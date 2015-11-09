@@ -1,0 +1,165 @@
+package de.privatepublic.pi.synth.modules.fx;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.P.FilterType;
+import de.privatepublic.pi.synth.modules.mod.EnvADSR;
+import de.privatepublic.pi.synth.modules.mod.EnvADSR.EnvelopeParamConfig;
+import de.privatepublic.pi.synth.modules.mod.LFO;
+import de.privatepublic.pi.synth.util.FastCalc;
+
+public class MultiModeFilter {
+
+	public static final float MAX_STABLE_FREQUENCY = 12000f;
+	private static final float float_SAMPLE_RATE = P.SAMPLE_RATE_HZ*2;
+	
+	private int p_track_keyboard = P.FILTER1_TRACK_KEYBOARD;
+	private int p_freq = P.FILTER1_FREQ;
+	private int p_resonance = P.FILTER1_RESONANCE;
+	private int p_mod_amount = P.MOD_FILTER1_AMOUNT;
+	private int p_env_depth = P.FILTER1_ENV_DEPTH;
+	private int p_type = 0;
+	
+	
+	private final EnvADSR filterEnv; // new EnvADSR(new short[] {P.FILTER1_ENV_A, P.FILTER1_ENV_D, P.FILTER1_ENV_S, P.FILTER1_ENV_R}, P.FILTER1_ENV_VELOCITY_SENS);
+
+	
+	public MultiModeFilter(int freq, int res, int mod, int env, int type, int trkkbd, int vel, EnvelopeParamConfig envelopeConfig) {
+		p_freq = freq;
+		p_resonance = res;
+		p_mod_amount = mod;
+		p_env_depth = env;
+		p_type = type;
+		p_track_keyboard = trkkbd;
+		filterEnv = new EnvADSR(envelopeConfig);
+	}
+	
+	
+	public void trigger(final float freq, final float velocity) {
+		filterEnv.noteOn(velocity);
+//		freq_keyboard_offset = freq*AU.FILTER_KEYBOARD_TRACKING;
+		if (P.VAL[p_track_keyboard]>0) {
+			frqOffset = freq*P.VAL[p_track_keyboard]*2f;//freq_keyboard_offset;
+		}
+		else {
+			frqOffset = 0;
+		}
+	}
+	
+	public void noteOff() {
+		filterEnv.noteOff();
+	}
+
+	private float frq, K, Q, QtimesK, a, b, A0, A1, A2, B1, A3, A5, stage1, input;
+	private float frqOffset, state0, state1, state2, state3, gain;
+	private float f1, damp;
+//	private float y_l0, y_l1, y_b0, y_b1, y_h1; 
+//	private float f1 = 0;
+//	private float gain = 0;
+//	private float damp, drive=0, notch, low, high, band, out, in;
+	private float notch, low, high, band, out;
+//	private float dnormoffset =  1.0E-25;
+	
+	@SuppressWarnings("incomplete-switch")
+	public float processSample(final float sampleValue, final int i) {
+		frq = FastCalc.ensureRange(
+				(
+					MAX_STABLE_FREQUENCY*P.VALX[p_freq]
+					+ (MAX_STABLE_FREQUENCY * (filterEnv.nextValue() * P.VALXC[p_env_depth]))
+					+ frqOffset
+				) 
+				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),
+				0, MAX_STABLE_FREQUENCY);
+//		if (frq > MAX_STABLE_FREQUENCY) {
+//			frq = MAX_STABLE_FREQUENCY;
+//		}
+//		else if (frq < 0) {
+//			frq = 0;
+//		}
+		FilterType type = P.VAL_FILTER_TYPE_FOR[p_type];
+		if (type==FilterType.LOWPASS24) {
+			Q = 1-P.VAL[p_resonance];
+			gain = (float) Math.sqrt(Q);
+
+			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
+			QtimesK = Q * K;
+			a = 0.76536686473f * QtimesK;
+			b = 1.84775906502f * QtimesK;
+			K = K*K;
+
+			A0 = (K+a+1);
+			A1 = 2*(1-K);
+			A2 =(a-K-1);
+//			final float B0 = K;
+			B1 = 2*K;
+//			final float B2 = B0;
+
+			A3 = (K+b+1);
+//			final float A4 = 2*(1-K);
+			A5 = (b-K-1);
+//			final float B3 = K;
+//			final float B4 = 2*B3;
+//			final float B5 = B3; 
+
+			input = sampleValue*gain;
+
+			stage1 = K*input + state0;
+			state0 = B1*input + A1/A0*stage1 + state1;
+			state1 = K*input + A2/A0*stage1;
+
+			input = K*stage1 + state2; // gain??
+			state2 = B1*stage1 + A1/A3*input + state3;
+			state3 = K*stage1 + A5/A3*input;
+			return input;
+
+		}
+		else {
+			Q = P.VAL[p_resonance];
+			f1 = (float) (2.0*Math.sin(Math.PI*(frq/float_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
+			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
+			
+			notch = sampleValue - damp*band;
+			low   = low + f1*band;
+			high  = notch - low;
+			band  = f1*high + band;// - drive*band*band*band;
+			switch (type) {
+			case LOWPASS:
+				out = low;
+				break;
+			case BANDPASS:
+				out = band;
+				break;
+			case HIGHPASS:
+				out = high;
+				break;
+			case NOTCH:
+				out = notch;
+				break;
+			case ALLPASS:
+			default:
+				out = low+band+high;
+			}
+			notch = sampleValue - damp*band;
+			low   = low + f1*band;
+			high  = notch - low;
+			band  = f1*high + band;// - drive*band*band*band;
+			switch (type) {
+			case LOWPASS:
+				return out + low;
+			case BANDPASS:
+				return out + band;
+			case HIGHPASS:
+				return out + high;
+			case NOTCH:
+				return out + notch;
+			}
+			return out + low+band+high;
+			
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private static final Logger log = LoggerFactory.getLogger(MultiModeFilter.class);
+}
