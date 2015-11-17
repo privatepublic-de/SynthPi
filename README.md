@@ -1,7 +1,7 @@
 #SynthPi
 Open source virtual analogue, additive organ and Karplus-Strong synthesizer engine in Java.
 
-Link to user manual will follow shortly.
+All documentation and the user manual can be found here: [http://www.privatepublic.de/blog/software/synthpi-synthesizer/](http://www.privatepublic.de/blog/software/synthpi-synthesizer/).
 
 SynthPi uses and is grateful for the following open source components and resources:
 
