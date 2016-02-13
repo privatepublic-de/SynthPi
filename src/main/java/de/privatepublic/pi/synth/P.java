@@ -584,7 +584,7 @@ public class P {
 		float v;
 		if (index==P.OSC2_TUNING) {
 			// consider range for midi device
-			v = val/MidiHandler.CC_OSC2_DETUNE_VALUE_RANGE;
+			v = val/(float)MidiHandler.CC_OSC2_DETUNE_VALUE_RANGE;
 		} else 
 		if (index==P.OSC1_WAVE_SET || index==P.OSC2_WAVE_SET) {
 			v = (val<127?val/127f:126f/127f); // mustn't reach 1
