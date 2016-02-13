@@ -52,6 +52,7 @@ public class SynthPi {
 		}
 		
 		try {
+			PresetHandler.loadRecentPatch();
 			MidiHandler.init();
 			SynthPiAudioClient.start();
 			JettyWebServerInterface.init();
@@ -61,6 +62,7 @@ public class SynthPi {
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
+		    	PresetHandler.saveCurrentPatch();
 		    	logger.info("Shutting down ...");
 		    	SynthPiAudioClient.shutdownAudio();
 		    }
@@ -79,13 +81,13 @@ public class SynthPi {
 				final String qmsg = queuedMessages.remove(0);
 				EventQueue.invokeLater(new Runnable() {
 			        public void run() {
-		        		window.appendMessage("] "+qmsg+ "\n");
+		        		window.appendMessage("> "+qmsg+ "\n");
 			        }
 			    });
 			}
 			EventQueue.invokeLater(new Runnable() {
 		        public void run() {
-		        	window.appendMessage("] "+message+ "\n");
+		        	window.appendMessage("> "+message+ "\n");
 		        }
 		    });
 		}

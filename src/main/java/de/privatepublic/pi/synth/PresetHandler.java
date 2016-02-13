@@ -322,6 +322,9 @@ public class PresetHandler {
 		return new File(PATCH_DIR, "settings.json");
 	}
 	
+	private static File userRecentFile() {
+		return new File(PATCH_DIR, "recent.json");
+	}
 
 	public static String settingsJSON() {
 		return settingsJSONObject().toString()+"\n";
@@ -390,6 +393,43 @@ public class PresetHandler {
 	public static void updateAndSaveSettings(String jsonString) {
 		updateSettings(jsonString);
 		saveSettings();
+	}
+	
+	public static void saveCurrentPatch() {
+		log.info("Saving current patch ...");
+		JSONObject current = createJSONFromCurrentPatch(P.LAST_LOADED_PATCH_NAME, PatchCategory.WHATEVER);
+		try {
+			FileUtils.write(userRecentFile(), current.toString(2), "utf-8");
+		} catch (JSONException | IOException e) {
+			log.warn("Error writing current patch to {}: {}", userRecentFile(), e);
+		}
+	}
+	
+	public static void loadRecentPatch() {
+		
+		try {
+			JSONObject patch = new JSONObject(FileUtils.readFileToString(userRecentFile(), "utf-8"));
+			
+			JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
+			P.setToDefaults();
+			for (int ix=0;ix<params.length();++ix) {
+				try {
+					JSONObject param = params.getJSONObject(ix);
+					int pindex = param.getInt(K.PATCH_PARAM_INDEX.key());
+					float val = (float) param.getDouble(K.PATCH_PARAM_VAL.key());
+					P.set(pindex, val);
+				} catch (JSONException e) {
+					log.debug("Error reading param at pos "+ix, e);
+				}
+			}
+			P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
+			log.debug("Loaded recent patch {}", P.LAST_LOADED_PATCH_NAME);
+			SynthPi.uiMessage("Loaded recent patch: "+P.LAST_LOADED_PATCH_NAME);
+		} catch (JSONException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public static enum K {
