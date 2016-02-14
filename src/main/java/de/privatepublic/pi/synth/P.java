@@ -66,7 +66,7 @@ public class P {
 	public static float SAMPLE_RATE_HZ = 48000;
 	public static float MILLIS_PER_SAMPLE_FRAME = 1000f/SAMPLE_RATE_HZ;
 	public static float FINAL_GAIN_FACTOR = .8f;
-	public static int SAMPLE_BUFFER_SIZE = 64;
+	public static int SAMPLE_BUFFER_SIZE = 128;
 	public static float BEND_RANGE_CENTS = 200f;
 	public static final int POLYPHONY_MAX  = 8;
 	public static int POLYPHONY = POLYPHONY_MAX;
