@@ -383,12 +383,16 @@ $(document).ready(function () {
 		$("#set_midichannel").val(settings.midichannel);
 		$("#set_pitchbendrange").val(settings.pitchbendrange);
 		$("#set_pitchbendfix").prop("checked",settings.pitchbendfix);
+		$("#set_liveperformance").prop("checked",settings.transferperformancedata);
 		$("#set_polyphonyvoices").val(settings.polyphonyvoices);
+		$("#set_buffersize").val(settings.audiobuffersize);
 		$("#savesettings").unbind().click(function() {
 			settings.midichannel = parseInt($("#set_midichannel").val());
 			settings.pitchbendrange = parseInt($("#set_pitchbendrange").val());
 			settings.pitchbendfix = $("#set_pitchbendfix").prop("checked");
 			settings.polyphonyvoices = parseInt($("#set_polyphonyvoices").val());
+			settings.audiobuffersize = parseInt($("#set_buffersize").val());
+			settings.transferperformancedata = $("#set_liveperformance").prop("checked");
 			socket.sendValueDirectly("/command/settings/save", JSON.stringify(settings));
 			$("#settings").fadeOut();
 			dimmer.hide();

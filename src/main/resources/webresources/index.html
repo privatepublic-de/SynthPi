@@ -388,7 +388,23 @@
 				</select>
 				semitones (<input type="checkbox" id="set_pitchbendfix"> <label for="set_pitchbendfix">fix strange behavior</label>)
 			</div>
-			<a href="#" class="push" id="savesettings">Save</a>
+			<div class="field">
+				<label>Audio Buffer Size</label>
+				<select id="set_buffersize">
+					<option value="32">32</option>
+					<option value="64">64</option>
+					<option value="96">96</option>
+					<option value="128">128</option>
+					<option value="256">256</option>
+					<option value="512">512</option>
+				</select>
+				bytes (needs restart)
+			</div>
+			<div class="field">
+				<label>Display Live Performance Data</label>
+				<input type="checkbox" id="set_liveperformance" />
+			</div>
+			<p><a href="#" class="push" id="savesettings">Save</a></p>
 		</form>
 	</div>
 	<div id="credits">

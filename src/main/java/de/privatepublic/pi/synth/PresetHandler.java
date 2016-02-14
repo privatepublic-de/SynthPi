@@ -336,6 +336,8 @@ public class PresetHandler {
 		settings.put(K.PREF_PITCH_BEND_RANGE.key(), (int)(P.BEND_RANGE_CENTS/100));
 		settings.put(K.PREF_PITCH_BEND_FIX.key(), !P.FIX_STRANGE_MIDI_PITCH_BEND);
 		settings.put(K.PREF_POLYPHONY_VOICES.key(), P.POLYPHONY);
+		settings.put(K.PREF_AUDIO_BUFFER_SIZE.key(), P.SAMPLE_BUFFER_SIZE);
+		settings.put(K.PREF_TRANSFER_PERFORMACE_DATA.key(), P.HTTP_SEND_PERFORMACE_DATA);
 		return settings;
 	}
 	
@@ -377,6 +379,12 @@ public class PresetHandler {
 		}
 		if (settings.has(K.PREF_POLYPHONY_VOICES.key())) {
 			P.POLYPHONY = settings.getInt(K.PREF_POLYPHONY_VOICES.key());
+		}
+		if (settings.has(K.PREF_TRANSFER_PERFORMACE_DATA.key())) {
+			P.HTTP_SEND_PERFORMACE_DATA = settings.getBoolean(K.PREF_TRANSFER_PERFORMACE_DATA.key());
+		}
+		if (settings.has(K.PREF_AUDIO_BUFFER_SIZE.key())) {
+			P.SAMPLE_BUFFER_SIZE = settings.getInt(K.PREF_AUDIO_BUFFER_SIZE.key());
 		}
 		if (settings.has(K.PREF_MIDI_CC_MAPPING_LIST.key())) {
 			try {
@@ -445,6 +453,8 @@ public class PresetHandler {
 		PREF_PITCH_BEND_FIX("pitchbendfix"), 
 		PREF_POLYPHONY_VOICES("polyphonyvoices"),
 		PREF_MIDI_CC_MAPPING_LIST("midiccmapping"),
+		PREF_AUDIO_BUFFER_SIZE("audiobuffersize"),
+		PREF_TRANSFER_PERFORMACE_DATA("transferperformancedata"),
 		
 		UI_EXISTINGPATCHES("existingPatches"), 
 		UI_CATEGORIES("categories"), 

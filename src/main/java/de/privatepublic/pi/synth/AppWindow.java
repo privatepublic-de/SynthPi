@@ -24,10 +24,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
-
-import javax.swing.JCheckBox;
-
 public class AppWindow {
 
 	private static final Logger log = LoggerFactory.getLogger(AppWindow.class);
@@ -66,7 +62,7 @@ public class AppWindow {
 	private void initialize() {
 		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 449, 378);
+		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("SynthPi Control");
 		setIcon(frame);
@@ -78,27 +74,22 @@ public class AppWindow {
 		lblSynthpi.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
 		
 		JScrollPane scrollPane = new JScrollPane();
-		
-		JCheckBox chckbxSendPerformanceData = new JCheckBox("Send performance data");
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(groupLayout.createSequentialGroup()
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(scrollPane))
-						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
+						.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
 							.addGap(15)
 							.addComponent(lblSynthpi))
-						.addGroup(groupLayout.createSequentialGroup()
+						.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
 							.addContainerGap()
 							.addComponent(btnOpenBrowserInterface)
-							.addPreferredGap(ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
-							.addComponent(btnExit))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(22)
-							.addComponent(chckbxSendPerformanceData)))
+							.addPreferredGap(ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
+							.addComponent(btnExit)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -107,13 +98,11 @@ public class AppWindow {
 					.addGap(15)
 					.addComponent(lblSynthpi)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnExit)
 						.addComponent(btnOpenBrowserInterface))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(chckbxSendPerformanceData)
 					.addContainerGap())
 		);
 		textArea = new JTextArea();
@@ -130,13 +119,6 @@ public class AppWindow {
 		btnOpenBrowserInterface.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				AppWindow.openWebBrowser();
-			}
-		});
-		chckbxSendPerformanceData.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				P.HTTP_SEND_PERFORMACE_DATA = chckbxSendPerformanceData.isSelected();
-				ControlMessageDispatcher.INSTANCE.updateAllParams();
 			}
 		});
 		
@@ -179,4 +161,5 @@ public class AppWindow {
 			// fail silently
 		}
 	}
+	
 }

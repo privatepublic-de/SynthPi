@@ -153,6 +153,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			case SAVE_SETTINGS:
 				String settingsJSON = msg.substring(msg.indexOf('=')+1);
 				PresetHandler.updateAndSaveSettings(settingsJSON);
+				updateAllParams();
 				break;
 			case PARAMETER_MESSAGE: // it's possibly a parameter message
 				if (parts.length==2) {
