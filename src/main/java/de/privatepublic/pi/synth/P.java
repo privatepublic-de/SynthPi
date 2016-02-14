@@ -70,6 +70,7 @@ public class P {
 	public static float BEND_RANGE_CENTS = 200f;
 	public static final int POLYPHONY_MAX  = 8;
 	public static int POLYPHONY = POLYPHONY_MAX;
+	public static boolean HTTP_SEND_PERFORMACE_DATA = false;
 
 	public static final float ROOT_FREQUENCY = 440;	
 	public static final float OCTAVE_CENTS = 1200f;
@@ -436,11 +437,12 @@ public class P {
 		setToDefaults();
 		
 		// send limiter status thread
-		Timer timer = new Timer("LimiterState", true);
-		timer.scheduleAtFixedRate(new TimerTask() {
-			private boolean lastWasGood = false;
-			@Override
-			public void run() {
+		if (HTTP_SEND_PERFORMACE_DATA) {
+			Timer timer = new Timer("LimiterState", true);
+			timer.scheduleAtFixedRate(new TimerTask() {
+				private boolean lastWasGood = false;
+				@Override
+				public void run() {
 					float val = limiterReductionValue;
 					if (val>1) {
 						val = (val-1)*.2f+1;
@@ -453,8 +455,9 @@ public class P {
 							lastWasGood = true;	
 						}
 					}
-			}
-		}, 2000, 100);
+				}
+			}, 2000, 100);
+		}
 		
 	}
 	

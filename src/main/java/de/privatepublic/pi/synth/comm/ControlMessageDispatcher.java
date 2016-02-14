@@ -195,6 +195,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			completeMsg.append(createValueAndLabelMessage(i));
 		}
 		// meta data
+		completeMsg.append("/config/performancedata="+P.HTTP_SEND_PERFORMACE_DATA+"\n");
 		completeMsg.append("/patch/name="+P.LAST_LOADED_PATCH_NAME);
 		String completeMessage = completeMsg.toString();
 		synchronized (SynthSocket.ACTIVE_SESSIONS) {
@@ -325,32 +326,37 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 	@Override
 	public void onMidiNoteMessage(ShortMessage msg, int command, int data1,
 			int data2, long timeStamp) {
-		StringBuffer wsmsg = new StringBuffer("/play/note/");
-		wsmsg.append(data1);
-		wsmsg.append('=');
-		if (command==ShortMessage.NOTE_ON) {
-			wsmsg.append('1');
+		if (P.HTTP_SEND_PERFORMACE_DATA) {
+			StringBuffer wsmsg = new StringBuffer("/play/note/");
+			wsmsg.append(data1);
+			wsmsg.append('=');
+			if (command==ShortMessage.NOTE_ON) {
+				wsmsg.append('1');
+			}
+			else if (command==ShortMessage.NOTE_OFF) {
+				wsmsg.append('0');
+			}
+			wsmsg.append('\n');
+			sendToAll(wsmsg.toString());
 		}
-		else if (command==ShortMessage.NOTE_OFF) {
-			wsmsg.append('0');
-		}
-		wsmsg.append('\n');
-		sendToAll(wsmsg.toString());
 	}
 
 	@Override
 	public void onPedalUp() {
-		sendToAll("/play/sustain=0\n");
+		if (P.HTTP_SEND_PERFORMACE_DATA)
+			sendToAll("/play/sustain=0\n");
 	}
 	
 	@Override
 	public void onPedalDown() {
-		sendToAll("/play/sustain=1\n");
+		if (P.HTTP_SEND_PERFORMACE_DATA)
+			sendToAll("/play/sustain=1\n");
 	}
 
 	@Override
 	public void onPitchBend() {
-		sendToAll("/play/mod/pitchbend="+(P.VAL_RAW_MIDI[P.PITCH_BEND] / 16383d)+"\n");
+		if (P.HTTP_SEND_PERFORMACE_DATA)
+			sendToAll("/play/mod/pitchbend="+(P.VAL_RAW_MIDI[P.PITCH_BEND] / 16383d)+"\n");
 	}
 	
 }

@@ -92,8 +92,6 @@ $(document).ready(function () {
 					if (parts.length==2) {
 						if (parts[0]=="/label/limiter/reduction") {
 							var value = parseFloat(parts[1])-1;
-//							var redval = Math.min(parseInt(value*255.0),255);
-//							$("*[data-control-path='/amp/volume'] label.static").animate({"backgroundColor":"rgb("+redval+",0,0)"},50);
 							renderLimiter(value);
 							continue;
 						}
@@ -103,6 +101,15 @@ $(document).ready(function () {
 							}
 							else {
 								$("*[data-osc='"+parts[0]+"']").removeClass("pressed");
+							}
+							continue;
+						}
+						if (parts[0]=="/config/performancedata") {
+							if (parts[1]=='true') { 
+								$(document.body).addClass("performancedata");
+							}
+							else {
+								$(document.body).removeClass("performancedata");
 							}
 							continue;
 						}

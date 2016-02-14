@@ -773,7 +773,12 @@ background: linear-gradient(to bottom,  rgba(0,0,0,0.38) 0%,rgba(0,0,0,0) 29%,rg
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', endColorstr='#b5000000',GradientType=0 ); /* IE6-9 */
 }
 
+.performancedata #keyboard {
+	display: block;
+}
+
 #keyboard {
+	display: none;
 	text-align: center;
 	background-color: #333;
 }
