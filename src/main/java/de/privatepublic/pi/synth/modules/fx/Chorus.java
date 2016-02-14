@@ -10,7 +10,7 @@ public class Chorus implements IProcessor {
 	private final int delayLineSize;
 	private final int delayLineSizeUnder;
 	private int writeIndex = 0;
-	private final float feedback = .5f;
+	private final float feedback = .4f;
 	private final LFO lfo;
 	
 	public Chorus(float maxDelayMS) {
