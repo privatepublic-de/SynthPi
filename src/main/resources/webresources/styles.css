@@ -253,14 +253,14 @@ a {
 	vertical-align: middle;
 	width: 180px;
 	height: 180px;
-	overflow: hidden;
+	overflow: visible;
 }
 .box-small-2x2 {
 	display: inline-block;
 	vertical-align: middle;
 	width: 134px;
 	height: 124px;
-	overflow: hidden;
+	overflow: visible;
 }
 
 /*
@@ -884,3 +884,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	background-position: center center;
 }
 
+.paramselected {
+	outline: 4px solid #0ff;
+}
+.inverted .paramselected {
+	outline: 4px solid #077;
+}

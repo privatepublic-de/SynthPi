@@ -90,6 +90,14 @@ $(document).ready(function () {
 					}
 					parts = lines[i].split("=",2);
 					if (parts.length==2) {
+						if (parts[0]=="/paramselected") {
+							clearTimeout(window.selectedtimer);
+							$("#main *").removeClass("paramselected");
+							$("*[data-control-path='"+parts[1]+"']").addClass("paramselected");
+							$(".checkbox[data-osc='"+parts[1]+"']").addClass("paramselected");
+							window.selectedtimer = setTimeout(function() {$("#main *").removeClass("paramselected");}, 8000);
+							continue;
+						}
 						if (parts[0]=="/label/limiter/reduction") {
 							var value = parseFloat(parts[1])-1;
 							renderLimiter(value);

@@ -177,6 +177,10 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		}
 	}
 	
+	public void updateSelectedParam(int paramSelected) {
+		sendToAll("/paramselected="+P.OSC_PATH[paramSelected]);
+	}
+	
 	/**
 	 * Send complete update of all parameters to all receivers.
 	 */

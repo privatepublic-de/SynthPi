@@ -72,6 +72,7 @@ public class MidiHandler {
 	private boolean receiveAllChannels = false;
 	private boolean isLearnMode = false;
 	private int learnParameterIndex = 0;
+	private int param_selected = -1;
 	
 	private MidiHandler() {
 		log.info("Initializing MIDI handler");
@@ -175,29 +176,41 @@ public class MidiHandler {
 					}
 				}
 				else if (command==ShortMessage.CONTROL_CHANGE) {
-					if (isLearnMode) {
-						storeLearnedCCNumber(data1);
-					}
-					// TODO mod wheel extra handling!
-					P.setFromMIDI(INDEX_OF_MIDI_CC[data1], data2);
-					if (data1==CC_OSC2_DETUNE || data1==CC_OSC2_DETUNE_FINE) {
-						sendPitchBendNotification();
-					}
-					if (data1==CC_SUSTAIN) {
-						boolean old = P.PEDAL;
-						P.PEDAL = data2>63;
-						if (old && !P.PEDAL) {
-							for (IMidiNoteReceiver rc:noteReceivers) {
-								rc.onPedalUp();
-							}
-						}
-						if (!old && P.PEDAL) {
-							for (IMidiNoteReceiver rc:noteReceivers) {
-								rc.onPedalDown();
-							}
+					if (data1==CC_PARAM_SELECT) {
+						if (data2<CC_PARAM_MAP.length) {
+							param_selected = CC_PARAM_MAP[data2];
+							ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 						}
 					}
-					updateStatus(data1);
+					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
+						P.setFromMIDI(param_selected, data2);
+						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
+					}
+					else {
+						if (isLearnMode) {
+							storeLearnedCCNumber(data1);
+						}
+						// TODO mod wheel extra handling!
+						P.setFromMIDI(INDEX_OF_MIDI_CC[data1], data2);
+						if (data1==CC_OSC2_DETUNE || data1==CC_OSC2_DETUNE_FINE) {
+							sendPitchBendNotification();
+						}
+						if (data1==CC_SUSTAIN) {
+							boolean old = P.PEDAL;
+							P.PEDAL = data2>63;
+							if (old && !P.PEDAL) {
+								for (IMidiNoteReceiver rc:noteReceivers) {
+									rc.onPedalUp();
+								}
+							}
+							if (!old && P.PEDAL) {
+								for (IMidiNoteReceiver rc:noteReceivers) {
+									rc.onPedalDown();
+								}
+							}
+						}
+						updateStatus(data1);
+					}
 				}
 				else if (command==ShortMessage.PITCH_BEND) {
 					int val = (data1+(data2<<7)) - 8192;
@@ -281,6 +294,91 @@ public class MidiHandler {
 	private static final int CC_OSC_RINGMOD = 70;
 	private static final int CC_OSC_PORTAMENTO_TIME = 5;
 //	private static final int CC_LOCAL_ON_OFF = 122;
+	
+	private static final int CC_PARAM_SELECT = 100;
+	private static final int CC_PARAM_VALUE = 101;
+	private static final int[] CC_PARAM_MAP = new int[] {
+		P.OSC_MODE,
+		P.OSC1_WAVE,
+		P.OSC2_WAVE,
+		P.OSC_1_2_MIX,
+		P.OSC1_WAVE_SET,
+		P.OSC2_WAVE_SET,
+		P.OSC_NOISE_LEVEL,
+		P.OSC2_TUNING,
+		P.OSC2_TUNING_FINE,
+		P.OSC_GAIN,
+		P.OSC2_SYNC,
+		P.OSC2_AM,
+		P.OSC_GLIDE_RATE,
+		P.OSC_MONO,
+		
+		P.FILTER_PARALLEL,
+		P.FILTER_PARALLEL_MIX,
+		
+		P.FILTER1_ON,
+		P.FILTER1_TRACK_KEYBOARD,
+		P.FILTER1_FREQ,
+		P.FILTER1_RESONANCE,
+		P.FILTER1_TYPE,
+		P.FILTER1_ENV_A,
+		P.FILTER1_ENV_D,
+		P.FILTER1_ENV_S,
+		P.FILTER1_ENV_R,
+		P.FILTER1_ENV_DEPTH,
+		P.FILTER1_ENV_VELOCITY_SENS,
+		P.FILTER1_ENV_LOOP,
+		
+		P.FILTER2_ON,
+		P.FILTER2_TRACK_KEYBOARD,
+		P.FILTER2_FREQ,
+		P.FILTER2_RESONANCE,
+		P.FILTER2_TYPE,
+		P.FILTER2_ENV_A,
+		P.FILTER2_ENV_D,
+		P.FILTER2_ENV_S,
+		P.FILTER2_ENV_R,
+		P.FILTER2_ENV_DEPTH,
+		P.FILTER2_ENV_VELOCITY_SENS,
+		P.FILTER2_ENV_LOOP,
+		
+		P.MOD_RATE,
+		P.MOD_AMOUNT_BASE,
+		P.MOD_PITCH_AMOUNT,
+		P.MOD_PITCH2_AMOUNT,
+		P.MOD_WAVE1_AMOUNT,
+		P.MOD_WAVE2_AMOUNT,
+		P.MOD_FILTER1_AMOUNT,
+		P.MOD_FILTER2_AMOUNT,
+		P.MOD_VOL_AMOUNT,
+		P.MOD_LFO_TYPE,
+		P.MOD_LFO_RESET,
+		P.MOD_ENV1_A,
+		P.MOD_ENV1_D,
+		P.MOD_ENV1_S,
+		P.MOD_ENV1_R,
+		P.MOD_ENV1_LOOP,
+		P.MOD_ENV1_PITCH_AMOUNT,
+		P.MOD_ENV1_PITCH2_AMOUNT,
+		P.MOD_ENV1_WAVE_AMOUNT,
+		P.MOD_ENV1_NOISE_AMOUNT,
+		P.MOD_ENV1_AM_AMOUNT,
+		
+		P.AMP_ENV_A,
+		P.AMP_ENV_D,
+		P.AMP_ENV_S,
+		P.AMP_ENV_R,
+		P.AMP_ENV_VELOCITY_SENS,
+		P.AMP_ENV_LOOP,
+		P.OVERDRIVE,
+		P.CHORUS_DEPTH,
+		P.SPREAD,
+		P.DELAY_WET,
+		P.DELAY_RATE,
+		P.DELAY_FEEDBACK,
+		P.REVERB_ONE_KNOB,
+		P.VOLUME
+	};
 	
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
 	static {
