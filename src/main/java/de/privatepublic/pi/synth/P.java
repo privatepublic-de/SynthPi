@@ -142,6 +142,7 @@ public class P {
 	
 	public static int MIDI_CHANNEL = 1 -1; // CAUTION 0-based
 	public static int PORT_HTTP = 31415;
+	public static String CUSTOM_BROWSER_COMMAND = null;
 	
 	/** Unused property (always 0) */
 	public static final int UNUSED = 0;
