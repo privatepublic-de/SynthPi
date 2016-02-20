@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Vector;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
@@ -72,19 +75,58 @@ public class MidiHandler {
 	
 	private MidiHandler() {
 		log.info("Initializing MIDI handler");
-		MidiDevice device;
-		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
-		for (int i = 0; i < infos.length; i++) {
-			try {
-				device = MidiSystem.getMidiDevice(infos[i]);
-				Transmitter trans = device.getTransmitter();
-				MidiInputFilter receiver = new MidiInputFilter(device.getDeviceInfo().toString());
-				trans.setReceiver(receiver);
-				s_receiver = receiver;
-				device.open();
-				log.info("Opened MIDI device: {}", device.getDeviceInfo());
-			} catch (MidiUnavailableException e) {}
-		}
+		s_receiver = new MidiInputFilter();
+		Timer timer = new Timer("MIDIWatcher", true);
+		timer.scheduleAtFixedRate(new TimerTask() {
+			int detectedDevices = 0;
+			Vector<MidiDevice> openedDevices = new Vector<MidiDevice>();
+			@Override
+			public void run() {
+				MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+				if (infos.length!=detectedDevices) {
+					log.info("MIDI device change. Scanning devices...");
+						for (int i=0; i<infos.length; i++) {
+							try {
+								MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+								Transmitter trans = device.getTransmitter();
+								if (device.getMaxReceivers()>=0 && !openedDevices.contains(device)) {
+									trans.setReceiver(s_receiver);
+									device.open();
+									openedDevices.add(device);
+									log.info("Opened MIDI device: {}", device.getDeviceInfo());
+									SynthPi.uiMessage("MIDI device opened: "+ device.getDeviceInfo());
+								}
+							} catch (MidiUnavailableException e) {/* fail silently */}
+						}
+						// check removed devices
+						Vector<MidiDevice> removedDev = new Vector<MidiDevice>();
+						for (MidiDevice dev:openedDevices) {
+							boolean stillThere = false;
+							for (int i=0; i<infos.length; i++) {
+								try {
+									MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
+									if (dev==device) {
+										stillThere = true;
+										break;
+									}
+								} catch (MidiUnavailableException e) { /* fail silently */ }
+							}
+							if (!stillThere) {
+								removedDev.add(dev);
+							}
+						}
+						for (MidiDevice remDev:removedDev) {
+							try {
+								remDev.close();
+							} catch (Exception e) { /* fail silently */ }
+							openedDevices.remove(remDev);
+							log.info("Removed {}", remDev.getDeviceInfo());
+							SynthPi.uiMessage("MIDI device closed: "+remDev.getDeviceInfo());
+						}
+				}
+				detectedDevices = infos.length;
+			}
+		}, 0, 2000);
 	}
 	
 	public void sendNote(int number, boolean on) {
@@ -114,11 +156,6 @@ public class MidiHandler {
 	}
 	
 	private class MidiInputFilter implements Receiver {
-		@SuppressWarnings("unused")
-		public String name;
-		public MidiInputFilter(String name) {
-			this.name = name;
-		}
 		public void send(final MidiMessage msg, final long timeStamp) {
 			if (msg instanceof ShortMessage) {
 				final ShortMessage smsg = (ShortMessage)msg;
