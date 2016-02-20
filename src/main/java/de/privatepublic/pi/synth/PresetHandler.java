@@ -124,10 +124,10 @@ public class PresetHandler {
 									log.debug("Error reading param at pos "+ix, e);
 								}
 							}
-							if (params.length()<P.DELAY_RATE+1) { // TODO fix old patch files!
-								// saved before delay params were introduced
-								P.setDirectly(P.DELAY_WET, 0); // turn off delay
-							}
+//							if (params.length()<P.DELAY_RATE+1) { // TODO fix old patch files!
+//								// saved before delay params were introduced
+//								P.setDirectly(P.DELAY_WET, 0); // turn off delay
+//							}
 							P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);

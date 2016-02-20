@@ -133,15 +133,24 @@ public class AppWindow {
 	
 	public static void openWebBrowser() {
 		try {
-			log.info("Starting desktop browser...");
+			
 			String uri = "http://localhost:" + P.PORT_HTTP;
-			SynthPi.uiMessage("Starting desktop browser with control interface: "+uri);
-			String os = System.getProperty("os.name").toLowerCase();
-			if (os.contains("mac")) {
-				Runtime.getRuntime().exec(new String[] {"osascript", "-e", "open location \"http://localhost:" + P.PORT_HTTP + "\""});
+			
+			if (P.CUSTOM_BROWSER_COMMAND!=null) {
+				log.info("Starting browser: {} {}", P.CUSTOM_BROWSER_COMMAND, uri);
+				SynthPi.uiMessage("Starting browser "+P.CUSTOM_BROWSER_COMMAND+" "+uri);
+				Runtime.getRuntime().exec(P.CUSTOM_BROWSER_COMMAND.concat(" ").concat(uri).split(" "));
 			}
 			else {
-				Desktop.getDesktop().browse(new URI(uri));
+				log.info("Starting desktop browser...");
+				SynthPi.uiMessage("Starting desktop browser with control interface: "+uri);
+				String os = System.getProperty("os.name").toLowerCase();
+				if (os.contains("mac")) {
+					Runtime.getRuntime().exec(new String[] {"osascript", "-e", "open location \"http://localhost:" + P.PORT_HTTP + "\""});
+				}
+				else {
+					Desktop.getDesktop().browse(new URI(uri));
+				}
 			}
 		} catch (Exception ex) {
 			log.warn("Could not start local web browser: {}", ex.getMessage());
