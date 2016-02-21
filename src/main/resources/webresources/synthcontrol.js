@@ -392,6 +392,7 @@ $(document).ready(function () {
 		$("#set_pitchbendrange").val(settings.pitchbendrange);
 		$("#set_pitchbendfix").prop("checked",settings.pitchbendfix);
 		$("#set_liveperformance").prop("checked",settings.transferperformancedata);
+		$("#set_limiter").prop("checked",settings.limimterenabled);
 		$("#set_polyphonyvoices").val(settings.polyphonyvoices);
 		$("#set_buffersize").val(settings.audiobuffersize);
 		$("#savesettings").unbind().click(function() {
@@ -401,6 +402,7 @@ $(document).ready(function () {
 			settings.polyphonyvoices = parseInt($("#set_polyphonyvoices").val());
 			settings.audiobuffersize = parseInt($("#set_buffersize").val());
 			settings.transferperformancedata = $("#set_liveperformance").prop("checked");
+			settings.limimterenabled = $("#set_limiter").prop("checked");
 			socket.sendValueDirectly("/command/settings/save", JSON.stringify(settings));
 			$("#settings").fadeOut();
 			dimmer.hide();

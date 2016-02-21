@@ -337,7 +337,8 @@ public class PresetHandler {
 		settings.put(K.PREF_PITCH_BEND_FIX.key(), !P.FIX_STRANGE_MIDI_PITCH_BEND);
 		settings.put(K.PREF_POLYPHONY_VOICES.key(), P.POLYPHONY);
 		settings.put(K.PREF_AUDIO_BUFFER_SIZE.key(), P.SAMPLE_BUFFER_SIZE);
-		settings.put(K.PREF_TRANSFER_PERFORMACE_DATA.key(), P.HTTP_SEND_PERFORMACE_DATA);
+		settings.put(K.PREF_TRANSFER_PERFORMANCE_DATA.key(), P.HTTP_SEND_PERFORMACE_DATA);
+		settings.put(K.PREF_LIMITER_ENABLED.key(), P.LIMITER_ENABLED);
 		return settings;
 	}
 	
@@ -380,8 +381,11 @@ public class PresetHandler {
 		if (settings.has(K.PREF_POLYPHONY_VOICES.key())) {
 			P.POLYPHONY = settings.getInt(K.PREF_POLYPHONY_VOICES.key());
 		}
-		if (settings.has(K.PREF_TRANSFER_PERFORMACE_DATA.key())) {
-			P.HTTP_SEND_PERFORMACE_DATA = settings.getBoolean(K.PREF_TRANSFER_PERFORMACE_DATA.key());
+		if (settings.has(K.PREF_TRANSFER_PERFORMANCE_DATA.key())) {
+			P.HTTP_SEND_PERFORMACE_DATA = settings.getBoolean(K.PREF_TRANSFER_PERFORMANCE_DATA.key());
+		}
+		if (settings.has(K.PREF_LIMITER_ENABLED.key())) {
+			P.LIMITER_ENABLED = settings.getBoolean(K.PREF_LIMITER_ENABLED.key());
 		}
 		if (settings.has(K.PREF_AUDIO_BUFFER_SIZE.key())) {
 			P.SAMPLE_BUFFER_SIZE = settings.getInt(K.PREF_AUDIO_BUFFER_SIZE.key());
@@ -454,7 +458,8 @@ public class PresetHandler {
 		PREF_POLYPHONY_VOICES("polyphonyvoices"),
 		PREF_MIDI_CC_MAPPING_LIST("midiccmapping"),
 		PREF_AUDIO_BUFFER_SIZE("audiobuffersize"),
-		PREF_TRANSFER_PERFORMACE_DATA("transferperformancedata"),
+		PREF_TRANSFER_PERFORMANCE_DATA("transferperformancedata"),
+		PREF_LIMITER_ENABLED("limiterenabled"),
 		
 		UI_EXISTINGPATCHES("existingPatches"), 
 		UI_CATEGORIES("categories"), 
