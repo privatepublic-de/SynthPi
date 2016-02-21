@@ -177,13 +177,12 @@ public class MidiHandler {
 				}
 				else if (command==ShortMessage.CONTROL_CHANGE) {
 					if (data1==CC_PARAM_SELECT) {
-						if (data2<CC_PARAM_MAP.length) {
-							param_selected = CC_PARAM_MAP[data2];
-							ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
-						}
+						param_selected = CC_PARAM_MAP[(int)(data2*((CC_PARAM_MAP.length-1)/127f))];
+						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
 						P.setFromMIDI(param_selected, data2);
+						ControlMessageDispatcher.INSTANCE.update(param_selected);
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else {

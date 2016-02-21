@@ -58,7 +58,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			chorus.process(nframes, outputs);
 		}
 		delay.process(nframes, outputs);
-		limiter.process(nframes, outputs);
+		// limiter.process(nframes, outputs); // TODO make switchable
 		if (P.IS[P.REVERB_ONE_KNOB]) {
 			reverb.process(nframes, outputs);
 		}
