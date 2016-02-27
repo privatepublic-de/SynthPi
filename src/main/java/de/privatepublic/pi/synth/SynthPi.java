@@ -3,6 +3,8 @@ package de.privatepublic.pi.synth;
 import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import org.apache.commons.cli.BasicParser;
@@ -56,6 +58,16 @@ public class SynthPi {
 			MidiHandler.init();
 			SynthPiAudioClient.start();
 			JettyWebServerInterface.init();
+			if (window!=null) {
+			Timer timer = new Timer("LoadWatch", true);
+			timer.schedule(new TimerTask() {
+				private float avareged;
+				@Override
+				public void run() {
+					avareged = (avareged+SynthPiAudioClient.LOAD)*.5f;
+					window.setLoad(avareged);
+				}}, 1000, 50);
+			}
 		} catch (Exception e1) {
 			logger.error(e1.getMessage(),e1);
 		}

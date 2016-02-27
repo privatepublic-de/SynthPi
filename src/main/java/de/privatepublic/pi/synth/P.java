@@ -441,7 +441,7 @@ public class P {
 		// send limiter status thread
 		if (HTTP_SEND_PERFORMACE_DATA) {
 			Timer timer = new Timer("LimiterState", true);
-			timer.scheduleAtFixedRate(new TimerTask() {
+			timer.schedule(new TimerTask() {
 				private boolean lastWasGood = false;
 				@Override
 				public void run() {

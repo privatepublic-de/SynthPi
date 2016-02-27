@@ -23,6 +23,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.JProgressBar;
 
 public class AppWindow {
 
@@ -30,6 +31,7 @@ public class AppWindow {
 	
 	private JFrame frame;
 	private JTextArea textArea;
+	private JProgressBar progressBarLoad;
 
 	/**
 	 * Create the application.
@@ -74,21 +76,25 @@ public class AppWindow {
 		lblSynthpi.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 16));
 		
 		JScrollPane scrollPane = new JScrollPane();
+		
+		progressBarLoad = new JProgressBar();
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
-						.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+							.addComponent(scrollPane))
+						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(15)
-							.addComponent(lblSynthpi))
-						.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+							.addComponent(lblSynthpi)
+							.addPreferredGap(ComponentPlacement.RELATED, 179, Short.MAX_VALUE)
+							.addComponent(progressBarLoad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
 							.addComponent(btnOpenBrowserInterface)
-							.addPreferredGap(ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
 							.addComponent(btnExit)))
 					.addContainerGap())
 		);
@@ -96,9 +102,11 @@ public class AppWindow {
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(15)
-					.addComponent(lblSynthpi)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(lblSynthpi)
+						.addComponent(progressBarLoad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnExit)
@@ -130,6 +138,9 @@ public class AppWindow {
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 	
+	public void setLoad(float load) {
+		progressBarLoad.setValue((int)(100*load));
+	}
 	
 	public static void openWebBrowser() {
 		try {
@@ -170,5 +181,4 @@ public class AppWindow {
 			// fail silently
 		}
 	}
-	
 }

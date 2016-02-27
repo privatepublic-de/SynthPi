@@ -78,7 +78,7 @@ public class MidiHandler {
 		log.info("Initializing MIDI handler");
 		s_receiver = new MidiInputFilter();
 		Timer timer = new Timer("MIDIWatcher", true);
-		timer.scheduleAtFixedRate(new TimerTask() {
+		timer.schedule(new TimerTask() {
 			int detectedDevices = 0;
 			Vector<MidiDevice> openedDevices = new Vector<MidiDevice>();
 			@Override
@@ -127,7 +127,7 @@ public class MidiHandler {
 				}
 				detectedDevices = infos.length;
 			}
-		}, 0, 2000);
+		}, 0, 5000);
 	}
 	
 	public void sendNote(int number, boolean on) {

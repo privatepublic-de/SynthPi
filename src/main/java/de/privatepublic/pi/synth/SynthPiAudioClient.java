@@ -10,6 +10,7 @@ import org.jaudiolibs.audioservers.AudioServer;
 import org.jaudiolibs.audioservers.AudioServerProvider;
 import org.jaudiolibs.audioservers.ext.ClientID;
 import org.jaudiolibs.audioservers.ext.Connections;
+import org.jaudiolibs.audioservers.javasound.JSTimingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,8 @@ public class SynthPiAudioClient implements AudioClient {
 			new Object[] {
 				true,
 				// extensions
-				new ClientID("SynthPi"), Connections.OUTPUT
+				new ClientID("SynthPi"), Connections.OUTPUT,
+				JSTimingMode.Estimated
 			}
 		);
 
@@ -89,6 +91,7 @@ public class SynthPiAudioClient implements AudioClient {
 		P.SAMPLE_BUFFER_SIZE = context.getMaxBufferSize();
 		P.SAMPLE_RATE_HZ = context.getSampleRate();
 		P.MILLIS_PER_SAMPLE_FRAME = 1000f/P.SAMPLE_RATE_HZ;
+		bufferTimeNS = (long)(((double) context.getMaxBufferSize() / context.getSampleRate()) * 1e9);
 		WaveTables.init();
 		LFO.init();
 		synthengine = new AnalogSynth();
@@ -106,13 +109,17 @@ public class SynthPiAudioClient implements AudioClient {
 		log.info("Synth is up and running!");
 	}
 
+	public static float LOAD = 0;
+	private static long bufferTimeNS = 0;
 	
 	@Override
 	public boolean process(long time, List<FloatBuffer> inputs, List<FloatBuffer> outputs, int nframes) {
 		if (synthengine!=null) {
 			try {
+				long startnanos = System.nanoTime();
 				P.interpolate();
 				synthengine.process(outputs, nframes);
+				LOAD = (System.nanoTime()-startnanos)/(float)bufferTimeNS;
 			}
 			catch (Exception e) {
 				log.error("Error processing", e);
