@@ -20,7 +20,7 @@ public class EnvADSR {
 	private float value = 0;
 	private float velocityFactor = 1;
 	private Runnable trigger;
-	private float attackThreshold;
+//	private float attackThreshold;
 	private float sustainValue;
 	private float decayCoeff;
 	private float releaseCoeff;
@@ -35,7 +35,7 @@ public class EnvADSR {
 		case ATTACK: 
 			value += slope;
 		    slope += curve;
-			if (value>attackThreshold) {
+			if (value>velocityFactor) {
 				value = velocityFactor;
 				if (conf.loopMode()) {
 					state = State.DECAY_LOOP;
@@ -81,23 +81,21 @@ public class EnvADSR {
 	
 	
 	public void noteOn(final float velocity) {
-		float attackScale = 1;
 		if (conf.velSens()) {
 			velocityFactor = velocity;
-			attackScale = 1-velocity;
 		}
 		else {
 			velocityFactor = 1f;
 		}
-		attackThreshold = velocityFactor*.96f;
-		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack()*attackScale);
+		float attackOvershoot = velocityFactor+velocityFactor*.05f;
+		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack());
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
 		float dur = (timeAttack*2)/P.MILLIS_PER_SAMPLE_FRAME;
 		float rdur = 1.0f / dur;
 		float rdur2 = rdur * rdur;
 
-		slope = 4.0f * velocityFactor * (rdur - rdur2);
-		curve = -8.0f * velocityFactor * rdur2;
+		slope = 4.0f * attackOvershoot * (rdur - rdur2);
+		curve = -8.0f * attackOvershoot * rdur2;
 		value = ZERO_THRESHOLD;
 //		attackCoeff = initStep(ZERO_THRESHOLD, velocityFactor, timeAttack);
 		sustainValue = conf.loopMode()?0:conf.sustain()*velocityFactor;
