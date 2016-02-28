@@ -24,6 +24,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 
 public class AppWindow {
 
@@ -78,6 +79,10 @@ public class AppWindow {
 		JScrollPane scrollPane = new JScrollPane();
 		
 		progressBarLoad = new JProgressBar();
+		
+		JLabel lblDspLoad = new JLabel("DSP load:");
+		lblDspLoad.setLabelFor(progressBarLoad);
+		lblDspLoad.setFont(new Font("Dialog", Font.PLAIN, 12));
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
@@ -86,16 +91,18 @@ public class AppWindow {
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(15)
 							.addComponent(lblSynthpi)
-							.addPreferredGap(ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
+							.addComponent(lblDspLoad)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(progressBarLoad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
 							.addComponent(btnOpenBrowserInterface)
-							.addPreferredGap(ComponentPlacement.RELATED, 214, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
 							.addComponent(btnExit))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)))
+							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -103,13 +110,15 @@ public class AppWindow {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(15)
-							.addComponent(lblSynthpi))
-						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(24)
-							.addComponent(progressBarLoad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(progressBarLoad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(15)
+							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(lblSynthpi)
+								.addComponent(lblDspLoad))))
 					.addGap(18)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(btnExit)
