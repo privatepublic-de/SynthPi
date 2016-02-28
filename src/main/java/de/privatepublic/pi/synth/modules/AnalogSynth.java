@@ -51,16 +51,10 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 		for (int i=0; i<P.POLYPHONY; i++) {
 			voices[i].process(outputs, nframes);
 		}
-		if (P.IS[P.OVERDRIVE]) {
-			distort.process(nframes, outputs);
-		}
-		if (P.IS[P.CHORUS_DEPTH]) {
-			chorus.process(nframes, outputs);
-		}
+		distort.process(nframes, outputs);
+		chorus.process(nframes, outputs);
 		delay.process(nframes, outputs);
-		if (P.IS[P.REVERB_ONE_KNOB]) {
-			reverb.process(nframes, outputs);
-		}
+		reverb.process(nframes, outputs);
 		if (P.LIMITER_ENABLED) {
 			limiter.process(nframes, outputs);
 		}
