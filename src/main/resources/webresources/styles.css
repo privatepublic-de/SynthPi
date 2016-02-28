@@ -525,6 +525,8 @@ a.push:hover {
 }
 a.push label  {
 	cursor: pointer;
+	min-width: 74px;
+	display: inline-block;
 }
 #status a.push {
 	border-color: #666;
