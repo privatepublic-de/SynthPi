@@ -10,7 +10,7 @@ public class Chorus implements IProcessor {
 	private final int delayLineSize;
 	private final int delayLineSizeUnder;
 	private int writeIndex = 0;
-	private final float feedback = .4f;
+	private final float feedback = 0;//.4f;
 	private final LFO lfo;
 	
 	public Chorus(float maxDelayMS) {
@@ -18,8 +18,8 @@ public class Chorus implements IProcessor {
 		delayLineSizeUnder = delayLineSize-1;
 		delayLineL = new float[delayLineSize+2];
 //		delayLineR = new float[delayLineSize+1];
-		P.set(P.CHORUS_LFO_RATE, 1/3f);
-		P.set(P.CHORUS_LFO_TYPE, 0);
+		P.set(P.CHORUS_LFO_RATE, 1/4f);
+		P.set(P.CHORUS_LFO_TYPE, .2f);
 		lfo = new LFO(P.CHORUS_LFO_RATE, P.CHORUS_LFO_TYPE);
 	}
 	
@@ -40,8 +40,8 @@ public class Chorus implements IProcessor {
 			if (++writeIndex==delayLineSize) {
 				writeIndex=0;
 			}
-			lfoval = lfo.valueAt(i)*.5f;
-			readindexL = (writeIndex - delayLineSizeUnder*(.5f+lfoval));
+			lfoval = (1+lfo.valueAt(i))*.5f;
+			readindexL = (writeIndex - delayLineSizeUnder*lfoval);
 			if (readindexL<0) {	readindexL += delayLineSize; }
 			indexBaseL = (int)readindexL;
 			delayLineL[writeIndex] = delayLineL[indexBaseL]*feedback+(in1+in2)*.5f; 

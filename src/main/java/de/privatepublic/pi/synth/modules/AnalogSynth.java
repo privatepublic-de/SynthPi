@@ -33,7 +33,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final float[] outputL = outputs[0];
 	private final float[] outputR = outputs[1];
 	
-	private final IProcessor chorus = new Chorus(7);
+	private final IProcessor chorus = new Chorus(25);
 	private final IProcessor distort = new DistortionExp();
 	private final IProcessor reverb = new Freeverb(P.SAMPLE_RATE_HZ, P.SAMPLE_BUFFER_SIZE);
 	private final IProcessor limiter = new Limiter(20, 500);
