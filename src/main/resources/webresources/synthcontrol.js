@@ -304,7 +304,7 @@ $(document).ready(function () {
 		var catselect = $("#pcategories");
 		catselect.empty();
 		$.each(info.categories, function(ix, v) {
-			catselect.append("<option class='"+v+"' value='"+v+"'>"+v+"</option>");
+			catselect.append("<option value='"+v+"' "+(v==info.selectedcategory?"selected":"")+">"+v+"</option>");
 		});
 		
 		var existing = $("#existingpatches");

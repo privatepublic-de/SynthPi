@@ -675,34 +675,34 @@ form select {
 }
 
 
-option.POLY , div.POLY .push {
+div.POLY .push {
 	background-color: #377;
 }
-option.PAD , div.PAD .push {
+div.PAD .push {
 	background-color: #337;
 }
-option.LEAD , div.LEAD .push {
+div.LEAD .push {
 	background-color: #990;
 }
-option.BASS , div.BASS .push {
+div.BASS .push {
 	background-color: #733;
 }
-option.KEYS , div.KEYS .push {
+div.KEYS .push {
 	background-color: #970;	
 }
-option.VOX , div.VOX .push {
+div.VOX .push {
 	background-color: #737;
 }
-option.EFFECTS , div.EFFECTS .push {
+div.EFFECTS .push {
 	background-color: #827;
 }
-option.PERC , div.PERC .push {
+div.PERC .push {
 	background-color: #555;
 }
-option.PLUCKED , div.PLUCKED .push {
+div.PLUCKED .push {
 	background-color: #373;
 }
-option.WHATEVER , div.WHATEVER .push {
+div.WHATEVER .push {
 	background-color: inherit;
 }
 

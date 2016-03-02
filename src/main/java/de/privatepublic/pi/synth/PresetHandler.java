@@ -29,7 +29,16 @@ public class PresetHandler {
 	private static final Logger log = LoggerFactory.getLogger(PresetHandler.class);
 	
 	public static enum PatchCategory {
-		POLY, PAD, LEAD, BASS, KEYS, VOX, EFFECTS, PERC, PLUCKED, WHATEVER
+		POLY, PAD, LEAD, BASS, KEYS, VOX, EFFECTS, PERC, PLUCKED, WHATEVER;
+		
+		public static PatchCategory find(String s) {
+			for (PatchCategory p:PatchCategory.values()) {
+				if (p.name().equals(s)) {
+					return p;
+				}
+			}
+			return WHATEVER;
+		}
 	};
 	
 	private static final File PATCH_DIR = new File(System.getProperty("user.home"), "synthpi");
@@ -50,6 +59,7 @@ public class PresetHandler {
 	public static void initPatch() {
 		P.setToDefaults();
 		P.LAST_LOADED_PATCH_NAME = "(INITIALIZED)";
+		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
 		SynthPi.uiMessage("Patch initialized to defaults");
 	}
 	
@@ -129,6 +139,7 @@ public class PresetHandler {
 //								P.setDirectly(P.DELAY_WET, 0); // turn off delay
 //							}
 							P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
+							P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);
 							return true;
@@ -221,6 +232,7 @@ public class PresetHandler {
 			log.info("Saved patch: {} to user data",name);
 			SynthPi.uiMessage("Saved patch: "+name+" ("+cat+")");
 			P.LAST_LOADED_PATCH_NAME = name;
+			P.LAST_LOADED_PATCH_CATEGORY = cat;
 			ControlMessageDispatcher.INSTANCE.updateAllParams();
 		} catch (IOException e) {
 			log.error("Error writing patch file", e);
@@ -243,6 +255,7 @@ public class PresetHandler {
 			catlist.put(cat.toString());
 		}
 		info.put(K.UI_CATEGORIES.key(), catlist);
+		info.put(K.UI_SELECTED_CATEGORY.key(), P.LAST_LOADED_PATCH_CATEGORY.toString());
 		return info;
 	}
 	
@@ -409,7 +422,7 @@ public class PresetHandler {
 	
 	public static void saveCurrentPatch() {
 		log.info("Saving current patch ...");
-		JSONObject current = createJSONFromCurrentPatch(P.LAST_LOADED_PATCH_NAME, PatchCategory.WHATEVER);
+		JSONObject current = createJSONFromCurrentPatch(P.LAST_LOADED_PATCH_NAME, P.LAST_LOADED_PATCH_CATEGORY);
 		try {
 			FileUtils.write(userRecentFile(), current.toString(2), "utf-8");
 		} catch (JSONException | IOException e) {
@@ -435,6 +448,7 @@ public class PresetHandler {
 				}
 			}
 			P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
+			P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 			log.debug("Loaded recent patch {}", P.LAST_LOADED_PATCH_NAME);
 			SynthPi.uiMessage("Loaded recent patch: "+P.LAST_LOADED_PATCH_NAME);
 		} catch (JSONException | IOException e) {
@@ -463,6 +477,7 @@ public class PresetHandler {
 		
 		UI_EXISTINGPATCHES("existingPatches"), 
 		UI_CATEGORIES("categories"), 
+		UI_SELECTED_CATEGORY("selectedcategory"), 
 		UI_USER_PATCH_LIST("user"), 
 		UI_FACTORY_PATCH_LIST("factory"), 
 		UI_PATCH_ID("id"),

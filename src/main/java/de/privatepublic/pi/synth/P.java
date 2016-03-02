@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.privatepublic.pi.synth.PresetHandler.PatchCategory;
 import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Freeverb;
@@ -83,8 +84,7 @@ public class P {
 
 	/** Last used (loaded or saved) patch name */
 	public static String LAST_LOADED_PATCH_NAME = "INITIAL";
-	public static String LAST_CHANGED_PATH = "";
-	public static String LAST_CHANGED_VALUE = "";
+	public static PatchCategory LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
 	
 	/** Number of available parameters */
 	public static final int PARAM_STORE_SIZE = 82;

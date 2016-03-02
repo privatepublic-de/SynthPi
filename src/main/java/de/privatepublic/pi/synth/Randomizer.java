@@ -5,6 +5,8 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.privatepublic.pi.synth.PresetHandler.PatchCategory;
+
 public class Randomizer {
 
 	private static final Logger log = LoggerFactory.getLogger(Randomizer.class);
@@ -100,6 +102,7 @@ public class Randomizer {
 			P.setDirectly(P.OVERDRIVE, range(.2f, .7f));
 		}
 		P.LAST_LOADED_PATCH_NAME = createFancyPatchName();
+		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
 		log.info("Randomized patch: {}", P.LAST_LOADED_PATCH_NAME);
 		SynthPi.uiMessage("Randomized patch ("+P.LAST_LOADED_PATCH_NAME+")");
 	}
