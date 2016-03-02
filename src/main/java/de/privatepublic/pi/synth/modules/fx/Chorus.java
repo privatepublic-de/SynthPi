@@ -25,13 +25,13 @@ public class Chorus implements IProcessor {
 	
 	
 	
-	float wet, wetInv, in1, in2, lfoval, readindexL, out1;
+	float wet, dry, in1, in2, lfoval, readindexL, out1;
 	int indexBaseL;
 	float[] bufL, bufR;
 	
 	public void process(final int bufferLen, final float[][] buffers) {
 		wet = P.VAL[P.CHORUS_DEPTH]*.5f;
-		wetInv = 1-wet;
+		dry = 1-wet;
 		bufL = buffers[0];
 		bufR = buffers[1];
 		for (int i=0;i<bufferLen;i++) {
@@ -50,8 +50,8 @@ public class Chorus implements IProcessor {
 			}
 			out1 = delayLineL[indexBaseL]*wet;
 			out1 += (delayLineL[indexBaseL+1]*wet-out1)*(readindexL-indexBaseL);
-			bufL[i] = in1*wetInv+out1;
-			bufR[i] = in2*wetInv+out1;
+			bufL[i] = in1*dry+out1;
+			bufR[i] = in2*dry-out1;
 		}
 		lfo.nextBufferSlice(bufferLen);
 	}
