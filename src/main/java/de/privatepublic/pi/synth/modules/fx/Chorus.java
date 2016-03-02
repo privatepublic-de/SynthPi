@@ -1,6 +1,7 @@
 package de.privatepublic.pi.synth.modules.fx;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
 public class Chorus implements IProcessor {
@@ -12,6 +13,7 @@ public class Chorus implements IProcessor {
 	private int writeIndex = 0;
 	private final float feedback = 0;//.4f;
 	private final LFO lfo;
+	private StateVariableFilter highpass = new StateVariableFilter(FilterType.HIGHPASS, 100, 0);
 	
 	public Chorus(float maxDelayMS) {
 		delayLineSize = (int)(maxDelayMS/P.MILLIS_PER_SAMPLE_FRAME);
@@ -25,7 +27,7 @@ public class Chorus implements IProcessor {
 	
 	
 	
-	float wet, dry, in1, in2, lfoval, readindexL, out1;
+	float wet, dry, in1, in2, sampleval, lfoval, readindexL, out1;
 	int indexBaseL;
 	float[] bufL, bufR;
 	
@@ -37,6 +39,7 @@ public class Chorus implements IProcessor {
 		for (int i=0;i<bufferLen;i++) {
 			in1 = bufL[i];
 			in2 = bufR[i];
+			sampleval = highpass.processSample((in1+in2)*.5f);
 			if (++writeIndex==delayLineSize) {
 				writeIndex=0;
 			}
@@ -44,7 +47,7 @@ public class Chorus implements IProcessor {
 			readindexL = (writeIndex - delayLineSizeUnder*lfoval);
 			if (readindexL<0) {	readindexL += delayLineSize; }
 			indexBaseL = (int)readindexL;
-			delayLineL[writeIndex] = delayLineL[indexBaseL]*feedback+(in1+in2)*.5f; 
+			delayLineL[writeIndex] = delayLineL[indexBaseL]*feedback + sampleval; 
 			if (writeIndex==0) {
 				delayLineL[delayLineSize] = delayLineL[0];
 			}
