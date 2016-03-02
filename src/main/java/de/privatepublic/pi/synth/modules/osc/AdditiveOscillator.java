@@ -63,7 +63,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 		// square
 		new float[] { 0, 0, 0, 0, 0,  1, 0, 1f/3, 0, 1f/5, 0, 1f/7, 0, 1f/9, 0, 1f/11, 0, 1f/13, 0, 1f/15, 0, 1f/17 },
 		new float[] { 1, 0, 0, 0, 0,  1, 0, 1f/3, 0, 1f/5, 0, 1f/7, 0, 1f/9, 0, 1f/11, 0, 1f/13, 0, 1f/15, 0, 1f/17 },
-		// last is floatd for array access
+		// last is doubled for array access
 		new float[] { 1, 0, 0, 0, 0,  1, 0, 1f/3, 0, 1f/5, 0, 1f/7, 0, 1f/9, 0, 1f/11, 0, 1f/13, 0, 1f/15, 0, 1f/17 }
 	};
 	private static final int HARMONICS_COUNT = HARMONIC_FACTORS_SEMIS.length;
