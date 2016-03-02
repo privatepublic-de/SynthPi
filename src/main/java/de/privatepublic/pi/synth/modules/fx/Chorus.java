@@ -19,7 +19,7 @@ public class Chorus implements IProcessor {
 		delayLineL = new float[delayLineSize+2];
 //		delayLineR = new float[delayLineSize+1];
 		P.set(P.CHORUS_LFO_RATE, 1/4f);
-		P.set(P.CHORUS_LFO_TYPE, .2f);
+		P.set(P.CHORUS_LFO_TYPE, 0);
 		lfo = new LFO(P.CHORUS_LFO_RATE, P.CHORUS_LFO_TYPE);
 	}
 	
@@ -30,8 +30,8 @@ public class Chorus implements IProcessor {
 	float[] bufL, bufR;
 	
 	public void process(final int bufferLen, final float[][] buffers) {
-		wet = P.VAL[P.CHORUS_DEPTH]*.5f;
-		dry = 1-wet;
+		wet = P.VAL[P.CHORUS_DEPTH];
+		dry = 1-wet*.5f;
 		bufL = buffers[0];
 		bufR = buffers[1];
 		for (int i=0;i<bufferLen;i++) {
