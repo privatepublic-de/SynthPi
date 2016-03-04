@@ -23,7 +23,8 @@ public abstract class OscillatorBase implements IOscillator {
 	
 	public void trigger(final float frequency, final float velocity) {
 		this.frequency = frequency;
-		if (P.VAL[P.OSC_GLIDE_RATE]>0) {
+		if (P.IS[P.OSC_GLIDE_RATE]) {
+			effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
 			glideStepSize = Math.abs((AnalogSynth.lastTriggeredFrequency-frequency)/(P.SAMPLE_RATE_HZ*P.VALX[P.OSC_GLIDE_RATE]));
 		}
 		else {
