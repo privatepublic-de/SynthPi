@@ -27,9 +27,9 @@ a {
 }
 
 #main {
-	width: 1200px;
+	width: 1280px;
 	margin: 0 auto;
-	padding: 45px 10px 35px 10px;
+	padding: 45px 10px 0 10px;
 	text-align: center;
 }
 
@@ -48,7 +48,7 @@ a {
 	padding: 6px 0 0 0;
 	text-align: center;
 	font-size: .8em;
-	width: 1130px;
+	width: 1220px;
 	height: 26px;
 	margin: 0 auto;
 }
@@ -224,18 +224,18 @@ a {
 
 
 .large {
-	width: 112px;
-	height: 112px;
+	width: 124px;
+	height: 124px;
 }
 
 .medium {
-	width: 80px;
-	height: 80px;	
+	width: 88px;
+	height: 88px;	
 }
 
 .small {
-	width: 56px;
-	height: 56px;
+	width: 62px;
+	height: 62px;
 }
 
 .smaller {
@@ -251,15 +251,15 @@ a {
 .box-medium-2x2 {
 	display: inline-block;
 	vertical-align: middle;
-	width: 180px;
-	height: 180px;
+	width: 196px;
+	height: 196px;
 	overflow: visible;
 }
 .box-small-2x2 {
 	display: inline-block;
 	vertical-align: middle;
-	width: 134px;
-	height: 124px;
+	width: 146px;
+	height: 146px;
 	overflow: visible;
 }
 
@@ -786,7 +786,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 #keyboard {
 	display: none;
 	text-align: center;
-	background-color: #333;
+	background-color: #000;
+	margin-top: 35px;
 }
 
 .inverted #keyboard {
