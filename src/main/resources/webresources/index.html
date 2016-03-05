@@ -235,6 +235,11 @@
 		</div>
 	</div>
 	<div id="keyboard">
+		<div class="perfcontrols">
+			<input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/play/mod/pitchbend" />
+			<input type="text" value="0" class="dial small" title="Mod" data-osc="/play/mod/wheel" /><br/>
+			<span class="checkbox smaller" title="Sustain" data-osc="/play/sustain"></span><br/>
+		</div>
 		<div class="keys">
 			<div class="wk"></div>
 			<div class="bk"></div>
@@ -296,12 +301,6 @@
 			<div class="wk"></div>
 			<div class="bk"></div>
 			<div class="wk"></div>
-		</div>
-		<div class="perfcontrols gray">
-			<input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/play/mod/pitchbend" />
-			<input type="text" value="0" class="dial small" title="Mod" data-osc="/play/mod/wheel" />
-			<span class="checkbox smaller" title="Sustain" data-osc="/play/sustain"></span>
-			<a href='#' id="stopbutton" class='push disabled' data-osc='/command/sequence/stop'>Stop sequencer</a>
 		</div>
 	</div>
 	<div id="dimmer" style="display:none"></div>
