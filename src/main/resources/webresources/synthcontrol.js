@@ -156,7 +156,9 @@ $(document).ready(function () {
 									val = val*200;
 								}
 								el.data("remoteupdate", true);
-								el.val(parseInt(val)).trigger('change');
+								if (!el.data("ignore")) {
+									el.val(parseInt(val)).trigger('change');
+								}
 							}
 							if (tagname=="SPAN" && el.hasClass("checkbox")) {
 								if (val>0) {
@@ -290,7 +292,7 @@ $(document).ready(function () {
 		elist.append("<div class='headline'>Play Test Sequences</div>");
 		elist.append("<div><a href='#' class='push seq' data-osc='/command/sequence/start/1'>&#9654; simple-sequence</a></div>");
 		elist.append("<div><a href='#' class='push seq' data-osc='/command/sequence/start/2'>&#9654; pad-sequence</a></div>");
-		elist.append("<div><a href='#' class='push disabled' data-osc='/command/sequence/stop'>Stop sequencer</a></div>");
+		elist.append("<div><a href='#' class='push seq' data-osc='/command/sequence/stop'>&#9642; Stop sequencer</a></div>");
 		dimmer.show();
 		$("#patchlistwindow").fadeIn();
 		$("#patchlistwindow .windowtitle").click(function(ev){
@@ -467,14 +469,19 @@ $(document).ready(function () {
 		container.attr("id","kn"+id);
 		container.attr("data-control-path", el.attr("data-osc"));
 		var fgcolor = el.css("color");
-		//var bgcolor = el.css("border-bottom-color");
-		var bgcolor = $.Color(el, "color").saturation(0.3).lightness(0.2).toHexString();
+		if (!el.parents().hasClass("perfcontrols")) {  
+			var bgcolor = $.Color(el, "color").lightness(0.2).saturation(0.3).toHexString();	
+		}
+		else {
+			var bgcolor = $.Color(el, "color").lightness(0.2).saturation(0.0).toHexString();
+		}
 		var bgcolor2 = $.Color(el, "color").saturation(0.3).lightness(0.8).toHexString();
 		var fgcolor2 = $.Color(el, "color").lightness(0.3).toHexString();
 		// console.log($.Color(el, "border-bottom-color"));
 		var width = el.width();
 		var cursor = el.attr("data-cursor");
 		var labelpath = el.attr("data-osc-label");
+		var releaseTimeout = 0;
 		el.wrap(container);
 		el.knob({
 			'min': cursor?-100:0, 
@@ -490,11 +497,16 @@ $(document).ready(function () {
 			'displayInput': labelpath?false:true,
 			// handler
 			'release': function(v) {
+				clearTimeout(releaseTimeout);
+				releaseTimeout = setTimeout(function() {
+					el.data("ignore", false);	
+				}, 300);
+				el.data("ignore", true);
 				socket.sendValue(el, v);
 				el.data("remoteupdate", false);
 			},
 			'change': function(v) {
-				if (!el.data("remoteupdate")) {
+				if (el.data("remoteupdate")!=true) {
 					socket.sendValue(el, v);
 				} 
 				el.data("remoteupdate", false);
