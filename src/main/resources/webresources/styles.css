@@ -371,6 +371,15 @@ h3 {
 	margin-left: 8px;
 }
 
+#amplifier .cblist {
+	text-align: center;
+}
+
+#amplifier .cblist label {
+	margin-right: .75em;
+}
+
+
 #amplifier .fx {
 	padding-left: 10px;
 	margin-left: 10px;
@@ -491,6 +500,7 @@ h3 {
 
 .lfotypes {
 	text-align: left;
+	margin-right: 1em;
 }
 .lfotypes label {
 	min-width: 46px;
@@ -506,6 +516,8 @@ h3 {
 	text-align: left;
 	line-height: 1.5em;
 }
+
+
 a.push {
 	display: inline-block;
 	color: inherit;
