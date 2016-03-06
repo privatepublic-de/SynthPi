@@ -111,20 +111,33 @@ public class FancyParam {
 	
 	public static String valueOf(int paramindex) {
 		final float value = P.TARGET_VAL[paramindex];
+		float calculatedVal;
 		String result;
 		switch (paramindex) {
 		case P.OSC2_TUNING:
 			result = Math.round(P.VALC[P.OSC2_TUNING]*24)+" st";
 			break;
 		case P.MOD_RATE:
-			result = FORMAT_FLOAT.format(LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE)))+" Hz";
+			calculatedVal = LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE));
+			if (calculatedVal<10) {
+				result = FORMAT_FLOAT2.format(LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE)))+" Hz";
+			}
+			else {
+				result = FORMAT_FLOAT.format(LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE)))+" Hz";
+			}
 			break;
 		case P.MOD_LFO_TYPE:
 			result = LFO.WAVE_NAMES[(int)(P.VAL[P.MOD_LFO_TYPE]*LFO.WAVE_COUNT_CALC)];
 			break;
 		case P.FILTER1_FREQ:
 		case P.FILTER2_FREQ:
-			result = Math.round(MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value))+" Hz";
+			calculatedVal = MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value);
+			if (calculatedVal>10) {
+				result = Math.round(calculatedVal)+" Hz";
+			}
+			else {
+				result = FORMAT_FLOAT2.format(calculatedVal)+" Hz";
+			}
 			break;
 		case P.OSC1_WAVE_SET:
 		case P.OSC2_WAVE_SET:
