@@ -42,6 +42,12 @@ a {
 	height: 32px;
 	z-index: 1;
 }
+#statuscontainer a {
+	text-decoration: none;
+}
+#statuscontainer a:hover {
+	text-decoration: underline;
+}
 
 #status {
 	position: relative;
