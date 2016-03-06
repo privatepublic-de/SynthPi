@@ -177,7 +177,7 @@ public class MidiHandler {
 				}
 				else if (command==ShortMessage.CONTROL_CHANGE) {
 					if (data1==CC_PARAM_SELECT) {
-						param_selected = CC_PARAM_MAP[(int)(data2*((CC_PARAM_MAP.length-1)/127f))];
+						param_selected = CC_PARAM_MAP[Math.min(data2, CC_PARAM_MAP.length-1)];
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
@@ -297,12 +297,13 @@ public class MidiHandler {
 	private static final int CC_PARAM_SELECT = 100;
 	private static final int CC_PARAM_VALUE = 101;
 	private static final int[] CC_PARAM_MAP = new int[] {
+		P.UNUSED,
 		P.OSC_MODE,
 		P.OSC1_WAVE,
-		P.OSC2_WAVE,
-		P.OSC_1_2_MIX,
 		P.OSC1_WAVE_SET,
+		P.OSC2_WAVE,
 		P.OSC2_WAVE_SET,
+		P.OSC_1_2_MIX,
 		P.OSC_NOISE_LEVEL,
 		P.OSC2_TUNING,
 		P.OSC2_TUNING_FINE,
