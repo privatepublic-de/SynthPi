@@ -156,9 +156,8 @@ $(document).ready(function () {
 									val = val*200;
 								}
 								el.data("remoteupdate", true);
-								if (!el.data("ignore")) {
-									el.val(parseInt(val)).trigger('change');
-								}
+								el.val(parseInt(val)).trigger('change');
+								el.data("remoteupdate", false);
 							}
 							if (tagname=="SPAN" && el.hasClass("checkbox")) {
 								if (val>0) {
@@ -477,11 +476,9 @@ $(document).ready(function () {
 		}
 		var bgcolor2 = $.Color(el, "color").saturation(0.3).lightness(0.8).toHexString();
 		var fgcolor2 = $.Color(el, "color").lightness(0.3).toHexString();
-		// console.log($.Color(el, "border-bottom-color"));
 		var width = el.width();
 		var cursor = el.attr("data-cursor");
 		var labelpath = el.attr("data-osc-label");
-		var releaseTimeout = 0;
 		el.wrap(container);
 		el.knob({
 			'min': cursor?-100:0, 
@@ -497,19 +494,14 @@ $(document).ready(function () {
 			'displayInput': labelpath?false:true,
 			// handler
 			'release': function(v) {
-				clearTimeout(releaseTimeout);
-				releaseTimeout = setTimeout(function() {
-					el.data("ignore", false);	
-				}, 300);
-				el.data("ignore", true);
-				socket.sendValue(el, v);
-				el.data("remoteupdate", false);
+				if (el.data("remoteupdate")!=true) {
+					socket.sendValue(el, v);
+				} 
 			},
 			'change': function(v) {
 				if (el.data("remoteupdate")!=true) {
 					socket.sendValue(el, v);
 				} 
-				el.data("remoteupdate", false);
 			}
 		});
 		el.attr("data-bg-1", bgcolor);
