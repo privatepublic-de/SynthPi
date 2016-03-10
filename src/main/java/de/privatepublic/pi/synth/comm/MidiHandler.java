@@ -189,7 +189,6 @@ public class MidiHandler {
 						if (isLearnMode) {
 							storeLearnedCCNumber(data1);
 						}
-						// TODO mod wheel extra handling!
 						P.setFromMIDI(INDEX_OF_MIDI_CC[data1], data2);
 						if (data1==CC_OSC2_DETUNE || data1==CC_OSC2_DETUNE_FINE) {
 							sendPitchBendNotification();
@@ -208,7 +207,9 @@ public class MidiHandler {
 								}
 							}
 						}
-						updateStatus(data1);
+						if (data1!=CC_MOD_WHEEL || P.HTTP_SEND_PERFORMACE_DATA) { // don't send mod_wheel if not needed
+							updateStatus(data1);
+						}
 					}
 				}
 				else if (command==ShortMessage.PITCH_BEND) {
