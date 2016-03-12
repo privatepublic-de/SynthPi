@@ -131,8 +131,8 @@ public class FancyParam {
 			break;
 		case P.FILTER1_FREQ:
 		case P.FILTER2_FREQ:
-			calculatedVal = MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value);
-			if (calculatedVal>10) {
+			calculatedVal = MultiModeFilter.MIN_STABLE_FREQUENCY+MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value);
+			if (calculatedVal>=100) {
 				result = Math.round(calculatedVal)+" Hz";
 			}
 			else {

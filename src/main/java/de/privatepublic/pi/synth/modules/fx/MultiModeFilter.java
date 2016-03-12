@@ -12,7 +12,8 @@ import de.privatepublic.pi.synth.util.FastCalc;
 
 public class MultiModeFilter {
 
-	public static final float MAX_STABLE_FREQUENCY = 12000f;
+	public static final float MIN_STABLE_FREQUENCY = 40f;
+	public static final float MAX_STABLE_FREQUENCY = 12000f - MIN_STABLE_FREQUENCY;
 	private static final float DOUBLE_SAMPLE_RATE = P.SAMPLE_RATE_HZ*2;
 	
 	private int p_track_keyboard = P.FILTER1_TRACK_KEYBOARD;
@@ -66,12 +67,13 @@ public class MultiModeFilter {
 	public float processSample(final float sampleValue, final int i) {
 		frq = FastCalc.ensureRange(
 				(
-					MAX_STABLE_FREQUENCY*P.VALX[p_freq]
+					MIN_STABLE_FREQUENCY
+					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
 					+ (MAX_STABLE_FREQUENCY * (filterEnv.nextValue() * P.VALXC[p_env_depth]))
 					+ frqOffset
 				) 
 				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),
-				0, MAX_STABLE_FREQUENCY);
+				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 //		if (frq > MAX_STABLE_FREQUENCY) {
 //			frq = MAX_STABLE_FREQUENCY;
 //		}
