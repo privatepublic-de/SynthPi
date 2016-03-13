@@ -278,15 +278,20 @@ $(document).ready(function () {
 					}
 				}
 				*/
+				var lastCat = list[0].category;
 				for (var i=0;i<list.length;i++) {
+					if (list[i].category!=lastCat) {
+						element.append("<br/>");
+					}
 					addEntry(list[i], element)
+					lastCat = list[i].category;
 				}
 			}
 			else {
 				element.append("<div><em>(empty)</em></div><div></div>");	
 			}
 		}
-		var elist = $("#loadpatchlist");
+		var elist = $("#loadpatchlist .listcontent");
 		elist.empty();
 		elist.append("<div class='headline'>Your Patches</div>");
 		columnsOut(lists.user, elist);
@@ -313,7 +318,7 @@ $(document).ready(function () {
 			catselect.append("<option value='"+v+"' "+(v==info.selectedcategory?"selected":"")+">"+v+"</option>");
 		});
 		
-		var existing = $("#existingpatches");
+		var existing = $("#existingpatches .listcontent");
 		existing.empty();
 		if (info.existingPatches) {
 			info.existingPatches.sort(sortOrdering);

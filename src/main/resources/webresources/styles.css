@@ -413,10 +413,13 @@ h3 {
 	display: inline-block;
 	vertical-align: middle;
 	position: relative;
-	padding: 4px 4px 0 4px;
+	padding: 4px 4px 4px 4px;
 	overflow: hidden;
 	background-repeat: no-repeat;
 	background-position: center center;
+}
+.container.large {
+	padding: 4px 4px 0 4px;
 }
 .container label.static {
 	position: absolute;
@@ -667,28 +670,32 @@ form select {
 	overflow: auto;
 	display: block;
 }
-.patchlist div {
+
+.patchlist {
+}
+.listcontent {
+}
+.listcontent div {
 	display: inline-block;
 	min-width: 320px;
 	margin: 2px 4px;
-	text-align: center;
 }
-.patchlist div.headline {
-	width: 100%;
+.listcontent div.headline {
 	padding: 5px 0;
 	margin: 15px 0 5px 0;
 	background-color: rgba(255,255,255,0.075);
+	display: block;
 }
-.inverted .patchlist div.headline {
+.inverted .listcontent div.headline {
 	background-color: rgba(0,0,0,.15);
 } 
-.patchlist div a.push {
+.listcontent div a.push {
 	width: 300px;
 	text-align: left;
 	color: #eee;
 	border-color: #666;
 }
-.patchlist div .category {
+.listcontent div .category {
 	margin-top: 3px;
 	float: right;
 	font-size: .8em;
@@ -702,16 +709,16 @@ div.PAD .push {
 	background-color: #337;
 }
 div.LEAD .push {
-	background-color: #990;
+	background-color: #787800;
 }
 div.BASS .push {
-	background-color: #733;
+	background-color: #933;
 }
 div.KEYS .push {
-	background-color: #970;	
+	background-color: #a70;	
 }
 div.VOX .push {
-	background-color: #737;
+	background-color: #858;
 }
 div.EFFECTS .push {
 	background-color: #827;
