@@ -413,7 +413,7 @@ h3 {
 	display: inline-block;
 	vertical-align: middle;
 	position: relative;
-	padding: 4px;
+	padding: 4px 4px 0 4px;
 	overflow: hidden;
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -669,8 +669,9 @@ form select {
 }
 .patchlist div {
 	display: inline-block;
-	min-width: 350px;
+	min-width: 320px;
 	margin: 2px 4px;
+	text-align: center;
 }
 .patchlist div.headline {
 	width: 100%;
