@@ -264,6 +264,7 @@ $(document).ready(function () {
 		}
 		var columnsOut = function(list, element) {
 			if (list && list.length>0) {
+				/*
 				list.sort(sortOrdering);
 				var rows = parseInt(list.length/2)+list.length%2;
 				for (var i=0;i<rows;i++) {
@@ -275,6 +276,10 @@ $(document).ready(function () {
 					else {
 						element.append("<div></div>");
 					}
+				}
+				*/
+				for (var i=0;i<list.length;i++) {
+					addEntry(list[i], element)
 				}
 			}
 			else {
