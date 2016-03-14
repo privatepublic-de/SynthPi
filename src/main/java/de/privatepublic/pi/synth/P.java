@@ -508,6 +508,9 @@ public class P {
 	}
 	
 	public static void set(int index, float val) {
+		if (index==CHORUS_LFO_RATE || index==CHORUS_LFO_TYPE) {
+			return; // ugly, but these are immutable and only set by defaults
+		}
 		TARGET_VAL[index] = val;
 		if (!isSetInterpolated(index)) {
 			setDirectly(index, val);

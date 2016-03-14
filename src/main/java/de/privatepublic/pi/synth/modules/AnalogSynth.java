@@ -67,7 +67,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			// clear while copying
 			outputL[i] = outputR[i] = 0;
 		}
-		LFO.LFO.nextBufferSlice(nframes);
+		LFO.GLOBAL.nextBufferSlice(nframes);
 	}
 
 	
@@ -128,7 +128,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 //				log.debug("Triggered @", selectedVoice);
 			}
 			if (P.IS[P.MOD_LFO_RESET]) {
-				LFO.LFO.reset();
+				LFO.GLOBAL.reset();
 			}
 //			lastTriggeredFrequency = pk.frequency;
 		}
