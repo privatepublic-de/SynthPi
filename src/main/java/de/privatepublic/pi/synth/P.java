@@ -505,6 +505,9 @@ public class P {
 		setDirectly(MIDI_VELOCITY_CURVE, 0.0f);
 		P.VAL[P.PITCH_BEND] = 0;
 		P.VAL_RAW_MIDI[P.PITCH_BEND] = 8192;
+		P.VAL[P.CHORUS_LFO_RATE] = 1/12f;
+		P.VALX[P.CHORUS_LFO_RATE] =  (float) Math.pow(P.VAL[P.CHORUS_LFO_RATE], 4);
+		P.VAL[P.CHORUS_LFO_TYPE] = 0;
 	}
 	
 	public static void set(int index, float val) {
@@ -544,6 +547,9 @@ public class P {
 	}
 	
 	protected static void setDirectly(int index, float val) {
+		if (index==CHORUS_LFO_RATE || index==CHORUS_LFO_TYPE) {
+			return; // ugly, but these are immutable and only set by defaults
+		}
 		setDirectly(index, val, true);
 	}
 	

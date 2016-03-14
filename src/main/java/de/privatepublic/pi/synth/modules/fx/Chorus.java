@@ -19,8 +19,11 @@ public class Chorus implements IProcessor {
 		delayLineSizeUnder = delayLineSize-2;
 		delayLineL = new float[delayLineSize+2];
 		delayLineR = new float[delayLineSize+2];
-		P.set(P.CHORUS_LFO_RATE, 1/4f);
-		P.set(P.CHORUS_LFO_TYPE, 0);
+//		P.VAL[P.CHORUS_LFO_RATE] = 1/4f;
+//		P.VALX[P.CHORUS_LFO_RATE] =  (float) Math.pow(P.VAL[P.CHORUS_LFO_RATE], 4);
+//		P.VAL[P.CHORUS_LFO_TYPE] = 0;
+//		P.set(P.CHORUS_LFO_RATE, 1/4f);
+//		P.set(P.CHORUS_LFO_TYPE, 0);
 		lfo = new LFO(P.CHORUS_LFO_RATE, P.CHORUS_LFO_TYPE);
 	}
 	
