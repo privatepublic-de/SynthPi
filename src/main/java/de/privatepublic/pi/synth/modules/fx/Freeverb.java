@@ -60,7 +60,7 @@ public final class Freeverb implements IProcessor {
     }
 
     private void initialize(float samplerate, int maxBufferSize) {
-        float freqscale = samplerate / 44100.0f;
+        float freqscale = samplerate / P.SAMPLE_RATE_HZ;
         int stereospread = 23;
 
         /*
