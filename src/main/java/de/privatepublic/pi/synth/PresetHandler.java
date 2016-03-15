@@ -369,6 +369,8 @@ public class PresetHandler {
 	public static void saveSettings() {
 		JSONObject settings = settingsJSONObject();
 		settings.put(K.PREF_MIDI_CC_MAPPING_LIST.key(), Arrays.asList(ArrayUtils.toObject(MidiHandler.getMidiMappings())));
+		settings.put(K.PREF_MIDI_CC_SELECT.key(), MidiHandler.CC_PARAM_SELECT);
+		settings.put(K.PREF_MIDI_CC_VALUE.key(), MidiHandler.CC_PARAM_VALUE);
 		// write file
 		try {
 			FileUtils.write(userSettingsFile(), settings.toString(2), "utf-8");
@@ -402,6 +404,12 @@ public class PresetHandler {
 		}
 		if (settings.has(K.PREF_AUDIO_BUFFER_SIZE.key())) {
 			P.SAMPLE_BUFFER_SIZE = settings.getInt(K.PREF_AUDIO_BUFFER_SIZE.key());
+		}
+		if (settings.has(K.PREF_MIDI_CC_SELECT.key())) {
+			MidiHandler.CC_PARAM_SELECT = settings.getInt(K.PREF_MIDI_CC_SELECT.key());
+		}
+		if (settings.has(K.PREF_MIDI_CC_VALUE.key())) {
+			MidiHandler.CC_PARAM_VALUE = settings.getInt(K.PREF_MIDI_CC_VALUE.key());
 		}
 		if (settings.has(K.PREF_MIDI_CC_MAPPING_LIST.key())) {
 			try {
@@ -474,6 +482,8 @@ public class PresetHandler {
 		PREF_AUDIO_BUFFER_SIZE("audiobuffersize"),
 		PREF_TRANSFER_PERFORMANCE_DATA("transferperformancedata"),
 		PREF_LIMITER_ENABLED("limiterenabled"),
+		PREF_MIDI_CC_SELECT("midi_cc_select"),
+		PREF_MIDI_CC_VALUE("midi_cc_value"),
 		
 		UI_EXISTINGPATCHES("existingPatches"), 
 		UI_CATEGORIES("categories"), 

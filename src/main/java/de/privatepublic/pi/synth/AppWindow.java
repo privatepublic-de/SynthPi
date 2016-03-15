@@ -15,16 +15,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.JProgressBar;
-import javax.swing.SwingConstants;
 
 public class AppWindow {
 

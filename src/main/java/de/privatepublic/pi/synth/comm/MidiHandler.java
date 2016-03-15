@@ -295,8 +295,8 @@ public class MidiHandler {
 	private static final int CC_OSC_PORTAMENTO_TIME = 5;
 //	private static final int CC_LOCAL_ON_OFF = 122;
 	
-	private static final int CC_PARAM_SELECT = 26;
-	private static final int CC_PARAM_VALUE = 27;
+	public static int CC_PARAM_SELECT = 26;
+	public static int CC_PARAM_VALUE = 27;
 	private static final int[] CC_PARAM_MAP = new int[] {
 		P.UNUSED,
 		P.OSC_MODE,
