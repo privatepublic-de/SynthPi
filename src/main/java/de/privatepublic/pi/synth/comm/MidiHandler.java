@@ -176,6 +176,9 @@ public class MidiHandler {
 					}
 				}
 				else if (command==ShortMessage.CONTROL_CHANGE) {
+					if (isLearnMode) {
+						storeLearnedCCNumber(data1);
+					}
 					if (data1==CC_PARAM_SELECT) {
 						param_selected = CC_PARAM_MAP[Math.min(data2, CC_PARAM_MAP.length-1)];
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
@@ -186,9 +189,6 @@ public class MidiHandler {
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else {
-						if (isLearnMode) {
-							storeLearnedCCNumber(data1);
-						}
 						P.setFromMIDI(INDEX_OF_MIDI_CC[data1], data2);
 						if (data1==CC_OSC2_DETUNE || data1==CC_OSC2_DETUNE_FINE) {
 							sendPitchBendNotification();
@@ -229,9 +229,7 @@ public class MidiHandler {
 				}
 				else if (command==ShortMessage.PROGRAM_CHANGE) {
 					log.debug("Program change to {}", data1);
-//					PresetHandler.loadPatch((char)('a'+(data1%PresetHandler.MAX_PATCH_NUMBER)));
 					PresetHandler.loadPatchFromProgramNumber(data1);
-//					OSCHandler.instance().sendAll(true);
 					ControlMessageDispatcher.INSTANCE.updateAllParams();
 				}
 			}
@@ -241,10 +239,6 @@ public class MidiHandler {
 		
 		private void updateStatus(int ccNumber) {
 			ControlMessageDispatcher.INSTANCE.update(INDEX_OF_MIDI_CC[ccNumber]);
-//			if (OSCHandler.instance()!=null && ccNumber>-1 && ccNumber<128) {
-//				OSCHandler.instance().sendParamChange(INDEX_OF_MIDI_CC[ccNumber], false);
-//			}
-			
 		}
 	}
 	
@@ -485,13 +479,37 @@ public class MidiHandler {
 			log.info("Started MIDI learning for {}", path);
 		}
 		else {
-			log.warn("No mapping found for path {} to MIDI learn.", path);
+			if (path.equals("/option/midicontrol/select")) {
+				learnParameterIndex = -1;  // TODO constant
+				isLearnMode = true;
+				log.info("Started MIDI learning for {}", path);
+			}
+			else if (path.equals("/option/midicontrol/value")) {
+				learnParameterIndex = -2; // TODO constant
+				isLearnMode = true;
+				log.info("Started MIDI learning for {}", path);
+			} 
+			else {
+				log.warn("No mapping found for path {} to MIDI learn.", path);
+			}
 		}
 	}
 	
 	private void storeLearnedCCNumber(int ccNumber) {
-		if (isLearnMode && learnParameterIndex>0) {
-			if (INDEX_OF_MIDI_CC[ccNumber]!=learnParameterIndex) {
+		if (isLearnMode) {
+			if (learnParameterIndex==-1 && CC_PARAM_SELECT!=ccNumber) {
+				// value select
+				CC_PARAM_SELECT = ccNumber;
+				INDEX_OF_MIDI_CC[ccNumber] = P.UNUSED;
+				SynthPi.uiMessage("Mapped MIDI CC#"+ccNumber+" to value select function.");
+			}
+			else if (learnParameterIndex==-2 && CC_PARAM_VALUE!=ccNumber) {
+				// value change
+				CC_PARAM_VALUE = ccNumber;
+				INDEX_OF_MIDI_CC[ccNumber] = P.UNUSED;
+				SynthPi.uiMessage("Mapped MIDI CC#"+ccNumber+" to value change function.");
+			}
+			else if (INDEX_OF_MIDI_CC[ccNumber]!=learnParameterIndex) {
 				// clear all occurences of learned parameterIndex
 				for (int i=0;i<INDEX_OF_MIDI_CC.length;i++) {
 					if (INDEX_OF_MIDI_CC[i]==learnParameterIndex) {
