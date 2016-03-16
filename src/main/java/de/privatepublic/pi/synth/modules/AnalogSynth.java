@@ -28,7 +28,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final AnalogSynthVoice[] voices = new AnalogSynthVoice[P.POLYPHONY_MAX];
 
 	private static final float FINAL_GAIN = P.FINAL_GAIN_FACTOR;
-	
+		
 	private final float[][] outputs = new float[][]{new float[P.SAMPLE_BUFFER_SIZE], new float[P.SAMPLE_BUFFER_SIZE]};
 	private final float[] outputL = outputs[0];
 	private final float[] outputR = outputs[1];
@@ -72,11 +72,11 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 
 	
 	@Override
-	public void onMidiNoteMessage(ShortMessage msg, int command, int data1, int data2, long timeStampMidi) {
+	public void onMidiNoteMessage(ShortMessage msg, int command, int noteNo, int midiVelocity, long timeStampMidi) {
 		final boolean isMono = P.IS[P.OSC_MONO];
 		final long timeStamp = System.nanoTime();
 		if (command==ShortMessage.NOTE_ON) {
-			float vel = data2/127f;
+			float vel = midiVelocity/127f;
 			if (P.VAL[P.MIDI_VELOCITY_CURVE]<.3334) {
 				// linear
 			} else if (P.VAL[P.MIDI_VELOCITY_CURVE]<.6667) {
@@ -94,7 +94,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			else {
 				// look if anyone is already playing this note
 				for (int i=0;i<P.POLYPHONY;i++) {
-					if (voices[i].lastMidiNote==data1) {
+					if (voices[i].lastMidiNote==noteNo) {
 						selectedVoice = voices[i];
 						break;
 					}
@@ -105,26 +105,26 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 					selectedVoice = voices[0];
 					for (int i=0;i<P.POLYPHONY;++i) {
 						float weight = voices[i].captureWeight(timeStamp);
-						if (weight<min) {
+						if (weight<=min) {
 							selectedVoice = voices[i];
 							min = weight;
 						}
 					}
 				}
 			}
-			Key pk = Key.pressKey(data1, selectedVoice);
+			Key pk = Key.pressKey(noteNo, selectedVoice);
 			if (isMono) {
 				if (Key.pressedKeyCount()>1) {
-					selectedVoice.triggerFreq(data1, pk.frequency, vel, timeStamp);
+					selectedVoice.triggerFreq(noteNo, pk.frequency, vel, timeStamp); // legato mode
 //					log.debug("TriggeredFreq @", selectedVoice);
 				}
 				else {
-					selectedVoice.trigger(data1, pk.frequency, vel, timeStamp);
+					selectedVoice.trigger(noteNo, pk.frequency, vel, timeStamp);
 //					log.debug("Triggered @", selectedVoice);
 				}
 			}
 			else {
-				selectedVoice.trigger(data1, pk.frequency, vel, timeStamp);
+				selectedVoice.trigger(noteNo, pk.frequency, vel, timeStamp);
 //				log.debug("Triggered @", selectedVoice);
 			}
 			if (P.IS[P.MOD_LFO_RESET]) {
@@ -134,7 +134,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 		}
 		else if (command==ShortMessage.NOTE_OFF) {
 			//			log.debug("Note off @", AU.MIDI_NOTE_NAME[data1]);
-			Key releasedKey = Key.releaseKey(data1);
+			Key releasedKey = Key.releaseKey(noteNo);
 			if (isMono && Key.pressedKeyCount()>0) {
 				Key tk = Key.lastKey();
 				tk.voice.triggerFreq(tk.midiNoteNumber, tk.frequency, 1, timeStamp);
@@ -142,8 +142,9 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			}
 			else {
 				if (!P.PEDAL) {
-					if (releasedKey!=null && releasedKey.voice!=null)
-					releasedKey.voice.noteOff();
+					if (releasedKey!=null && releasedKey.voice!=null) {
+						releasedKey.voice.noteOff();
+					}
 				}
 			}
 		}
@@ -190,13 +191,20 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 		
 		public static Key releaseKey(int midiNo) {
 			Key removek = null;
+			
 			for (Key k:PRESSED_KEYS) {
-				if (k.midiNoteNumber == midiNo) {
+				if (k.midiNoteNumber==midiNo && k.voice.lastMidiNote==midiNo) {
 					removek = k;
 				}
 			}
 			if (removek!=null) {
 				PRESSED_KEYS.remove(removek);
+			}
+			for (Key k:PRESSED_KEYS) {
+				if (k.midiNoteNumber==midiNo) {
+					PRESSED_KEYS.remove(k);
+					break;
+				}
 			}
 			return removek;
 		}
@@ -224,5 +232,6 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 		private static Vector<Key> PRESSED_KEYS = new Vector<Key>();
 		
 	}
+	
 
 }

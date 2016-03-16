@@ -226,7 +226,7 @@ public class AnalogSynthVoice {
 			return envelope.outValue;
 		}
 		if (envelope.state==State.QUEUE) {
-			return Integer.MAX_VALUE; // don't use queued voice
+			return Float.MAX_VALUE; // don't use queued voice
 		}
 		// use hold time
 		return timestamp-lastTriggered;
