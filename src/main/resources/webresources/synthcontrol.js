@@ -61,13 +61,13 @@ $(document).ready(function () {
 			},
 			setStatus: function(connected) {
 				if (connected) {
-					$('#status').removeClass("connecting");
-					$('#status').addClass("connected");
+					$('body').removeClass("connecting");
+					$('body').addClass("connected");
 				}
 				else {
 					if (!dontreconnect) {
-						$('#status').addClass("connecting");
-						$('#status').removeClass("connected");
+						$('body').addClass("connecting");
+						$('body').removeClass("connected");
 						if (this.reconnectTimer) {
 							clearTimeout(this.reconnectTimer);
 							this.reconectTimer = 0;

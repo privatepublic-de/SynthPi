@@ -67,23 +67,29 @@ a {
 	height: 10px;
 	background: url(img/green-led.png) no-repeat center center;
 }
-#status .connection {
+.connection {
 	display: block;
 	position: absolute;
 	right: 0;
 }
-#status.connecting .connection.connecting {
+.connecting .connecting {
 	color: #c00;
 }
-#status.connecting .connection.connected {
+.connecting .connected {
 	display: none;
 }
-#status.connected  .connection.connected {
+.connected  .connected {
 	color: #999;
 }
-#status.connected .connection.connecting {
+.connected .connecting {
 	display: none;
 }
+
+.connecting #main {
+	opacity: .15;	
+}
+
+
 #status #patch, #learnhint {
 	display: block;
 	position: absolute;
