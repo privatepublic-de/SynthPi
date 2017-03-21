@@ -32,7 +32,8 @@ public class AnalogSynthVoice {
 			P.FILTER1_ENV_DEPTH, 
 			0, 
 			P.FILTER1_TRACK_KEYBOARD, 
-			P.FILTER1_ENV_VELOCITY_SENS, 
+			P.FILTER1_ENV_VELOCITY_SENS,
+			P.FILTER1_OVERLOAD,
 			P.ENV_CONF_FILTER1
 		);
 	private final MultiModeFilter filter2 = new MultiModeFilter(
@@ -42,7 +43,8 @@ public class AnalogSynthVoice {
 			P.FILTER2_ENV_DEPTH, 
 			1, 
 			P.FILTER2_TRACK_KEYBOARD, 
-			P.FILTER2_ENV_VELOCITY_SENS, 
+			P.FILTER2_ENV_VELOCITY_SENS,
+			P.FILTER2_OVERLOAD,
 			P.ENV_CONF_FILTER2
 		);
 	
@@ -433,8 +435,8 @@ public class AnalogSynthVoice {
 			osc2=osc2_va;
 			break;
 		}
-		final float osc1Vol = P.VALMIXHIGH[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN];
-		final float osc2Vol = P.VALMIXLOW[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN];
+		final float osc1Vol = P.VALMIXHIGH[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
+		final float osc2Vol = P.VALMIXLOW[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
 		noiseLevel = P.VALX[P.OSC_NOISE_LEVEL];
 		noiseModAmount = P.VALXC[P.MOD_ENV1_NOISE_AMOUNT];
 		RouteFilters filterRoute = filtersAllOff;

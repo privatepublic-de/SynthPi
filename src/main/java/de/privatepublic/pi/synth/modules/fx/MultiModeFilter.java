@@ -22,18 +22,20 @@ public class MultiModeFilter {
 	private int p_mod_amount = P.MOD_FILTER1_AMOUNT;
 	private int p_env_depth = P.FILTER1_ENV_DEPTH;
 	private int p_type = 0;
+	private int p_overload = 0;
 	
 	
 	private final EnvADSR filterEnv; // new EnvADSR(new short[] {P.FILTER1_ENV_A, P.FILTER1_ENV_D, P.FILTER1_ENV_S, P.FILTER1_ENV_R}, P.FILTER1_ENV_VELOCITY_SENS);
 
 	
-	public MultiModeFilter(int freq, int res, int mod, int env, int type, int trkkbd, int vel, EnvelopeParamConfig envelopeConfig) {
+	public MultiModeFilter(int freq, int res, int mod, int env, int type, int trkkbd, int vel, int overload, EnvelopeParamConfig envelopeConfig) {
 		p_freq = freq;
 		p_resonance = res;
 		p_mod_amount = mod;
 		p_env_depth = env;
 		p_type = type;
 		p_track_keyboard = trkkbd;
+		p_overload = overload;
 		filterEnv = new EnvADSR(envelopeConfig);
 	}
 	
@@ -62,9 +64,17 @@ public class MultiModeFilter {
 //	private float damp, drive=0, notch, low, high, band, out, in;
 	private float notch, low, high, band, out;
 //	private float dnormoffset =  1.0E-25;
+	private float lastout = 0;
 	
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue, final int i) {
+		// apply drive
+		
+		float x = sampleValue*(1f + 10f*P.VALX[p_overload]);
+		float x2 = x*x;
+		x = x * ( 27 + x2 ) / ( 27 + 9 * x2 );
+		float inValue = sampleValue*P.VALMIXHIGH[p_overload] + x*P.VALMIXLOW[p_overload]*.334f;
+		
 		frq = FastCalc.ensureRange(
 				(
 					MIN_STABLE_FREQUENCY
@@ -105,7 +115,7 @@ public class MultiModeFilter {
 //			final float B4 = 2*B3;
 //			final float B5 = B3; 
 
-			input = sampleValue*gain;
+			input = inValue*gain;
 
 			stage1 = K*input + state0;
 			state0 = B1*input + A1/A0*stage1 + state1;
@@ -114,6 +124,7 @@ public class MultiModeFilter {
 			input = K*stage1 + state2; // gain??
 			state2 = B1*stage1 + A1/A3*input + state3;
 			state3 = K*stage1 + A5/A3*input;
+			lastout = input;
 			return input;
 
 		}
@@ -122,7 +133,7 @@ public class MultiModeFilter {
 			f1 = (float) (2.0*Math.sin(Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
 			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
 			
-			notch = sampleValue - damp*band;
+			notch = inValue - damp*band;
 			low   = low + f1*band;
 			high  = notch - low;
 			band  = f1*high + band;// - drive*band*band*band;
@@ -143,21 +154,26 @@ public class MultiModeFilter {
 			default:
 				out = low+band+high;
 			}
-			notch = sampleValue - damp*band;
+			notch = inValue - damp*band;
 			low   = low + f1*band;
 			high  = notch - low;
 			band  = f1*high + band;// - drive*band*band*band;
 			switch (type) {
 			case LOWPASS:
-				return out + low;
+				lastout = out + low;
+				return lastout;
 			case BANDPASS:
-				return out + band;
+				lastout = out + band;
+				return lastout;
 			case HIGHPASS:
-				return out + high;
+				lastout = out + high;
+				return lastout;
 			case NOTCH:
-				return out + notch;
+				lastout = out + notch;
+				return lastout;
 			}
-			return out + low+band+high;
+			lastout = out + low+band+high;
+			return lastout;
 			
 		}
 	}

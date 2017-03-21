@@ -87,7 +87,7 @@ public class P {
 	public static PatchCategory LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
 	
 	/** Number of available parameters */
-	public static final int PARAM_STORE_SIZE = 82;
+	public static final int PARAM_STORE_SIZE = 84;
 	
 	/** float value of parameter (0 - 1) */
 	public static final float[] VAL = new float[PARAM_STORE_SIZE];
@@ -303,6 +303,9 @@ public class P {
 	public static final int DELAY_RATE = 80;
 	public static final int DELAY_FEEDBACK = 81;
 	
+	public static final int FILTER1_OVERLOAD = 82;
+	public static final int FILTER2_OVERLOAD = 83;
+	
 	public static final int[] SET_INTERPOLATED = new int[] {
 		FILTER1_FREQ,
 		FILTER2_FREQ,
@@ -418,6 +421,7 @@ public class P {
 		OSC_PATH[FILTER1_ENV_DEPTH] = "/filter/1/env/amount";
 		OSC_PATH[FILTER1_ENV_LOOP] = "/filter/1/env/loop";
 		OSC_PATH[FILTER1_ENV_VELOCITY_SENS] = "/filter/1/velocity";
+		OSC_PATH[FILTER1_OVERLOAD] = "/filter/1/overload";
 		
 		OSC_PATH[FILTER2_TYPE] = "/filter/2/type"; 
 		OSC_PATH[FILTER2_FREQ] = "/filter/2/freq";
@@ -431,6 +435,7 @@ public class P {
 		OSC_PATH[FILTER2_ENV_DEPTH] = "/filter/2/env/amount";
 		OSC_PATH[FILTER2_ENV_LOOP] = "/filter/2/env/loop";
 		OSC_PATH[FILTER2_ENV_VELOCITY_SENS] = "/filter/2/velocity";
+		OSC_PATH[FILTER2_OVERLOAD] = "/filter/2/overload";
 		
 		OSC_PATH[FILTER_PARALLEL] = "/filter/parallel";
 		OSC_PATH[FILTER_PARALLEL_MIX] = "/filter/parallelmix";
