@@ -444,12 +444,13 @@ public class P {
 		setToDefaults();
 		
 		// send limiter status thread
-		if (HTTP_SEND_PERFORMACE_DATA) {
-			Timer timer = new Timer("LimiterState", true);
-			timer.schedule(new TimerTask() {
-				private boolean lastWasGood = false;
-				@Override
-				public void run() {
+
+		Timer timer = new Timer("LimiterState", true);
+		timer.schedule(new TimerTask() {
+			private boolean lastWasGood = false;
+			@Override
+			public void run() {
+				if (HTTP_SEND_PERFORMACE_DATA) {
 					float val = limiterReductionValue;
 					if (val>1) {
 						val = (val-1)*.2f+1;
@@ -463,8 +464,9 @@ public class P {
 						}
 					}
 				}
-			}, 2000, 100);
-		}
+			}
+		}, 2000, 100);
+
 		
 	}
 	
