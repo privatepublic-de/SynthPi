@@ -227,7 +227,7 @@ a {
 	border-color: #777777!important;
 	background-color: #333;
 }
-.gray .inner { background-color: #777777; }
+.gray .inner, .perfcontrols .inner { background-color: #777777; }
 .inverted .gray, .inverted .group.gray, .inverted .gray input {
 	background-color: #eee;
 }
