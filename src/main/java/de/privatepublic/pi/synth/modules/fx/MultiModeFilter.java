@@ -64,16 +64,15 @@ public class MultiModeFilter {
 //	private float damp, drive=0, notch, low, high, band, out, in;
 	private float notch, low, high, band, out;
 //	private float dnormoffset =  1.0E-25;
-	private float lastout = 0;
+	float drive, dsquare, inValue;
 	
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue, final int i) {
 		// apply drive
-		
-		float x = sampleValue*(1f + 10f*P.VALX[p_overload]);
-		float x2 = x*x;
-		x = x * ( 27 + x2 ) / ( 27 + 9 * x2 );
-		float inValue = sampleValue*P.VALMIXHIGH[p_overload] + x*P.VALMIXLOW[p_overload]*.334f;
+		drive = sampleValue*(1f + 10f*P.VALX[p_overload]);
+		dsquare = drive*drive;
+		drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
+		inValue = sampleValue*P.VALMIXHIGH[p_overload] + drive*P.VALMIXLOW[p_overload]*.334f;
 		
 		frq = FastCalc.ensureRange(
 				(
@@ -84,12 +83,7 @@ public class MultiModeFilter {
 				) 
 				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),
 				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
-//		if (frq > MAX_STABLE_FREQUENCY) {
-//			frq = MAX_STABLE_FREQUENCY;
-//		}
-//		else if (frq < 0) {
-//			frq = 0;
-//		}
+
 		FilterType type = P.VAL_FILTER_TYPE_FOR[p_type];
 		if (type==FilterType.LOWPASS24) {
 			Q = 1-P.VAL[p_resonance];
@@ -124,7 +118,6 @@ public class MultiModeFilter {
 			input = K*stage1 + state2; // gain??
 			state2 = B1*stage1 + A1/A3*input + state3;
 			state3 = K*stage1 + A5/A3*input;
-			lastout = input;
 			return input;
 
 		}
@@ -160,20 +153,15 @@ public class MultiModeFilter {
 			band  = f1*high + band;// - drive*band*band*band;
 			switch (type) {
 			case LOWPASS:
-				lastout = out + low;
-				return lastout;
+				return out + low;
 			case BANDPASS:
-				lastout = out + band;
-				return lastout;
+				return out + band;
 			case HIGHPASS:
-				lastout = out + high;
-				return lastout;
+				return out + high;
 			case NOTCH:
-				lastout = out + notch;
-				return lastout;
+				return out + notch;
 			}
-			lastout = out + low+band+high;
-			return lastout;
+			return out + low+band+high;
 			
 		}
 	}

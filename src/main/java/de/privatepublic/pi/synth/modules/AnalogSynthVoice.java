@@ -59,11 +59,6 @@ public class AnalogSynthVoice {
 	public int lastMidiNote = 0;
 	
 	private RouteFilters filtersAllOff = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return in1 + in2;
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
@@ -74,11 +69,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersSerial1On2Off = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter1.processSample(in1+in2, sampleNo);
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			filter2.processSample(in2, sampleNo);
@@ -90,11 +80,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersSerial1On2On = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter2.processSample(filter1.processSample(in1+in2, sampleNo), sampleNo);
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			// serial is mono only
@@ -105,11 +90,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersSerial1Off2On = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter2.processSample(in1+in2, sampleNo);
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
@@ -121,11 +101,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersParallel1On2Off = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter1.processSample(in1+in2, sampleNo);
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			filter2.processSample(in2, sampleNo);
@@ -137,12 +112,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersParallel1On2On = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			final float val = in1+in2;
-//			return filter1.processSample(val, sampleNo)*P.VALMIXHIGH[P.FILTER_PARALLEL_MIX]+filter2.processSample(val, sampleNo)*P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			final float val = in1+in2;
@@ -154,11 +123,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersParallel1Off2On = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter2.processSample(in1+in2, sampleNo);
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
@@ -170,11 +134,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersPerOsc1On2Off = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter1.processSample(in1, sampleNo) + in2;
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			filter2.processSample(in2, sampleNo);
@@ -185,11 +144,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersPerOsc1On2On = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter1.processSample(in1, sampleNo) + filter2.processSample(in2, sampleNo);
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			final float filtered1 = filter1.processSample(in1, sampleNo)*P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
@@ -200,11 +154,6 @@ public class AnalogSynthVoice {
 	};
 	
 	private RouteFilters filtersPerOsc1Off2On = new RouteFilters(filter1, filter2) {
-//		@Override
-//		public float process(float in1, float in2, int sampleNo) {
-//			return filter2.processSample(in2, sampleNo) + in1;
-//		}
-		
 		@Override
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
@@ -345,75 +294,6 @@ public class AnalogSynthVoice {
 	
 	private float noiseLevel = 0;
 	private float noiseModAmount = 0;
-	
-	
-//	public void process(final float[] outbuffer, final int nframes) {
-//		final boolean filter1on = P.IS[P.FILTER1_ON];
-//		final boolean filter2on = P.IS[P.FILTER2_ON];
-//		final IOscillator osc1=P.IS[P.OSC_MODE]?osc1_pluck:osc1_va;
-//		final IOscillator osc2=P.IS[P.OSC_MODE]?osc2_pluck:osc2_va;
-//		final float osc1Vol = P.VALMIXHIGH[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN];
-//		final float osc2Vol = P.VALMIXLOW[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN];
-//		noiseLevel = P.VALX[P.OSC_NOISE_LEVEL];
-//		noiseModAmount = P.VALXC[P.MOD_ENV1_NOISE_AMOUNT];
-//		RouteFilters filterRoute = filtersAllOff;
-//		if (filter1on || filter2on) {
-//			switch(P.VAL_FILTER_ROUTING) {
-//			case SERIAL:
-//				if (filter1on && filter2on) {
-//					filterRoute = filtersSerial1On2On;
-//				}
-//				else {
-//					if (filter1on) {
-//						filterRoute = filtersSerial1On2Off;
-//					}
-//					else {
-//						filterRoute = filtersSerial1Off2On;
-//					}
-//				}
-//				break;
-//			case PARALLEL:
-//				if (filter1on && filter2on) {
-//					filterRoute = filtersParallel1On2On;
-//				}
-//				else {
-//					if (filter1on) {
-//						filterRoute = filtersParallel1On2Off;
-//					}
-//					else {
-//						filterRoute = filtersParallel1Off2On;
-//					}
-//				}
-//				break;
-//			case PEROSC:
-//				if (filter1on && filter2on) {
-//					filterRoute = filtersPerOsc1On2On;
-//				}
-//				else {
-//					if (filter1on) {
-//						filterRoute = filtersPerOsc1On2Off;
-//					}
-//					else {
-//						filterRoute = filtersPerOsc1Off2On;
-//					}
-//				}
-//				break;
-//			}
-//		}
-//		float osc1_val;
-//		float osc2_val;
-//		float noise_val;
-//		for (int i=0;i<nframes;i++) {
-//			modEnvelope.nextValue();
-//			noiseX2 += noiseX1;
-//			noiseX1 ^= noiseX2;
-//			noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5;
-//			osc1_val = osc1.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
-//			osc2_val = osc2.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
-//			outbuffer[i] += filterRoute.process(osc1_val, osc2_val, i)*envelope.nextValue();
-//			am_buffer[i] = 0;
-//		}
-//	}
 	
 	public void process(final float[][] outbuffers, final int nframes) {
 		final boolean filter1on = P.IS[P.FILTER1_ON];
