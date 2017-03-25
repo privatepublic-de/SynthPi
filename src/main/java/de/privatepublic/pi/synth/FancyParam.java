@@ -94,9 +94,14 @@ public class FancyParam {
 		
 		NAME[P.FILTER_PARALLEL] = "Filter1/2 Routing";
 		NAME[P.FILTER_PARALLEL_MIX] = "Filter1/2 Parallel Mix";
+		NAME[P.FILTER1_OVERLOAD] = "Filter 1 Drive";
+		NAME[P.FILTER2_OVERLOAD] = "Filter 2 Drive";
 	}
 	
 	public static String nameOf(int paramindex) {
+		if (paramindex<0 || paramindex>NAME.length-1) {
+			return "unknown";
+		}
 		String result = NAME[paramindex];
 		if (result==null) {
 			return P.OSC_PATH[paramindex];
