@@ -129,6 +129,7 @@ public class SynthPi {
 		final String ARG_USE_JACK_AUDIO_SERVER = "usejackaudioserver";
 		final String ARG_AUDIO_BUFFER_SIZE = "audiobuffersize";
 		final String ARG_OPEN_BROWSER_COMMAND = "openbrowsercmd";
+		final String ARG_LOW_BUDGET_ADDITIVE = "lowbudgetadditive";
 		Options options = new Options();
 		options.addOption(OptionBuilder.withArgName(ARG_HELP).withDescription("Print this help message and exit").create(ARG_HELP));
 		options.addOption(OptionBuilder.withArgName("channel").hasArg().withDescription("MIDI channel number (1-16, default 1)").create(ARG_MIDI_CHANNEL));
@@ -139,6 +140,7 @@ public class SynthPi {
 		options.addOption(OptionBuilder.withDescription("Don't start web browser on launch").create(ARG_DISABLE_BROWSER_START));
 		options.addOption(OptionBuilder.withDescription("Don't open user interface window").create(ARG_HEADLESS));
 		options.addOption(OptionBuilder.withDescription("Use JACK audio server for playback. Fails if JACK isn't installed and started.").create(ARG_USE_JACK_AUDIO_SERVER));
+		options.addOption(OptionBuilder.withDescription("Low budget additive (more description please).").create(ARG_LOW_BUDGET_ADDITIVE));
 		options.addOption(OptionBuilder.withArgName("size").hasArg().withDescription("Playback audio buffer size. Smaller values for less latency, higher values for less drop-outs and crackles (default 64)").create(ARG_AUDIO_BUFFER_SIZE));
 		options.addOption(OptionBuilder.withArgName("cmd").hasArg().withDescription("Command line to open web browser.").create(ARG_OPEN_BROWSER_COMMAND));		
 		try {
@@ -154,6 +156,8 @@ public class SynthPi {
 			if (commandline.hasOption(ARG_USE_JACK_AUDIO_SERVER)) {
 				P.AUDIO_SYSTEM_NAME = "JACK";
 			}
+			
+			P.LOW_BUDGET_ADDITIVE = commandline.hasOption(ARG_LOW_BUDGET_ADDITIVE);
 			
 			Integer bufferSize = getOptionInt(commandline, ARG_AUDIO_BUFFER_SIZE, 16, 4096);
 			if (bufferSize!=null) {

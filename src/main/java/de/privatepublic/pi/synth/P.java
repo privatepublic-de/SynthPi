@@ -73,6 +73,7 @@ public class P {
 	public static int POLYPHONY = POLYPHONY_MAX;
 	public static boolean HTTP_SEND_PERFORMACE_DATA = false;
 	public static boolean LIMITER_ENABLED = false;
+	public static boolean LOW_BUDGET_ADDITIVE = false;
 
 	public static final float ROOT_FREQUENCY = 440;	
 	public static final float OCTAVE_CENTS = 1200f;

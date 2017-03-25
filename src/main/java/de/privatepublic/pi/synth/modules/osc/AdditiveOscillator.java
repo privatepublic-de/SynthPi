@@ -67,6 +67,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 		new float[] { 1, 0, 0, 0, 0,  1, 0, 1f/3, 0, 1f/5, 0, 1f/7, 0, 1f/9, 0, 1f/11, 0, 1f/13, 0, 1f/15, 0, 1f/17 }
 	};
 	private static final int HARMONICS_COUNT = HARMONIC_FACTORS_SEMIS.length;
+	private static final int HARMONICS_COUNT_EFFECTIVE = P.LOW_BUDGET_ADDITIVE?HARMONIC_FACTORS_SEMIS.length/2:HARMONIC_FACTORS_SEMIS.length;
 	private static final int VOLUMES_COUNT = VOLUME_MAP.length-2;
 	
 	private Sine[] sines = new Sine[HARMONICS_COUNT];
@@ -110,7 +111,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 		outValue = 0;
 		modwave1amount = P.VALXC[P.MOD_WAVE1_AMOUNT];
 		modenv1waveamount = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
-		for (int i=0;i<HARMONICS_COUNT;i++) {
+		for (int i=0;i<HARMONICS_COUNT_EFFECTIVE;i++) {
 			outValue += sines[i].value(P.OSC1_WAVE, LFO.lfoAmountAdd(sampleNo, modwave1amount, modEnvelope, modenv1waveamount), false);
 		}
 		am_buffer[sampleNo] = outValue;
@@ -120,6 +121,9 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 
 	@Override
 	public float processSample2nd(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer, EnvADSR modEnvelope) {
+		if (P.LOW_BUDGET_ADDITIVE) {
+			return outValue * volume;	
+		}
 		// second osc
 		if (ampmod && !P.IS[P.OSC2_AM]) {
 			effectiveFrequency = targetFrequency;
@@ -150,7 +154,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 		sync = P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo];
 		modwave2amount = P.VALXC[P.MOD_WAVE2_AMOUNT];
 		modenv1waveamount = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
-		for (int i=0;i<HARMONICS_COUNT;i++) {
+		for (int i=0;i<HARMONICS_COUNT_EFFECTIVE;i++) {
 			outValue += sines[i].value(P.OSC2_WAVE, LFO.lfoAmountAdd(sampleNo, modwave2amount, modEnvelope, modenv1waveamount), sync);
 		}
 		if (ampmod) {
