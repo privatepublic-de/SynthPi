@@ -370,6 +370,8 @@ public class AnalogSynthVoice {
 		final float[] outR = outbuffers[1];
 		final float width = 1-P.VAL[P.SPREAD];
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
+		filter1.updateFreqResponse();
+		filter2.updateFreqResponse();
 		for (int i=0;i<nframes;i++) {
 			modEnvelope.nextValue();
 			noiseX2 += noiseX1;
