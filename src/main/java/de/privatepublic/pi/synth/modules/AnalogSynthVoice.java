@@ -9,17 +9,19 @@ import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR.State;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.modules.osc.AdditiveOscillator;
+import de.privatepublic.pi.synth.modules.osc.BlepOscillator;
 import de.privatepublic.pi.synth.modules.osc.ExciterOscillator;
 import de.privatepublic.pi.synth.modules.osc.IOscillator;
-import de.privatepublic.pi.synth.modules.osc.WaveTableOscillator;
 
 public class AnalogSynthVoice {
 
 	private final EnvADSR envelope;
 	private final EnvADSR modEnvelope;
 	
-	private final IOscillator osc1_va = new WaveTableOscillator(IOscillator.PRIMARY_OSC);
-	private final IOscillator osc2_va = new WaveTableOscillator(IOscillator.SECONDARY_OSC);
+//	private final IOscillator osc1_va = new WaveTableOscillator(IOscillator.PRIMARY_OSC);
+//	private final IOscillator osc2_va = new WaveTableOscillator(IOscillator.SECONDARY_OSC);
+	private final IOscillator osc1_va = new BlepOscillator(IOscillator.PRIMARY_OSC);
+	private final IOscillator osc2_va = new BlepOscillator(IOscillator.SECONDARY_OSC);
 	private final IOscillator osc1_add = new AdditiveOscillator(IOscillator.PRIMARY_OSC);
 	private final IOscillator osc2_add = new AdditiveOscillator(IOscillator.SECONDARY_OSC);
 	private final IOscillator osc1_pluck = new ExciterOscillator(IOscillator.PRIMARY_OSC);
