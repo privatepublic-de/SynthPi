@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IPitchBendReceiver;
+import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 
 public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver{
@@ -23,17 +24,20 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	Mode mode = Mode.SAW;
     float mPhase = 0;
     float mPhaseIncrement;
+    float mPhaseIncrementDiv;
     float lastOutput;
 	
 
 	public BlepOscillator(boolean primaryOrSecondary) {
 		super(primaryOrSecondary);
+		MidiHandler.registerReceiver(this);
 	}
 	
 	@Override
 	protected void setTargetFrequency(float frequency) {
 		super.setTargetFrequency(frequency);
 		mPhaseIncrement = (float) (effectiveFrequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+		mPhaseIncrementDiv = mPhaseIncrement/PI2;
 	}
 	
 
@@ -45,14 +49,17 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 			if (effectiveFrequency<targetFrequency) {
 				effectiveFrequency += glideStepSize;
 				mPhaseIncrement = (float) (frequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+				mPhaseIncrementDiv = mPhaseIncrement/PI2;
 			}
 			else if (effectiveFrequency>targetFrequency) {
 				effectiveFrequency -= glideStepSize;
 				mPhaseIncrement = (float) (frequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+				mPhaseIncrementDiv = mPhaseIncrement/PI2;
 			}
 			if (Math.abs(effectiveFrequency-targetFrequency)<glideStepSize) {
 				effectiveFrequency = targetFrequency;
 				mPhaseIncrement = (float) (frequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+				mPhaseIncrementDiv = mPhaseIncrement/PI2;
 			}
 		}
 		
@@ -120,15 +127,14 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	}
 	
 	private float pblep(float t) {
-	    float dt = mPhaseIncrement / PI2;
 	    // 0 <= t < 1
-	    if (t < dt) {
-	        t /= dt;
+	    if (t < mPhaseIncrementDiv) {
+	        t /= mPhaseIncrementDiv;
 	        return t+t - t*t - 1.0f;
 	    }
 	    // -1 < t < 0
-	    else if (t > 1.0 - dt) {
-	        t = (t - 1.0f) / dt;
+	    else if (t > 1.0 - mPhaseIncrementDiv) {
+	        t = (t - 1.0f) / mPhaseIncrementDiv;
 	        return t*t + t+t + 1.0f;
 	    }
 	    // 0 otherwise
