@@ -15,10 +15,29 @@ public abstract class OscillatorBase implements IOscillator {
 	
 	protected final boolean isBase;
 	protected final boolean isSecond;
+	protected final boolean isSub;
 	
-	public OscillatorBase (boolean primaryOrSecondary) {
-		this.isBase = primaryOrSecondary;
-		this.isSecond = !primaryOrSecondary;
+	protected final Mode mode;
+	
+	
+	public OscillatorBase(boolean isPrimary) {
+		isBase = isPrimary;
+		isSecond = !isPrimary;
+		if (isBase) {
+			mode = Mode.PRIMARY;
+		}
+		else {
+			mode = Mode.SECONDARY;
+		}
+		isSub = false;
+	}
+	
+	
+	public OscillatorBase (Mode mode) {
+		this.isBase = mode==Mode.PRIMARY;
+		this.isSecond = mode==Mode.SECONDARY;
+		this.isSub = mode==Mode.SUB;
+		this.mode = mode;
 	}
 	
 	public void trigger(final float frequency, final float velocity) {

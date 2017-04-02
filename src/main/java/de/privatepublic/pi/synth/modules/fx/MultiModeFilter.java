@@ -67,52 +67,11 @@ public class MultiModeFilter {
 	float drive, dsquare, inValue;
 	FilterType type;
 	
-	public void updateFreqResponse() {
-		type = P.VAL_FILTER_TYPE_FOR[p_type];
-		frq = FastCalc.ensureRange(
-				(
-					MIN_STABLE_FREQUENCY
-					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
-					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
-					+ frqOffset
-				) 
-				* LFO.lfoAmount(0, P.VALXC[p_mod_amount]),
-				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
-
-		if (type==FilterType.LOWPASS24) {
-		
-			Q = 1-P.VAL[p_resonance];
-			gain = (float) Math.sqrt(Q);
-	
-			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
-			QtimesK = Q * K;
-			a = 0.76536686473f * QtimesK;
-			b = 1.84775906502f * QtimesK;
-			K = K*K;
-	
-			A0 = (K+a+1);
-			A1 = 2*(1-K);
-			A2 =(a-K-1);
-	//		final float B0 = K;
-			B1 = 2*K;
-	//		final float B2 = B0;
-	
-			A3 = (K+b+1);
-	//		final float A4 = 2*(1-K);
-			A5 = (b-K-1);
-	//		final float B3 = K;
-	//		final float B4 = 2*B3;
-	//		final float B5 = B3; 
-		}
-		else {
-			Q = P.VAL[p_resonance];
-			f1 = (float) (2.0*Math.sin(Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
-			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
-			}
-	}
 	
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue, final int i) {
+		type = P.VAL_FILTER_TYPE_FOR[p_type];
+		
 		filterEnv.nextValue();
 		// apply drive
 		drive = sampleValue*(1f + 10f*P.VALX[p_overload]);
@@ -120,39 +79,39 @@ public class MultiModeFilter {
 		drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
 		inValue = sampleValue*P.VALMIXHIGH[p_overload] + drive*P.VALMIXLOW[p_overload]*.334f;
 		
-//		frq = FastCalc.ensureRange(
-//				(
-//					MIN_STABLE_FREQUENCY
-//					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
-//					+ (MAX_STABLE_FREQUENCY * (filterEnv.nextValue() * P.VALXC[p_env_depth]))
-//					+ frqOffset
-//				) 
-//				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),
-//				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
+		frq = FastCalc.ensureRange(
+				(
+					MIN_STABLE_FREQUENCY
+					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
+					+ (MAX_STABLE_FREQUENCY * (filterEnv.nextValue() * P.VALXC[p_env_depth]))
+					+ frqOffset
+				) 
+				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),
+				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
 		if (type==FilterType.LOWPASS24) {
-//			Q = 1-P.VAL[p_resonance];
-//			gain = (float) Math.sqrt(Q);
-//
-//			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
-//			QtimesK = Q * K;
-//			a = 0.76536686473f * QtimesK;
-//			b = 1.84775906502f * QtimesK;
-//			K = K*K;
-//
-//			A0 = (K+a+1);
-//			A1 = 2*(1-K);
-//			A2 =(a-K-1);
-////			final float B0 = K;
-//			B1 = 2*K;
-////			final float B2 = B0;
-//
-//			A3 = (K+b+1);
-////			final float A4 = 2*(1-K);
-//			A5 = (b-K-1);
-////			final float B3 = K;
-////			final float B4 = 2*B3;
-////			final float B5 = B3; 
+			Q = 1-P.VAL[p_resonance];
+			gain = (float) Math.sqrt(Q);
+
+			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
+			QtimesK = Q * K;
+			a = 0.76536686473f * QtimesK;
+			b = 1.84775906502f * QtimesK;
+			K = K*K;
+
+			A0 = (K+a+1);
+			A1 = 2*(1-K);
+			A2 =(a-K-1);
+//			final float B0 = K;
+			B1 = 2*K;
+//			final float B2 = B0;
+
+			A3 = (K+b+1);
+//			final float A4 = 2*(1-K);
+			A5 = (b-K-1);
+//			final float B3 = K;
+//			final float B4 = 2*B3;
+//			final float B5 = B3; 
 
 			input = inValue*gain;
 
@@ -167,9 +126,9 @@ public class MultiModeFilter {
 
 		}
 		else {
-//			Q = P.VAL[p_resonance];
-//			f1 = (float) (2.0*Math.sin(Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
-//			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
+			Q = P.VAL[p_resonance];
+			f1 = (2.0f*FastCalc.sin((float)Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
+			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
 			
 			notch = inValue - damp*band;
 			low   = low + f1*band;

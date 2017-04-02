@@ -40,6 +40,30 @@ public class P {
 		public String shortName() {
 			return shortName;
 		}
+		
+		public static FilterType selectedFilterType(float val) {
+			return values()[(int)Math.round(val * (values().length-1))];
+		}
+	}
+	
+	/** Oscillator Waveforms */
+	public static enum Waveform { 
+		SINE("SIN"), 
+		TRIANGLE("TRI"), 
+		SAW("SAW"), 
+		PULSE("PUL");
+		
+		private final String shortName;
+		Waveform(String s) {
+			shortName = s;
+		}
+		public String shortName() {
+			return shortName;
+		}
+		
+		public static Waveform selectedWaveform(float val) {
+			return values()[(int)Math.round(val * (values().length-1))];
+		}
 	}
 	
 	/** Available filter routings */
@@ -141,6 +165,8 @@ public class P {
 	public static FilterType[] VAL_FILTER_TYPE_FOR = new FilterType[] {FilterType.LOWPASS, FilterType.ALLPASS};
 	public static FilterRouting VAL_FILTER_ROUTING = FilterRouting.SERIAL;
 	public static OscillatorMode VAL_OSCILLATOR_MODE = OscillatorMode.VIRTUAL_ANALOG;
+	public static Waveform VAL_OSC1_WAVEFORM = Waveform.SAW;
+	public static Waveform VAL_OSC2_WAVEFORM = Waveform.SAW;
 	
 	public static int MIDI_CHANNEL = 1 -1; // CAUTION 0-based
 	public static int PORT_HTTP = 31415;
@@ -185,7 +211,7 @@ public class P {
 	public static final int AMP_ENV_R = 17;
 	/** Mix balance of oscillators 1 and 2. 
 	 * @see VALMIXLOW, VALMIXHIGH */
-	public static final int OSC_1_2_MIX = 18;
+	public static final int OSC1_VOLUME = 18;
 	/** Pitch bend amount */
 	public static final int PITCH_BEND = 19;
 	/** Filter1 LFO modulation amount (use centered) */
@@ -213,15 +239,12 @@ public class P {
 	public static final int OSC_GLIDE_RATE = 31;
 	/** Play monophonic (use only one synth voice) */
 	public static final int OSC_MONO = 32;
-	/** Filter2 cut-off frequency */
-	public static final int FILTER2_FREQ = 33;
-	/** Filter2 resonance (Q) level */
-	public static final int FILTER2_RESONANCE = 34;
-	/** Filter2 envelope modulation depth (use centered) */
-	public static final int FILTER2_ENV_DEPTH = 35;
-	/** Filter2 type 
-	 * @see FilterType */
-	public static final int FILTER2_TYPE = 36;
+	
+	
+	public static final int OSC1_PULSE_WIDTH = 33;
+	public static final int OSC2_PULSE_WIDTH = 34;
+	public static final int OSC2_VOLUME = 35;
+	public static final int OSC_SUB_VOLUME = 36;
 	/** Filter2 LFO modulation amount (use centered) */
 	public static final int MOD_FILTER2_AMOUNT = 37;
 	/** Filter2 is enabled */
@@ -238,6 +261,10 @@ public class P {
 	public static final int FILTER2_ENV_R = 43;
 	/** Filter2 mod envelope velocity sensitivity >0 = true*/
 	public static final int FILTER2_ENV_VELOCITY_SENS = 44;
+	
+	
+	
+	
 	/** LFO pitch of oscillator2 modulation amount (use centered) */
 	public static final int MOD_PITCH2_AMOUNT = 45;
 	/** Oscillator2 fine tuning -/+100 cents (use centered) */
@@ -309,11 +336,12 @@ public class P {
 	
 	public static final int[] SET_INTERPOLATED = new int[] {
 		FILTER1_FREQ,
-		FILTER2_FREQ,
 		FILTER1_RESONANCE,
-		FILTER2_RESONANCE,
-		OSC_1_2_MIX,
-		OSC2_AM,
+		OSC1_VOLUME,
+		OSC2_VOLUME,
+		OSC_SUB_VOLUME,
+		OSC1_PULSE_WIDTH,
+		OSC2_PULSE_WIDTH,
 		VOLUME,
 		OVERDRIVE,
 		CHORUS_DEPTH,
@@ -369,7 +397,9 @@ public class P {
 		OSC_PATH[AMP_ENV_LOOP] = "/amp/env/loop";
 		
 		// oscillators
-		OSC_PATH[OSC_1_2_MIX] = "/osc/mix";
+		OSC_PATH[OSC1_VOLUME] = "/osc/1/vol";
+		OSC_PATH[OSC2_VOLUME] = "/osc/2/vol";
+		OSC_PATH[OSC_SUB_VOLUME] = "/osc/sub/vol";
 		OSC_PATH[OSC_NOISE_LEVEL] = "/osc/noiselevel";
 		OSC_PATH[OSC1_WAVE] = "/osc/1/wave";
 		OSC_PATH[OSC1_WAVE_SET] = "/osc/1/waveset";
@@ -381,7 +411,6 @@ public class P {
 		OSC_PATH[OSC2_AM] = "/osc/2/am";
 		OSC_PATH[OSC_GLIDE_RATE] = "/osc/gliderate";
 		OSC_PATH[OSC_MONO] = "/osc/mono";
-//		OSC_PATH[UNUSED_RELIC] = "/osc/mode/va";
 		OSC_PATH[OSC_MODE] = "/osc/mode";
 		OSC_PATH[OSC_GAIN] = "/osc/gain";
 		
@@ -424,16 +453,14 @@ public class P {
 		OSC_PATH[FILTER1_ENV_VELOCITY_SENS] = "/filter/1/velocity";
 		OSC_PATH[FILTER1_OVERLOAD] = "/filter/1/overload";
 		
-		OSC_PATH[FILTER2_TYPE] = "/filter/2/type"; 
-		OSC_PATH[FILTER2_FREQ] = "/filter/2/freq";
-		OSC_PATH[FILTER2_RESONANCE] = "/filter/2/res";
+		OSC_PATH[OSC1_PULSE_WIDTH] = "/osc/1/pw";
+		OSC_PATH[OSC2_PULSE_WIDTH] = "/osc/2/pw";
 		OSC_PATH[FILTER2_ON] = "/filter/2/enable";
 		OSC_PATH[FILTER2_TRACK_KEYBOARD] = "/filter/2/kbdtracking";
 		OSC_PATH[FILTER2_ENV_A] = "/filter/2/env/1";
 		OSC_PATH[FILTER2_ENV_D] = "/filter/2/env/2";
 		OSC_PATH[FILTER2_ENV_S] = "/filter/2/env/3";
 		OSC_PATH[FILTER2_ENV_R] = "/filter/2/env/4";
-		OSC_PATH[FILTER2_ENV_DEPTH] = "/filter/2/env/amount";
 		OSC_PATH[FILTER2_ENV_LOOP] = "/filter/2/env/loop";
 		OSC_PATH[FILTER2_ENV_VELOCITY_SENS] = "/filter/2/velocity";
 		OSC_PATH[FILTER2_OVERLOAD] = "/filter/2/overload";
@@ -477,11 +504,13 @@ public class P {
 		}
 		setDirectly(VOLUME, 0.79f);
 		setDirectly(FILTER1_FREQ, 0.5f);
-		setDirectly(FILTER2_FREQ, 0.5f);
+		setDirectly(OSC1_PULSE_WIDTH, 0.5f);
+		setDirectly(OSC2_PULSE_WIDTH, 0.5f);
+		setDirectly(OSC1_VOLUME, 0.75f);
+		setDirectly(OSC2_VOLUME, 0.75f);
+		setDirectly(OSC_SUB_VOLUME, 0f);
 		setDirectly(FILTER1_TYPE, 0);
-		setDirectly(FILTER2_TYPE, 1f/6);
 		setDirectly(FILTER1_ENV_DEPTH, 0.5f);
-		setDirectly(FILTER2_ENV_DEPTH, 0.5f);
 		setDirectly(OSC_MODE, 0);
 		setDirectly(OSC_NOISE_LEVEL, 0);
 		setDirectly(OSC_GAIN, .8f);
@@ -489,7 +518,7 @@ public class P {
 		setDirectly(OSC2_WAVE, 0.5f);
 		setDirectly(OSC2_TUNING_FINE, 0.66667f);
 		setDirectly(AMP_ENV_S, 1);
-		setDirectly(OSC_1_2_MIX, .5f);
+		
 		setDirectly(MOD_RATE, .666667f);
 		setDirectly(MOD_FILTER1_AMOUNT, .875f);
 		setDirectly(MOD_FILTER2_AMOUNT, .5f);
@@ -579,10 +608,13 @@ public class P {
 		
 		switch (index) {
 		case FILTER1_TYPE:
-			VAL_FILTER_TYPE_FOR[0] = selectedFilterType(val);
+			VAL_FILTER_TYPE_FOR[0] = FilterType.selectedFilterType(val);
 			break;
-		case FILTER2_TYPE:
-			VAL_FILTER_TYPE_FOR[1] = selectedFilterType(val);
+		case OSC1_WAVE:
+			VAL_OSC1_WAVEFORM = Waveform.selectedWaveform(val);
+			break;
+		case OSC2_WAVE:
+			VAL_OSC2_WAVEFORM = Waveform.selectedWaveform(val);
 			break;
 		case FILTER_PARALLEL:
 			VAL_FILTER_ROUTING = FilterRouting.values()[(int)Math.round(val * (FilterRouting.values().length-1))];
@@ -627,10 +659,6 @@ public class P {
 	}
 	
 	
-	
-	public static FilterType selectedFilterType(float val) {
-		return FilterType.values()[(int)Math.round(val * (FilterType.values().length-1))];
-	}
 	
 	public static OscillatorMode selectedOscillatorMode(float val) {
 		return OscillatorMode.values()[(int)Math.round(val * (OscillatorMode.values().length-1))];

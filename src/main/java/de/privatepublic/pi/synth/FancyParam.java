@@ -28,7 +28,9 @@ public class FancyParam {
 		NAME[P.AMP_ENV_LOOP] = "Amp Env. Loop Mode";
 		
 		// oscillators
-		NAME[P.OSC_1_2_MIX] = "Osc 1/2 Mix";
+		NAME[P.OSC1_VOLUME] = "Osc 1 Volume";
+		NAME[P.OSC2_VOLUME] = "Osc 1 Volume";
+		NAME[P.OSC_SUB_VOLUME] = "Osc Sub Volume";
 		NAME[P.OSC_NOISE_LEVEL] = "Noise Level";
 		NAME[P.OSC1_WAVE] = "Osc 1 Waveform";
 		NAME[P.OSC1_WAVE_SET] = "Osc 1 Waveset";
@@ -79,16 +81,14 @@ public class FancyParam {
 		NAME[P.FILTER1_ENV_VELOCITY_SENS] = "Filter1 Env. Velocity";
 		NAME[P.FILTER1_ENV_LOOP] = "Filter1 Env. Loop Mode";
 		
-		NAME[P.FILTER2_TYPE] = "Filter2 Type"; 
-		NAME[P.FILTER2_FREQ] = "Filter2 Cutoff Frq";
-		NAME[P.FILTER2_RESONANCE] = "Filter2 Resonance";
+		NAME[P.OSC1_PULSE_WIDTH] = "Osc1 PW";
+		NAME[P.OSC2_PULSE_WIDTH] = "Osc2 PW";
 		NAME[P.FILTER2_ON] = "Filter2";
 		NAME[P.FILTER2_TRACK_KEYBOARD] = "Filter2 Keyboard Tracking";
 		NAME[P.FILTER2_ENV_A] = "Filter2 Env. Attack";
 		NAME[P.FILTER2_ENV_D] = "Filter2 Env. Decay";
 		NAME[P.FILTER2_ENV_S] = "Filter2 Env. Sustain";
 		NAME[P.FILTER2_ENV_R] = "Filter2 Env. Release";
-		NAME[P.FILTER2_ENV_DEPTH] = "Filter2 Env. Depth";
 		NAME[P.FILTER2_ENV_VELOCITY_SENS] = "Filter2 Env. Velocity";
 		NAME[P.FILTER2_ENV_LOOP] = "Filter2 Env. Loop Mode";
 		
@@ -119,6 +119,10 @@ public class FancyParam {
 		float calculatedVal;
 		String result;
 		switch (paramindex) {
+		case P.OSC1_WAVE:
+		case P.OSC2_WAVE:
+			result = P.Waveform.selectedWaveform(value).name();
+			break;
 		case P.OSC2_TUNING:
 			result = Math.round(P.VALC[P.OSC2_TUNING]*24)+" st";
 			break;
@@ -135,7 +139,6 @@ public class FancyParam {
 			result = LFO.WAVE_NAMES[(int)(P.VAL[P.MOD_LFO_TYPE]*LFO.WAVE_COUNT_CALC)];
 			break;
 		case P.FILTER1_FREQ:
-		case P.FILTER2_FREQ:
 			calculatedVal = MultiModeFilter.MIN_STABLE_FREQUENCY+MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value);
 			if (calculatedVal>=100) {
 				result = Math.round(calculatedVal)+" Hz";
@@ -199,12 +202,10 @@ public class FancyParam {
 			result = "x"+FORMAT_FLOAT2.format((P.VAL[P.OSC2_AM]*4));
 			break;
 		case P.FILTER1_TYPE:
-		case P.FILTER2_TYPE:
-			result = P.selectedFilterType(value).name();
+			result = P.FilterType.selectedFilterType(value).name();
 			break;
 		case P.OSC2_TUNING_FINE:
 		case P.FILTER1_ENV_DEPTH:
-		case P.FILTER2_ENV_DEPTH:
 		case P.MOD_ENV1_NOISE_AMOUNT:
 		case P.MOD_ENV1_PITCH2_AMOUNT:
 		case P.MOD_ENV1_PITCH_AMOUNT:
@@ -215,16 +216,6 @@ public class FancyParam {
 		case P.MOD_PITCH_AMOUNT:
 		case P.MOD_PITCH2_AMOUNT:
 			result = FORMAT_FLOAT.format(((value-.5)*2)*100);
-			break;
-		case P.OSC_1_2_MIX:
-		case P.FILTER_PARALLEL_MIX:
-			// need to recalculate to use target_value instead of precalculated valmixhigh/low
-			float vxc = (value-.5f)*2f;
-			float sign = Math.signum(vxc);
-			vxc = 1+sign*(vxc*vxc*vxc*vxc);
-			float v2 = vxc/2;
-			float v1 = 1 - v2;
-			result = FORMAT_INT.format(v1*100)+"/"+FORMAT_INT.format(v2*100);
 			break;
 		case P.DELAY_RATE:
 			float freq = 2000.0f*(.001f+.999f*P.VALX[P.DELAY_RATE]);

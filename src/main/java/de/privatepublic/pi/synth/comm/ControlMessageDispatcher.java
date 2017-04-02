@@ -281,7 +281,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			msgLabel.append(FancyParam.valueOf(paramIndex));
 			msgLabel.append('\n');
 			// special case for enums
-			if (paramIndex==P.FILTER1_TYPE || paramIndex==P.FILTER2_TYPE || paramIndex==P.FILTER_PARALLEL || paramIndex==P.MOD_LFO_TYPE || paramIndex==P.OSC_MODE) {
+			if (paramIndex==P.FILTER1_TYPE || paramIndex==P.FILTER_PARALLEL || paramIndex==P.MOD_LFO_TYPE || paramIndex==P.OSC_MODE || paramIndex==P.OSC1_WAVE || paramIndex==P.OSC2_WAVE) {
 				msgLabel.append("/option");
 				msgLabel.append(path);
 				msgLabel.append('/');

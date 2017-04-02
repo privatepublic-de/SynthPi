@@ -10,14 +10,16 @@ import de.privatepublic.pi.synth.modules.mod.EnvADSR.State;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.modules.osc.BlepOscillator;
 import de.privatepublic.pi.synth.modules.osc.IOscillator;
+import de.privatepublic.pi.synth.modules.osc.IOscillator.Mode;
 
 public class AnalogSynthVoice {
 
 	private final EnvADSR envelope;
 	private final EnvADSR modEnvelope;
 	
-	private final IOscillator osc1_va = new BlepOscillator(IOscillator.PRIMARY_OSC);
-	private final IOscillator osc2_va = new BlepOscillator(IOscillator.SECONDARY_OSC);
+	private final IOscillator osc1 = new BlepOscillator(Mode.PRIMARY);
+	private final IOscillator osc2 = new BlepOscillator(Mode.SECONDARY);
+	private final IOscillator oscSub = new BlepOscillator(Mode.SUB);
 	
 	private final MultiModeFilter filter1 = new MultiModeFilter(
 			P.FILTER1_FREQ, 
@@ -81,8 +83,9 @@ public class AnalogSynthVoice {
 		lastMidiNote = midiNote;
 		lastTriggered = timestamp;
 		if (envelope.state==State.REST) {
-			osc1_va.trigger(frequency, velocity);
-			osc2_va.trigger(frequency, velocity);
+			osc1.trigger(frequency, velocity);
+			osc2.trigger(frequency, velocity);
+			oscSub.trigger(frequency, velocity);
 			filter1.trigger(frequency, velocity);
 			envelope.noteOn(velocity);
 			modEnvelope.noteOn(1);
@@ -92,8 +95,9 @@ public class AnalogSynthVoice {
 			envelope.queueNoteOn(velocity, new Runnable() {
 				@Override
 				public void run() {
-					osc1_va.trigger(frequency, velocity);
-					osc2_va.trigger(frequency, velocity);
+					osc1.trigger(frequency, velocity);
+					osc2.trigger(frequency, velocity);
+					oscSub.trigger(frequency, velocity);
 					filter1.trigger(frequency, velocity);
 					envelope.noteOn(velocity);
 					modEnvelope.noteOn(1);
@@ -106,8 +110,9 @@ public class AnalogSynthVoice {
 	public void triggerFreq(final int midiNote, final float frequency, final float velocity, final long timestamp) {
 		lastMidiNote = midiNote;
 		lastTriggered = timestamp;
-		osc1_va.trigger(frequency, velocity);
-		osc2_va.trigger(frequency, velocity);
+		osc1.trigger(frequency, velocity);
+		osc2.trigger(frequency, velocity);
+		oscSub.trigger(frequency, velocity);
 		AnalogSynth.lastTriggeredFrequency = frequency;
 	}
 	
@@ -123,8 +128,9 @@ public class AnalogSynthVoice {
 	public void process(final float[][] outbuffers, final int nframes) {
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		
-		final float osc1Vol = P.VALMIXHIGH[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
-		final float osc2Vol = P.VALMIXLOW[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
+		final float osc1Vol = P.VALX[P.OSC1_VOLUME]*P.VALX[P.OSC_GAIN]*.75f;
+		final float osc2Vol = P.VALX[P.OSC2_VOLUME]*P.VALX[P.OSC_GAIN]*.75f;
+		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME]*P.VALX[P.OSC_GAIN]*.75f;
 		noiseLevel = P.VALX[P.OSC_NOISE_LEVEL];
 		noiseModAmount = P.VALXC[P.MOD_ENV1_NOISE_AMOUNT];
 		float val;
@@ -132,20 +138,22 @@ public class AnalogSynthVoice {
 		final float[] outL = outbuffers[0];
 		final float[] outR = outbuffers[1];
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
-		filter1.updateFreqResponse();
 		for (int i=0;i<nframes;i++) {
 			modEnvelope.nextValue();
 			noiseX2 += noiseX1;
 			noiseX1 ^= noiseX2;
 			noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
-			val = osc1_va.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
-			val += osc2_va.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
+			val = osc1.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope);
+			val += osc2.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope);
+			val += oscSub.processSample2nd(i, oscSubVol, syncBuffer, am_buffer, modEnvelope);
+			val += noise_val;
 			if (filter1on)
 				val = filter1.processSample(val, i);
 			else
 				filter1.processSample(val, i);
 			val *= envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol));
-			outL[i] = outR[i] = val;
+			outL[i] += val;
+			outR[i] += val;
 			am_buffer[i] = 0;
 		}
 	}

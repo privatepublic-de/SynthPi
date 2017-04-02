@@ -7,6 +7,7 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IPitchBendReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
+import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.util.FastCalc;
 
 public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver{
@@ -15,29 +16,34 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	private static final Logger log = LoggerFactory.getLogger(BlepOscillator.class);
 	
 	
-	private static enum Mode {
+	private static enum Wave {
 	    SINE,
 	    SAW,
 	    SQUARE,
 	    TRIANGLE
 	};
 	
-	Mode mode = Mode.SAW;
+	Wave wave = Wave.SAW;
     float mPhase = 0;
     float mPhaseIncrement;
     float mPhaseIncrementDiv;
     float lastOutput;
+    float syncPhase = 0;
+    float drift = 0;
 	
 
-	public BlepOscillator(boolean primaryOrSecondary) {
-		super(primaryOrSecondary);
+	public BlepOscillator(IOscillator.Mode mode) {
+		super(mode);
 		MidiHandler.registerReceiver(this);
+		if (mode==IOscillator.Mode.SUB) {
+			wave = Wave.SQUARE;
+		}
 	}
 	
 	@Override
 	protected void setTargetFrequency(float frequency) {
 		super.setTargetFrequency(frequency);
-		mPhaseIncrement = (float) (effectiveFrequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+		mPhaseIncrement = effectiveFrequency * PI2 / P.SAMPLE_RATE_HZ;
 		mPhaseIncrementDiv = mPhaseIncrement/PI2;
 	}
 	
@@ -49,55 +55,89 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 		if (effectiveFrequency!=targetFrequency) {
 			if (effectiveFrequency<targetFrequency) {
 				effectiveFrequency += glideStepSize;
-				mPhaseIncrement = (float) (frequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+				mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
 				mPhaseIncrementDiv = mPhaseIncrement/PI2;
 			}
 			else if (effectiveFrequency>targetFrequency) {
 				effectiveFrequency -= glideStepSize;
-				mPhaseIncrement = (float) (frequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+				mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
 				mPhaseIncrementDiv = mPhaseIncrement/PI2;
 			}
 			if (Math.abs(effectiveFrequency-targetFrequency)<glideStepSize) {
 				effectiveFrequency = targetFrequency;
-				mPhaseIncrement = (float) (frequency * 2 * Math.PI / P.SAMPLE_RATE_HZ);
+				mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
 				mPhaseIncrementDiv = mPhaseIncrement/PI2;
 			}
 		}
+		final float freq;
+		switch(mode) {
+		case PRIMARY:
+			freq = effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR;
+			break;
+		case SECONDARY:
+			freq = 
+				effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
+				* LFO.lfoAmountAsymm(sampleNo, P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
+			break;
+		case SUB:
+		default:
+			freq = effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR / 2;
+		}
+		
+		mPhaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
+		mPhaseIncrementDiv = mPhaseIncrement/PI2;
 		
 		// TODO optimize waveform selection
-		float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
-		if (modev<.25) {
-			mode = Mode.SINE;
+		if (mode!=Mode.SUB) {
+			float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
+			if (modev<.25) {
+				wave = Wave.SINE;
+			}
+			else if (modev<.5) {
+				wave = Wave.TRIANGLE;
+			}
+			else if (modev<.75) {
+				wave = Wave.SAW;
+			}
+			else {
+				wave = Wave.SQUARE;
+			}
 		}
-		else if (modev<.5) {
-			mode = Mode.TRIANGLE;
-		}
-		else if (modev<.75) {
-			mode = Mode.SAW;
+
+		if (isBase) {
+			syncOnFrameBuffer[sampleNo] = false;
 		}
 		else {
-			mode = Mode.SQUARE;
+			if (isSecond && P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
+				mPhase = 0;
+			}			
 		}
 		
 		float t = mPhase / PI2;
 		float outVal = 0;
-		switch(mode) {
+		switch(wave) {
 		case SINE:
 	        outVal = FastCalc.sin(mPhase);
+	        if (isSecond && P.IS[P.OSC2_SYNC]) {
+	        	outVal -= pblep((syncPhase/PI2)%PI2);
+	        	outVal = mPhaseIncrement * outVal + (1 - mPhaseIncrement) * lastOutput;
+	        }
 			break;
 		case SAW:
-			outVal = (float) ((2.0 * mPhase / PI2) - 1.0);
+			outVal = (float) ((2.0 * t) - 1.0);
 			outVal -= pblep(t);
 			break;
 		case SQUARE:
-			float saw1 = (2.0f * mPhase / PI2) - 1.0f;
+			float saw1 = (2.0f * t) - 1.0f;
 			saw1 -= pblep(t);
-			float phaseShift = (float)(mPhase+PI2*P.VAL[P.FILTER2_OVERLOAD]);
+			float pulsewidth = isSub?.5f:P.VAL[isBase?P.OSC1_PULSE_WIDTH:P.OSC2_PULSE_WIDTH];
+			float phaseShift = (float)(mPhase+PI2*pulsewidth);
 			while (phaseShift >= PI2) {
 				phaseShift -= PI2;
 	        }
-			float saw2 = (2.0f * phaseShift/PI2) - 1.0f;
-			saw2 -= pblep(phaseShift/PI2);
+			float t2 = phaseShift/PI2;
+			float saw2 = (2.0f * t2) - 1.0f;
+			saw2 -= pblep(t2);
 			outVal = saw1-saw2;
 			break;
 		case TRIANGLE:
@@ -108,14 +148,17 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	        }
 			outVal += pblep(t);
 			outVal -= pblep((t + 0.5f)%1.0f);
-			if (mode==Mode.TRIANGLE) {
-		        outVal = mPhaseIncrement * outVal + (1 - mPhaseIncrement) * lastOutput;
-			}
+	        outVal = mPhaseIncrement * outVal + (1 - mPhaseIncrement) * lastOutput;
 			break;
 		}
 		mPhase += mPhaseIncrement;
         while (mPhase >= PI2) {
             mPhase -= PI2;
+            if (isBase) {
+            	syncOnFrameBuffer[sampleNo] = true;
+            	syncPhase = mPhase;
+            }
+            drift = (float)Math.random()*.5f-.25f;
         }
         lastOutput = outVal;
 		return outVal*volume;

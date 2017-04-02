@@ -33,26 +33,29 @@
 	</div>
 	<div id="main">
 		<div id="oscillators" class="group yellow">
-			<canvas id="waveformosc1" class="renderwaveform" width="50" height="48"></canvas>
-			<canvas id="waveformosc2" class="renderwaveform" width="50" height="48"></canvas>
 			<h2>Oscillators</h2>
 			<div class="innergroup">
-				<div class="sectionsettings exclusiveunstyled" data-control-path="/osc/mode">
-					<span class="checkbox smaller" title="Waves" data-osc="/option/osc/mode/VIRTUAL_ANALOG" data-osc-send="/osc/mode,0"></span>
-					<span class="checkbox smaller" title="Additive Organ" data-osc="/option/osc/mode/ADDITIVE" data-osc-send="/osc/mode,0.5"></span>
-					<span class="checkbox smaller" title="Plucked" data-osc="/option/osc/mode/EXITER" data-osc-send="/osc/mode,1"></span>
-				</div>
 				<div class="innergroup">
-					<input type="text" value="0" class="dial large waveform" title="OSC1 Wave" data-label-VIRTUAL_ANALOG="OSC1 Wave" data-label-ADDITIVE="Harmonics 1" data-label-EXITER="Harmonics" data-osc="/osc/1/wave" />
+					<div class="exclusive" data-control-path="/osc/1/wave">
+						<span class="checkbox smaller" title="SIN" data-osc="/option/osc/1/wave/SINE" data-osc-send="/osc/1/wave,0"></span>
+						<span class="checkbox smaller" title="TRI" data-osc="/option/osc/1/wave/TRIANGLE" data-osc-send="/osc/1/wave,0.25"></span>
+						<span class="checkbox smaller" title="SAW" data-osc="/option/osc/1/wave/SAW" data-osc-send="/osc/1/wave,0.5"></span>
+						<span class="checkbox smaller" title="PUL" data-osc="/option/osc/1/wave/PULSE" data-osc-send="/osc/1/wave,1"></span>
+					</div>
 					<br />
-					<a href="#" class="push showOnly-virtual-analog" data-osc="/command/osc/1/togglewaveset" data-control-path="/osc/1/waveset"><label data-osc="/label/osc/1/waveset">Waveset1</label></a>
+					<input type="text" value="0" class="dial medium" title="Pulse Width" data-osc="/osc/1/pw" />
 					<br />
 					<input type="text" value="0" class="dial medium" title="Noise Level" data-osc="/osc/noiselevel" />
 				</div>
 				<div class="innergroup">
-					<input type="text" value="0" class="dial large waveform" title="OSC2 Wave" data-label-VIRTUAL_ANALOG="OSC2 Wave" data-label-ADDITIVE="Harmonics 2" data-label-EXITER="Damp" data-osc="/osc/2/wave" />
+					<div class="exclusive" data-control-path="/osc/2/wave">
+						<span class="checkbox smaller" title="SIN" data-osc="/option/osc/2/wave/SINE" data-osc-send="/osc/2/wave,0"></span>
+						<span class="checkbox smaller" title="TRI" data-osc="/option/osc/2/wave/TRIANGLE" data-osc-send="/osc/2/wave,0.25"></span>
+						<span class="checkbox smaller" title="SAW" data-osc="/option/osc/2/wave/SAW" data-osc-send="/osc/2/wave,0.5"></span>
+						<span class="checkbox smaller" title="PUL" data-osc="/option/osc/2/wave/PULSE" data-osc-send="/osc/2/wave,1"></span>
+					</div>
 					<br />
-					<a href="#" class="push showOnly-virtual-analog" data-osc="/command/osc/2/togglewaveset" data-control-path="/osc/2/waveset"><label data-osc="/label/osc/2/waveset">Waveset2</label></a>
+					<input type="text" value="0" class="dial medium" title="Pulse Width" data-osc="/osc/2/pw" />
 					<br />
 					<input type="text" value="0" class="dial small" title="Semis" data-cursor="10" data-osc="/osc/2/tuning" data-osc-label="/label/osc/2/tuning" />
 					<input type="text" value="0" class="dial small" title="Fine" data-cursor="10" data-osc="/osc/2/tuning/fine" />
@@ -60,7 +63,11 @@
 					<label>Tuning OSC2</label>
 				</div>
 				<div class="innergroup">
-					<input type="text" value="0" class="dial large" title="1 Mix 2" data-cursor="10" data-osc="/osc/mix" />
+					<input type="text" value="0" class="dial medium" title="Vol 1" data-osc="/osc/1/vol" />
+					<br />
+					<input type="text" value="0" class="dial medium" title="Vol 2" data-osc="/osc/2/vol" />
+					<br />
+					<input type="text" value="0" class="dial medium" title="Sub" data-osc="/osc/sub/vol" />
 					<div style="height:1.5em">&darr;</div>
 					<input type="text" value="0" class="dial medium" title="Gain" data-osc="/osc/gain" data-osc-label="/label/osc/gain" style="margin-top:1.em" />
 				</div>

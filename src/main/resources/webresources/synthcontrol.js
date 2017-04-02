@@ -121,10 +121,6 @@ $(document).ready(function () {
 							}
 							continue;
 						}
-						if (parts[0]=="/waveform/osc1" || parts[0]=="/waveform/osc2") {
-							renderWaveform(parts[0], parts[1]);
-							continue;
-						}
 						if (parts[0]=="/settings") {
 							renderSettings(parts[1]);
 						}
@@ -364,33 +360,6 @@ $(document).ready(function () {
 		$("#savename").val($("*[data-osc='/patch/name']").first().text());
 	}
 	
-	var renderWaveform = function(path, values) {
-		var oscNumber = path.charAt(13);
-		var values = values.split(',');
-		var canvas = document.getElementById('waveformosc'+oscNumber);
-		var ctx = canvas.getContext("2d");
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		ctx.strokeStyle = "#999958";
-		ctx.lineWidth = 1;
-		ctx.beginPath();
-		for (var x=0;x<values.length;x++) {
-			var y = values[x];
-			if (y>=0) {
-				ctx.moveTo(x,20+4);
-				ctx.lineTo(x,parseInt(y)+4);
-			}
-			else {
-				ctx.moveTo(x,canvas.height);
-				ctx.lineTo(x,parseInt(y)+canvas.height);
-			}
-		}
-		ctx.stroke();
-		var data = canvas.toDataURL();
-		var displayElement = $('*[data-control-path="/osc/'+oscNumber+'/wave"]');
-		displayElement.css('background-image','url('+data+')');
-	}
-	
-	
 	var renderSettings = function(settingsjson) {
 		var settings = jQuery.parseJSON(settingsjson);
 		dimmer.show();		
@@ -449,15 +418,6 @@ $(document).ready(function () {
 		}
 	};
 	
-	observers.push({ path:'/label/osc/mode', fn: function(path, value) {
-			$("body").removeClass('VIRTUAL_ANALOG').removeClass('ADDITIVE').removeClass('EXITER').addClass(value);
-			var attrkey = "data-label-"+value;
-			$("*["+attrkey+"]").each(function() {
-				var label = $(this).parent().parent().find("label");
-				label.text($(this).attr(attrkey));
-			}); 
-		}
-	});
 	observers.push({ path:'/command/sequence/', fn: function(path, value) {
 		if (value!=1) { return };
 		if (path.indexOf('stop')>-1) {

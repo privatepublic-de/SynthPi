@@ -59,7 +59,6 @@ public class Randomizer {
 
 		// filters
 		boolean filter1on = enable();
-		boolean filter2on = enable(.25f);
 		if (filter1on) {
 			P.setDirectly(P.FILTER1_ON, 1);
 			P.setDirectly(P.FILTER1_FREQ, range(.2f,.8f));
@@ -68,23 +67,6 @@ public class Randomizer {
 		}
 		else {
 			P.setDirectly(P.FILTER1_ON, 0);
-		}
-		if (filter2on) {
-			P.setDirectly(P.FILTER2_ON, 1);
-			P.setDirectly(P.FILTER2_FREQ, range(.2f,.8f));
-			P.setDirectly(P.FILTER2_RESONANCE, range(0, .7f));
-			P.setDirectly(P.FILTER2_TYPE, fullRange());
-		}
-		else {
-			P.setDirectly(P.FILTER2_ON, 0);
-		}
-		if (filter1on && filter2on) {
-			P.setDirectly(P.FILTER_PARALLEL, range(.334f, 1));
-		}
-		else {
-			if (filter1on || filter2on) {
-				P.setDirectly(P.FILTER_PARALLEL, 0);
-			}
 		}
 		
 		// amp

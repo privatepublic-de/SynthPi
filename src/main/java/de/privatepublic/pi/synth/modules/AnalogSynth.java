@@ -54,7 +54,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 		distort.process(nframes, outputs);
 		chorus.process(nframes, outputs);
 		delay.process(nframes, outputs);
-		reverb.process(nframes, outputs);
+		// reverb.process(nframes, outputs);
 		if (P.LIMITER_ENABLED) {
 			limiter.process(nframes, outputs);
 		}
