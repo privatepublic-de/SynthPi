@@ -130,7 +130,15 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 		case SQUARE:
 			float saw1 = (2.0f * t) - 1.0f;
 			saw1 -= pblep(t);
-			float pulsewidth = isSub?.5f:P.VAL[isBase?P.OSC1_PULSE_WIDTH:P.OSC2_PULSE_WIDTH];
+			float pulsewidth = .5f;
+			
+			if (isBase) {
+				pulsewidth = P.VAL[P.OSC1_PULSE_WIDTH]+LFO.lfoAmountAdd(sampleNo, P.VALXC[P.MOD_WAVE1_AMOUNT]);
+			}
+			else {
+				pulsewidth = P.VAL[P.OSC2_PULSE_WIDTH]+LFO.lfoAmountAdd(sampleNo, P.VALXC[P.MOD_WAVE2_AMOUNT]);;
+			}
+			
 			float phaseShift = (float)(mPhase+PI2*pulsewidth);
 			while (phaseShift >= PI2) {
 				phaseShift -= PI2;
