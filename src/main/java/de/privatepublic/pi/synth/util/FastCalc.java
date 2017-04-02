@@ -26,6 +26,38 @@ public final class FastCalc {
 		return val<min?min:(val>max?max:val);
 	}
 	
+	public static float PI2 = (float) (2*Math.PI);
+	
+	public static final float sin(float phase) {
+		float out;
+		if (phase < -Math.PI)
+		    phase += PI2;
+		else
+			if (phase >  Math.PI)
+			    phase -= PI2;
+
+		//compute sine
+		if (phase < 0)
+		{
+		    out = 1.27323954f * phase + .405284735f * phase * phase;
+		    
+		    if (out < 0)
+		        out = .225f * (out *-out - out) + out;
+		    else
+		        out = .225f * (out * out - out) + out;
+		}
+		else
+		{
+		    out = 1.27323954f * phase - 0.405284735f * phase * phase;
+		    
+		    if (out < 0)
+		        out = .225f * (out *-out - out) + out;
+		    else
+		        out = .225f * (out * out - out) + out;
+		}
+		return out;
+	}
+	
 	public static class InterpolatedArrayAccess {
 		
 		private final float[] data;

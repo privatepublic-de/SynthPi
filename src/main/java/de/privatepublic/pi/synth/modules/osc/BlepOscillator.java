@@ -7,6 +7,7 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IPitchBendReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
+import de.privatepublic.pi.synth.util.FastCalc;
 
 public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver{
 	
@@ -82,7 +83,7 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 		float outVal = 0;
 		switch(mode) {
 		case SINE:
-	        outVal = (float)Math.sin(mPhase);
+	        outVal = FastCalc.sin(mPhase);
 			break;
 		case SAW:
 			outVal = (float) ((2.0 * mPhase / PI2) - 1.0);
