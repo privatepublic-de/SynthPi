@@ -30,6 +30,7 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
     float lastOutput;
     float syncPhase = 0;
     float drift = 0;
+    boolean ampmod = false;
 	
 
 	public BlepOscillator(IOscillator.Mode mode) {
@@ -51,22 +52,32 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	@Override
 	public float processSample1st(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer,
 			EnvADSR modEnvelope) {
-		
-		if (effectiveFrequency!=targetFrequency) {
-			if (effectiveFrequency<targetFrequency) {
-				effectiveFrequency += glideStepSize;
-				mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
-				mPhaseIncrementDiv = mPhaseIncrement/PI2;
-			}
-			else if (effectiveFrequency>targetFrequency) {
-				effectiveFrequency -= glideStepSize;
-				mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
-				mPhaseIncrementDiv = mPhaseIncrement/PI2;
-			}
-			if (Math.abs(effectiveFrequency-targetFrequency)<glideStepSize) {
-				effectiveFrequency = targetFrequency;
-				mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
-				mPhaseIncrementDiv = mPhaseIncrement/PI2;
+		if (ampmod && !P.IS[P.OSC2_AM]) {
+			effectiveFrequency = targetFrequency;
+		}
+		final float ampModAmount = P.VALC[P.MOD_ENV1_AM_AMOUNT];
+		final float ampamount = FastCalc.ensureRange(P.VAL[P.OSC2_AM]+modEnvelope.outValue*ampModAmount, 0, 1);
+		ampmod = isSecond && (ampamount>0 || ampModAmount!=0);
+		if (ampmod) {
+			effectiveFrequency = targetFrequency*((ampamount*4));			
+		}
+		else {
+			if (effectiveFrequency!=targetFrequency) {
+				if (effectiveFrequency<targetFrequency) {
+					effectiveFrequency += glideStepSize;
+					mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
+					mPhaseIncrementDiv = mPhaseIncrement/PI2;
+				}
+				else if (effectiveFrequency>targetFrequency) {
+					effectiveFrequency -= glideStepSize;
+					mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
+					mPhaseIncrementDiv = mPhaseIncrement/PI2;
+				}
+				if (Math.abs(effectiveFrequency-targetFrequency)<glideStepSize) {
+					effectiveFrequency = targetFrequency;
+					mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
+					mPhaseIncrementDiv = mPhaseIncrement/PI2;
+				}
 			}
 		}
 		final float freq;
@@ -169,7 +180,8 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
             drift = (float)Math.random()*.5f-.25f;
         }
         lastOutput = outVal;
-		return outVal*volume;
+        if (isBase) am_buffer[sampleNo] = outVal;
+        return ampmod ? am_buffer[sampleNo]*outVal*volume : outVal*volume;
 	}
 
 	@Override
