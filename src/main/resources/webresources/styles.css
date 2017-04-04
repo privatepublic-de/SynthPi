@@ -335,29 +335,11 @@ h3 {
 	border-color: inherit;
 }
 
-#oscillators .innergroup {
-	text-align: right;
-}
-
-#oscillators .common {
-	border-top: 1px solid;
-	border-color: inherit;
-}
-
 #oscillators .osc {
 	border-bottom: 1px solid;
 	border-color: inherit;
-	padding: .5em 0;
+	padding: 12px 0;
 }
-
-.VIRTUAL_ANALOG input.waveform {
-	margin-top: 56px!important;
-}
-
-.ADDITIVE input.waveform {
-	margin-top: 13px!important;
-}
-
 
 
 #filterchain {
@@ -799,10 +781,6 @@ div.WHATEVER .push {
 	padding-bottom: 4px;
 	border-bottom: 1px solid;
 	border-color: inherit;
-}
-
-canvas.renderwaveform {
-	display: none;
 }
 
 canvas#limiterview {

@@ -58,9 +58,9 @@
 					<br />
 					<input type="text" value="0" class="dial small" title="Semis" data-cursor="10" data-osc="/osc/2/tuning" data-osc-label="/label/osc/2/tuning" />
 					<input type="text" value="0" class="dial small" title="Fine" data-cursor="10" data-osc="/osc/2/tuning/fine" />
-					<div class="innergroup">
-						<span class="checkbox smaller" title="Sync" data-osc="/osc/2/sync"></span>
-						<input type="text" value="0" class="dial small" title="Ringmod" data-osc="/osc/2/am" data-osc-label="/label/osc/2/am" />
+					<div class="innergroup" style="text-align:left">
+						<span class="checkbox smaller" title="Sync" data-osc="/osc/2/sync"></span><br />
+						<span class="checkbox smaller" title="Ringmod" data-osc="/osc/2/am"></span>
 					</div>
 				</div>
 			</div>
@@ -83,14 +83,14 @@
 			</div>
 		</div>
 		<div id="filter1" class="group orange">
-			<h2>Filter 1 <span class="checkbox smaller" title="on/off" data-osc="/filter/1/enable"></span></h2>
+			<h2>Filter <span class="checkbox smaller" title="on/off" data-osc="/filter/1/enable"></span></h2>
 			<div class="innergroup">
 				<div class="innergroup">
 					<input type="text" value="0" class="dial small" title="Drive" data-osc="/filter/1/overload" /><br />
 					<input type="text" value="0" class="dial small" title="Keyboard" data-osc="/filter/1/kbdtracking" />					
 				</div>
 				<input type="text" value="0" class="dial large" title="Freq" data-osc="/filter/1/freq" data-osc-label="/label/filter/1/freq" />
-				<input type="text" value="0" class="dial large" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
+				<input type="text" value="0" class="dial medium" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
 			</div>
 			<div class="exclusive" data-control-path="/filter/1/type">
 				<span class="checkbox smaller" title="LP24" data-osc="/option/filter/1/type/LOWPASS24" data-osc-send="/filter/1/type,0"></span>

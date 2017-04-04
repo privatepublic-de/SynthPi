@@ -321,7 +321,7 @@ public class P {
 	
 	public static final int DELAY_WET = 71;
 	public static final int OSC_MODE = 72;
-	public static final int OSC_GAIN = 73;
+	public static final int UNUSED_OSC_GAIN = 73;
 	public static final int MIDI_VELOCITY_CURVE = 74;
 	public static final int REVERB_ONE_KNOB = 75;
 	public static final int SPREAD = 76;
@@ -348,7 +348,6 @@ public class P {
 		REVERB_ONE_KNOB,
 		FILTER_PARALLEL_MIX,
 		OSC_NOISE_LEVEL,
-		OSC_GAIN,
 		DELAY_WET,
 		DELAY_FEEDBACK
 	};
@@ -412,7 +411,6 @@ public class P {
 		OSC_PATH[OSC_GLIDE_RATE] = "/osc/gliderate";
 		OSC_PATH[OSC_MONO] = "/osc/mono";
 		OSC_PATH[OSC_MODE] = "/osc/mode";
-		OSC_PATH[OSC_GAIN] = "/osc/gain";
 		
 		// modulation
 		OSC_PATH[MOD_RATE] = "/mod/1/rate";
@@ -513,7 +511,6 @@ public class P {
 		setDirectly(FILTER1_ENV_DEPTH, 0.5f);
 		setDirectly(OSC_MODE, 0);
 		setDirectly(OSC_NOISE_LEVEL, 0);
-		setDirectly(OSC_GAIN, .8f);
 		setDirectly(OSC1_WAVE, 0.3333334f);
 		setDirectly(OSC2_WAVE, 0.5f);
 		setDirectly(OSC2_TUNING_FINE, 0.66667f);

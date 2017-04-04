@@ -128,9 +128,9 @@ public class AnalogSynthVoice {
 	public void process(final float[][] outbuffers, final int nframes) {
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		
-		final float osc1Vol = P.VALX[P.OSC1_VOLUME]*P.VALX[P.OSC_GAIN]*.75f;
-		final float osc2Vol = P.VALX[P.OSC2_VOLUME]*P.VALX[P.OSC_GAIN]*.75f;
-		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME]*P.VALX[P.OSC_GAIN]*.75f;
+		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
+		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
+		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME];
 		noiseLevel = P.VALX[P.OSC_NOISE_LEVEL];
 		noiseModAmount = P.VALXC[P.MOD_ENV1_NOISE_AMOUNT];
 		float val;
