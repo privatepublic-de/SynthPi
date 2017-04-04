@@ -199,7 +199,7 @@ public class FancyParam {
 			result = P.VAL_OSCILLATOR_MODE.toString();
 			break;
 		case P.OSC2_AM:
-			result = "x"+FORMAT_FLOAT2.format((P.VAL[P.OSC2_AM]*4));
+			result = (P.VAL[P.OSC2_AM]>0?"x"+FORMAT_FLOAT2.format((P.VAL[P.OSC2_AM]*4)):"OFF");
 			break;
 		case P.FILTER1_TYPE:
 			result = P.FilterType.selectedFilterType(value).name();
