@@ -250,6 +250,11 @@ a {
 	height: 62px;
 }
 
+.checkbox.small {
+	width: 32px;
+	height: 32px;
+}
+
 .smaller {
 	width: 18px;
 	height: 18px;
@@ -331,12 +336,18 @@ h3 {
 }
 
 #oscillators .innergroup {
-	vertical-align: top;
+	text-align: right;
 }
 
 #oscillators .common {
 	border-top: 1px solid;
 	border-color: inherit;
+}
+
+#oscillators .osc {
+	border-bottom: 1px solid;
+	border-color: inherit;
+	padding: .5em 0;
 }
 
 .VIRTUAL_ANALOG input.waveform {
@@ -965,4 +976,36 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	color: #f33;
 	margin-left: .5em;
 	cursor: default;
+}
+
+.sin, .tri, .saw, .pul,
+.sin .inner, .tri .inner, .saw .inner, .pul .inner {
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.sin {
+	background-image: url(img/bg_sin.png);
+}
+.tri {
+	background-image: url(img/bg_tri.png);
+}
+.saw {
+	background-image: url(img/bg_saw.png);
+}
+.pul {
+	background-image: url(img/bg_pul.png);
+}
+
+.sin .inner {
+	background-image: url(img/bg_sin_sel.png);
+}
+.tri .inner {
+	background-image: url(img/bg_tri_sel.png);
+}
+.saw .inner {
+	background-image: url(img/bg_saw_sel.png);
+}
+.pul .inner {
+	background-image: url(img/bg_pul_sel.png);
 }
