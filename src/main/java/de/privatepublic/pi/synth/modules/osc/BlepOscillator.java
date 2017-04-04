@@ -52,16 +52,16 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	@Override
 	public float processSample1st(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer,
 			EnvADSR modEnvelope) {
-		if (ampmod && !P.IS[P.OSC2_AM]) {
-			effectiveFrequency = targetFrequency;
-		}
-		final float ampModAmount = P.VALC[P.MOD_ENV1_AM_AMOUNT];
-		final float ampamount = FastCalc.ensureRange(P.VAL[P.OSC2_AM]+modEnvelope.outValue*ampModAmount, 0, 1);
-		ampmod = isSecond && (ampamount>0 || ampModAmount!=0);
-		if (ampmod) {
-			effectiveFrequency = targetFrequency*((ampamount*4));			
-		}
-		else {
+//		if (ampmod && !P.IS[P.OSC2_AM]) {
+//			effectiveFrequency = targetFrequency;
+//		}
+		final float ampModAmount = P.VAL[P.OSC2_AM];//P.VALC[P.MOD_ENV1_AM_AMOUNT];
+//		final float ampamount = FastCalc.ensureRange(P.VAL[P.OSC2_AM]+modEnvelope.outValue*ampModAmount, 0, 1);
+		ampmod = isSecond && (/*ampamount>0 || */ampModAmount!=0);
+//		if (ampmod) {
+//			effectiveFrequency = targetFrequency*((ampamount*4));			
+//		}
+//		else {
 			if (effectiveFrequency!=targetFrequency) {
 				if (effectiveFrequency<targetFrequency) {
 					effectiveFrequency += glideStepSize;
@@ -79,7 +79,7 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 					mPhaseIncrementDiv = mPhaseIncrement/PI2;
 				}
 			}
-		}
+//		}
 		final float freq;
 		switch(mode) {
 		case PRIMARY:
