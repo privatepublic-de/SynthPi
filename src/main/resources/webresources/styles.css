@@ -25,6 +25,9 @@ label {
 a {
 	color: #999c9f;
 }
+th {
+	font-weight: normal;
+}
 
 #main {
 	width: 1280px;
@@ -369,32 +372,13 @@ h3 {
 	margin-top: 1em;
 }
 #amplifier {
-	min-height: 252px;
+	
 }
 
 #amplifier .innergroup.hilite {
-	margin-left: 8px;
-}
-
-#amplifier .cblist {
-	text-align: center;
-}
-
-#amplifier .cblist label {
-	margin-right: .75em;
 }
 
 
-#amplifier .fx {
-	padding-left: 10px;
-	margin-left: 10px;
-	margin-right: 8px;
-	border-left: 1px solid;
-	border-left-color: inherit;
-}
-.fx .innergroup {
-	vertical-align: top;
-}
 
 
 #modulators {

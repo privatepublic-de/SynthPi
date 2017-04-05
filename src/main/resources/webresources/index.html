@@ -119,7 +119,7 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="modulators" class="group pink">
 			<h2>Modulators</h2>
 			<div class="innergroup lfo">
@@ -127,15 +127,7 @@
 					<input type="text" value="0" class="dial medium" title="LFO Rate" data-osc="/mod/1/rate" data-osc-label="/label/mod/1/rate" />
 					<input type="text" value="0" class="dial medium" title="Amount" data-osc="/mod/1/amount" data-osc-label="/label/mod/1/amount" />
 				</div>
-				&rarr;
-				<input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/1/depth/pitch" />
-				<input type="text" value="0" class="dial small" title="Pitch 2" data-cursor="10" data-osc="/mod/1/depth/pitch/2" />
-				<input type="text" value="0" class="dial small" title="PWM 1" data-cursor="10" data-osc="/mod/1/depth/wave/1" />
-				<input type="text" value="0" class="dial small" title="PWM 2" data-cursor="10" data-osc="/mod/1/depth/wave/2" />
-				<input type="text" value="0" class="dial small" title="Filter 1" data-cursor="10" data-osc="/mod/1/depth/filter/1" />
-				<input type="text" value="0" class="dial small" title="Vol" data-osc="/mod/1/depth/vol" />
 			</div>
-			<br />
 			<div class="innergroup lfotypes">
 				<label>LFO Waveform</label>
 				<div class="exclusiveunstyled" data-control-path="/mod/1/type">
@@ -148,55 +140,70 @@
 				</div>
 				<span class="checkbox tiny" title="Key Reset" data-osc="/mod/1/reset"></span>			
 			</div>
-			<div class="innergroup env">
-				<div class="box-small-2x2 hilite">
-					<input type="text" value="0" class="dial small" title="Attack" data-osc="/mod/env/1" data-osc-label="/label/mod/env/1" />
-					<input type="text" value="0" class="dial small" title="Decay" data-osc="/mod/env/2" data-osc-label="/label/mod/env/2" />
-					<input type="text" value="0" class="dial small" title="Sustain" data-osc="/mod/env/3" data-osc-label="/label/mod/env/3" />
-					<input type="text" value="0" class="dial small" title="Release" data-osc="/mod/env/4" data-osc-label="/label/mod/env/4" />
-				</div>
-				<div class="innergroup" style="text-align:left">
-					<label>Mod Envelope</label>
+			<br/>
+			<div class="innergroup">
+				<label>ENV1</label><br />
+				<div class="innergroup hilite">
+					<input type="text" value="0" class="dial medium" title="Attack" data-osc="/amp/env/1" data-osc-label="/label/amp/env/1"/>
+					<input type="text" value="0" class="dial medium" title="Decay" data-osc="/amp/env/2" data-osc-label="/label/amp/env/2" />
 					<br />
-					&rarr;
-					<input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/env/depth/pitch" />
-					<input type="text" value="0" class="dial small" title="Pitch2" data-cursor="10" data-osc="/mod/env/depth/pitch/2" />
-					<input type="text" value="0" class="dial small" title="Wave" data-cursor="10" data-osc="/mod/env/depth/wave" />
-					<input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/depth/noise" />
-					<input type="text" value="0" class="dial small" title="Ringmod" data-cursor="10" data-osc="/mod/env/depth/am" />
+					<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/amp/env/3" data-osc-label="/label/amp/env/3" />
+					<input type="text" value="0" class="dial medium" title="Release" data-osc="/amp/env/4" data-osc-label="/label/amp/env/4" />
+				</div><br/>
+				<span class="checkbox tiny" title="Loop Env" data-osc="/amp/env/loop"></span>
+			</div>
+			<div class="innergroup">
+				<label>ENV2</label><br />
+				<div class="innergroup hilite">
+					<input type="text" value="0" class="dial medium" title="Attack" data-osc="/mod/env/1" data-osc-label="/label/mod/env/1" />
+					<input type="text" value="0" class="dial medium" title="Decay" data-osc="/mod/env/2" data-osc-label="/label/mod/env/2" />
 					<br />
-					<span class="checkbox tiny" title="Loop" data-osc="/mod/env/loop"></span>
-				</div>
+					<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/mod/env/3" data-osc-label="/label/mod/env/3" />
+					<input type="text" value="0" class="dial medium" title="Release" data-osc="/mod/env/4" data-osc-label="/label/mod/env/4" />
+				</div><br />
+				<span class="checkbox tiny" title="Loop" data-osc="/mod/env/loop"></span>
 			</div>
 		</div>
-		<div id="amplifier" class="group blue">
-			<h2>Amplifier</h2>
-			<div class="innergroup hilite">
-				<input type="text" value="0" class="dial medium" title="Attack" data-osc="/amp/env/1" data-osc-label="/label/amp/env/1"/>
-				<input type="text" value="0" class="dial medium" title="Decay" data-osc="/amp/env/2" data-osc-label="/label/amp/env/2" />
-				<br />
-				<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/amp/env/3" data-osc-label="/label/amp/env/3" />
-				<input type="text" value="0" class="dial medium" title="Release" data-osc="/amp/env/4" data-osc-label="/label/amp/env/4" />
-				<div class="cblist"> 
-					<span class="checkbox tiny" title="Velocity" data-osc="/amp/velocity"></span>
-					<span class="checkbox tiny" title="Loop Env" data-osc="/amp/env/loop"></span>
-				</div>
+		
+		<div id="modmatrix" class="group pink">
+			<h2>Modmatrix</h2>
+			<div class="innergroup">
+				<table>
+					<tr><th></th><th>PITCH1/2</th><th>PITCH2</th><th>PW1</th><th>PW2</th><th>NOISE</th><th>FILTER</th><th>VOL</th></tr>
+					<tr>
+						<th>LFO</th>
+						<td><input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/1/depth/pitch" /></td>
+						<td><input type="text" value="0" class="dial small" title="Pitch 2" data-cursor="10" data-osc="/mod/1/depth/pitch/2" /></td>
+						<td><input type="text" value="0" class="dial small" title="PWM 1" data-cursor="10" data-osc="/mod/1/depth/wave/1" /></td>
+						<td><input type="text" value="0" class="dial small" title="PWM 2" data-cursor="10" data-osc="/mod/1/depth/wave/2" /></td>
+						<td></td>
+						<td><input type="text" value="0" class="dial small" title="Filter 1" data-cursor="10" data-osc="/mod/1/depth/filter/1" /></td>
+						<td><input type="text" value="0" class="dial small" title="Vol" data-osc="/mod/1/depth/vol" /></td>
+					</tr>
+					<tr>
+						<th>ENV2</th>
+						<td><input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/env/depth/pitch" /></td>
+						<td><input type="text" value="0" class="dial small" title="Pitch2" data-cursor="10" data-osc="/mod/env/depth/pitch/2" /></td>
+						<td></td>
+						<td></td>
+						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/depth/noise" /></td>
+					</tr>
+				</table>
 			</div>
-			<div class="innergroup fx">
+		</div>
+		
+		<div id="amplifier" class="group blue">
+			<h2>Effects &amp; Output</h2>
+			<div class="innergroup">
 				<div class="innergroup">
 					<input type="text" value="0" class="dial small" title="Drive" data-osc="/fx/overdrive" />
+					<input type="text" value="0" class="dial small" title="Chorus" data-osc="/fx/chorus/drywet" data-osc-label="/label/fx/chorus/drywet" />
 					<br />
 					<input type="text" value="0" class="dial small" title="Delay" data-osc="/fx/delay/wet" data-osc-label="/label/fx/delay/wet" />
-					<br />
-					<input type="text" value="0" class="dial small" title="Reverb" data-osc="/fx/reverb/oneknob" data-osc-label="/label/fx/reverb/oneknob" />
-				</div>
-				<div class="innergroup">
-					<input type="text" value="0" class="dial small" title="Chorus" data-osc="/fx/chorus/drywet" data-osc-label="/label/fx/chorus/drywet" />
-					<input type="text" value="0" class="dial small" title="Spread" data-osc="/fx/spread" data-osc-label="/label/fx/spread" />
-					<br />
 					<input type="text" value="0" class="dial small" title="Time" data-osc="/fx/delay/rate" data-osc-label="/label/fx/delay/rate" />
 					<input type="text" value="0" class="dial small" title="Feedb." data-osc="/fx/delay/feedback" data-osc-label="/label/fx/delay/feedback" />
-					<br />
+				</div>
+				<div class="innergroup">
 					<input type="text" value="0" class="dial medium" title="Volume" data-osc="/amp/volume" data-osc-label="/label/amp/volume" />
 				</div>
 			</div>
