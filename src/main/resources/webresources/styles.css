@@ -169,7 +169,7 @@ th {
 	background-image: url(img/ic_close_black_18dp.png);
 }
 
-.blue, .group.blue, .blue input, .window.blue {
+.blue, .group.blue, .blue input, .window.blue, .innergroup.blue, .innergroup.blue input {
 	color: #0cf;
 	border-color: #069!important;
 	background-color: #013;
