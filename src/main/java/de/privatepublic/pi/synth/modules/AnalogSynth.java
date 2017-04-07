@@ -15,8 +15,9 @@ import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
 import de.privatepublic.pi.synth.modules.fx.Delay;
 import de.privatepublic.pi.synth.modules.fx.DistortionExp;
-import de.privatepublic.pi.synth.modules.fx.Freeverb;
-import de.privatepublic.pi.synth.modules.fx.IProcessor;
+import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
+import de.privatepublic.pi.synth.modules.fx.IProcessorMono2Stereo;
+import de.privatepublic.pi.synth.modules.fx.IProcessorStereo;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
@@ -32,12 +33,14 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final float[][] outputs = new float[][]{new float[P.SAMPLE_BUFFER_SIZE], new float[P.SAMPLE_BUFFER_SIZE]};
 	private final float[] outputL = outputs[0];
 	private final float[] outputR = outputs[1];
+	private final float[] renderBuffer = new float[P.SAMPLE_BUFFER_SIZE];
 	
-	private final IProcessor chorus = new Chorus(25);
-	private final IProcessor distort = new DistortionExp();
-	private final IProcessor reverb = new Freeverb(P.SAMPLE_RATE_HZ, P.SAMPLE_BUFFER_SIZE);
-	private final IProcessor limiter = new Limiter(20, 500);
-	private final IProcessor delay = new Delay();
+	private final IProcessorMono2Stereo chorus = new Chorus(25);
+	private final IProcessorMono distort = new DistortionExp();
+	private final IProcessorStereo limiter = new Limiter(20, 500);
+	private final IProcessorStereo delay = new Delay();
+	
+	private int numberBufferChunks = P.SAMPLE_BUFFER_SIZE/P.CONTROL_BUFFER_SIZE;
 	
 	public AnalogSynth() {
 		for (int i=0;i<P.POLYPHONY_MAX;++i) {
@@ -48,16 +51,20 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	
 	@Override
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
-		for (int i=0; i<P.POLYPHONY; i++) {
-			voices[i].process(outputs, nframes);
+		// 
+		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {
+			final int startPos = chunkNo*P.CONTROL_BUFFER_SIZE;
+			for (int i=0; i<P.POLYPHONY; i++) {
+				voices[i].process(renderBuffer, startPos);
+			}
+			distort.process(renderBuffer, startPos);
+			chorus.process(renderBuffer, outputs, startPos);
+			delay.process(outputs, startPos);
+			if (P.LIMITER_ENABLED) {
+				limiter.process(outputs, startPos);
+			}
 		}
-		distort.process(nframes, outputs);
-		chorus.process(nframes, outputs);
-		delay.process(nframes, outputs);
-		// reverb.process(nframes, outputs);
-		if (P.LIMITER_ENABLED) {
-			limiter.process(nframes, outputs);
-		}
+		
 		final float gain =  P.VALX[P.VOLUME]*FINAL_GAIN;
 		final FloatBuffer outL = outbuffers.get(0);
 		final FloatBuffer outR = outbuffers.get(1);
@@ -65,7 +72,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			outL.put((float)(outputL[i] * gain));
 			outR.put((float)(outputR[i] * gain));
 			// clear while copying
-			outputL[i] = outputR[i] = 0;
+			renderBuffer[i] = outputL[i] = outputR[i] = 0;
 		}
 		LFO.GLOBAL.nextBufferSlice(nframes);
 	}

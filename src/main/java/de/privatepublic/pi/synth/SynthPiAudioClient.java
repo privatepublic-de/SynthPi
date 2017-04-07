@@ -90,6 +90,7 @@ public class SynthPiAudioClient implements AudioClient {
 		log.info("Audio configured:\n{}", context);
 		P.SAMPLE_BUFFER_SIZE = context.getMaxBufferSize();
 		P.SAMPLE_RATE_HZ = context.getSampleRate();
+		P.CONTROL_BUFFER_SIZE = (int)(P.SAMPLE_RATE_HZ/3000);
 		P.MILLIS_PER_SAMPLE_FRAME = 1000f/P.SAMPLE_RATE_HZ;
 		bufferTimeNS = (long)(((double) context.getMaxBufferSize() / context.getSampleRate()) * 1e9);
 		WaveTables.init();

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 
-public final class Freeverb implements IProcessor {
+public final class Freeverb {
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(Freeverb.class);

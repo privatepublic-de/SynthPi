@@ -2,7 +2,7 @@ package de.privatepublic.pi.synth.modules.fx;
 
 import de.privatepublic.pi.synth.P;
 
-public class Delay implements IProcessor {
+public class Delay implements IProcessorStereo {
 
 	private final int delayLineSize = (int)(P.SAMPLE_RATE_HZ*2);
 	private final int delayLineSizeUnder = delayLineSize-1;
@@ -15,19 +15,20 @@ public class Delay implements IProcessor {
 	
 	private float lastrate = 0;
 	
-	public void process(final int bufferLen, final float[][] buffers) {
+	public void process(final float[][] buffers, final int startPos) {
 		float feedback = P.VAL[P.DELAY_FEEDBACK];
 		float delayRate = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
-		float delta = (delayRate - lastrate) / bufferLen;
+		float delta = (delayRate - lastrate) / P.CONTROL_BUFFER_SIZE;
 		final float wet = P.VAL[P.DELAY_WET];
 		final float wetInv = 1-wet;
 		final float[] bufL = buffers[0];
 		final float[] bufR = buffers[1];
 		float in1, in2, readindex, indexFract, feedbackL, feedbackR, out1, out2, valR0, valR1, valL0, valL1;
 		int indexBase;
-		for (int i=0;i<bufferLen;i++) {
-			in1 = bufL[i];
-			in2 = bufR[i];
+		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
+			final int pos = i+startPos;
+			in1 = bufL[pos];
+			in2 = bufR[pos];
 			if (++writeIndex==delayLineSize) {
 				writeIndex=0;
 				delayLineL[delayLineSize] = delayLineL[0];
@@ -51,8 +52,8 @@ public class Delay implements IProcessor {
 			out1 += (valL1*wet-out1)*indexFract;
 			out2 = valR0*wet;
 			out2 += (valR1*wet-out2)*indexFract;
-			bufL[i] = in1*wetInv+out1;
-			bufR[i] = in2*wetInv+out2;
+			bufL[pos] = in1*wetInv+out1;
+			bufR[pos] = in2*wetInv+out2;
 			lastrate += delta;
 		}
 		lastrate = delayRate;
