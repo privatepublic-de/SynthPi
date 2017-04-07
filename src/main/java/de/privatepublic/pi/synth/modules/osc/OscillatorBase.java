@@ -44,7 +44,7 @@ public abstract class OscillatorBase implements IOscillator {
 		this.frequency = frequency;
 		if (P.IS[P.OSC_GLIDE_RATE]) {
 			effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
-			glideStepSize = Math.abs((AnalogSynth.lastTriggeredFrequency-frequency)/(P.SAMPLE_RATE_HZ*P.VALX[P.OSC_GLIDE_RATE]));
+			glideStepSize = Math.abs((AnalogSynth.lastTriggeredFrequency-frequency)/(P.SAMPLE_RATE_HZ/P.CONTROL_BUFFER_SIZE*P.VALX[P.OSC_GLIDE_RATE]));
 		}
 		else {
 			glideStepSize = 0;

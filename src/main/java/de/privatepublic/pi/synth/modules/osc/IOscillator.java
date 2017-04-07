@@ -1,8 +1,9 @@
 package de.privatepublic.pi.synth.modules.osc;
 
+import de.privatepublic.pi.synth.modules.IControlProcessor;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 
-public interface IOscillator {
+public interface IOscillator extends IControlProcessor {
 
 	public static enum Mode { PRIMARY, SECONDARY, SUB };
 	

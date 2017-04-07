@@ -56,34 +56,6 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 	@Override
 	public float process(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer,
 			EnvADSR modEnvelope) {
-//		if (ampmod && !P.IS[P.OSC2_AM]) {
-//			effectiveFrequency = targetFrequency;
-//		}
-		final float ampModAmount = P.VAL[P.OSC2_AM];//P.VALC[P.MOD_ENV1_AM_AMOUNT];
-//		final float ampamount = FastCalc.ensureRange(P.VAL[P.OSC2_AM]+modEnvelope.outValue*ampModAmount, 0, 1);
-		ampmod = isSecond && (/*ampamount>0 || */ampModAmount!=0);
-//		if (ampmod) {
-//			effectiveFrequency = targetFrequency*((ampamount*4));			
-//		}
-//		else {
-			if (effectiveFrequency!=targetFrequency) {
-				if (effectiveFrequency<targetFrequency) {
-					effectiveFrequency += glideStepSize;
-					mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
-					mPhaseIncrementDiv = mPhaseIncrement/PI2;
-				}
-				else if (effectiveFrequency>targetFrequency) {
-					effectiveFrequency -= glideStepSize;
-					mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
-					mPhaseIncrementDiv = mPhaseIncrement/PI2;
-				}
-				if (Math.abs(effectiveFrequency-targetFrequency)<glideStepSize) {
-					effectiveFrequency = targetFrequency;
-					mPhaseIncrement = frequency * PI2 / P.SAMPLE_RATE_HZ;
-					mPhaseIncrementDiv = mPhaseIncrement/PI2;
-				}
-			}
-//		}
 		final float freq;
 		switch(mode) {
 		case PRIMARY:
@@ -102,23 +74,6 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		mPhaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
 		mPhaseIncrementDiv = mPhaseIncrement/PI2;
 		
-		// TODO optimize waveform selection
-		if (mode!=Mode.SUB) {
-			float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
-			if (modev<.25) {
-				wave = Wave.SINE;
-			}
-			else if (modev<.5) {
-				wave = Wave.TRIANGLE;
-			}
-			else if (modev<.75) {
-				wave = Wave.SAW;
-			}
-			else {
-				wave = Wave.SQUARE;
-			}
-		}
-
 		if (isBase) {
 			syncOnFrameBuffer[sampleNo] = false;
 		}
@@ -181,7 +136,6 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
             	syncOnFrameBuffer[sampleNo] = true;
             	syncPhase = mPhase;
             }
-            drift = (float)random.nextDouble()*.5f-.25f;
         }
         lastOutput = outVal;
         if (isBase) am_buffer[sampleNo] = outVal;
@@ -211,7 +165,34 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 
 	@Override
 	public void controlTick() {
-		
+		if (mode!=Mode.SUB) {
+			float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
+			if (modev<.25) {
+				wave = Wave.SINE;
+			}
+			else if (modev<.5) {
+				wave = Wave.TRIANGLE;
+			}
+			else if (modev<.75) {
+				wave = Wave.SAW;
+			}
+			else {
+				wave = Wave.SQUARE;
+			}
+		}
+		ampmod = isSecond && P.IS[P.OSC2_AM];
+		if (effectiveFrequency!=targetFrequency) {
+			if (effectiveFrequency<targetFrequency) {
+				effectiveFrequency += glideStepSize;
+			}
+			else if (effectiveFrequency>targetFrequency) {
+				effectiveFrequency -= glideStepSize;
+			}
+			if (Math.abs(effectiveFrequency-targetFrequency)<glideStepSize) {
+				effectiveFrequency = targetFrequency;
+			}
+		}
+		drift = ((float)random.nextDouble()*.5f-.25f)*2;
 	}
 
 
