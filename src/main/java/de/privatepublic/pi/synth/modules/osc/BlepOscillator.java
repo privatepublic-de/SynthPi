@@ -1,5 +1,7 @@
 package de.privatepublic.pi.synth.modules.osc;
 
+import java.util.SplittableRandom;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +34,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
     float syncPhase = 0;
     float drift = 0;
     boolean ampmod = false;
+    private SplittableRandom random = new SplittableRandom();
 	
 
 	public BlepOscillator(IOscillator.Mode mode) {
@@ -178,7 +181,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
             	syncOnFrameBuffer[sampleNo] = true;
             	syncPhase = mPhase;
             }
-            drift = (float)Math.random()*.5f-.25f;
+            drift = (float)random.nextDouble()*.5f-.25f;
         }
         lastOutput = outVal;
         if (isBase) am_buffer[sampleNo] = outVal;
