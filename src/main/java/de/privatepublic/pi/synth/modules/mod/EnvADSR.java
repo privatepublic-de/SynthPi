@@ -4,9 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.modules.IControlProcessor;
 import de.privatepublic.pi.synth.util.IOUtils;
 
-public class EnvADSR {
+public class EnvADSR implements IControlProcessor {
 
 	public static enum State { REST, ATTACK, DECAY, DECAY_LOOP, HOLD, RELEASE, QUEUE }
 	public State state = State.REST;
@@ -30,7 +31,7 @@ public class EnvADSR {
 	private float curve;
 	
 	@SuppressWarnings("incomplete-switch")
-	public float nextValue() {
+	private float nextValue() {
 		switch (state) {
 		case ATTACK: 
 			value += slope;
@@ -90,7 +91,7 @@ public class EnvADSR {
 		float attackOvershoot = velocityFactor+velocityFactor*.05f;
 		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack());
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
-		float dur = (timeAttack*2)/P.MILLIS_PER_SAMPLE_FRAME;
+		float dur = (timeAttack*2)/(1f/3f);//    P.MILLIS_PER_SAMPLE_FRAME;
 		float rdur = 1.0f / dur;
 		float rdur2 = rdur * rdur;
 
@@ -122,7 +123,7 @@ public class EnvADSR {
 	}
 	
 	private static float initStep(float levelCurrent, float levelEnd, float releaseTime) {
-	    return (float) ((Math.log(Math.max(levelEnd, ZERO_THRESHOLD)) - Math.log(Math.max(levelCurrent, ZERO_THRESHOLD))) / (releaseTime/1000 * P.SAMPLE_RATE_HZ));
+	    return (float) ((Math.log(Math.max(levelEnd, ZERO_THRESHOLD)) - Math.log(Math.max(levelCurrent, ZERO_THRESHOLD))) / (releaseTime/3000 * P.SAMPLE_RATE_HZ));
 	}
 	
 	private static float threshold(float v) {
@@ -195,6 +196,11 @@ public class EnvADSR {
 		public boolean loopMode() {
 			return P.IS[indexLoop];
 		}
+	}
+
+	@Override
+	public void controlTick() {
+		nextValue();
 	}
 	
 }

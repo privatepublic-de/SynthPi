@@ -53,6 +53,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
 		// 
 		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {
+			LFO.GLOBAL.controlTick();
 			final int startPos = chunkNo*P.CONTROL_BUFFER_SIZE;
 			for (int i=0; i<P.POLYPHONY; i++) {
 				voices[i].process(renderBuffer, startPos);

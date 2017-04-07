@@ -100,24 +100,6 @@
 				<span class="checkbox smaller" title="Notch" data-osc="/option/filter/1/type/NOTCH" data-osc-send="/filter/1/type,0.8"></span>
 				<span class="checkbox smaller" title="AllP" data-osc="/option/filter/1/type/ALLPASS" data-osc-send="/filter/1/type,1"></span>
 			</div>
-			<div class="innergroup hilite">
-				<div class="box-medium-2x2 brown">
-					<input type="text" value="0" class="dial medium" title="Attack" data-osc="/filter/1/env/1" data-osc-label="/label/filter/1/env/1" />
-					<input type="text" value="0" class="dial medium" title="Decay" data-osc="/filter/1/env/2" data-osc-label="/label/filter/1/env/2" />
-					<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/filter/1/env/3" data-osc-label="/label/filter/1/env/3" />
-					<input type="text" value="0" class="dial medium" title="Release" data-osc="/filter/1/env/4" data-osc-label="/label/filter/1/env/4" />
-				</div>
-				<div class="innergroup brown" style="margin-left:1em">
-					<label>Envelope</label>
-					<br />
-					<input type="text" value="0" class="dial medium" title="Env Depth" data-cursor="10" data-osc="/filter/1/env/amount" />
-					<div class="cblist"> 
-						<span class="checkbox smaller" title="Velocity" data-osc="/filter/1/velocity"></span>
-						<br />
-						<span class="checkbox smaller" title="Loop Env" data-osc="/filter/1/env/loop"></span>
-					</div>
-				</div>
-			</div>
 		</div>
 
 		<div id="modulators" class="group pink">
@@ -187,6 +169,8 @@
 						<td></td>
 						<td></td>
 						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/depth/noise" /></td>
+						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/filter/1/env/amount" /></td>
+						<td></td>
 					</tr>
 				</table>
 			</div>

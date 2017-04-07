@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import de.privatepublic.pi.synth.modules.fx.MultiModeFilter;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
-import de.privatepublic.pi.synth.modules.osc.WaveTables;
 
 public class FancyParam {
 
@@ -146,10 +145,6 @@ public class FancyParam {
 			else {
 				result = FORMAT_FLOAT2.format(calculatedVal)+" Hz";
 			}
-			break;
-		case P.OSC1_WAVE_SET:
-		case P.OSC2_WAVE_SET:
-			result = WaveTables.WAVE_SET_NAMES[(int)(value*WaveTables.WAVE_SET_COUNT)];
 			break;
 		case P.AMP_ENV_A:
 		case P.AMP_ENV_D:

@@ -15,8 +15,6 @@ import de.privatepublic.pi.synth.PresetHandler;
 import de.privatepublic.pi.synth.Randomizer;
 import de.privatepublic.pi.synth.SynthPi;
 import de.privatepublic.pi.synth.comm.web.SynthSocket;
-import de.privatepublic.pi.synth.modules.osc.AdditiveOscillator;
-import de.privatepublic.pi.synth.modules.osc.WaveTables;
 
 public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendReceiver {
 	
@@ -116,13 +114,6 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 					// on delete send saveinfo again to update ui list
 					session.getRemote().sendStringByFuture("/saveinfo="+PresetHandler.patchSaveInfo().toString());
 				}
-				break;
-			case OSC1_TOGGLE_WAVESET:
-			case OSC2_TOGGLE_WAVESET:
-				int pindex = (command==CommandMessage.OSC1_TOGGLE_WAVESET)?P.OSC1_WAVE_SET:P.OSC2_WAVE_SET;
-				int idx1 = (int)(P.VAL[pindex]*WaveTables.WAVE_SET_COUNT);
-				P.set(pindex, ((idx1+1)%WaveTables.WAVE_SET_COUNT)/(float)WaveTables.WAVE_SET_COUNT);
-				update(session, pindex);
 				break;
 			case SEQ_START:
 				Matcher matcherseq = Pattern.compile("\\/([^\\/]+?)=").matcher(msg);
@@ -299,27 +290,6 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 					msgLabel.append(createLabelMessage(P.OSC1_WAVE));
 					msgLabel.append(createLabelMessage(P.OSC2_WAVE));
 				}
-			}
-			else if ((P.VAL_OSCILLATOR_MODE!=P.OscillatorMode.EXITER) && ( paramIndex==P.OSC1_WAVE || paramIndex==P.OSC2_WAVE || paramIndex==P.OSC1_WAVE_SET || paramIndex==P.OSC2_WAVE_SET)) {
-				// send waveform values	
-				int oscNumber = (paramIndex==P.OSC1_WAVE || paramIndex==P.OSC1_WAVE_SET)?1:2;
-				int[] values;
-				if (P.VAL_OSCILLATOR_MODE==P.OscillatorMode.VIRTUAL_ANALOG) {
-					values = (oscNumber==1)?WaveTables.waveValues(50, P.VAL[P.OSC1_WAVE_SET], P.VAL[P.OSC1_WAVE]):WaveTables.waveValues(50, P.VAL[P.OSC2_WAVE_SET],  P.VAL[P.OSC2_WAVE]);
-				}
-				else {
-					values = AdditiveOscillator.renderVolumes(oscNumber);
-				}
-				StringBuilder valuesOut = new StringBuilder();
-				for (int i=0;i<values.length;i++) {
-					if (i>0) { valuesOut.append(','); }
-					valuesOut.append(values[i]);
-				}
-				msgLabel.append("/waveform/osc");
-				msgLabel.append(oscNumber);
-				msgLabel.append('=');
-				msgLabel.append(valuesOut);
-				msgLabel.append('\n');
 			}
 			return msgLabel.toString();
 		}

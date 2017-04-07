@@ -6,11 +6,12 @@ import org.slf4j.LoggerFactory;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IPitchBendReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
+import de.privatepublic.pi.synth.modules.IControlProcessor;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.util.FastCalc;
 
-public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver{
+public class BlepOscillator extends OscillatorBase implements IControlProcessor, IPitchBendReceiver{
 	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(BlepOscillator.class);
@@ -50,7 +51,7 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	
 
 	@Override
-	public float processSample1st(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer,
+	public float process(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer,
 			EnvADSR modEnvelope) {
 //		if (ampmod && !P.IS[P.OSC2_AM]) {
 //			effectiveFrequency = targetFrequency;
@@ -184,11 +185,6 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
         return ampmod ? am_buffer[sampleNo]*outVal*volume : outVal*volume;
 	}
 
-	@Override
-	public float processSample2nd(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer,
-			EnvADSR modEnvelope) {
-		return processSample1st(sampleNo, volume, syncOnFrameBuffer, am_buffer, modEnvelope);
-	}
 	
 	private float pblep(float t) {
 	    // 0 <= t < 1
@@ -209,5 +205,11 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 	public void onPitchBend() {
 		setTargetFrequency(frequency);		
 	}
+
+	@Override
+	public void controlTick() {
+		
+	}
+
 
 }

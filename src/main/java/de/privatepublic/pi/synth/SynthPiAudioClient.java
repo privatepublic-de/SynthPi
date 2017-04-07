@@ -18,7 +18,6 @@ import de.privatepublic.pi.synth.comm.MidiPlayback;
 import de.privatepublic.pi.synth.modules.AnalogSynth;
 import de.privatepublic.pi.synth.modules.ISynth;
 import de.privatepublic.pi.synth.modules.mod.LFO;
-import de.privatepublic.pi.synth.modules.osc.WaveTables;
 
 public class SynthPiAudioClient implements AudioClient {
 	
@@ -93,7 +92,6 @@ public class SynthPiAudioClient implements AudioClient {
 		P.CONTROL_BUFFER_SIZE = (int)(P.SAMPLE_RATE_HZ/3000);
 		P.MILLIS_PER_SAMPLE_FRAME = 1000f/P.SAMPLE_RATE_HZ;
 		bufferTimeNS = (long)(((double) context.getMaxBufferSize() / context.getSampleRate()) * 1e9);
-		WaveTables.init();
 		LFO.init();
 		synthengine = new AnalogSynth();
 		if (P.MIDI_FILE_NAME!=null) {

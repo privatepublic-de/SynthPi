@@ -25,7 +25,7 @@ public class MultiModeFilter {
 	private int p_overload = 0;
 	
 	
-	private final EnvADSR filterEnv; // new EnvADSR(new short[] {P.FILTER1_ENV_A, P.FILTER1_ENV_D, P.FILTER1_ENV_S, P.FILTER1_ENV_R}, P.FILTER1_ENV_VELOCITY_SENS);
+//	private final EnvADSR filterEnv; // new EnvADSR(new short[] {P.FILTER1_ENV_A, P.FILTER1_ENV_D, P.FILTER1_ENV_S, P.FILTER1_ENV_R}, P.FILTER1_ENV_VELOCITY_SENS);
 
 	
 	public MultiModeFilter(int freq, int res, int mod, int env, int type, int trkkbd, int vel, int overload, EnvelopeParamConfig envelopeConfig) {
@@ -36,12 +36,12 @@ public class MultiModeFilter {
 		p_type = type;
 		p_track_keyboard = trkkbd;
 		p_overload = overload;
-		filterEnv = new EnvADSR(envelopeConfig);
+//		filterEnv = new EnvADSR(envelopeConfig);
 	}
 	
 	
 	public void trigger(final float freq, final float velocity) {
-		filterEnv.noteOn(velocity);
+//		filterEnv.noteOn(velocity);
 //		freq_keyboard_offset = freq*AU.FILTER_KEYBOARD_TRACKING;
 		if (P.VAL[p_track_keyboard]>0) {
 			frqOffset = freq*P.VAL[p_track_keyboard]*2f;//freq_keyboard_offset;
@@ -52,7 +52,7 @@ public class MultiModeFilter {
 	}
 	
 	public void noteOff() {
-		filterEnv.noteOff();
+//		filterEnv.noteOff();
 	}
 
 	private float frq, K, Q, QtimesK, a, b, A0, A1, A2, B1, A3, A5, stage1, input;
@@ -69,10 +69,10 @@ public class MultiModeFilter {
 	
 	
 	@SuppressWarnings("incomplete-switch")
-	public float processSample(final float sampleValue, final int i) {
+	public float processSample(final float sampleValue, final int i, EnvADSR filterEnv) {
 		type = P.VAL_FILTER_TYPE_FOR[p_type];
 		
-		filterEnv.nextValue();
+		//filterEnv.nextValue();
 		// apply drive
 		drive = sampleValue*(1f + 10f*P.VALX[p_overload]);
 		dsquare = drive*drive;
@@ -83,7 +83,7 @@ public class MultiModeFilter {
 				(
 					MIN_STABLE_FREQUENCY
 					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
-					+ (MAX_STABLE_FREQUENCY * (filterEnv.nextValue() * P.VALXC[p_env_depth]))
+					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
 					+ frqOffset
 				) 
 				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),

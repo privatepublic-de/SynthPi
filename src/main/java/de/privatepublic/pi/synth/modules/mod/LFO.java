@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.modules.IControlProcessor;
 
 
-public class LFO {
+public class LFO implements IControlProcessor {
 
 	private static final Logger log = LoggerFactory.getLogger(LFO.class); 
 
@@ -162,6 +163,12 @@ public class LFO {
 	
 	public void reset() {
 		indexOffset = 0;
+	}
+
+	@Override
+	public void controlTick() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

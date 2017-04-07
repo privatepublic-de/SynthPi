@@ -126,8 +126,9 @@ public class AnalogSynthVoice {
 	private float noiseModAmount = 0;
 	
 	public void process(final float[] buffer, final int startPos) {
+		envelope.controlTick();
+		modEnvelope.controlTick();
 		final boolean filter1on = P.IS[P.FILTER1_ON];
-		
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
 		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME];
@@ -138,19 +139,18 @@ public class AnalogSynthVoice {
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;
-			modEnvelope.nextValue();
 			noiseX2 += noiseX1;
 			noiseX1 ^= noiseX2;
 			noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
-			val = osc1.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope);
-			val += osc2.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope);
-			val += oscSub.processSample2nd(i, oscSubVol, syncBuffer, am_buffer, modEnvelope);
+			val = osc1.process(i, osc1Vol, syncBuffer, am_buffer, modEnvelope);
+			val += osc2.process(i, osc2Vol, syncBuffer, am_buffer, modEnvelope);
+			val += oscSub.process(i, oscSubVol, syncBuffer, am_buffer, modEnvelope);
 			val += noise_val;
 			if (filter1on)
-				val = filter1.processSample(val, i);
+				val = filter1.processSample(val, i, modEnvelope);
 			else
-				filter1.processSample(val, i);
-			val *= envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol));
+				filter1.processSample(val, i, modEnvelope);
+			val *= envelope.outValue*(1+LFO.lfoAmountAdd(i, modVol));
 			buffer[pos] += val;
 			am_buffer[pos] = 0;
 		}
