@@ -16,7 +16,6 @@
 		<div id="status">
 			<span id="rc" class="connection connecting blink">Trying to connect ...</span>
 			<span id="cs" class="connection connected">
-				<a href="#" class="iconbutton" id="toggledisplay" title="Toggle display dark/bright"></a>
 				<a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
 				<a href="#" id="learn" class="iconbutton" title="Learn MIDI controllers"></a>
 				<a href="#" id="update" class="iconbutton" data-osc="/command/updaterequest" title="Refresh all parameters"></a>
@@ -83,39 +82,39 @@
 			</div>
 		</div>
 		
-			<div id="filter1" class="group orange">
-				<h2>Filter <span class="checkbox smaller" title="on" data-osc="/filter/1/enable"></span></h2>
-				<div class="exclusive filtertype" data-control-path="/filter/1/type">
-					<span class="checkbox smaller" title="LP24" data-osc="/option/filter/1/type/LOWPASS24" data-osc-send="/filter/1/type,0"></span>
-					<span class="checkbox smaller" title="LP" data-osc="/option/filter/1/type/LOWPASS" data-osc-send="/filter/1/type,0.2"></span>
-					<span class="checkbox smaller" title="BP" data-osc="/option/filter/1/type/BANDPASS" data-osc-send="/filter/1/type,0.4"></span>
-					<span class="checkbox smaller" title="HP" data-osc="/option/filter/1/type/HIGHPASS" data-osc-send="/filter/1/type,0.6"></span>
-					<span class="checkbox smaller" title="Notch" data-osc="/option/filter/1/type/NOTCH" data-osc-send="/filter/1/type,0.8"></span>
-					<span class="checkbox smaller" title="AllP" data-osc="/option/filter/1/type/ALLPASS" data-osc-send="/filter/1/type,1"></span>
-				</div>
-				<div class="innergroup">
-					<input type="text" value="0" class="dial medium" title="Drive" data-osc="/filter/1/overload" />
-					<input type="text" value="0" class="dial large" title="Freq" data-osc="/filter/1/freq" data-osc-label="/label/filter/1/freq" />
-					<input type="text" value="0" class="dial medium" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
-				</div><br/>
-				<input type="text" value="0" class="dial small" title="Keyboard" data-osc="/filter/1/kbdtracking" />
+		<div id="filter1" class="group orange">
+			<h2>Filter <span class="checkbox smaller" title="on" data-osc="/filter/1/enable"></span></h2>
+			<div class="exclusive filtertype" data-control-path="/filter/1/type">
+				<span class="checkbox smaller" title="LP24" data-osc="/option/filter/1/type/LOWPASS24" data-osc-send="/filter/1/type,0"></span>
+				<span class="checkbox smaller" title="LP" data-osc="/option/filter/1/type/LOWPASS" data-osc-send="/filter/1/type,0.2"></span>
+				<span class="checkbox smaller" title="BP" data-osc="/option/filter/1/type/BANDPASS" data-osc-send="/filter/1/type,0.4"></span>
+				<span class="checkbox smaller" title="HP" data-osc="/option/filter/1/type/HIGHPASS" data-osc-send="/filter/1/type,0.6"></span>
+				<span class="checkbox smaller" title="Notch" data-osc="/option/filter/1/type/NOTCH" data-osc-send="/filter/1/type,0.8"></span>
+				<span class="checkbox smaller" title="AllP" data-osc="/option/filter/1/type/ALLPASS" data-osc-send="/filter/1/type,1"></span>
 			</div>
+			<div class="innergroup">
+				<input type="text" value="0" class="dial medium" title="Drive" data-osc="/filter/1/overload" />
+				<input type="text" value="0" class="dial large" title="Freq" data-osc="/filter/1/freq" data-osc-label="/label/filter/1/freq" />
+				<input type="text" value="0" class="dial medium" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
+			</div><br/>
+			<input type="text" value="0" class="dial small" title="Keyboard" data-osc="/filter/1/kbdtracking" />
+		</div>
 
-			<div id="amplifier" class="group blue">
-				<h2>Amplifier</h2>
-				<div class="innergroup">
-					<input type="text" value="0" class="dial medium" title="Drive" data-osc="/fx/overdrive" />
-					<input type="text" value="0" class="dial medium" title="Chorus" data-osc="/fx/chorus/drywet" data-osc-label="/label/fx/chorus/drywet" />
-					<br />
-					<input type="text" value="0" class="dial small" title="Delay" data-osc="/fx/delay/wet" data-osc-label="/label/fx/delay/wet" />
-					<input type="text" value="0" class="dial small" title="Time" data-osc="/fx/delay/rate" data-osc-label="/label/fx/delay/rate" />
-					<input type="text" value="0" class="dial small" title="Feedb." data-osc="/fx/delay/feedback" data-osc-label="/label/fx/delay/feedback" />
-				</div>
-				<br/>
-				<div class="innergroup">
-					<input type="text" value="0" class="dial large" title="Volume" data-osc="/amp/volume" data-osc-label="/label/amp/volume" />
-				</div>
+		<div id="amplifier" class="group blue">
+			<h2>Amplifier</h2>
+			<div class="innergroup">
+				<input type="text" value="0" class="dial medium" title="Drive" data-osc="/fx/overdrive" />
+				<input type="text" value="0" class="dial medium" title="Chorus" data-osc="/fx/chorus/drywet" data-osc-label="/label/fx/chorus/drywet" />
+				<br />
+				<input type="text" value="0" class="dial small" title="Delay" data-osc="/fx/delay/wet" data-osc-label="/label/fx/delay/wet" />
+				<input type="text" value="0" class="dial small" title="Time" data-osc="/fx/delay/rate" data-osc-label="/label/fx/delay/rate" />
+				<input type="text" value="0" class="dial small" title="Feedb." data-osc="/fx/delay/feedback" data-osc-label="/label/fx/delay/feedback" />
 			</div>
+			<br/>
+			<div class="innergroup">
+				<input type="text" value="0" class="dial large" title="Volume" data-osc="/amp/volume" data-osc-label="/label/amp/volume" />
+			</div>
+		</div>
 			
 		<div id="modulators" class="group pink">
 			<h2>Modulators</h2>

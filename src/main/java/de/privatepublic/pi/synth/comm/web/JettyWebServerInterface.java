@@ -149,6 +149,7 @@ public class JettyWebServerInterface {
 			"img/ic_settings_white_18dp.png",
 			"img/ic_shuffle_black_18dp.png",
 			"img/ic_shuffle_white_18dp.png",
+			"img/ic_midi.png",
 			"index.html",
 			"jquery-2.1.4.min.js",
 			"jquery.color-2.1.2.min.js",

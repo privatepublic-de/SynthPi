@@ -618,22 +618,6 @@ $(document).ready(function () {
 	};
 	blink(".blink");
 	
-	var updateDisplayColors = function() {
-		var colorNo = $("body").hasClass("inverted")?2:1; 
-		Cookie.create("synthpi_uistyle", colorNo, 30);
-		$('.dial').each(function() {
-			var el = $(this);
-			var bgCol = el.attr("data-bg-"+colorNo);
-			var fgCol = el.attr("data-fg-"+colorNo);
-			el.trigger('configure', { "fgColor":fgCol, "bgColor":bgCol});				
-		});
-	}
-	
-	$("#toggledisplay").click(function() {
-		$("body").toggleClass("inverted");
-		updateDisplayColors();
-	});
-	
 	// setup limiter display
 	var setupLimiter = function() {
 		var fps = 12;
@@ -680,9 +664,6 @@ $(document).ready(function () {
 		}
 	};
 	var renderLimiter = setupLimiter();
-	if (Cookie.read("synthpi_uistyle")==2) {
-		$("body").addClass("inverted");
-		updateDisplayColors();
-	}
+	
 	socket.createAndConnect();
 });

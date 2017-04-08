@@ -9,10 +9,6 @@ body {
 	margin: 0;
 }
 
-body.inverted {
-	background-color: #fff;
-}
-
 .noscroll {
 	position: fixed; 
     overflow-y: auto;
@@ -31,8 +27,6 @@ th {
 }
 
 #main {
-	width: 1280px;
-	margin: 0 auto;
 	padding: 45px 10px 0 10px;
 	text-align: center;
 }
@@ -58,13 +52,11 @@ th {
 	padding: 6px 0 0 0;
 	text-align: center;
 	font-size: .8em;
-	width: 1220px;
+	width: 90%;
 	height: 26px;
 	margin: 0 auto;
 }
-.inverted #statuscontainer {
-	background: #eee;
-}
+
 #datalight {
 	display: inline-block;
 	width: 8px;
@@ -119,44 +111,23 @@ th {
 #toggledisplay {
 	background-image: url(img/ic_brightness_medium_white_18dp.png);	
 }
-.inverted #toggledisplay {
-	background-image: url(img/ic_brightness_medium_black_18dp.png);
-}
 #opensettings {
 	background-image: url(img/ic_settings_white_18dp.png);
-}
-.inverted #opensettings {
-	background-image: url(img/ic_settings_black_18dp.png);
 }
 #update {
 	background-image: url(img/ic_refresh_white_18dp.png);
 }
-.inverted #update {
-	background-image: url(img/ic_refresh_black_18dp.png);
-}
 #learn {
-	background-image: url(img/ic_settings_input_component_white_18dp.png);
-}
-.inverted #learn {
-	background-image: url(img/ic_settings_input_component_black_18dp.png);
+	background-image: url(img/ic_midi.png);
 }
 #randomize {
 	background-image: url(img/ic_shuffle_white_18dp.png);
 }
-.inverted #randomize {
-	background-image: url(img/ic_shuffle_black_18dp.png);
-}
 #savepatch {
 	background-image: url(img/ic_save_white_18dp.png);
 }
-.inverted #savepatch {
-	background-image: url(img/ic_save_black_18dp.png);
-}
 #exit {
 	background-image: url(img/ic_close_white_18dp.png);
-}
-.inverted #exit {
-	background-image: url(img/ic_close_black_18dp.png);
 }
 .btnclose {
 	float: right;
@@ -166,9 +137,6 @@ th {
 	background: no-repeat center center;
 	background-image: url(img/ic_close_white_18dp.png);
 }
-.inverted .btnclose {
-	background-image: url(img/ic_close_black_18dp.png);
-}
 
 .blue, .group.blue, .blue input, .window.blue, .innergroup.blue, .innergroup.blue input {
 	color: #0cf;
@@ -176,11 +144,6 @@ th {
 	background-color: #013;
 }
 .blue .inner { background-color: #0cf; }
-.inverted .blue, .inverted .group.blue, .inverted .blue input, .inverted .window.blue {
-	background-color: #e0e8ff;
-	color: #049;
-}
-.inverted .blue .inner { background-color: #049; }
 
 .yellow, .group.yellow, .yellow input, .window.yellow {
 	color: #ff0;
@@ -188,12 +151,6 @@ th {
 	background-color: #202000;
 }
 .yellow .inner { background-color: #ff0; }
-.inverted .yellow, .inverted .group.yellow, .inverted .yellow input, .inverted .window.yellow {
-	background-color: #ffffe8;
-	color: #760;
-}
-.inverted .yellow .inner { background-color: #760; }
-
 
 .orange, .group.orange, .orange input, .window.orange, .orange .exclusive {
 	color: #f90;
@@ -201,18 +158,12 @@ th {
 	background-color: #261A00;
 }
 .orange .inner { background-color: #f90; }
-.inverted .orange, .inverted .group.orange, .inverted .orange input, .inverted .window.orange {
-	color: #e80;
-	background-color: #ffe8e0;
-}
-.inverted .orange .inner { background-color: #e80; }
 
 .brown, .group.brown, .brown input, .window.brown {
 	color: #7F4C00;
 	border-color: #402600!important;
 }
  .brown .inner { background-color: #7f4c00; }
- .inverted  .brown .inner { background-color: #7f4c00; }
  
 .pink, .group.pink, .pink input, .window.pink {
 	color: #E566E5;
@@ -220,11 +171,6 @@ th {
 	background-color: #261126;
 }
 .pink .inner { background-color: #E566E5; }
-.inverted .pink, .inverted .group.pink, .inverted .pink input, .inverted .window.pink  {
-	color: #606;
-	background-color: #fff0ff;
-}
-.inverted .pink .inner { background-color: #606; }
 
 .gray, .group.gray, .gray input {
 	color: #ccc;
@@ -232,11 +178,6 @@ th {
 	background-color: #111;
 }
 .gray .inner, .perfcontrols .inner { background-color: #ccc; }
-.inverted .gray, .inverted .group.gray, .inverted .gray input {
-	background-color: #eee;
-}
-.inverted .gray .inner { background-color: #686868; }
-
 
 
 .large {
@@ -284,16 +225,6 @@ th {
 	overflow: visible;
 }
 
-/*
-.hilite {
-	box-shadow: 0 0 5px #000;
-	background-color: rgba(0,0,0,0.2);
-}
-.inverted .hilite {
-	background-color: rgba(255,255,255,0.5);
-	box-shadow: 0 0 5px #ddd;
-} */
-
 .group {
 	display: inline-block;
 	padding: 14px 4px 4px 4px;
@@ -327,9 +258,6 @@ th {
 	top: -13px;
 	left: 12px;
 	background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 45%, black 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0) 100%);
-}
-.inverted .group h2 {
-	background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(255,255,255,1) 50%,rgba(255,255,255,0) 100%); /* W3C */
 }
 
 h3 {
@@ -465,6 +393,7 @@ h3 {
 }
 .exclusive.filtertype {
 	border: 1px solid;
+	border-radius: 4px;
 	padding: .5em;
 	margin-top: .5em;
 }
@@ -539,16 +468,6 @@ a.push label  {
 	vertical-align: middle;
 	margin: 0;
 }
-.inverted #status a.push {
-	color: #fff;
-	background-color: #909999;
-}
-
-.inverted a.push:hover {
-	background-color: #666;
-	box-shadow: 0 0 3px #000;
-	color: #fff;
-}
 
 .push.disabled {
 	visibility: hidden;
@@ -559,9 +478,6 @@ a.push label  {
 	top: 0; left: 0; right: 0; bottom: 0;
 	background-color: rgba(0,0,0,.67);
 	cursor: pointer;
-}
-.inverted #dimmer {
-	background-color: rgba(255,255,255,.67);
 }
 
 .window {
@@ -594,9 +510,6 @@ h2.windowtitle {
 	top: 0;
 	left: 0;
 	right: 0;
-}
-.inverted h2.windowtitle {
-	background-color: rgba(0,0,0,0.1);
 }
 
 #patchlistwindow {
@@ -668,9 +581,6 @@ form select {
 	background-color: rgba(255,255,255,0.075);
 	display: block;
 }
-.inverted .listcontent div.headline {
-	background-color: rgba(0,0,0,.15);
-} 
 .listcontent div a.push {
 	width: 300px;
 	text-align: left;
@@ -740,9 +650,6 @@ div.WHATEVER .push {
 .deletepatch {
 	background-image: url(img/ic_delete_white_18dp.png);
 }
-.inverted .deletepatch {
-	background-image: url(img/ic_delete_black_18dp.png);
-}
 
 .saveform .field {
 	display: inline-block;
@@ -793,11 +700,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	text-align: center;
 	background-color: #000;
 	margin-top: 35px;
-}
-
-.inverted #keyboard {
-	background-color: #eee;
-	box-shadow: 0 0 10px #999;
 }
 
 #keyboard .keys {
@@ -889,31 +791,9 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 #main .learnselected, .learnselected #learn {
 	background-color: #d00!important;
 }
-.inverted #main .learnselected, .inverted.learnselected #learn {
-	background-color: #fc9!important;
-}
-
-
-.showOnly-virtual-analog {
-	visibility: hidden;
-}
-.VIRTUAL_ANALOG .showOnly-virtual-analog {
-	visibility: visible;
-}
-
-.container.waveform {
-	background-position:-100% -100%;
-}
-.VIRTUAL_ANALOG .container.waveform,
-.ADDITIVE .container.waveform {
-	background-position: center center;
-}
 
 .paramselected {
 	outline: 4px solid #0ff;
-}
-.inverted .paramselected {
-	outline: 4px solid #077;
 }
 
 .show-learning {
