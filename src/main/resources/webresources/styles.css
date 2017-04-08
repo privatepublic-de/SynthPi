@@ -195,7 +195,7 @@ th {
 .inverted .yellow .inner { background-color: #760; }
 
 
-.orange, .group.orange, .orange input, .window.orange {
+.orange, .group.orange, .orange input, .window.orange, .orange .exclusive {
 	color: #f90;
 	border-color: #960!important;
 	background-color: #261A00;
@@ -464,8 +464,8 @@ h3 {
 	border-color: inherit;
 }
 .exclusive.filtertype {
-	border-bottom: 1px solid;
-	padding-bottom: .5em;
+	border: 1px solid;
+	padding: .5em;
 	margin-top: .5em;
 }
 .exclusive .checkbox,
