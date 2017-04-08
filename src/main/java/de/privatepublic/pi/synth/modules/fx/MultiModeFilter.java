@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
-import de.privatepublic.pi.synth.modules.mod.EnvADSR.EnvelopeParamConfig;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.util.FastCalc;
 
@@ -23,12 +22,13 @@ public class MultiModeFilter {
 	private int p_env_depth = P.FILTER1_ENV_DEPTH;
 	private int p_type = 0;
 	private int p_overload = 0;
+	private EnvADSR filterEnv;
 	
 	
 //	private final EnvADSR filterEnv; // new EnvADSR(new short[] {P.FILTER1_ENV_A, P.FILTER1_ENV_D, P.FILTER1_ENV_S, P.FILTER1_ENV_R}, P.FILTER1_ENV_VELOCITY_SENS);
 
 	
-	public MultiModeFilter(int freq, int res, int mod, int env, int type, int trkkbd, int vel, int overload, EnvelopeParamConfig envelopeConfig) {
+	public MultiModeFilter(int freq, int res, int mod, int env, int type, int trkkbd, int vel, int overload, EnvADSR modEnv) {
 		p_freq = freq;
 		p_resonance = res;
 		p_mod_amount = mod;
@@ -36,7 +36,8 @@ public class MultiModeFilter {
 		p_type = type;
 		p_track_keyboard = trkkbd;
 		p_overload = overload;
-//		filterEnv = new EnvADSR(envelopeConfig);
+		this.filterEnv = modEnv;
+		
 	}
 	
 	
@@ -69,7 +70,7 @@ public class MultiModeFilter {
 	
 	
 	@SuppressWarnings("incomplete-switch")
-	public float processSample(final float sampleValue, final int i, EnvADSR filterEnv) {
+	public float processSample(final float sampleValue) {
 		type = P.VAL_FILTER_TYPE_FOR[p_type];
 		
 		//filterEnv.nextValue();
@@ -86,7 +87,7 @@ public class MultiModeFilter {
 					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
 					+ frqOffset
 				) 
-				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),
+				* LFO.lfoAmount(P.VALXC[p_mod_amount]),
 				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
 		if (type==FilterType.LOWPASS24) {

@@ -22,8 +22,6 @@ public class Chorus implements IProcessorMono2Stereo {
 		lfo = new LFO(P.CHORUS_LFO_RATE, P.CHORUS_LFO_TYPE);
 	}
 	
-	
-	
 	float wet, dry, in, sampleval, modval, lfoval, readindexL, readindexR, outL, outR;
 	int indexBaseL, indexBaseR, writeIndex;
 	float[] bufL, bufR;
@@ -33,6 +31,8 @@ public class Chorus implements IProcessorMono2Stereo {
 		dry = 1-wet*.5f;
 		bufL = buffers[0];
 		bufR = buffers[1];
+		lfo.controlTick();
+		lfoval = lfo.value();
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;
 			in = inBuffer[pos];
@@ -40,7 +40,6 @@ public class Chorus implements IProcessorMono2Stereo {
 			if (++writeIndex==delayLineSize) {
 				writeIndex=0;
 			}
-			lfoval = lfo.valueAt(pos);
 			modval = (1+lfoval)*.5f;
 			
 			readindexL = (writeIndex - delayLineSizeUnder*modval);
@@ -65,7 +64,6 @@ public class Chorus implements IProcessorMono2Stereo {
 			bufL[pos] = in*dry+outL;
 			bufR[pos] = in*dry-outR;
 		}
-		lfo.nextBufferSlice(P.CONTROL_BUFFER_SIZE); // TODO make coherent
 	}
 
 		

@@ -59,16 +59,16 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		final float freq;
 		switch(mode) {
 		case PRIMARY:
-			freq = effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR;
+			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR;
 			break;
 		case SECONDARY:
 			freq = 
-				effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
-				* LFO.lfoAmountAsymm(sampleNo, P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
+				effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
+				* LFO.lfoAmountAsymm(P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
 			break;
 		case SUB:
 		default:
-			freq = effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR / 2;
+			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR / 2;
 		}
 		
 		mPhaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
@@ -103,10 +103,10 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			float pulsewidth = .5f;
 			
 			if (isBase) {
-				pulsewidth = P.VAL[P.OSC1_PULSE_WIDTH]+LFO.lfoAmountAdd(sampleNo, P.VALXC[P.MOD_WAVE1_AMOUNT]);
+				pulsewidth = P.VAL[P.OSC1_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_WAVE1_AMOUNT]);
 			}
 			else {
-				pulsewidth = P.VAL[P.OSC2_PULSE_WIDTH]+LFO.lfoAmountAdd(sampleNo, P.VALXC[P.MOD_WAVE2_AMOUNT]);;
+				pulsewidth = P.VAL[P.OSC2_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_WAVE2_AMOUNT]);;
 			}
 			
 			float phaseShift = (float)(mPhase+PI2*pulsewidth);

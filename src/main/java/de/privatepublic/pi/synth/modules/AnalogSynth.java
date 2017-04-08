@@ -75,7 +75,6 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			// clear while copying
 			renderBuffer[i] = outputL[i] = outputR[i] = 0;
 		}
-		LFO.GLOBAL.nextBufferSlice(nframes);
 	}
 
 	

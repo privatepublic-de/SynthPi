@@ -87,41 +87,36 @@ public class LFO implements IControlProcessor {
 	private float[] currentWave = TABLES[0];
 	private final int paraIndexLfoType;
 	private final int paraIndexLfoRate;
+	private int index = 0;
 
 	public static final LFO GLOBAL = new LFO();
 	
 	// 0 - 2
 	// filter
-	public static float lfoAmount(final int sampleIndex, final float depth) {
-		return (1-GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth);
+	public static float lfoAmount(final float depth) {
+		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch modulation
-	public static float lfoAmount(final int sampleIndex, final float depth, final EnvADSR modEnv, final float modEnvDepth) {
+	public static float lfoAmount(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
 		// caution! copy & paste
-		return (1-GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
+		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
 	}
 	
-	// -1 - 1 + env
-	// oscillators wave form modulation
-	public static float lfoAmountAdd(final int sampleIndex, final float depth, final EnvADSR modEnv, final float modEnvDepth) {
-		// caution! copy & paste
-		return (GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
-	}
 	
 	// -1 - 1
 	// voice volume modulation
-	public static float lfoAmountAdd(final int sampleIndex, final float depth) {
+	public static float lfoAmountAdd(final float depth) {
 		// caution! copy & paste
-		return (GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth);
+		return (GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch2 modulation
-	public static float lfoAmountAsymm(final int sampleIndex, final float depth, final EnvADSR modEnv, final float modEnvDepth) {
+	public static float lfoAmountAsymm(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
 		// caution! copy & paste
-		return (((GLOBAL.valueAt(sampleIndex)+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
+		return (((GLOBAL.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
 	}
 	
 	public LFO() {
@@ -138,7 +133,7 @@ public class LFO implements IControlProcessor {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
 	}
 	
-	public void nextBufferSlice(final int nframes) {
+	private void nextBufferSlice(final int nframes) {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
 		tableIndexIncrement = (LOW_FREQ+(P.VALX[paraIndexLfoRate]*FREQ_RANGE));
 		if (currentWave==TABLES[5]) {
@@ -148,16 +143,20 @@ public class LFO implements IControlProcessor {
 		if (indexOffset>WAVE_LENGHT) {
 			indexOffset -= WAVE_LENGHT;
 		}
+		index = (int)indexOffset;
 	}
+
+
+//	public float valueAt(final int index) {
+//		int idx = (int)(indexOffset + tableIndexIncrement*index);
+//		if (idx>=WAVE_LENGHT) {
+//			idx -= WAVE_LENGHT;
+//		}
+//		return currentWave[idx];
+//	}
 	
-//	private float idx;
-	
-	public float valueAt(final int index) {
-		int idx = (int)(indexOffset + tableIndexIncrement*index);
-		if (idx>=WAVE_LENGHT) {
-			idx -= WAVE_LENGHT;
-		}
-		return currentWave[idx];
+	public float value() {
+		return currentWave[index];
 	}
 	
 	
@@ -167,8 +166,7 @@ public class LFO implements IControlProcessor {
 
 	@Override
 	public void controlTick() {
-		// TODO Auto-generated method stub
-		
+		nextBufferSlice(P.CONTROL_BUFFER_SIZE);
 	}
 	
 }

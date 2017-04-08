@@ -21,17 +21,7 @@ public class AnalogSynthVoice {
 	private final IOscillator osc2 = new BlepOscillator(Mode.SECONDARY);
 	private final IOscillator oscSub = new BlepOscillator(Mode.SUB);
 	
-	private final MultiModeFilter filter1 = new MultiModeFilter(
-			P.FILTER1_FREQ, 
-			P.FILTER1_RESONANCE, 
-			P.MOD_FILTER1_AMOUNT, 
-			P.FILTER1_ENV_DEPTH, 
-			0, 
-			P.FILTER1_TRACK_KEYBOARD, 
-			P.FILTER1_ENV_VELOCITY_SENS,
-			P.FILTER1_OVERLOAD,
-			P.ENV_CONF_FILTER1
-		);
+	private final MultiModeFilter filter1;
 	
 	private final float[] am_buffer = new float[P.SAMPLE_BUFFER_SIZE];
 	private final boolean[] syncBuffer = new boolean[P.SAMPLE_BUFFER_SIZE];
@@ -48,6 +38,17 @@ public class AnalogSynthVoice {
 	public AnalogSynthVoice() {
 		envelope = new EnvADSR(P.ENV_CONF_AMP);
 		modEnvelope = new EnvADSR(P.ENV_CONF_MOD_ENV);
+		filter1 = new MultiModeFilter(
+				P.FILTER1_FREQ, 
+				P.FILTER1_RESONANCE, 
+				P.MOD_FILTER1_AMOUNT, 
+				P.FILTER1_ENV_DEPTH, 
+				0, 
+				P.FILTER1_TRACK_KEYBOARD, 
+				P.FILTER1_ENV_VELOCITY_SENS,
+				P.FILTER1_OVERLOAD,
+				modEnvelope
+			);
 	}
 	
 	public float captureWeight(long timestamp) {
@@ -150,10 +151,10 @@ public class AnalogSynthVoice {
 			val += oscSub.process(i, oscSubVol, syncBuffer, am_buffer, modEnvelope);
 			val += noise_val;
 			if (filter1on)
-				val = filter1.processSample(val, i, modEnvelope);
+				val = filter1.processSample(val);
 			else
-				filter1.processSample(val, i, modEnvelope);
-			val *= envelope.outValue*(1+LFO.lfoAmountAdd(i, modVol));
+				filter1.processSample(val);
+			val *= envelope.outValue*(1+LFO.lfoAmountAdd(modVol));
 			buffer[pos] += val;
 			am_buffer[pos] = 0;
 		}
