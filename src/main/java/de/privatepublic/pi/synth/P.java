@@ -91,6 +91,8 @@ public class P {
 	public static float SAMPLE_RATE_HZ = 48000;
 	public static float MILLIS_PER_SAMPLE_FRAME = 1000f/SAMPLE_RATE_HZ;
 	public static int CONTROL_BUFFER_SIZE = 16;
+	public static float CONTROL_RATE_HZ = SAMPLE_RATE_HZ/CONTROL_BUFFER_SIZE;
+	public static float MILLIS_PER_CONTROL_FRAME = 1000f/CONTROL_RATE_HZ;
 	public static float FINAL_GAIN_FACTOR = .8f;
 	public static int SAMPLE_BUFFER_SIZE = 128;
 	public static float BEND_RANGE_CENTS = 200f;

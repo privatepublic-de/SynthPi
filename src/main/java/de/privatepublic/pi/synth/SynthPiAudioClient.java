@@ -91,6 +91,8 @@ public class SynthPiAudioClient implements AudioClient {
 		P.SAMPLE_RATE_HZ = context.getSampleRate();
 		P.CONTROL_BUFFER_SIZE = (int)(P.SAMPLE_RATE_HZ/3000);
 		P.MILLIS_PER_SAMPLE_FRAME = 1000f/P.SAMPLE_RATE_HZ;
+		P.CONTROL_RATE_HZ = P.SAMPLE_RATE_HZ/P.CONTROL_BUFFER_SIZE;
+		P.MILLIS_PER_CONTROL_FRAME = 1000f/P.CONTROL_RATE_HZ;
 		bufferTimeNS = (long)(((double) context.getMaxBufferSize() / context.getSampleRate()) * 1e9);
 		LFO.init();
 		synthengine = new AnalogSynth();

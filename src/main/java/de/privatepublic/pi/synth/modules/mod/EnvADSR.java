@@ -91,7 +91,7 @@ public class EnvADSR implements IControlProcessor {
 		float attackOvershoot = velocityFactor+velocityFactor*.05f;
 		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack());
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
-		float dur = (timeAttack*2)/(1f/3f);//    P.MILLIS_PER_SAMPLE_FRAME;
+		float dur = (timeAttack*2)/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
 		float rdur = 1.0f / dur;
 		float rdur2 = rdur * rdur;
 
@@ -123,7 +123,7 @@ public class EnvADSR implements IControlProcessor {
 	}
 	
 	private static float initStep(float levelCurrent, float levelEnd, float releaseTime) {
-	    return (float) ((Math.log(Math.max(levelEnd, ZERO_THRESHOLD)) - Math.log(Math.max(levelCurrent, ZERO_THRESHOLD))) / (releaseTime/3000 * P.SAMPLE_RATE_HZ));
+	    return (float) ((Math.log(Math.max(levelEnd, ZERO_THRESHOLD)) - Math.log(Math.max(levelCurrent, ZERO_THRESHOLD))) / (releaseTime/1000 * P.CONTROL_RATE_HZ));
 	}
 	
 	private static float threshold(float v) {
