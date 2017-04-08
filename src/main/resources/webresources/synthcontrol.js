@@ -438,7 +438,7 @@ $(document).ready(function () {
 		container.attr("id","kn"+id);
 		container.attr("data-control-path", el.attr("data-osc"));
 		var fgcolor = el.css("color");
-		if (!el.parents().hasClass("perfcontrols")) {  
+		if (!el.parents().hasClass("perfcontrols") && !el.parents().hasClass("gray")) {  
 			var bgcolor = $.Color(el, "color").lightness(0.2).saturation(0.3).toHexString();	
 		}
 		else {

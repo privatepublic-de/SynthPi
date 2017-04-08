@@ -227,9 +227,9 @@ th {
 .inverted .pink .inner { background-color: #606; }
 
 .gray, .group.gray, .gray input {
-	color: #eeeeee;
+	color: #ccc;
 	border-color: #777777!important;
-	background-color: #333;
+	background-color: #111;
 }
 .gray .inner, .perfcontrols .inner { background-color: #777777; }
 .inverted .gray, .inverted .group.gray, .inverted .gray input {
@@ -304,6 +304,7 @@ th {
 	margin-top: 12px;
 	text-align: center;
 	vertical-align: middle;
+	min-height: 340px;
 }
 
 .group h2 {
@@ -345,30 +346,6 @@ h3 {
 	padding: 12px 0;
 }
 
-
-#filterchain {
-	vertical-align: top;
-	padding-top: 4px;
-}
-
-#filterchain .route {
-	position: absolute;
-	bottom: -110px;
-	opacity: .75;
-	left: 50%;
-	margin-left: -30px;
-	width: 60px;
-	height: 100px;
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-image: url(img/frouting-s.png);
-}
-#filterchain .route[data-osc-path="/option/filter/parallel/PARALLEL"] {
-	background-image: url(img/frouting-p.png);
-}
-#filterchain .route[data-osc-path="/option/filter/parallel/PEROSC"] {
-	background-image: url(img/frouting-o.png);
-}
 .divup {
 	margin-top: 1em;
 }
@@ -376,7 +353,11 @@ h3 {
 	
 }
 
-#amplifier .innergroup.hilite {
+#filter1 .innergroup {
+	margin-top: 1em;
+}
+#amplifier .innergroup {
+	margin-top: 2em;
 }
 
 
@@ -473,8 +454,13 @@ h3 {
 }
 .exclusive {
 	text-align: center;
-	margin-bottom: .5em;
+	margin: .5em 0;
 	border-color: inherit;
+}
+.exclusive.filtertype {
+	border-bottom: 1px solid;
+	padding-bottom: .5em;
+	margin-top: 2em;
 }
 .exclusive .checkbox,
 .labelbelow .checkbox {
@@ -493,7 +479,7 @@ h3 {
 
 .lfotypes {
 	text-align: left;
-	margin-right: 1em;
+	margin-left: 1em;
 }
 .lfotypes label {
 	min-width: 46px;
@@ -505,11 +491,17 @@ h3 {
 	border-bottom: 1px solid;
 }
 
-.cblist {
-	text-align: left;
-	line-height: 1.5em;
+.env1, .env2 {
+	margin-top: 1em;
+	border-top: 1px solid #666;
 }
-
+.env1 {
+	padding-right: .5em;
+}
+.env2 {
+	padding-left: .5em;
+	border-left: 1px solid #666;
+}
 
 a.push {
 	display: inline-block;
