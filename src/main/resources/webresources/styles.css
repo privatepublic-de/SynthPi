@@ -231,7 +231,7 @@ th {
 	border-color: #777777!important;
 	background-color: #111;
 }
-.gray .inner, .perfcontrols .inner { background-color: #777777; }
+.gray .inner, .perfcontrols .inner { background-color: #ccc; }
 .inverted .gray, .inverted .group.gray, .inverted .gray input {
 	background-color: #eee;
 }
@@ -303,8 +303,16 @@ th {
 	position: relative;
 	margin-top: 12px;
 	text-align: center;
-	vertical-align: middle;
-	min-height: 340px;
+	vertical-align: top;
+}
+
+.groupcontainer {
+	display: inline-block;
+	position: relative;
+	vertical-align: top;
+}
+.groupcontainer .group {
+	min-width: 355px;
 }
 
 .group h2 {
@@ -340,27 +348,25 @@ h3 {
 	border-color: inherit;
 }
 
+#oscillators {
+	min-width: 355px;
+}
+
 #oscillators .osc {
 	border-bottom: 1px solid;
 	border-color: inherit;
 	padding: 12px 0;
 }
+#oscillators .mixer {
+	margin-left: 1em;
+	padding-left: 1em;
+	border-left: 1px solid;
+	border-color: inherit;
+}
 
 .divup {
 	margin-top: 1em;
 }
-#amplifier {
-	
-}
-
-#filter1 .innergroup {
-	margin-top: 1em;
-}
-#amplifier .innergroup {
-	margin-top: 2em;
-}
-
-
 
 
 #modulators {
@@ -460,7 +466,7 @@ h3 {
 .exclusive.filtertype {
 	border-bottom: 1px solid;
 	padding-bottom: .5em;
-	margin-top: 2em;
+	margin-top: .5em;
 }
 .exclusive .checkbox,
 .labelbelow .checkbox {
