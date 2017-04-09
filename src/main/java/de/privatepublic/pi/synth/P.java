@@ -219,7 +219,10 @@ public class P {
 	public static final int PITCH_BEND = 19;
 	/** Filter1 LFO modulation amount (use centered) */
 	public static final int MOD_FILTER1_AMOUNT = 20;
-//	public static final int MOD_PULSEWIDTH_AMOUNT = 21; // THIS IS A GAP!
+	
+	// there's a gap at 21
+	
+	
 	/** LFO modulation rate */
 	public static final int MOD_RATE = 22;
 	/** Amplifier master volume */
@@ -250,8 +253,7 @@ public class P {
 	public static final int OSC_SUB_VOLUME = 36;
 	/** Filter2 LFO modulation amount (use centered) */
 	public static final int MOD_FILTER2_AMOUNT = 37;
-	/** Filter2 is enabled */
-	public static final int FILTER2_ON = 38;
+	public static final int OSC_SUB_LOW = 38;
 	/** Filter2 cut off frequency keyboard tracking amount */
 	public static final int FILTER2_TRACK_KEYBOARD = 39;
 	/** Filter2 mod envelope attack time */
@@ -414,6 +416,7 @@ public class P {
 		OSC_PATH[OSC_GLIDE_RATE] = "/osc/gliderate";
 		OSC_PATH[OSC_MONO] = "/osc/mono";
 		OSC_PATH[OSC_MODE] = "/osc/mode";
+		OSC_PATH[OSC_SUB_LOW] = "/osc/sub/low";
 		
 		// modulation
 		OSC_PATH[MOD_RATE] = "/mod/1/rate";
@@ -456,7 +459,6 @@ public class P {
 		
 		OSC_PATH[OSC1_PULSE_WIDTH] = "/osc/1/pw";
 		OSC_PATH[OSC2_PULSE_WIDTH] = "/osc/2/pw";
-		OSC_PATH[FILTER2_ON] = "/filter/2/enable";
 		OSC_PATH[FILTER2_TRACK_KEYBOARD] = "/filter/2/kbdtracking";
 		OSC_PATH[FILTER2_ENV_A] = "/filter/2/env/1";
 		OSC_PATH[FILTER2_ENV_D] = "/filter/2/env/2";

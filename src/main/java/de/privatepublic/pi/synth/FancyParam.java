@@ -82,7 +82,6 @@ public class FancyParam {
 		
 		NAME[P.OSC1_PULSE_WIDTH] = "Osc1 PW";
 		NAME[P.OSC2_PULSE_WIDTH] = "Osc2 PW";
-		NAME[P.FILTER2_ON] = "Filter2";
 		NAME[P.FILTER2_TRACK_KEYBOARD] = "Filter2 Keyboard Tracking";
 		NAME[P.FILTER2_ENV_A] = "Filter2 Env. Attack";
 		NAME[P.FILTER2_ENV_D] = "Filter2 Env. Decay";
@@ -176,7 +175,6 @@ public class FancyParam {
 		case P.FILTER1_ENV_VELOCITY_SENS:
 		case P.FILTER2_ENV_VELOCITY_SENS:
 		case P.FILTER1_ON:
-		case P.FILTER2_ON:
 		case P.MOD_ENV1_LOOP:
 		case P.FILTER1_ENV_LOOP:
 		case P.FILTER2_ENV_LOOP:
@@ -186,15 +184,8 @@ public class FancyParam {
 		case P.MOD_LFO_RESET:
 			result = value>0?"ON":"OFF";
 			break;
-		case P.FILTER_PARALLEL:
-//			result = value>0?"parallel":"serial";
-			result = P.VAL_FILTER_ROUTING.descName();
-			break;
 		case P.OSC_MODE:
 			result = P.VAL_OSCILLATOR_MODE.toString();
-			break;
-		case P.OSC2_AM:
-			result = (P.VAL[P.OSC2_AM]>0?"x"+FORMAT_FLOAT2.format((P.VAL[P.OSC2_AM]*4)):"OFF");
 			break;
 		case P.FILTER1_TYPE:
 			result = P.FilterType.selectedFilterType(value).name();

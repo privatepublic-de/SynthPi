@@ -145,7 +145,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 
 	@Override
 	public void controlTick() {
-		if (mode!=Mode.SUB) {
+		if (mode!=Mode.SUB) { // sub is only square
 			float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
 			if (modev<.25) {
 				wave = Wave.SINE;
@@ -184,8 +184,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 				* LFO.lfoAmountAsymm(P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
 			break;
 		case SUB:
-		default:
-			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR / 2;
+			freq = (effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR)*(P.IS[P.OSC_SUB_LOW]?.25f:.5f);
 		}
 		
 		phaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
