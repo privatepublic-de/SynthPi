@@ -21,7 +21,7 @@ public class AnalogSynthVoice {
 	private final IOscillator osc2 = new BlepOscillator(Mode.SECONDARY, modEnvelope);
 	private final IOscillator oscSub = new BlepOscillator(Mode.SUB, modEnvelope);
 	
-	private final MultiModeFilter filter1;
+	private final MultiModeFilter filter;
 	
 	private final float[] am_buffer = new float[P.SAMPLE_BUFFER_SIZE];
 	private final boolean[] syncBuffer = new boolean[P.SAMPLE_BUFFER_SIZE];
@@ -37,17 +37,7 @@ public class AnalogSynthVoice {
 	
 	public AnalogSynthVoice() {
 		envelope = new EnvADSR(P.ENV_CONF_AMP);
-		filter1 = new MultiModeFilter(
-				P.FILTER1_FREQ, 
-				P.FILTER1_RESONANCE, 
-				P.MOD_FILTER1_AMOUNT, 
-				P.FILTER1_ENV_DEPTH, 
-				0, 
-				P.FILTER1_TRACK_KEYBOARD, 
-				P.FILTER1_ENV_VELOCITY_SENS,
-				P.FILTER1_OVERLOAD,
-				modEnvelope
-			);
+		filter = new MultiModeFilter(modEnvelope);
 	}
 	
 	public float captureWeight(long timestamp) {
@@ -86,7 +76,7 @@ public class AnalogSynthVoice {
 			osc1.trigger(frequency, velocity);
 			osc2.trigger(frequency, velocity);
 			oscSub.trigger(frequency, velocity);
-			filter1.trigger(frequency, velocity);
+			filter.trigger(frequency, velocity);
 			envelope.noteOn(velocity);
 			modEnvelope.noteOn(1);
 			AnalogSynth.lastTriggeredFrequency = frequency;
@@ -98,7 +88,7 @@ public class AnalogSynthVoice {
 					osc1.trigger(frequency, velocity);
 					osc2.trigger(frequency, velocity);
 					oscSub.trigger(frequency, velocity);
-					filter1.trigger(frequency, velocity);
+					filter.trigger(frequency, velocity);
 					envelope.noteOn(velocity);
 					modEnvelope.noteOn(1);
 					AnalogSynth.lastTriggeredFrequency = frequency;
@@ -119,7 +109,6 @@ public class AnalogSynthVoice {
 	public void noteOff() {
 		envelope.noteOff();
 		modEnvelope.noteOff();
-		filter1.noteOff();
 	}
 	
 	private float noiseLevel = 0;
@@ -131,7 +120,7 @@ public class AnalogSynthVoice {
 		osc1.controlTick();
 		osc2.controlTick();
 		oscSub.controlTick();
-		filter1.controlTick();
+		filter.controlTick();
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
@@ -151,11 +140,10 @@ public class AnalogSynthVoice {
 			val += oscSub.process(i, oscSubVol, syncBuffer, am_buffer);
 			val += noise_val;
 			if (filter1on)
-				val = filter1.processSample(val);
+				val = filter.processSample(val);
 			else
-				filter1.processSample(val);
-			val *= envelope.outValue*(1+LFO.lfoAmountAdd(modVol));
-			buffer[pos] += val;
+				filter.processSample(val);
+			buffer[pos] += val * envelope.outValue*(1+LFO.lfoAmountAdd(modVol));
 			am_buffer[pos] = 0;
 		}
 	}

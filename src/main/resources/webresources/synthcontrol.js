@@ -453,7 +453,7 @@ $(document).ready(function () {
 			'min': cursor?-100:0, 
 			'max': cursor?100:200, 
 			'cursor': cursor?28:0,
-			'thickness': cursor?.5:.4,
+//			'thickness': cursor?.5:.4,
 			'step': 1,
 			'angleArc': 240, 
 			'angleOffset': -120,

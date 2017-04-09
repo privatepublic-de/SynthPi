@@ -276,10 +276,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				msgLabel.append("/option");
 				msgLabel.append(path);
 				msgLabel.append('/');
-				if (paramIndex==P.FILTER_PARALLEL) {
-					msgLabel.append(P.VAL_FILTER_ROUTING);
-				}
-				else if (paramIndex==P.OSC_MODE) {
+				if (paramIndex==P.OSC_MODE) {
 					msgLabel.append(P.VAL_OSCILLATOR_MODE);
 				}
 				else {

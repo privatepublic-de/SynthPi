@@ -165,8 +165,7 @@ public class P {
 	
 	public static final String[] OSC_PATH = new String[PARAM_STORE_SIZE];
 	
-	public static FilterType[] VAL_FILTER_TYPE_FOR = new FilterType[] {FilterType.LOWPASS, FilterType.ALLPASS};
-	public static FilterRouting VAL_FILTER_ROUTING = FilterRouting.SERIAL;
+	public static FilterType VAL_FILTER_TYPE = FilterType.LOWPASS;
 	public static OscillatorMode VAL_OSCILLATOR_MODE = OscillatorMode.VIRTUAL_ANALOG;
 	public static Waveform VAL_OSC1_WAVEFORM = Waveform.SAW;
 	public static Waveform VAL_OSC2_WAVEFORM = Waveform.SAW;
@@ -610,16 +609,13 @@ public class P {
 		
 		switch (index) {
 		case FILTER1_TYPE:
-			VAL_FILTER_TYPE_FOR[0] = FilterType.selectedFilterType(val);
+			VAL_FILTER_TYPE = FilterType.selectedFilterType(val);
 			break;
 		case OSC1_WAVE:
 			VAL_OSC1_WAVEFORM = Waveform.selectedWaveform(val);
 			break;
 		case OSC2_WAVE:
 			VAL_OSC2_WAVEFORM = Waveform.selectedWaveform(val);
-			break;
-		case FILTER_PARALLEL:
-			VAL_FILTER_ROUTING = FilterRouting.values()[(int)Math.round(val * (FilterRouting.values().length-1))];
 			break;
 		case OSC_MODE:
 			VAL_OSCILLATOR_MODE = selectedOscillatorMode(val);
