@@ -43,7 +43,7 @@
 							<span class="checkbox small saw" title="" data-osc="/option/osc/1/wave/SAW" data-osc-send="/osc/1/wave,0.5"></span>
 							<span class="checkbox small pul" title="" data-osc="/option/osc/1/wave/PULSE" data-osc-send="/osc/1/wave,1"></span>
 						</div>
-						<input type="text" value="0" class="dial small" title="Pulse Width" data-osc="/osc/1/pw" />				
+						<input type="text" value="0" class="dial small" title="Pulse Width" data-osc="/osc/1/pw" data-osc-label="/label/osc/1/pw"/>				
 					</div>
 					<br />
 					<div class="innergroup osc">
@@ -54,7 +54,7 @@
 							<span class="checkbox small saw" title="" data-osc="/option/osc/2/wave/SAW" data-osc-send="/osc/2/wave,0.5"></span>
 							<span class="checkbox small pul" title="" data-osc="/option/osc/2/wave/PULSE" data-osc-send="/osc/2/wave,1"></span>
 						</div>
-						<input type="text" value="0" class="dial small" title="Pulse Width" data-osc="/osc/2/pw" />
+						<input type="text" value="0" class="dial small" title="Pulse Width" data-osc="/osc/2/pw" data-osc-label="/label/osc/2/pw"/>
 						<br />
 						<input type="text" value="0" class="dial small" title="Semis" data-cursor="10" data-osc="/osc/2/tuning" data-osc-label="/label/osc/2/tuning" />
 						<input type="text" value="0" class="dial small" title="Fine" data-cursor="10" data-osc="/osc/2/tuning/fine" />
@@ -68,17 +68,18 @@
 				<div class="innergroup common">
 					<input type="text" value="0" class="dial small" title="Glide" data-osc="/osc/gliderate" />
 					<span class="checkbox smaller" title="Mono" data-osc="/osc/mono"></span>
+					<span class="checkbox smaller" title="Ultra-sub" data-osc="/osc/sub/low"></span>
 				</div>
 			</div>
 			<div class="innergroup mixer">
 				<label>MIX</label><br />
-				<input type="text" value="0" class="dial medium" title="Osc 1" data-osc="/osc/1/vol" />
+				<input type="text" value="0" class="dial medium" title="Osc 1" data-osc="/osc/1/vol" data-osc-label="/label/osc/1/vol"/>
 				<br />
-				<input type="text" value="0" class="dial medium" title="Osc 2" data-osc="/osc/2/vol" />
+				<input type="text" value="0" class="dial medium" title="Osc 2" data-osc="/osc/2/vol" data-osc-label="/label/osc/2/vol"/>
 				<br />
-				<input type="text" value="0" class="dial small" title="Sub Osc" data-osc="/osc/sub/vol" />
+				<input type="text" value="0" class="dial small" title="Sub Osc" data-osc="/osc/sub/vol" data-osc-label="/label/osc/sub/vol"/>
 				<br />
-				<input type="text" value="0" class="dial small" title="Noise" data-osc="/osc/noiselevel" />
+				<input type="text" value="0" class="dial small" title="Noise" data-osc="/osc/noiselevel" data-osc-label="/label/osc/noiselevel"/>
 			</div>
 		</div>
 		
@@ -93,7 +94,7 @@
 				<span class="checkbox smaller" title="AllP" data-osc="/option/filter/1/type/ALLPASS" data-osc-send="/filter/1/type,1"></span>
 			</div>
 			<div class="innergroup">
-				<input type="text" value="0" class="dial medium" title="Drive" data-osc="/filter/1/overload" />
+				<input type="text" value="0" class="dial medium" title="Drive" data-osc="/filter/1/overload" data-osc-label="/label/filter/1/overload" />
 				<input type="text" value="0" class="dial large" title="Freq" data-osc="/filter/1/freq" data-osc-label="/label/filter/1/freq" />
 				<input type="text" value="0" class="dial medium" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
 			</div><br/>
@@ -103,7 +104,7 @@
 		<div id="amplifier" class="group blue">
 			<h2>Amplifier</h2>
 			<div class="innergroup">
-				<input type="text" value="0" class="dial medium" title="Drive" data-osc="/fx/overdrive" />
+				<input type="text" value="0" class="dial medium" title="Drive" data-osc="/fx/overdrive" data-osc-label="/label/fx/overdrive" />
 				<input type="text" value="0" class="dial medium" title="Chorus" data-osc="/fx/chorus/drywet" data-osc-label="/label/fx/chorus/drywet" />
 				<br />
 				<input type="text" value="0" class="dial small" title="Delay" data-osc="/fx/delay/wet" data-osc-label="/label/fx/delay/wet" />
@@ -170,7 +171,7 @@
 						<td><input type="text" value="0" class="dial small" title="PWM 2" data-cursor="10" data-osc="/mod/1/depth/wave/2" /></td>
 						<td></td>
 						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/mod/1/depth/filter/1" /></td>
-						<td><input type="text" value="0" class="dial small" title="Vol" data-osc="/mod/1/depth/vol" /></td>
+						<td><input type="text" value="0" class="dial small" title="Vol" data-osc="/mod/1/depth/vol" data-osc-label="/label/mod/1/depth/vol"/></td>
 					</tr>
 					<tr>
 						<th>ENV1</th>

@@ -229,11 +229,11 @@ $(document).ready(function () {
 
 	var pushHandler = function(index) {
 		var el = $(this);
-		el.on("mousedown", {element: el}, function(ev) {
+		el.on("mousedown touchstart", {element: el}, function(ev) {
 			socket.sendValue(ev.data.element, 1);
 			el.addClass("pressed");
 		});
-		el.on("mouseup mouseleave", {element: el}, function(ev) {
+		el.on("mouseup touchend mouseleave", {element: el}, function(ev) {
 			if (el.hasClass("pressed")) {
 				socket.sendValue(ev.data.element, 0);
 				el.removeClass("pressed");
@@ -452,7 +452,8 @@ $(document).ready(function () {
 		el.knob({
 			'min': cursor?-100:0, 
 			'max': cursor?100:200, 
-			'cursor': cursor?24:0,
+			'cursor': cursor?28:0,
+			'thickness': cursor?.5:.4,
 			'step': 1,
 			'angleArc': 240, 
 			'angleOffset': -120,
@@ -478,23 +479,13 @@ $(document).ready(function () {
 					console.log(this);
 					var ctx = this.c;
 					var cx = ctx.canvas.width/2;
-					var cy = this.lineWidth/2;
-					var h = this.lineWidth/2-1;
-					var d = 1;
-					var w = h;
-					ctx.fillStyle = markercolor;
+					ctx.strokeStyle = markercolor;
+					ctx.lineWidth = 1;
 					ctx.beginPath();
-					ctx.moveTo(cx-d, cy-h);
-					ctx.lineTo(cx-d, cy+h);
-					ctx.lineTo(cx-d-w, cy);
+					ctx.moveTo(cx, 0);
+					ctx.lineTo(cx, this.lineWidth*1.5);
 					ctx.closePath();
-					ctx.fill();
-					ctx.beginPath();
-					ctx.moveTo(cx+d, cy-h);
-					ctx.lineTo(cx+d, cy+h);
-					ctx.lineTo(cx+d+w, cy);
-					ctx.closePath();
-					ctx.fill();
+					ctx.stroke();
 					return false;
 				}
 			}
