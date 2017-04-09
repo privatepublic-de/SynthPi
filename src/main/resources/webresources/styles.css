@@ -700,11 +700,15 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	text-align: center;
 	background-color: #000;
 	margin-top: 35px;
+	position: relative;
 }
 
 #keyboard .keys {
 	display: inline-block;
 	vertical-align: top;
+	max-width: 100%;
+	height: 100px;
+	overflow: hidden;
 }
 
 .wk, .bk {
