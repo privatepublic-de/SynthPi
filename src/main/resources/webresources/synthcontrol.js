@@ -472,6 +472,17 @@ $(document).ready(function () {
 				if (el.data("remoteupdate")!=true) {
 					socket.sendValue(el, v);
 				} 
+			},
+			'draw': function() {
+				if (cursor) {
+					var ctx = this.g;
+					var cx = ctx.canvas.width/2;
+					ctx.strokeStyle = fgcolor;
+					ctx.beginPath();
+					ctx.moveTo(cx, 0);
+					ctx.lineTo(cx, ctx.canvas.width*0.34);
+					ctx.stroke();
+				}
 			}
 		});
 		el.attr("data-bg-1", bgcolor);
