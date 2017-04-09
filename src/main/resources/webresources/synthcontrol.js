@@ -444,8 +444,7 @@ $(document).ready(function () {
 		else {
 			var bgcolor = $.Color(el, "color").lightness(0.2).saturation(0.0).toHexString();
 		}
-		var bgcolor2 = $.Color(el, "color").saturation(0.3).lightness(0.8).toHexString();
-		var fgcolor2 = $.Color(el, "color").lightness(0.3).toHexString();
+		var markercolor = $.Color(el, "color").lightness(0.4).toHexString();
 		var width = el.width();
 		var cursor = el.attr("data-cursor");
 		var labelpath = el.attr("data-osc-label");
@@ -453,6 +452,7 @@ $(document).ready(function () {
 		el.knob({
 			'min': cursor?-100:0, 
 			'max': cursor?100:200, 
+			'cursor': cursor?20:0,
 			'step': 1,
 			'angleArc': 240, 
 			'angleOffset': -120,
@@ -462,7 +462,6 @@ $(document).ready(function () {
 			'bgColor': bgcolor,
 			'fontWeight': 'normal',
 			'displayInput': labelpath?false:true,
-			// handler
 			'release': function(v) {
 				if (el.data("remoteupdate")!=true) {
 					socket.sendValue(el, v);
@@ -475,20 +474,18 @@ $(document).ready(function () {
 			},
 			'draw': function() {
 				if (cursor) {
-					var ctx = this.g;
+					this.draw();
+					console.log(this);
+					var ctx = this.c;
 					var cx = ctx.canvas.width/2;
-					ctx.strokeStyle = fgcolor;
+					ctx.fillStyle = markercolor;
 					ctx.beginPath();
-					ctx.moveTo(cx, 0);
-					ctx.lineTo(cx, ctx.canvas.width*0.34);
-					ctx.stroke();
+					ctx.arc(cx,this.lineWidth/2,this.lineWidth/3,0,Math.PI*2);
+					ctx.fill();
+					return false;
 				}
 			}
 		});
-		el.attr("data-bg-1", bgcolor);
-		el.attr("data-fg-1", fgcolor);
-		el.attr("data-bg-2", bgcolor2);
-		el.attr("data-fg-2", fgcolor2);
 		$("#kn"+id).append("<label class='static'>"+el.attr("title")+"</label>").dblclick(function() {
 			socket.sendValue(el, 0);
 			el.val(0).trigger("change");
