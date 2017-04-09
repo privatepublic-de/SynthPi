@@ -452,7 +452,7 @@ $(document).ready(function () {
 		el.knob({
 			'min': cursor?-100:0, 
 			'max': cursor?100:200, 
-			'cursor': cursor?28:0,
+			'cursor': cursor?24:0,
 			'step': 1,
 			'angleArc': 240, 
 			'angleOffset': -120,
@@ -480,7 +480,7 @@ $(document).ready(function () {
 					var cx = ctx.canvas.width/2;
 					var cy = this.lineWidth/2;
 					var h = this.lineWidth/2-1;
-					var d = 2;
+					var d = 1;
 					var w = h;
 					ctx.fillStyle = markercolor;
 					ctx.beginPath();
