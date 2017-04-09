@@ -35,14 +35,16 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
     float drift = 0;
     boolean ampmod = false;
     private SplittableRandom random = new SplittableRandom();
+    private EnvADSR modEnvelope;
 	
 
-	public BlepOscillator(IOscillator.Mode mode) {
+	public BlepOscillator(IOscillator.Mode mode, EnvADSR modEnv) {
 		super(mode);
 		MidiHandler.registerReceiver(this);
 		if (mode==IOscillator.Mode.SUB) {
 			wave = Wave.SQUARE;
 		}
+		this.modEnvelope = modEnv;
 	}
 	
 	@Override
@@ -52,27 +54,11 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		mPhaseIncrementDiv = mPhaseIncrement/PI2;
 	}
 	
+	float freq = 0;
 
 	@Override
-	public float process(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer,
-			EnvADSR modEnvelope) {
-		final float freq;
-		switch(mode) {
-		case PRIMARY:
-			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR;
-			break;
-		case SECONDARY:
-			freq = 
-				effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
-				* LFO.lfoAmountAsymm(P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
-			break;
-		case SUB:
-		default:
-			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR / 2;
-		}
+	public float process(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer) {
 		
-		mPhaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
-		mPhaseIncrementDiv = mPhaseIncrement/PI2;
 		
 		if (isBase) {
 			syncOnFrameBuffer[sampleNo] = false;
@@ -193,6 +179,24 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			}
 		}
 		drift = ((float)random.nextDouble()*.5f-.25f)*2;
+		
+		switch(mode) {
+		case PRIMARY:
+			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR;
+			break;
+		case SECONDARY:
+			freq = 
+				effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
+				* LFO.lfoAmountAsymm(P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
+			break;
+		case SUB:
+		default:
+			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR / 2;
+		}
+		
+		mPhaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
+		mPhaseIncrementDiv = mPhaseIncrement/PI2;
+		
 	}
 
 

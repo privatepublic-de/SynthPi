@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
+import de.privatepublic.pi.synth.modules.IControlProcessor;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.util.FastCalc;
 
-public class MultiModeFilter {
+public class MultiModeFilter implements IControlProcessor {
 
 	public static final float MIN_STABLE_FREQUENCY = 40f;
 	public static final float MAX_STABLE_FREQUENCY = 12000f - MIN_STABLE_FREQUENCY;
@@ -25,9 +26,6 @@ public class MultiModeFilter {
 	private EnvADSR filterEnv;
 	
 	
-//	private final EnvADSR filterEnv; // new EnvADSR(new short[] {P.FILTER1_ENV_A, P.FILTER1_ENV_D, P.FILTER1_ENV_S, P.FILTER1_ENV_R}, P.FILTER1_ENV_VELOCITY_SENS);
-
-	
 	public MultiModeFilter(int freq, int res, int mod, int env, int type, int trkkbd, int vel, int overload, EnvADSR modEnv) {
 		p_freq = freq;
 		p_resonance = res;
@@ -42,8 +40,6 @@ public class MultiModeFilter {
 	
 	
 	public void trigger(final float freq, final float velocity) {
-//		filterEnv.noteOn(velocity);
-//		freq_keyboard_offset = freq*AU.FILTER_KEYBOARD_TRACKING;
 		if (P.VAL[p_track_keyboard]>0) {
 			frqOffset = freq*P.VAL[p_track_keyboard]*2f;//freq_keyboard_offset;
 		}
@@ -71,7 +67,7 @@ public class MultiModeFilter {
 	
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue) {
-		type = P.VAL_FILTER_TYPE_FOR[p_type];
+		
 		
 		//filterEnv.nextValue();
 		// apply drive
@@ -80,25 +76,17 @@ public class MultiModeFilter {
 		drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
 		inValue = sampleValue*P.VALMIXHIGH[p_overload] + drive*P.VALMIXLOW[p_overload]*.334f;
 		
-		frq = FastCalc.ensureRange(
-				(
-					MIN_STABLE_FREQUENCY
-					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
-					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
-					+ frqOffset
-				) 
-				* LFO.lfoAmount(P.VALXC[p_mod_amount]),
-				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
+		
 
 		if (type==FilterType.LOWPASS24) {
-			Q = 1-P.VAL[p_resonance];
-			gain = (float) Math.sqrt(Q);
-
-			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
-			QtimesK = Q * K;
-			a = 0.76536686473f * QtimesK;
-			b = 1.84775906502f * QtimesK;
-			K = K*K;
+//			Q = 1-P.VAL[p_resonance];
+//			gain = (float) Math.sqrt(Q);
+//
+//			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
+//			QtimesK = Q * K;
+//			a = 0.76536686473f * QtimesK;
+//			b = 1.84775906502f * QtimesK;
+//			K = K*K;
 
 			A0 = (K+a+1);
 			A1 = 2*(1-K);
@@ -127,9 +115,9 @@ public class MultiModeFilter {
 
 		}
 		else {
-			Q = P.VAL[p_resonance];
-			f1 = (2.0f*FastCalc.sin((float)Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
-			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
+//			Q = P.VAL[p_resonance];
+//			f1 = (2.0f*FastCalc.sin((float)Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
+//			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
 			
 			notch = inValue - damp*band;
 			low   = low + f1*band;
@@ -173,4 +161,37 @@ public class MultiModeFilter {
 	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(MultiModeFilter.class);
+
+
+	@Override
+	public void controlTick() {
+		type = P.VAL_FILTER_TYPE_FOR[p_type];
+		
+		frq = FastCalc.ensureRange(
+				(
+					MIN_STABLE_FREQUENCY
+					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
+					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
+					+ frqOffset
+				) 
+				* LFO.lfoAmount(P.VALXC[p_mod_amount]),
+				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
+		
+		if (type==FilterType.LOWPASS24) {
+			Q = 1-P.VAL[p_resonance];
+			gain = (float) Math.sqrt(Q);
+
+			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
+			QtimesK = Q * K;
+			a = 0.76536686473f * QtimesK;
+			b = 1.84775906502f * QtimesK;
+			K = K*K;
+		}
+		else {
+			Q = P.VAL[p_resonance];
+			f1 = (2.0f*FastCalc.sin((float)Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
+			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
+		}
+		
+	}
 }

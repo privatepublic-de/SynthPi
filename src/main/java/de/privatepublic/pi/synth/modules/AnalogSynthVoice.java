@@ -15,11 +15,11 @@ import de.privatepublic.pi.synth.modules.osc.IOscillator.Mode;
 public class AnalogSynthVoice {
 
 	private final EnvADSR envelope;
-	private final EnvADSR modEnvelope;
+	private final EnvADSR modEnvelope = new EnvADSR(P.ENV_CONF_MOD_ENV);
 	
-	private final IOscillator osc1 = new BlepOscillator(Mode.PRIMARY);
-	private final IOscillator osc2 = new BlepOscillator(Mode.SECONDARY);
-	private final IOscillator oscSub = new BlepOscillator(Mode.SUB);
+	private final IOscillator osc1 = new BlepOscillator(Mode.PRIMARY, modEnvelope);
+	private final IOscillator osc2 = new BlepOscillator(Mode.SECONDARY, modEnvelope);
+	private final IOscillator oscSub = new BlepOscillator(Mode.SUB, modEnvelope);
 	
 	private final MultiModeFilter filter1;
 	
@@ -37,7 +37,6 @@ public class AnalogSynthVoice {
 	
 	public AnalogSynthVoice() {
 		envelope = new EnvADSR(P.ENV_CONF_AMP);
-		modEnvelope = new EnvADSR(P.ENV_CONF_MOD_ENV);
 		filter1 = new MultiModeFilter(
 				P.FILTER1_FREQ, 
 				P.FILTER1_RESONANCE, 
@@ -132,6 +131,7 @@ public class AnalogSynthVoice {
 		osc1.controlTick();
 		osc2.controlTick();
 		oscSub.controlTick();
+		filter1.controlTick();
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
@@ -146,9 +146,9 @@ public class AnalogSynthVoice {
 			noiseX2 += noiseX1;
 			noiseX1 ^= noiseX2;
 			noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
-			val = osc1.process(i, osc1Vol, syncBuffer, am_buffer, modEnvelope);
-			val += osc2.process(i, osc2Vol, syncBuffer, am_buffer, modEnvelope);
-			val += oscSub.process(i, oscSubVol, syncBuffer, am_buffer, modEnvelope);
+			val = osc1.process(i, osc1Vol, syncBuffer, am_buffer);
+			val += osc2.process(i, osc2Vol, syncBuffer, am_buffer);
+			val += oscSub.process(i, oscSubVol, syncBuffer, am_buffer);
 			val += noise_val;
 			if (filter1on)
 				val = filter1.processSample(val);
