@@ -27,12 +27,14 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 	};
 	
 	Wave wave = Wave.SAW;
-    float mPhase = 0;
-    float mPhaseIncrement;
-    float mPhaseIncrementDiv;
+    float phase = 0;
+    float phaseIncrement;
+    float phaseIncrementDiv;
     float lastOutput;
     float syncPhase = 0;
     float drift = 0;
+    float pulsewidth = .5f;
+    float freq = 0;
     boolean ampmod = false;
     private SplittableRandom random = new SplittableRandom();
     private EnvADSR modEnvelope;
@@ -50,11 +52,11 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 	@Override
 	protected void setTargetFrequency(float frequency) {
 		super.setTargetFrequency(frequency);
-		mPhaseIncrement = effectiveFrequency * PI2 / P.SAMPLE_RATE_HZ;
-		mPhaseIncrementDiv = mPhaseIncrement/PI2;
+		phaseIncrement = effectiveFrequency * PI2 / P.SAMPLE_RATE_HZ;
+		phaseIncrementDiv = phaseIncrement/PI2;
 	}
 	
-	float freq = 0;
+	
 
 	@Override
 	public float process(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer) {
@@ -65,18 +67,18 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		}
 		else {
 			if (isSecond && P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
-				mPhase = 0;
+				phase = 0;
 			}			
 		}
 		
-		float t = mPhase / PI2;
+		float t = phase / PI2;
 		float outVal = 0;
 		switch(wave) {
 		case SINE:
-	        outVal = FastCalc.sin(mPhase);
+	        outVal = FastCalc.sin(phase);
 	        if (isSecond && P.IS[P.OSC2_SYNC]) {
 	        	outVal -= pblep((syncPhase/PI2)%PI2);
-	        	outVal = mPhaseIncrement * outVal + (1 - mPhaseIncrement) * lastOutput;
+	        	outVal = phaseIncrement * outVal + (1 - phaseIncrement) * lastOutput;
 	        }
 			break;
 		case SAW:
@@ -86,16 +88,8 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		case SQUARE:
 			float saw1 = (2.0f * t) - 1.0f;
 			saw1 -= pblep(t);
-			float pulsewidth = .5f;
 			
-			if (isBase) {
-				pulsewidth = P.VAL[P.OSC1_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_WAVE1_AMOUNT]);
-			}
-			else {
-				pulsewidth = P.VAL[P.OSC2_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_WAVE2_AMOUNT]);;
-			}
-			
-			float phaseShift = (float)(mPhase+PI2*pulsewidth);
+			float phaseShift = (float)(phase+PI2*pulsewidth);
 			while (phaseShift >= PI2) {
 				phaseShift -= PI2;
 	        }
@@ -105,22 +99,22 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			outVal = saw1-saw2;
 			break;
 		case TRIANGLE:
-			if (mPhase <= Math.PI) {
+			if (phase <= Math.PI) {
 	            outVal = 1.0f;
 	        } else {
 	            outVal = -1.0f;
 	        }
 			outVal += pblep(t);
 			outVal -= pblep((t + 0.5f)%1.0f);
-	        outVal = mPhaseIncrement * outVal + (1 - mPhaseIncrement) * lastOutput;
+	        outVal = phaseIncrement * outVal + (1 - phaseIncrement) * lastOutput;
 			break;
 		}
-		mPhase += mPhaseIncrement;
-        while (mPhase >= PI2) {
-            mPhase -= PI2;
+		phase += phaseIncrement;
+        while (phase >= PI2) {
+            phase -= PI2;
             if (isBase) {
             	syncOnFrameBuffer[sampleNo] = true;
-            	syncPhase = mPhase;
+            	syncPhase = phase;
             }
         }
         lastOutput = outVal;
@@ -131,13 +125,13 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 	
 	private float pblep(float t) {
 	    // 0 <= t < 1
-	    if (t < mPhaseIncrementDiv) {
-	        t /= mPhaseIncrementDiv;
+	    if (t < phaseIncrementDiv) {
+	        t /= phaseIncrementDiv;
 	        return t+t - t*t - 1.0f;
 	    }
 	    // -1 < t < 0
-	    else if (t > 1.0 - mPhaseIncrementDiv) {
-	        t = (t - 1.0f) / mPhaseIncrementDiv;
+	    else if (t > 1.0 - phaseIncrementDiv) {
+	        t = (t - 1.0f) / phaseIncrementDiv;
 	        return t*t + t+t + 1.0f;
 	    }
 	    // 0 otherwise
@@ -194,8 +188,15 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			freq = effectiveFrequency*LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR / 2;
 		}
 		
-		mPhaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
-		mPhaseIncrementDiv = mPhaseIncrement/PI2;
+		phaseIncrement = (freq+drift) * PI2 / P.SAMPLE_RATE_HZ;
+		phaseIncrementDiv = phaseIncrement/PI2;
+		
+		if (isBase) {
+			pulsewidth = FastCalc.ensureRange(P.VAL[P.OSC1_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_WAVE1_AMOUNT]), 0, 1);
+		}
+		else if (isSecond) {
+			pulsewidth = FastCalc.ensureRange(P.VAL[P.OSC2_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_WAVE2_AMOUNT]), 0, 1);
+		}
 		
 	}
 
