@@ -191,26 +191,26 @@ public class P {
 	/** Filter1 resonance (Q) level */
 	public static final int FILTER1_RESONANCE = 7;
 	/** Filter1 envelope modulation depth (use centered) */
-	public static final int FILTER1_ENV_DEPTH = 8;
+	public static final int MOD_ENV2_FILTER_AMOUNT = 8;
 	/** Filter1 type 
 	 * @see FilterType */
 	public static final int FILTER1_TYPE = 9;
 	/** Filter1 mod envelope attack time */
-	public static final int FILTER1_ENV_A = 10;
+	public static final int MOD_ENV1_FILTER_AMOUNT = 10;
 	/** Filter1 mod envelope decay time */
-	public static final int FILTER1_ENV_D = 11;
+	public static final int MOD_ENV1_PITCH_AMOUNT = 11;
 	/** Filter1 mod envelope sustain level */
-	public static final int FILTER1_ENV_S = 12;
+	public static final int MOD_ENV1_PITCH2_AMOUNT = 12;
 	/** Filter1 mod envelope release time */
-	public static final int FILTER1_ENV_R = 13;
+	public static final int MOD_ENV2_VOL_AMOUNT = 13;
 	/** Amp envelope attack time */
-	public static final int AMP_ENV_A = 14;
+	public static final int MOD_ENV1_A = 14;
 	/** Amp envelope decay time */
-	public static final int AMP_ENV_D = 15;
+	public static final int MOD_ENV1_D = 15;
 	/** Amp envelope sustain level */
-	public static final int AMP_ENV_S = 16;
+	public static final int MOD_ENV1_S = 16;
 	/** Amp envelope release time */
-	public static final int AMP_ENV_R = 17;
+	public static final int MOD_ENV1_R = 17;
 	/** Mix balance of oscillators 1 and 2. 
 	 * @see VALMIXLOW, VALMIXHIGH */
 	public static final int OSC1_VOLUME = 18;
@@ -219,7 +219,7 @@ public class P {
 	/** Filter1 LFO modulation amount (use centered) */
 	public static final int MOD_FILTER1_AMOUNT = 20;
 	
-	// there's a gap at 21
+	public static final int MOD_ENV1_VOL_AMOUNT = 21;
 	
 	
 	/** LFO modulation rate */
@@ -266,15 +266,12 @@ public class P {
 	/** Filter2 mod envelope velocity sensitivity >0 = true*/
 	public static final int FILTER2_ENV_VELOCITY_SENS = 44;
 	
-	
-	
-	
 	/** LFO pitch of oscillator2 modulation amount (use centered) */
 	public static final int MOD_PITCH2_AMOUNT = 45;
 	/** Oscillator2 fine tuning -/+100 cents (use centered) */
 	public static final int OSC2_TUNING_FINE = 46;
 	/** Oscillator1+2 wave form modulation amount */
-	public static final int MOD_WAVE1_AMOUNT = 47;
+	public static final int MOD_PW1_AMOUNT = 47;
 	/** Selected wave set for oscillator 1 */
 	public static final int OSC1_WAVE_SET = 48;
 	/** Selected wave set for oscillator 2 */
@@ -285,23 +282,23 @@ public class P {
 	public static final int FILTER_PARALLEL = 51;
 	/** Filter parallel mix level 
 	 * @see VALMIXLOW, VALMIXHIGH */
-	public static final int FILTER_PARALLEL_MIX = 52;
+	public static final int MOD_ENV2_PW2_AMOUNT = 52;
 	/** Mod envelope attack time */
-	public static final int MOD_ENV1_A = 53;
+	public static final int MOD_ENV2_A = 53;
 	/** Mod envelope decay time */
-	public static final int MOD_ENV1_D = 54;
+	public static final int MOD_ENV2_D = 54;
 	/** Mod envelope sustain level */
-	public static final int MOD_ENV1_S = 55;
+	public static final int MOD_ENV2_S = 55;
 	/** Mod envelope release time */
-	public static final int MOD_ENV1_R = 56;
+	public static final int MOD_ENV2_R = 56;
 	/** Mod envelope pitch modulation amount (use centered) */
-	public static final int MOD_ENV1_PITCH_AMOUNT = 57;
+	public static final int MOD_ENV2_PITCH_AMOUNT = 57;
 	/** Mod envelope pitch of oscillator 2 modulation amount (use centered) */
-	public static final int MOD_ENV1_PITCH2_AMOUNT = 58;
+	public static final int MOD_ENV2_PITCH2_AMOUNT = 58;
 	/** Mod envelope wave form modulation amount (use centered) */
-	public static final int MOD_ENV1_WAVE_AMOUNT = 59;
+	public static final int MOD_ENV2_PW1_AMOUNT = 59;
 	/** Mod envelope noise level modulation amount (use centered) */
-	public static final int MOD_ENV1_NOISE_AMOUNT = 60;
+	public static final int MOD_ENV2_NOISE_AMOUNT = 60;
 	/** LFO wave form */
 	public static final int MOD_LFO_TYPE = 61;
 	/** LFO resets on every note on (key stroke) */
@@ -315,23 +312,23 @@ public class P {
 	/** LFO base amount */
 	public static final int MOD_AMOUNT_BASE = 66;
 	/** Mod envelope loop mode */
-	public static final int MOD_ENV1_LOOP = 67;
+	public static final int MOD_ENV2_LOOP = 67;
 	/** Filter 1 envelope loop mode */
-	public static final int FILTER1_ENV_LOOP = 68;
+	public static final int MOD_ENV1_PW1_AMOUNT = 68;
 	/** Filter 2 envelope loop mode */
-	public static final int FILTER2_ENV_LOOP = 69;
+	public static final int MOD_ENV1_PW2_AMOUNT = 69;
 	/** Amp envelope loop mode */
-	public static final int AMP_ENV_LOOP = 70;
+	public static final int MOD_ENV1_LOOP = 70;
 	
 	public static final int DELAY_WET = 71;
 	public static final int OSC_MODE = 72;
 	public static final int UNUSED_OSC_GAIN = 73;
 	public static final int MIDI_VELOCITY_CURVE = 74;
 	public static final int REVERB_ONE_KNOB = 75;
-	public static final int SPREAD = 76;
-	public static final int MOD_WAVE2_AMOUNT = 77;
+	public static final int MOD_NOISE_AMOUNT = 76;
+	public static final int MOD_PW2_AMOUNT = 77;
 	public static final int MOD_VOL_AMOUNT = 78;
-	public static final int MOD_ENV1_AM_AMOUNT = 79;
+	public static final int MOD_ENV1_NOISE_AMOUNT = 79;
 	public static final int DELAY_RATE = 80;
 	public static final int DELAY_FEEDBACK = 81;
 	
@@ -350,17 +347,14 @@ public class P {
 		OVERDRIVE,
 		CHORUS_DEPTH,
 		REVERB_ONE_KNOB,
-		FILTER_PARALLEL_MIX,
 		OSC_NOISE_LEVEL,
 		DELAY_WET,
 		DELAY_FEEDBACK
 	};
 	public static final int SET_INTERPOLATED_SIZE = SET_INTERPOLATED.length;
 	
-	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(AMP_ENV_A, AMP_ENV_D, AMP_ENV_S, AMP_ENV_R, AMP_ENV_VELOCITY_SENS, AMP_ENV_LOOP);
-	public static final EnvelopeParamConfig ENV_CONF_FILTER1 = new EnvelopeParamConfig(FILTER1_ENV_A, FILTER1_ENV_D, FILTER1_ENV_S, FILTER1_ENV_R, FILTER1_ENV_VELOCITY_SENS, FILTER1_ENV_LOOP);
-	public static final EnvelopeParamConfig ENV_CONF_FILTER2 = new EnvelopeParamConfig(FILTER2_ENV_A, FILTER2_ENV_D, FILTER2_ENV_S, FILTER2_ENV_R, FILTER2_ENV_VELOCITY_SENS, FILTER2_ENV_LOOP);
-	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, UNUSED, MOD_ENV1_LOOP);
+	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, AMP_ENV_VELOCITY_SENS, MOD_ENV1_LOOP);
+	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV = new EnvelopeParamConfig(MOD_ENV2_A, MOD_ENV2_D, MOD_ENV2_S, MOD_ENV2_R, UNUSED, MOD_ENV2_LOOP);
 	public static final String VERSION_STRING = "0.9";
 	
 	public static Freeverb reverbObject = null; // TODO more generic with interface and receiver handler!?
@@ -388,16 +382,12 @@ public class P {
 		OSC_PATH[OVERDRIVE] = "/fx/overdrive";
 		OSC_PATH[CHORUS_DEPTH] = "/fx/chorus/drywet";
 		OSC_PATH[REVERB_ONE_KNOB] = "/fx/reverb/oneknob";
-		OSC_PATH[SPREAD] = "/fx/spread";
 		OSC_PATH[DELAY_WET] = "/fx/delay/wet";
 		OSC_PATH[DELAY_RATE] = "/fx/delay/rate";
 		OSC_PATH[DELAY_FEEDBACK] = "/fx/delay/feedback";
-		OSC_PATH[AMP_ENV_A] = "/amp/env/1";
-		OSC_PATH[AMP_ENV_D] = "/amp/env/2";
-		OSC_PATH[AMP_ENV_S] = "/amp/env/3";
-		OSC_PATH[AMP_ENV_R] = "/amp/env/4";
+		
 		OSC_PATH[AMP_ENV_VELOCITY_SENS] = "/amp/velocity";
-		OSC_PATH[AMP_ENV_LOOP] = "/amp/env/loop";
+		
 		
 		// oscillators
 		OSC_PATH[OSC1_VOLUME] = "/osc/1/vol";
@@ -426,19 +416,39 @@ public class P {
 		OSC_PATH[MOD_FILTER2_AMOUNT] = "/mod/1/depth/filter/2";
 		OSC_PATH[MOD_PITCH_AMOUNT] = "/mod/1/depth/pitch";
 		OSC_PATH[MOD_PITCH2_AMOUNT] = "/mod/1/depth/pitch/2";
-		OSC_PATH[MOD_WAVE1_AMOUNT] = "/mod/1/depth/wave/1";
-		OSC_PATH[MOD_WAVE2_AMOUNT] = "/mod/1/depth/wave/2";
+		OSC_PATH[MOD_PW1_AMOUNT] = "/mod/1/depth/wave/1";
+		OSC_PATH[MOD_PW2_AMOUNT] = "/mod/1/depth/wave/2";
 		OSC_PATH[MOD_VOL_AMOUNT] = "/mod/1/depth/vol";
-		OSC_PATH[MOD_ENV1_A] = "/mod/env/1";
-		OSC_PATH[MOD_ENV1_D] = "/mod/env/2";
-		OSC_PATH[MOD_ENV1_S] = "/mod/env/3";
-		OSC_PATH[MOD_ENV1_R] = "/mod/env/4";
-		OSC_PATH[MOD_ENV1_LOOP] = "/mod/env/loop";
-		OSC_PATH[MOD_ENV1_PITCH_AMOUNT] = "/mod/env/depth/pitch";
-		OSC_PATH[MOD_ENV1_PITCH2_AMOUNT] = "/mod/env/depth/pitch/2";
-		OSC_PATH[MOD_ENV1_WAVE_AMOUNT] = "/mod/env/depth/wave";
-		OSC_PATH[MOD_ENV1_NOISE_AMOUNT] = "/mod/env/depth/noise";
-		OSC_PATH[MOD_ENV1_AM_AMOUNT] = "/mod/env/depth/am";
+		OSC_PATH[MOD_NOISE_AMOUNT] = "/mod/1/depth/noise";
+		
+		OSC_PATH[MOD_ENV1_A] = "/mod/env/1/1";
+		OSC_PATH[MOD_ENV1_D] = "/mod/env/1/2";
+		OSC_PATH[MOD_ENV1_S] = "/mod/env/1/3";
+		OSC_PATH[MOD_ENV1_R] = "/mod/env/1/4";
+		OSC_PATH[MOD_ENV1_LOOP] = "/mod/env/1/loop";
+		OSC_PATH[MOD_ENV1_PITCH_AMOUNT] = "/mod/env/1/depth/pitch";
+		OSC_PATH[MOD_ENV1_PITCH2_AMOUNT] = "/mod/env/1/depth/pitch/2";
+		OSC_PATH[MOD_ENV1_PW1_AMOUNT] = "/mod/env/1/depth/pw/1";
+		OSC_PATH[MOD_ENV1_PW2_AMOUNT] = "/mod/env/1/depth/pw/2";
+		OSC_PATH[MOD_ENV1_NOISE_AMOUNT] = "/mod/env/1/depth/noise";
+		OSC_PATH[MOD_ENV1_FILTER_AMOUNT] = "/mod/env/1/depth/filter";
+		OSC_PATH[MOD_ENV1_VOL_AMOUNT] = "/mod/env/1/depth/vol";
+		
+		OSC_PATH[MOD_ENV2_A] = "/mod/env/2/1";
+		OSC_PATH[MOD_ENV2_D] = "/mod/env/2/2";
+		OSC_PATH[MOD_ENV2_S] = "/mod/env/2/3";
+		OSC_PATH[MOD_ENV2_R] = "/mod/env/2/4";
+		OSC_PATH[MOD_ENV2_LOOP] = "/mod/env/2/loop";
+		OSC_PATH[MOD_ENV2_PITCH_AMOUNT] = "/mod/env/2/depth/pitch";
+		OSC_PATH[MOD_ENV2_PITCH2_AMOUNT] = "/mod/env/2/depth/pitch/2";
+		OSC_PATH[MOD_ENV2_PW1_AMOUNT] = "/mod/env/2/depth/pw/1";
+		OSC_PATH[MOD_ENV2_PW2_AMOUNT] = "/mod/env/2/depth/pw/2";
+		OSC_PATH[MOD_ENV2_NOISE_AMOUNT] = "/mod/env/2/depth/noise";
+		OSC_PATH[MOD_ENV2_FILTER_AMOUNT] = "/mod/env/2/depth/filter";
+		OSC_PATH[MOD_ENV2_VOL_AMOUNT] = "/mod/env/2/depth/vol";
+		
+		
+		
 		OSC_PATH[MOD_WHEEL] = "/play/mod/wheel";
 		
 		// filters
@@ -447,12 +457,6 @@ public class P {
 		OSC_PATH[FILTER1_RESONANCE] = "/filter/1/res";
 		OSC_PATH[FILTER1_ON] = "/filter/1/enable";
 		OSC_PATH[FILTER1_TRACK_KEYBOARD] = "/filter/1/kbdtracking";
-		OSC_PATH[FILTER1_ENV_A] = "/filter/1/env/1";
-		OSC_PATH[FILTER1_ENV_D] = "/filter/1/env/2";
-		OSC_PATH[FILTER1_ENV_S] = "/filter/1/env/3";
-		OSC_PATH[FILTER1_ENV_R] = "/filter/1/env/4";
-		OSC_PATH[FILTER1_ENV_DEPTH] = "/filter/1/env/amount";
-		OSC_PATH[FILTER1_ENV_LOOP] = "/filter/1/env/loop";
 		OSC_PATH[FILTER1_ENV_VELOCITY_SENS] = "/filter/1/velocity";
 		OSC_PATH[FILTER1_OVERLOAD] = "/filter/1/overload";
 		
@@ -463,12 +467,10 @@ public class P {
 		OSC_PATH[FILTER2_ENV_D] = "/filter/2/env/2";
 		OSC_PATH[FILTER2_ENV_S] = "/filter/2/env/3";
 		OSC_PATH[FILTER2_ENV_R] = "/filter/2/env/4";
-		OSC_PATH[FILTER2_ENV_LOOP] = "/filter/2/env/loop";
 		OSC_PATH[FILTER2_ENV_VELOCITY_SENS] = "/filter/2/velocity";
 		OSC_PATH[FILTER2_OVERLOAD] = "/filter/2/overload";
 		
 		OSC_PATH[FILTER_PARALLEL] = "/filter/parallel";
-		OSC_PATH[FILTER_PARALLEL_MIX] = "/filter/parallelmix";
 		
 		// defaults!
 		setToDefaults();
@@ -512,33 +514,29 @@ public class P {
 		setDirectly(OSC2_VOLUME, 0.75f);
 		setDirectly(OSC_SUB_VOLUME, 0f);
 		setDirectly(FILTER1_TYPE, 0);
-		setDirectly(FILTER1_ENV_DEPTH, 0.5f);
+		setDirectly(MOD_ENV2_FILTER_AMOUNT, 0.5f);
 		setDirectly(OSC_MODE, 0);
 		setDirectly(OSC_NOISE_LEVEL, 0);
 		setDirectly(OSC1_WAVE, 0.3333334f);
 		setDirectly(OSC2_WAVE, 0.5f);
 		setDirectly(OSC2_TUNING_FINE, 0.66667f);
-		setDirectly(AMP_ENV_S, 1);
+		setDirectly(MOD_ENV1_S, 1);
 		
 		setDirectly(MOD_RATE, .666667f);
 		setDirectly(MOD_FILTER1_AMOUNT, .875f);
 		setDirectly(MOD_FILTER2_AMOUNT, .5f);
-		setDirectly(MOD_WAVE1_AMOUNT, .5f);
-		setDirectly(MOD_WAVE2_AMOUNT, .5f);
+		setDirectly(MOD_PW1_AMOUNT, .5f);
+		setDirectly(MOD_PW2_AMOUNT, .5f);
 		setDirectly(MOD_PITCH_AMOUNT, .8335f);
 		setDirectly(MOD_PITCH2_AMOUNT, .5f);
 		setDirectly(FILTER1_ENV_VELOCITY_SENS, 0);
 		setDirectly(OSC2_TUNING, .5f);
 		setDirectly(FILTER1_TRACK_KEYBOARD, .5f);
-		setDirectly(FILTER2_TRACK_KEYBOARD, .5f);
 		setDirectly(FILTER1_ON, 0);
-		setDirectly(FILTER_PARALLEL_MIX, .5f);
-		setDirectly(FILTER_PARALLEL, 0);
-		setDirectly(MOD_ENV1_PITCH_AMOUNT, .5f);
-		setDirectly(MOD_ENV1_PITCH2_AMOUNT, .5f);
-		setDirectly(MOD_ENV1_WAVE_AMOUNT, .5f);
-		setDirectly(MOD_ENV1_NOISE_AMOUNT, .5f);
-		setDirectly(MOD_ENV1_AM_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_PITCH_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_PITCH2_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_PW1_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_NOISE_AMOUNT, .5f);
 		setDirectly(DELAY_RATE, .66f);
 		setDirectly(MIDI_VELOCITY_CURVE, 0.0f);
 		P.VAL[P.PITCH_BEND] = 0;

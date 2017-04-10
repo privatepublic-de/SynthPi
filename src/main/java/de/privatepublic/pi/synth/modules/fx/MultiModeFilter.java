@@ -16,11 +16,13 @@ public class MultiModeFilter implements IControlProcessor {
 	public static final float MAX_STABLE_FREQUENCY = 12000f - MIN_STABLE_FREQUENCY;
 	private static final float DOUBLE_SAMPLE_RATE = P.SAMPLE_RATE_HZ*2;
 	
-	private EnvADSR filterEnv;
+	private EnvADSR env1;
+	private EnvADSR env2;
 	
 	
-	public MultiModeFilter(EnvADSR modEnv) {
-		this.filterEnv = modEnv;
+	public MultiModeFilter(EnvADSR env1, EnvADSR env2) {
+		this.env1 = env1;
+		this.env2 = env2;
 	}
 	
 	
@@ -152,7 +154,8 @@ public class MultiModeFilter implements IControlProcessor {
 				(
 					MIN_STABLE_FREQUENCY
 					+ MAX_STABLE_FREQUENCY*P.VALX[P.FILTER1_FREQ]
-					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[P.FILTER1_ENV_DEPTH]))
+					+ (MAX_STABLE_FREQUENCY * (env1.outValue * P.VALXC[P.MOD_ENV1_FILTER_AMOUNT]))
+					+ (MAX_STABLE_FREQUENCY * (env2.outValue * P.VALXC[P.MOD_ENV2_FILTER_AMOUNT]))
 					+ frqOffset
 				) 
 				* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT]),

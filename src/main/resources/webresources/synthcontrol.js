@@ -229,11 +229,11 @@ $(document).ready(function () {
 
 	var pushHandler = function(index) {
 		var el = $(this);
-		el.on("mousedown touchstart", {element: el}, function(ev) {
+		el.on("mousedown", {element: el}, function(ev) {
 			socket.sendValue(ev.data.element, 1);
 			el.addClass("pressed");
 		});
-		el.on("mouseup touchend mouseleave", {element: el}, function(ev) {
+		el.on("mouseup mouseleave", {element: el}, function(ev) {
 			if (el.hasClass("pressed")) {
 				socket.sendValue(ev.data.element, 0);
 				el.removeClass("pressed");
@@ -431,8 +431,9 @@ $(document).ready(function () {
 	var id = 0;
 	$(".dial").each(function(index){
 		var el = $(this);
+		var hilitenon0 = el.closest('.highlightnonzero').length;
 		el.attr("disabled","disabled");
-		var cclass = (el.hasClass("large")?"large":el.hasClass("small")?"small":"medium") + (el.hasClass("waveform")?" waveform":"");
+		var cclass = (el.hasClass("large")?"large":el.hasClass("small")?"small":"medium");
 		var container = $(document.createElement("div"));
 		container.addClass("container "+cclass);
 		container.attr("id","kn"+id);
@@ -445,6 +446,7 @@ $(document).ready(function () {
 			var bgcolor = $.Color(el, "color").lightness(0.2).saturation(0.0).toHexString();
 		}
 		var markercolor = $.Color(el, "color").lightness(0.4).toHexString();
+		var hilitecolor = "#7F337F";
 		var width = el.width();
 		var cursor = el.attr("data-cursor");
 		var labelpath = el.attr("data-osc-label");
@@ -474,11 +476,18 @@ $(document).ready(function () {
 			},
 			'draw': function() {
 				if (cursor) {
+					var mcol = markercolor;
+					if (hilitenon0 && this.v) {
+						this.o.bgColor = hilitecolor;
+						mcol = fgcolor;
+					}
+					else {
+						this.o.bgColor = bgcolor;
+					}
 					this.draw();
-					console.log(this);
 					var ctx = this.c;
 					var cx = ctx.canvas.width/2;
-					ctx.strokeStyle = markercolor;
+					ctx.strokeStyle = mcol;
 					ctx.lineWidth = 1;
 					ctx.beginPath();
 					ctx.moveTo(cx, 0);

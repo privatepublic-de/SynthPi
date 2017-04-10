@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
-import de.privatepublic.pi.synth.util.IOUtils;
 
 public class EnvADSR implements IControlProcessor {
 
@@ -130,27 +129,27 @@ public class EnvADSR implements IControlProcessor {
 		return Math.max(v, MIN_TIME_MILLIS);
 	}
 	
-	public static void main(String[] args) {
-		P.setToDefaults();
-		P.setFromMIDI(P.FILTER1_ENV_A, 64);
-		P.setFromMIDI(P.FILTER1_ENV_D, 64);
-		P.setFromMIDI(P.FILTER1_ENV_S, 64);
-		P.setFromMIDI(P.FILTER1_ENV_R, 64);
-		P.setFromMIDI(P.FILTER1_ENV_VELOCITY_SENS, 1);
-		EnvADSR env = new EnvADSR(P.ENV_CONF_FILTER1);
-		float[] out = new float[(int) (P.SAMPLE_RATE_HZ*12)];
-		int noteoffi = (int) (out.length*.75);
-		for (int i=0;i<out.length;++i) {
-			if (i==0) {
-				env.noteOn(1);
-			}
-			if (i==noteoffi) {
-				env.noteOff();
-			}
-			out[i] = env.nextValue();
-		}
-		IOUtils.writeToFileBinary("./env.raw", out);
-	}
+//	public static void main(String[] args) {
+//		P.setToDefaults();
+//		P.setFromMIDI(P.FILTER1_ENV_A, 64);
+//		P.setFromMIDI(P.FILTER1_ENV_D, 64);
+//		P.setFromMIDI(P.FILTER1_ENV_S, 64);
+//		P.setFromMIDI(P.FILTER1_ENV_R, 64);
+//		P.setFromMIDI(P.FILTER1_ENV_VELOCITY_SENS, 1);
+//		EnvADSR env = new EnvADSR(P.ENV_CONF_FILTER1);
+//		float[] out = new float[(int) (P.SAMPLE_RATE_HZ*12)];
+//		int noteoffi = (int) (out.length*.75);
+//		for (int i=0;i<out.length;++i) {
+//			if (i==0) {
+//				env.noteOn(1);
+//			}
+//			if (i==noteoffi) {
+//				env.noteOff();
+//			}
+//			out[i] = env.nextValue();
+//		}
+//		IOUtils.writeToFileBinary("./env.raw", out);
+//	}
 	
 	public static final float MIN_TIME_MILLIS = 2;
 	public static final float MAX_TIME_MILLIS = 16000;

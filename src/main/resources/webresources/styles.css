@@ -370,7 +370,7 @@ h3 {
 	border-color: inherit;
 	border-radius: 4px;
 	cursor: pointer;
-	margin-right: .5em;
+	margin: 0 .5em;
 }
 .checkbox .inner {
 	border-radius: 2px;
@@ -724,7 +724,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	background: #f90;
 	box-shadow: none;
 }
-.wk.pressed { height: 96px; } .bk.pressed { height: 62px; }
+.wk.pressed { height: 96px; } 
 
 .wk {
 	background: #fff;

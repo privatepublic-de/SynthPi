@@ -14,12 +14,12 @@ import de.privatepublic.pi.synth.modules.osc.IOscillator.Mode;
 
 public class AnalogSynthVoice {
 
-	private final EnvADSR envelope;
-	private final EnvADSR modEnvelope = new EnvADSR(P.ENV_CONF_MOD_ENV);
+	private final EnvADSR env1 = new EnvADSR(P.ENV_CONF_AMP);
+	private final EnvADSR env2 = new EnvADSR(P.ENV_CONF_MOD_ENV);
 	
-	private final IOscillator osc1 = new BlepOscillator(Mode.PRIMARY, modEnvelope);
-	private final IOscillator osc2 = new BlepOscillator(Mode.SECONDARY, modEnvelope);
-	private final IOscillator oscSub = new BlepOscillator(Mode.SUB, modEnvelope);
+	private final IOscillator osc1 = new BlepOscillator(Mode.PRIMARY, env1, env2);
+	private final IOscillator osc2 = new BlepOscillator(Mode.SECONDARY, env1, env2);
+	private final IOscillator oscSub = new BlepOscillator(Mode.SUB, env1, env2);
 	
 	private final MultiModeFilter filter;
 	
@@ -36,18 +36,17 @@ public class AnalogSynthVoice {
 	
 	
 	public AnalogSynthVoice() {
-		envelope = new EnvADSR(P.ENV_CONF_AMP);
-		filter = new MultiModeFilter(modEnvelope);
+		filter = new MultiModeFilter(env1, env2);
 	}
 	
 	public float captureWeight(long timestamp) {
-		if (envelope.state==State.REST) {
+		if (env1.state==State.REST) {
 			return 0;
 		}
-		if (envelope.state==State.RELEASE) {
-			return envelope.outValue;
+		if (env1.state==State.RELEASE) {
+			return env1.outValue;
 		}
-		if (envelope.state==State.QUEUE) {
+		if (env1.state==State.QUEUE) {
 			return Float.MAX_VALUE; // don't use queued voice
 		}
 		// use hold time
@@ -55,42 +54,42 @@ public class AnalogSynthVoice {
 	}
 	
 	public boolean isActive() {
-		return (envelope.state!=EnvADSR.State.REST);
+		return (env1.state!=EnvADSR.State.REST);
 	}
 	
 	public boolean isIdle() {
-		return (envelope.state==EnvADSR.State.REST);
+		return (env1.state==EnvADSR.State.REST);
 	}
 	
 	public boolean isHeld() {
-		return (envelope.state==EnvADSR.State.HOLD 
-				|| envelope.state==EnvADSR.State.ATTACK 
-				|| envelope.state==EnvADSR.State.DECAY 
-				|| envelope.state==EnvADSR.State.DECAY_LOOP);
+		return (env1.state==EnvADSR.State.HOLD 
+				|| env1.state==EnvADSR.State.ATTACK 
+				|| env1.state==EnvADSR.State.DECAY 
+				|| env1.state==EnvADSR.State.DECAY_LOOP);
 	}
 	
 	public void trigger(final int midiNote, final float frequency, final float velocity, final long timestamp) {
 		lastMidiNote = midiNote;
 		lastTriggered = timestamp;
-		if (envelope.state==State.REST) {
+		if (env1.state==State.REST) {
 			osc1.trigger(frequency, velocity);
 			osc2.trigger(frequency, velocity);
 			oscSub.trigger(frequency, velocity);
 			filter.trigger(frequency, velocity);
-			envelope.noteOn(velocity);
-			modEnvelope.noteOn(1);
+			env1.noteOn(velocity);
+			env2.noteOn(1);
 			AnalogSynth.lastTriggeredFrequency = frequency;
 		}
 		else {
-			envelope.queueNoteOn(velocity, new Runnable() {
+			env1.queueNoteOn(velocity, new Runnable() {
 				@Override
 				public void run() {
 					osc1.trigger(frequency, velocity);
 					osc2.trigger(frequency, velocity);
 					oscSub.trigger(frequency, velocity);
 					filter.trigger(frequency, velocity);
-					envelope.noteOn(velocity);
-					modEnvelope.noteOn(1);
+					env1.noteOn(velocity);
+					env2.noteOn(1);
 					AnalogSynth.lastTriggeredFrequency = frequency;
 				}
 			});
@@ -107,16 +106,14 @@ public class AnalogSynthVoice {
 	}
 	
 	public void noteOff() {
-		envelope.noteOff();
-		modEnvelope.noteOff();
+		env1.noteOff();
+		env2.noteOff();
 	}
 	
-	private float noiseLevel = 0;
-	private float noiseModAmount = 0;
 	
 	public void process(final float[] buffer, final int startPos) {
-		envelope.controlTick();
-		modEnvelope.controlTick();
+		env1.controlTick();
+		env2.controlTick();
 		osc1.controlTick();
 		osc2.controlTick();
 		oscSub.controlTick();
@@ -125,17 +122,15 @@ public class AnalogSynthVoice {
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
 		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME];
-		noiseLevel = P.VALX[P.OSC_NOISE_LEVEL];
-		noiseModAmount = P.VALXC[P.MOD_ENV1_NOISE_AMOUNT];
-		float val;
-		float noise_val;
+		final float noiseLevel = P.VALX[P.OSC_NOISE_LEVEL] + env1.outValue*(P.VALXC[P.MOD_ENV1_NOISE_AMOUNT]+env2.outValue*P.VALXC[P.MOD_ENV2_NOISE_AMOUNT])+LFO.lfoAmountAdd(P.VALXC[P.MOD_NOISE_AMOUNT]);
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
+		final float volume = env1.outValue*P.VALXC[P.MOD_ENV1_VOL_AMOUNT]*(1+LFO.lfoAmountAdd(modVol))+env2.outValue*P.VALXC[P.MOD_ENV2_VOL_AMOUNT]*(1+LFO.lfoAmountAdd(modVol));
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;
 			noiseX2 += noiseX1;
 			noiseX1 ^= noiseX2;
-			noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
-			val = osc1.process(i, osc1Vol, syncBuffer, am_buffer);
+			float noise_val = noiseLevel * (noiseX2 * NOISE_SCALE) * .5f;
+			float val = osc1.process(i, osc1Vol, syncBuffer, am_buffer);
 			val += osc2.process(i, osc2Vol, syncBuffer, am_buffer);
 			val += oscSub.process(i, oscSubVol, syncBuffer, am_buffer);
 			val += noise_val;
@@ -143,7 +138,7 @@ public class AnalogSynthVoice {
 				val = filter.processSample(val);
 			else
 				filter.processSample(val);
-			buffer[pos] += val * envelope.outValue*(1+LFO.lfoAmountAdd(modVol));
+			buffer[pos] += val * volume;
 			am_buffer[pos] = 0;
 		}
 	}

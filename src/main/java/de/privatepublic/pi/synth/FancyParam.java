@@ -18,13 +18,12 @@ public class FancyParam {
 		NAME[P.DELAY_WET] = "Delay Mix";
 		NAME[P.DELAY_FEEDBACK] = "Delay Feedback";
 		NAME[P.DELAY_RATE] = "Delay Rate";
-		NAME[P.SPREAD] = "Stereo Spread";
-		NAME[P.AMP_ENV_A] = "Amp Env. Attack";
-		NAME[P.AMP_ENV_D] = "Amp Env. Decay";
-		NAME[P.AMP_ENV_S] = "Amp Env. Sustain";
-		NAME[P.AMP_ENV_R] = "Amp Env. Release";
+		NAME[P.MOD_ENV1_A] = "Amp Env. Attack";
+		NAME[P.MOD_ENV1_D] = "Amp Env. Decay";
+		NAME[P.MOD_ENV1_S] = "Amp Env. Sustain";
+		NAME[P.MOD_ENV1_R] = "Amp Env. Release";
 		NAME[P.AMP_ENV_VELOCITY_SENS] = "Amp Env. Velocity";
-		NAME[P.AMP_ENV_LOOP] = "Amp Env. Loop Mode";
+		NAME[P.MOD_ENV1_LOOP] = "Amp Env. Loop Mode";
 		
 		// oscillators
 		NAME[P.OSC1_VOLUME] = "Osc 1 Volume";
@@ -52,18 +51,17 @@ public class FancyParam {
 		NAME[P.MOD_FILTER2_AMOUNT] = "LFO > Filter2";
 		NAME[P.MOD_PITCH_AMOUNT] = "LFO > Pitch";
 		NAME[P.MOD_PITCH2_AMOUNT] = "LFO > Pitch2";
-		NAME[P.MOD_WAVE1_AMOUNT] = "LFO > Waveform 1";
-		NAME[P.MOD_WAVE2_AMOUNT] = "LFO > Waveform 2";
-		NAME[P.MOD_ENV1_A] = "Mod Env. Attack";
-		NAME[P.MOD_ENV1_D] = "Mod Env. Decay";
-		NAME[P.MOD_ENV1_S] = "Mod Env. Sustain";
-		NAME[P.MOD_ENV1_R] = "Mod Env. Release";
-		NAME[P.MOD_ENV1_LOOP] = "Mod Env. Loop Mode";
-		NAME[P.MOD_ENV1_PITCH_AMOUNT] = "Mod Env. > Pitch";
-		NAME[P.MOD_ENV1_PITCH2_AMOUNT] = "Mod Env. > Pitch2";
-		NAME[P.MOD_ENV1_WAVE_AMOUNT] = "Mod Env. > Waveform";
-		NAME[P.MOD_ENV1_NOISE_AMOUNT] = "Mod Env. > Noise";
-		NAME[P.MOD_ENV1_AM_AMOUNT] = "Mod Env. > Ringmod";
+		NAME[P.MOD_PW1_AMOUNT] = "LFO > Waveform 1";
+		NAME[P.MOD_PW2_AMOUNT] = "LFO > Waveform 2";
+		NAME[P.MOD_ENV2_A] = "Mod Env. Attack";
+		NAME[P.MOD_ENV2_D] = "Mod Env. Decay";
+		NAME[P.MOD_ENV2_S] = "Mod Env. Sustain";
+		NAME[P.MOD_ENV2_R] = "Mod Env. Release";
+		NAME[P.MOD_ENV2_LOOP] = "Mod Env. Loop Mode";
+		NAME[P.MOD_ENV2_PITCH_AMOUNT] = "Mod Env. > Pitch";
+		NAME[P.MOD_ENV2_PITCH2_AMOUNT] = "Mod Env. > Pitch2";
+		NAME[P.MOD_ENV2_PW1_AMOUNT] = "Mod Env. > Waveform";
+		NAME[P.MOD_ENV2_NOISE_AMOUNT] = "Mod Env. > Noise";
 		NAME[P.MOD_VOL_AMOUNT] = "LFO > Volume";
 		
 		// filters
@@ -72,13 +70,8 @@ public class FancyParam {
 		NAME[P.FILTER1_RESONANCE] = "Filter1 Resonance";
 		NAME[P.FILTER1_ON] = "Filter1";
 		NAME[P.FILTER1_TRACK_KEYBOARD] = "Filter1 Keyboard Tracking";
-		NAME[P.FILTER1_ENV_A] = "Filter1 Env. Attack";
-		NAME[P.FILTER1_ENV_D] = "Filter1 Env. Decay";
-		NAME[P.FILTER1_ENV_S] = "Filter1 Env. Sustain";
-		NAME[P.FILTER1_ENV_R] = "Filter1 Env. Release";
-		NAME[P.FILTER1_ENV_DEPTH] = "Filter1 Env. Depth";
+		NAME[P.MOD_ENV2_FILTER_AMOUNT] = "Filter1 Env. Depth";
 		NAME[P.FILTER1_ENV_VELOCITY_SENS] = "Filter1 Env. Velocity";
-		NAME[P.FILTER1_ENV_LOOP] = "Filter1 Env. Loop Mode";
 		
 		NAME[P.OSC1_PULSE_WIDTH] = "Osc1 PW";
 		NAME[P.OSC2_PULSE_WIDTH] = "Osc2 PW";
@@ -88,10 +81,8 @@ public class FancyParam {
 		NAME[P.FILTER2_ENV_S] = "Filter2 Env. Sustain";
 		NAME[P.FILTER2_ENV_R] = "Filter2 Env. Release";
 		NAME[P.FILTER2_ENV_VELOCITY_SENS] = "Filter2 Env. Velocity";
-		NAME[P.FILTER2_ENV_LOOP] = "Filter2 Env. Loop Mode";
 		
 		NAME[P.FILTER_PARALLEL] = "Filter1/2 Routing";
-		NAME[P.FILTER_PARALLEL_MIX] = "Filter1/2 Parallel Mix";
 		NAME[P.FILTER1_OVERLOAD] = "Filter 1 Drive";
 		NAME[P.FILTER2_OVERLOAD] = "Filter 2 Drive";
 	}
@@ -145,18 +136,15 @@ public class FancyParam {
 				result = FORMAT_FLOAT2.format(calculatedVal)+" Hz";
 			}
 			break;
-		case P.AMP_ENV_A:
-		case P.AMP_ENV_D:
-		case P.AMP_ENV_R:
-		case P.FILTER1_ENV_A:
-		case P.FILTER1_ENV_D:
-		case P.FILTER1_ENV_R:
-		case P.FILTER2_ENV_A:
-		case P.FILTER2_ENV_D:
-		case P.FILTER2_ENV_R:
 		case P.MOD_ENV1_A:
 		case P.MOD_ENV1_D:
 		case P.MOD_ENV1_R:
+		case P.FILTER2_ENV_A:
+		case P.FILTER2_ENV_D:
+		case P.FILTER2_ENV_R:
+		case P.MOD_ENV2_A:
+		case P.MOD_ENV2_D:
+		case P.MOD_ENV2_R:
 			long millis = Math.round(EnvADSR.MIN_TIME_MILLIS+(EnvADSR.MAX_TIME_MILLIS-EnvADSR.MIN_TIME_MILLIS)*(value*value*value*value));
 			float seconds;
 			if (millis<100) {
@@ -175,10 +163,8 @@ public class FancyParam {
 		case P.FILTER1_ENV_VELOCITY_SENS:
 		case P.FILTER2_ENV_VELOCITY_SENS:
 		case P.FILTER1_ON:
+		case P.MOD_ENV2_LOOP:
 		case P.MOD_ENV1_LOOP:
-		case P.FILTER1_ENV_LOOP:
-		case P.FILTER2_ENV_LOOP:
-		case P.AMP_ENV_LOOP:
 		case P.AMP_ENV_VELOCITY_SENS:
 		case P.OSC_MONO:
 		case P.MOD_LFO_RESET:
@@ -191,14 +177,14 @@ public class FancyParam {
 			result = P.FilterType.selectedFilterType(value).name();
 			break;
 		case P.OSC2_TUNING_FINE:
-		case P.FILTER1_ENV_DEPTH:
-		case P.MOD_ENV1_NOISE_AMOUNT:
-		case P.MOD_ENV1_PITCH2_AMOUNT:
-		case P.MOD_ENV1_PITCH_AMOUNT:
-		case P.MOD_ENV1_WAVE_AMOUNT:
+		case P.MOD_ENV2_FILTER_AMOUNT:
+		case P.MOD_ENV2_NOISE_AMOUNT:
+		case P.MOD_ENV2_PITCH2_AMOUNT:
+		case P.MOD_ENV2_PITCH_AMOUNT:
+		case P.MOD_ENV2_PW1_AMOUNT:
 		case P.MOD_FILTER1_AMOUNT:
 		case P.MOD_FILTER2_AMOUNT:
-		case P.MOD_WAVE1_AMOUNT:
+		case P.MOD_PW1_AMOUNT:
 		case P.MOD_PITCH_AMOUNT:
 		case P.MOD_PITCH2_AMOUNT:
 			result = FORMAT_FLOAT.format(((value-.5)*2)*100);

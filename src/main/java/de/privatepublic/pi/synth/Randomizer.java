@@ -70,10 +70,10 @@ public class Randomizer {
 		}
 		
 		// amp
-		P.setDirectly(P.AMP_ENV_A, range(0,.5f));
-		P.setDirectly(P.AMP_ENV_D, range(.2f, .8f));
-		P.setDirectly(P.AMP_ENV_S, fullRange());
-		P.setDirectly(P.AMP_ENV_R, fullRange());
+		P.setDirectly(P.MOD_ENV1_A, range(0,.5f));
+		P.setDirectly(P.MOD_ENV1_D, range(.2f, .8f));
+		P.setDirectly(P.MOD_ENV1_S, fullRange());
+		P.setDirectly(P.MOD_ENV1_R, fullRange());
 		if (enable(.334f)) {
 			P.setDirectly(P.CHORUS_DEPTH, fullRange());
 		}

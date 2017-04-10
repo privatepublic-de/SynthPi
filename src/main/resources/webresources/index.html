@@ -138,28 +138,28 @@
 			</div>
 			<br/>
 			<div class="innergroup env1">
-				<label>ENV1 <span class="checkbox tiny" title="Loop" data-osc="/amp/env/loop"></span></label><br />
+				<label>ENV1 <span class="checkbox tiny" title="Loop" data-osc="/mod/env/1/loop"></span></label><br />
 				<div class="innergroup hilite">
-					<input type="text" value="0" class="dial medium" title="Attack" data-osc="/amp/env/1" data-osc-label="/label/amp/env/1"/>
-					<input type="text" value="0" class="dial medium" title="Decay" data-osc="/amp/env/2" data-osc-label="/label/amp/env/2" />
+					<input type="text" value="0" class="dial medium" title="Attack" data-osc="/mod/env/1/1" data-osc-label="/label/mod/env/1/1"/>
+					<input type="text" value="0" class="dial medium" title="Decay" data-osc="/mod/env/1/2" data-osc-label="/label/mod/env/1/2" />
 					<br />
-					<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/amp/env/3" data-osc-label="/label/amp/env/3" />
-					<input type="text" value="0" class="dial medium" title="Release" data-osc="/amp/env/4" data-osc-label="/label/amp/env/4" />
+					<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/mod/env/1/3" data-osc-label="/label/mod/env/1/3" />
+					<input type="text" value="0" class="dial medium" title="Release" data-osc="/mod/env/1/4" data-osc-label="/label/mod/env/1/4" />
 				</div><br/>
 			</div>
 			<div class="innergroup env2">
-				<label>ENV2 <span class="checkbox tiny" title="Loop" data-osc="/mod/env/loop"></span></label><br />
+				<label>ENV2 <span class="checkbox tiny" title="Loop" data-osc="/mod/env/2/loop"></span></label><br />
 				<div class="innergroup">
-					<input type="text" value="0" class="dial medium" title="Attack" data-osc="/mod/env/1" data-osc-label="/label/mod/env/1" />
-					<input type="text" value="0" class="dial medium" title="Decay" data-osc="/mod/env/2" data-osc-label="/label/mod/env/2" />
+					<input type="text" value="0" class="dial medium" title="Attack" data-osc="/mod/env/2/1" data-osc-label="/label/mod/env/2/1" />
+					<input type="text" value="0" class="dial medium" title="Decay" data-osc="/mod/env/2/2" data-osc-label="/label/mod/env/2/2" />
 					<br />
-					<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/mod/env/3" data-osc-label="/label/mod/env/3" />
-					<input type="text" value="0" class="dial medium" title="Release" data-osc="/mod/env/4" data-osc-label="/label/mod/env/4" />
+					<input type="text" value="0" class="dial medium" title="Sustain" data-osc="/mod/env/2/3" data-osc-label="/label/mod/env/2/3" />
+					<input type="text" value="0" class="dial medium" title="Release" data-osc="/mod/env/2/4" data-osc-label="/label/mod/env/2/4" />
 				</div><br />
 			</div>
 		</div>
 		
-		<div id="modmatrix" class="group gray">
+		<div id="modmatrix" class="group gray highlightnonzero">
 			<h2>Modmatrix</h2>
 			<div class="innergroup">
 				<table>
@@ -167,31 +167,31 @@
 						<th>LFO</th>
 						<td><input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/1/depth/pitch" /></td>
 						<td><input type="text" value="0" class="dial small" title="Pitch 2" data-cursor="10" data-osc="/mod/1/depth/pitch/2" /></td>
-						<td><input type="text" value="0" class="dial small" title="PWM 1" data-cursor="10" data-osc="/mod/1/depth/wave/1" /></td>
-						<td><input type="text" value="0" class="dial small" title="PWM 2" data-cursor="10" data-osc="/mod/1/depth/wave/2" /></td>
-						<td></td>
+						<td><input type="text" value="0" class="dial small" title="PW 1" data-cursor="10" data-osc="/mod/1/depth/wave/1" /></td>
+						<td><input type="text" value="0" class="dial small" title="PW 2" data-cursor="10" data-osc="/mod/1/depth/wave/2" /></td>
+						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/1/depth/noise" /></td>
 						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/mod/1/depth/filter/1" /></td>
 						<td><input type="text" value="0" class="dial small" title="Vol" data-osc="/mod/1/depth/vol" data-osc-label="/label/mod/1/depth/vol"/></td>
 					</tr>
 					<tr>
 						<th>ENV1</th>
-						<td><input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/env/depth/pitch" /></td>
-						<td><input type="text" value="0" class="dial small" title="Pitch2" data-cursor="10" data-osc="/mod/env/depth/pitch/2" /></td>
-						<td></td>
-						<td></td>
-						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/depth/noise" /></td>
-						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/filter/1/env/amount" /></td>
-						<td></td>
+						<td><input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/env/1/depth/pitch" /></td>
+						<td><input type="text" value="0" class="dial small" title="Pitch2" data-cursor="10" data-osc="/mod/env/1/depth/pitch/2" /></td>
+						<td><input type="text" value="0" class="dial small" title="PW 1" data-cursor="10" data-osc="/mod/env/1/depth/pw/1" /></td>
+						<td><input type="text" value="0" class="dial small" title="PW 2" data-cursor="10" data-osc="/mod/env/1/depth/pw/2" /></td>
+						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/1/depth/noise" /></td>
+						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/mod/env/1/depth/filter" /></td>
+						<td><input type="text" value="0" class="dial small" title="Vol" data-cursor="10" data-osc="/mod/env/1/depth/vol"></td>
 					</tr>
 					<tr>
 						<th>ENV2</th>
-						<td><input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/env/depth/pitch" /></td>
-						<td><input type="text" value="0" class="dial small" title="Pitch2" data-cursor="10" data-osc="/mod/env/depth/pitch/2" /></td>
-						<td></td>
-						<td></td>
-						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/depth/noise" /></td>
-						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/filter/1/env/amount" /></td>
-						<td></td>
+						<td><input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/mod/env/2/depth/pitch" /></td>
+						<td><input type="text" value="0" class="dial small" title="Pitch2" data-cursor="10" data-osc="/mod/env/2/depth/pitch/2" /></td>
+						<td><input type="text" value="0" class="dial small" title="PW 1" data-cursor="10" data-osc="/mod/env/2/depth/pw/1" /></td>
+						<td><input type="text" value="0" class="dial small" title="PW 2" data-cursor="10" data-osc="/mod/env/2/depth/pw/2" /></td>
+						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/2/depth/noise" /></td>
+						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/mod/env/2/depth/filter" /></td>
+						<td><input type="text" value="0" class="dial small" title="Vol" data-cursor="10" data-osc="/mod/env/2/depth/vol"></td>
 					</tr>
 				</table>
 			</div>
