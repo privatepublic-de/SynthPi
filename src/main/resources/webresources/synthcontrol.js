@@ -452,8 +452,7 @@ $(document).ready(function () {
 		el.knob({
 			'min': cursor?-100:0, 
 			'max': cursor?100:200, 
-			'cursor': cursor?28:0,
-//			'thickness': cursor?.5:.4,
+			'cursor': cursor?12:0,
 			'step': 1,
 			'angleArc': 240, 
 			'angleOffset': -120,
