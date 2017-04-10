@@ -510,33 +510,47 @@ public class P {
 		setDirectly(FILTER1_FREQ, 0.5f);
 		setDirectly(OSC1_PULSE_WIDTH, 0.5f);
 		setDirectly(OSC2_PULSE_WIDTH, 0.5f);
-		setDirectly(OSC1_VOLUME, 0.75f);
-		setDirectly(OSC2_VOLUME, 0.75f);
+		setDirectly(OSC1_VOLUME, 0.66667f);
+		setDirectly(OSC2_VOLUME, 0.66667f);
 		setDirectly(OSC_SUB_VOLUME, 0f);
 		setDirectly(FILTER1_TYPE, 0);
-		setDirectly(MOD_ENV2_FILTER_AMOUNT, 0.5f);
 		setDirectly(OSC_MODE, 0);
 		setDirectly(OSC_NOISE_LEVEL, 0);
-		setDirectly(OSC1_WAVE, 0.3333334f);
-		setDirectly(OSC2_WAVE, 0.5f);
+		setDirectly(OSC1_WAVE, 0.5f);
+		setDirectly(OSC2_WAVE, 1f);
 		setDirectly(OSC2_TUNING_FINE, 0.66667f);
-		setDirectly(MOD_ENV1_S, 1);
+		setDirectly(FILTER1_ENV_VELOCITY_SENS, 0);
+		setDirectly(OSC2_TUNING, .5f);
+		setDirectly(FILTER1_TRACK_KEYBOARD, .5f);
+		setDirectly(FILTER1_ON, 0);		
 		
-		setDirectly(MOD_RATE, .666667f);
+		setDirectly(MOD_RATE, .5f);
 		setDirectly(MOD_FILTER1_AMOUNT, .875f);
 		setDirectly(MOD_FILTER2_AMOUNT, .5f);
 		setDirectly(MOD_PW1_AMOUNT, .5f);
 		setDirectly(MOD_PW2_AMOUNT, .5f);
+		setDirectly(MOD_NOISE_AMOUNT, .5f);
 		setDirectly(MOD_PITCH_AMOUNT, .8335f);
 		setDirectly(MOD_PITCH2_AMOUNT, .5f);
-		setDirectly(FILTER1_ENV_VELOCITY_SENS, 0);
-		setDirectly(OSC2_TUNING, .5f);
-		setDirectly(FILTER1_TRACK_KEYBOARD, .5f);
-		setDirectly(FILTER1_ON, 0);
+
+		
+		setDirectly(MOD_ENV1_S, 1);
+		setDirectly(MOD_ENV1_PITCH_AMOUNT, .5f);
+		setDirectly(MOD_ENV1_PITCH2_AMOUNT, .5f);
+		setDirectly(MOD_ENV1_PW1_AMOUNT, .5f);
+		setDirectly(MOD_ENV1_PW2_AMOUNT, .5f);
+		setDirectly(MOD_ENV1_NOISE_AMOUNT, .5f);
+		setDirectly(MOD_ENV1_FILTER_AMOUNT, 0.5f);
+		setDirectly(MOD_ENV1_VOL_AMOUNT, 1f);
+		
 		setDirectly(MOD_ENV2_PITCH_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_PITCH2_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_PW1_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_PW2_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_NOISE_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_FILTER_AMOUNT, 0.5f);
+		setDirectly(MOD_ENV2_VOL_AMOUNT, 0.5f);
+		
 		setDirectly(DELAY_RATE, .66f);
 		setDirectly(MIDI_VELOCITY_CURVE, 0.0f);
 		P.VAL[P.PITCH_BEND] = 0;

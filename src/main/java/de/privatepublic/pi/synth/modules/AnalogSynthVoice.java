@@ -124,6 +124,8 @@ public class AnalogSynthVoice {
 		}
 	}
 	
+	
+
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(AnalogSynthVoice.class);
