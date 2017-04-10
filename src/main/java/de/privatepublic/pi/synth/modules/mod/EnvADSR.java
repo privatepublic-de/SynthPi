@@ -8,7 +8,7 @@ import de.privatepublic.pi.synth.modules.IControlProcessor;
 
 public class EnvADSR implements IControlProcessor {
 
-	public static enum State { REST, ATTACK, DECAY, DECAY_LOOP, HOLD, RELEASE, QUEUE }
+	public static enum State { REST, ATTACK, DECAY, DECAY_LOOP, HOLD, RELEASE }
 	public State state = State.REST;
 	public float outValue = 0;
 
@@ -19,8 +19,6 @@ public class EnvADSR implements IControlProcessor {
 	private final EnvelopeParamConfig conf;
 	private float value = 0;
 	private float velocityFactor = 1;
-	private Runnable trigger;
-//	private float attackThreshold;
 	private float sustainValue;
 	private float decayCoeff;
 	private float releaseCoeff;
@@ -65,15 +63,6 @@ public class EnvADSR implements IControlProcessor {
 				state = State.REST;
 			}
 			break;
-		case QUEUE:
-			value += releaseCoeff * value;
-			if (value<ZERO_THRESHOLD) {
-				value = ZERO_THRESHOLD;
-				state = State.REST;
-				trigger.run();
-				return 0;
-			}
-			break;
 		}
 		outValue = (value<ZERO_THRESHOLD)?0:value;
 		return outValue;
@@ -96,23 +85,12 @@ public class EnvADSR implements IControlProcessor {
 
 		slope = 4.0f * attackOvershoot * (rdur - rdur2);
 		curve = -8.0f * attackOvershoot * rdur2;
-		value = ZERO_THRESHOLD;
-//		attackCoeff = initStep(ZERO_THRESHOLD, velocityFactor, timeAttack);
+		// value = ZERO_THRESHOLD;
 		sustainValue = conf.loopMode()?0:conf.sustain()*velocityFactor;
 		decayCoeff = initStep(velocityFactor, sustainValue, timeDecay);
 		state = State.ATTACK;
 	}
 	
-	public void queueNoteOn(float velocity, Runnable trigger) {
-		this.trigger = trigger;
-		if (outValue>ZERO_THRESHOLD) {
-			releaseCoeff = initStep(value, ZERO_THRESHOLD, QUEUE_MILLIS);
-			state = State.QUEUE;	
-		}
-		else {
-			this.trigger.run();
-		}
-	}
 	
 	public void noteOff() {
 		if (state==State.ATTACK || state==State.DECAY || state==State.DECAY_LOOP || state==State.HOLD) {
@@ -153,7 +131,6 @@ public class EnvADSR implements IControlProcessor {
 	
 	public static final float MIN_TIME_MILLIS = 2;
 	public static final float MAX_TIME_MILLIS = 16000;
-	private static final float QUEUE_MILLIS = 10;
 	
 	private static final float ZERO_THRESHOLD = (float) 1.0E-4;
 	
@@ -184,7 +161,7 @@ public class EnvADSR implements IControlProcessor {
 			return P.VALX[indexD];
 		}
 		public float sustain() {
-			return P.VALX[indexS];
+			return P.VAL[indexS];
 		}
 		public float release() {
 			return P.VALX[indexR];

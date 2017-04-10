@@ -46,9 +46,6 @@ public class AnalogSynthVoice {
 		if (env1.state==State.RELEASE) {
 			return env1.outValue;
 		}
-		if (env1.state==State.QUEUE) {
-			return Float.MAX_VALUE; // don't use queued voice
-		}
 		// use hold time
 		return timestamp-lastTriggered;
 	}
@@ -71,29 +68,13 @@ public class AnalogSynthVoice {
 	public void trigger(final int midiNote, final float frequency, final float velocity, final long timestamp) {
 		lastMidiNote = midiNote;
 		lastTriggered = timestamp;
-		if (env1.state==State.REST) {
-			osc1.trigger(frequency, velocity);
-			osc2.trigger(frequency, velocity);
-			oscSub.trigger(frequency, velocity);
-			filter.trigger(frequency, velocity);
-			env1.noteOn(velocity);
-			env2.noteOn(1);
-			AnalogSynth.lastTriggeredFrequency = frequency;
-		}
-		else {
-			env1.queueNoteOn(velocity, new Runnable() {
-				@Override
-				public void run() {
-					osc1.trigger(frequency, velocity);
-					osc2.trigger(frequency, velocity);
-					oscSub.trigger(frequency, velocity);
-					filter.trigger(frequency, velocity);
-					env1.noteOn(velocity);
-					env2.noteOn(1);
-					AnalogSynth.lastTriggeredFrequency = frequency;
-				}
-			});
-		}
+		osc1.trigger(frequency, velocity);
+		osc2.trigger(frequency, velocity);
+		oscSub.trigger(frequency, velocity);
+		filter.trigger(frequency, velocity);
+		env1.noteOn(velocity);
+		env2.noteOn(1);
+		AnalogSynth.lastTriggeredFrequency = frequency;
 	}
 	
 	public void triggerFreq(final int midiNote, final float frequency, final float velocity, final long timestamp) {
@@ -143,8 +124,6 @@ public class AnalogSynthVoice {
 		}
 	}
 	
-	
-
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(AnalogSynthVoice.class);
