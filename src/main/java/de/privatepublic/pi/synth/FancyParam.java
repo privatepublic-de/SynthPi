@@ -180,24 +180,24 @@ public class FancyParam {
 		case P.MOD_PITCH2_AMOUNT:
 			result = FORMAT_FLOAT.format(((value-.5)*2)*100);
 			break;
-		case P.DELAY_RATE:
-			float freq = 2000.0f*(.001f+.999f*P.VALX[P.DELAY_RATE]);
-			millis = Math.round(freq);
-			if (millis<10) {
-				result = FORMAT_FLOAT2.format(freq) +"ms";
-			}
-			else if (millis<100) {
-				result = millis +"ms";
-			}
-			else if (millis<10000) {
-				seconds = (float) Math.round(millis/1000d * 100) / 100;
-				result = seconds +"s";
-			}
-			else {
-				seconds = (float) Math.round(millis/1000d * 10) / 10;
-				result = seconds +"s";
-			}
-			break;
+//		case P.DELAY_RATE:
+//			float freq = 2000.0f*(.001f+.999f*P.VALX[P.DELAY_RATE]);
+//			millis = Math.round(freq);
+//			if (millis<10) {
+//				result = FORMAT_FLOAT2.format(freq) +"ms";
+//			}
+//			else if (millis<100) {
+//				result = millis +"ms";
+//			}
+//			else if (millis<10000) {
+//				seconds = (float) Math.round(millis/1000d * 100) / 100;
+//				result = seconds +"s";
+//			}
+//			else {
+//				seconds = (float) Math.round(millis/1000d * 10) / 10;
+//				result = seconds +"s";
+//			}
+//			break;
 		default:
 			result = FORMAT_FLOAT.format(value*100);
 			break;

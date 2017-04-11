@@ -6,6 +6,8 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.apple.laf.AquaMenuPainter;
+
 import de.privatepublic.pi.synth.PresetHandler.PatchCategory;
 import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
 import de.privatepublic.pi.synth.comm.MidiHandler;
@@ -253,9 +255,8 @@ public class P {
 	
 	public static final int MOD_AHD_ATTACK = 37;
 	public static final int OSC_SUB_LOW = 38;
-	/** Filter2 cut off frequency keyboard tracking amount */
 	public static final int MOD_AHD_DECAY = 39;
-	// 40 is freee
+	public static final int DELAY_RATE_RIGHT = 40;
 	/** Filter2 mod envelope decay time */
 	public static final int FILTER2_ENV_D = 41;
 	/** Filter2 mod envelope sustain level */
@@ -383,6 +384,7 @@ public class P {
 		OSC_PATH[REVERB_ONE_KNOB] = "/fx/reverb/oneknob";
 		OSC_PATH[DELAY_WET] = "/fx/delay/wet";
 		OSC_PATH[DELAY_RATE] = "/fx/delay/rate";
+		OSC_PATH[DELAY_RATE_RIGHT] = "/fx/delay/rateright";
 		OSC_PATH[DELAY_FEEDBACK] = "/fx/delay/feedback";
 		
 		// oscillators

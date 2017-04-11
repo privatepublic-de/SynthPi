@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
-import de.privatepublic.pi.synth.util.FastCalc;
 
 
 public class LFO implements IControlProcessor {

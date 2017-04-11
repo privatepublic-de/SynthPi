@@ -19,6 +19,7 @@ import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
 import de.privatepublic.pi.synth.modules.fx.IProcessorMono2Stereo;
 import de.privatepublic.pi.synth.modules.fx.IProcessorStereo;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
+import de.privatepublic.pi.synth.modules.fx.TapeDelay;
 import de.privatepublic.pi.synth.modules.mod.EnvAHD;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
@@ -41,6 +42,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
 	private final IProcessorStereo delay = new Delay();
+	private final TapeDelay tapeDelay = new TapeDelay();
 	
 	private int numberBufferChunks = P.SAMPLE_BUFFER_SIZE/P.CONTROL_BUFFER_SIZE;
 	
@@ -59,13 +61,14 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			LFO.GLOBAL.setValueMod(envAhd.outValue*P.VALXC[P.MOD_AHD_LFO_DEPTH_AMOUNT]);
 			LFO.GLOBAL.setRateMod(envAhd.outValue*P.VALXC[P.MOD_AHD_LFO_RATE_AMOUNT]);
 			LFO.GLOBAL.controlTick();
+			tapeDelay.controlTick();
 			final int startPos = chunkNo*P.CONTROL_BUFFER_SIZE;
 			for (int i=0; i<P.POLYPHONY; i++) {
 				voices[i].process(renderBuffer, startPos);
 			}
 			distort.process(renderBuffer, startPos);
 			chorus.process(renderBuffer, outputs, startPos);
-			delay.process(outputs, startPos);
+			tapeDelay.process(outputs, startPos);
 			if (P.LIMITER_ENABLED) {
 				limiter.process(outputs, startPos);
 			}
