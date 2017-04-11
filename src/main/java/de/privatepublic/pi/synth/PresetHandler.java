@@ -328,15 +328,15 @@ public class PresetHandler {
 	}
 	
 	private static File userDataFile() {
-		return new File(PATCH_DIR, "user-patches.json");
+		return new File(PATCH_DIR, "mk2-user-patches.json");
 	}
 	
 	private static File userSettingsFile() {
-		return new File(PATCH_DIR, "settings.json");
+		return new File(PATCH_DIR, "mk2-settings.json");
 	}
 	
 	private static File userRecentFile() {
-		return new File(PATCH_DIR, "recent.json");
+		return new File(PATCH_DIR, "mk2-recent.json");
 	}
 
 	public static String settingsJSON() {
