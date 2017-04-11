@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
-import de.privatepublic.pi.synth.modules.IControlProcessor;
 
-public class EnvADSR implements IControlProcessor {
+public class EnvADSR extends Envelope {
 
 	public static enum State { REST, ATTACK, DECAY, DECAY_LOOP, HOLD, RELEASE }
 	public State state = State.REST;
-	public float outValue = 0;
 
 	public EnvADSR(EnvelopeParamConfig conf) {
 		this.conf = conf;
@@ -18,7 +16,6 @@ public class EnvADSR implements IControlProcessor {
 
 	private final EnvelopeParamConfig conf;
 	private float value = 0;
-	private float velocityFactor = 1;
 	private float sustainValue;
 	private float decayCoeff;
 	private float releaseCoeff;
@@ -33,8 +30,8 @@ public class EnvADSR implements IControlProcessor {
 		case ATTACK: 
 			value += slope;
 		    slope += curve;
-			if (value>velocityFactor) {
-				value = velocityFactor;
+			if (value>1) {
+				value = 1;
 				if (conf.loopMode()) {
 					state = State.DECAY_LOOP;
 				}
@@ -53,7 +50,7 @@ public class EnvADSR implements IControlProcessor {
 		case DECAY_LOOP:
 			value += decayCoeff * value;
 			if (value<ZERO_THRESHOLD) {
-				noteOn(velocityFactor);
+				noteOn();
 			}
 			break;
 		case RELEASE:
@@ -69,14 +66,8 @@ public class EnvADSR implements IControlProcessor {
 	}
 	
 	
-	public void noteOn(final float velocity) {
-		if (conf.velSens()) {
-			velocityFactor = velocity;
-		}
-		else {
-			velocityFactor = 1f;
-		}
-		float attackOvershoot = velocityFactor+velocityFactor*.05f;
+	public void noteOn() {
+		float attackOvershoot = 1.05f;
 		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack());
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
 		float dur = (timeAttack*2)/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
@@ -86,8 +77,8 @@ public class EnvADSR implements IControlProcessor {
 		slope = 4.0f * attackOvershoot * (rdur - rdur2);
 		curve = -8.0f * attackOvershoot * rdur2;
 		// value = ZERO_THRESHOLD;
-		sustainValue = conf.loopMode()?0:conf.sustain()*velocityFactor;
-		decayCoeff = initStep(velocityFactor, sustainValue, timeDecay);
+		sustainValue = conf.loopMode()?0:conf.sustain();
+		decayCoeff = initStep(1, sustainValue, timeDecay);
 		state = State.ATTACK;
 	}
 	
@@ -129,10 +120,6 @@ public class EnvADSR implements IControlProcessor {
 //		IOUtils.writeToFileBinary("./env.raw", out);
 //	}
 	
-	public static final float MIN_TIME_MILLIS = 2;
-	public static final float MAX_TIME_MILLIS = 16000;
-	
-	private static final float ZERO_THRESHOLD = (float) 1.0E-4;
 	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(EnvADSR.class);

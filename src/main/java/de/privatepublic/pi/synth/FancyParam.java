@@ -22,7 +22,6 @@ public class FancyParam {
 		NAME[P.MOD_ENV1_D] = "Amp Env. Decay";
 		NAME[P.MOD_ENV1_S] = "Amp Env. Sustain";
 		NAME[P.MOD_ENV1_R] = "Amp Env. Release";
-		NAME[P.AMP_ENV_VELOCITY_SENS] = "Amp Env. Velocity";
 		NAME[P.MOD_ENV1_LOOP] = "Amp Env. Loop Mode";
 		
 		// oscillators
@@ -48,7 +47,6 @@ public class FancyParam {
 		NAME[P.MOD_LFO_TYPE] = "LFO Type";
 		NAME[P.MOD_LFO_RESET] = "Reset LFO on Key";
 		NAME[P.MOD_FILTER1_AMOUNT] = "LFO > Filter1";
-		NAME[P.MOD_FILTER2_AMOUNT] = "LFO > Filter2";
 		NAME[P.MOD_PITCH_AMOUNT] = "LFO > Pitch";
 		NAME[P.MOD_PITCH2_AMOUNT] = "LFO > Pitch2";
 		NAME[P.MOD_PW1_AMOUNT] = "LFO > Waveform 1";
@@ -71,12 +69,9 @@ public class FancyParam {
 		NAME[P.FILTER1_ON] = "Filter1";
 		NAME[P.FILTER1_TRACK_KEYBOARD] = "Filter1 Keyboard Tracking";
 		NAME[P.MOD_ENV2_FILTER_AMOUNT] = "Filter1 Env. Depth";
-		NAME[P.FILTER1_ENV_VELOCITY_SENS] = "Filter1 Env. Velocity";
 		
 		NAME[P.OSC1_PULSE_WIDTH] = "Osc1 PW";
 		NAME[P.OSC2_PULSE_WIDTH] = "Osc2 PW";
-		NAME[P.FILTER2_TRACK_KEYBOARD] = "Filter2 Keyboard Tracking";
-		NAME[P.FILTER2_ENV_A] = "Filter2 Env. Attack";
 		NAME[P.FILTER2_ENV_D] = "Filter2 Env. Decay";
 		NAME[P.FILTER2_ENV_S] = "Filter2 Env. Sustain";
 		NAME[P.FILTER2_ENV_R] = "Filter2 Env. Release";
@@ -139,12 +134,11 @@ public class FancyParam {
 		case P.MOD_ENV1_A:
 		case P.MOD_ENV1_D:
 		case P.MOD_ENV1_R:
-		case P.FILTER2_ENV_A:
-		case P.FILTER2_ENV_D:
-		case P.FILTER2_ENV_R:
 		case P.MOD_ENV2_A:
 		case P.MOD_ENV2_D:
 		case P.MOD_ENV2_R:
+		case P.MOD_AHD_ATTACK:
+		case P.MOD_AHD_DECAY:
 			long millis = Math.round(EnvADSR.MIN_TIME_MILLIS+(EnvADSR.MAX_TIME_MILLIS-EnvADSR.MIN_TIME_MILLIS)*(value*value*value*value));
 			float seconds;
 			if (millis<100) {
@@ -160,12 +154,10 @@ public class FancyParam {
 			}
 			break;
 		case P.OSC2_SYNC:
-		case P.FILTER1_ENV_VELOCITY_SENS:
 		case P.FILTER2_ENV_VELOCITY_SENS:
 		case P.FILTER1_ON:
 		case P.MOD_ENV2_LOOP:
 		case P.MOD_ENV1_LOOP:
-		case P.AMP_ENV_VELOCITY_SENS:
 		case P.OSC_MONO:
 		case P.MOD_LFO_RESET:
 			result = value>0?"ON":"OFF";
@@ -183,7 +175,6 @@ public class FancyParam {
 		case P.MOD_ENV2_PITCH_AMOUNT:
 		case P.MOD_ENV2_PW1_AMOUNT:
 		case P.MOD_FILTER1_AMOUNT:
-		case P.MOD_FILTER2_AMOUNT:
 		case P.MOD_PW1_AMOUNT:
 		case P.MOD_PITCH_AMOUNT:
 		case P.MOD_PITCH2_AMOUNT:

@@ -72,8 +72,8 @@ public class AnalogSynthVoice {
 		osc2.trigger(frequency, velocity);
 		oscSub.trigger(frequency, velocity);
 		filter.trigger(frequency, velocity);
-		env1.noteOn(velocity);
-		env2.noteOn(1);
+		env1.noteOn();
+		env2.noteOn();
 		AnalogSynth.lastTriggeredFrequency = frequency;
 	}
 	

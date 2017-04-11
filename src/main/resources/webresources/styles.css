@@ -399,7 +399,7 @@ h3 {
 }
 .exclusive .checkbox,
 .labelbelow .checkbox {
-	margin-right: 0;
+	margin: 0;
 }
 .exclusive-container {
 	display: inline-block;
@@ -414,7 +414,6 @@ h3 {
 
 .lfotypes {
 	text-align: left;
-	margin-left: 1em;
 }
 .lfotypes label {
 	min-width: 46px;
@@ -424,18 +423,38 @@ h3 {
 	padding-bottom: 5px;
 	margin-bottom: 5px;
 	border-bottom: 1px solid;
+	border-color: inherit;
+}
+.lfo {
+	border-right: 1px solid;
+	border-color: inherit;
+	width: 50%;
+	min-height: 211px;
+}
+
+div.ahd {
+	width: 48%;
+}
+tr.ahd td, tr.ahd th {
+	padding-top: 1em;
+}
+
+#modulators .innergroup {
+	vertical-align: top;
 }
 
 .env1, .env2 {
-	margin-top: 1em;
-	border-top: 1px solid #666;
+	padding-top: .5em;
+	border-top: 1px solid;
+	border-color: inherit;
 }
 .env1 {
 	padding-right: .5em;
 }
 .env2 {
 	padding-left: .5em;
-	border-left: 1px solid #666;
+	border-left: 1px solid;
+	border-color: inherit;
 }
 
 a.push {

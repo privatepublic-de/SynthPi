@@ -120,27 +120,30 @@
 		<div id="modulators" class="group pink">
 			<h2>Modulators</h2>
 			<div class="innergroup lfo">
+				<label>LFO</label><br/>
 				<div class="innergroup">
-					<input type="text" value="0" class="dial medium" title="LFO Rate" data-osc="/mod/1/rate" data-osc-label="/label/mod/1/rate" />
-					<input type="text" value="0" class="dial medium" title="Amount" data-osc="/mod/1/amount" data-osc-label="/label/mod/1/amount" />
+					<input type="text" value="0" class="dial medium" title="Rate" data-osc="/mod/1/rate" data-osc-label="/label/mod/1/rate" />
+					<input type="text" value="0" class="dial medium" title="Depth" data-osc="/mod/1/amount" data-osc-label="/label/mod/1/amount" />
+				</div>
+				<br/>
+				<div class="innergroup lfotypes">
+					<div class="exclusiveunstyled" data-control-path="/mod/1/type">
+						<span class="checkbox tiny" title="Sine" data-osc="/option/mod/1/type/SIN" data-osc-send="/mod/1/type,0"></span>
+						<span class="checkbox tiny" title="Triangle" data-osc="/option/mod/1/type/TRG" data-osc-send="/mod/1/type,0.2"></span><br />
+						<span class="checkbox tiny" title="Up" data-osc="/option/mod/1/type/RUP" data-osc-send="/mod/1/type,0.4"></span>
+						<span class="checkbox tiny" title="Down" data-osc="/option/mod/1/type/RDN" data-osc-send="/mod/1/type,0.6"></span><br />
+						<span class="checkbox tiny" title="Square" data-osc="/option/mod/1/type/SQR" data-osc-send="/mod/1/type,0.8"></span>
+						<span class="checkbox tiny" title="S&amp;Hold" data-osc="/option/mod/1/type/SH" data-osc-send="/mod/1/type,1"></span>
+					</div>
+					<span class="checkbox tiny" title="Key Reset" data-osc="/mod/1/reset"></span>			
 				</div>
 			</div>
-			<div class="innergroup lfotypes">
-				<div class="exclusiveunstyled" data-control-path="/mod/1/type">
-					<span class="checkbox tiny" title="Sine" data-osc="/option/mod/1/type/SIN" data-osc-send="/mod/1/type,0"></span>
-					<span class="checkbox tiny" title="Triangle" data-osc="/option/mod/1/type/TRG" data-osc-send="/mod/1/type,0.2"></span><br />
-					<span class="checkbox tiny" title="Up" data-osc="/option/mod/1/type/RUP" data-osc-send="/mod/1/type,0.4"></span>
-					<span class="checkbox tiny" title="Down" data-osc="/option/mod/1/type/RDN" data-osc-send="/mod/1/type,0.6"></span><br />
-					<span class="checkbox tiny" title="Square" data-osc="/option/mod/1/type/SQR" data-osc-send="/mod/1/type,0.8"></span>
-					<span class="checkbox tiny" title="S&amp;Hold" data-osc="/option/mod/1/type/SH" data-osc-send="/mod/1/type,1"></span>
-				</div>
-				<span class="checkbox tiny" title="Key Reset" data-osc="/mod/1/reset"></span>			
-			</div>
-			<br/>
-			<div class="innergroup">
-				<label>GLOBAL AHD ENV</label><br/>
-				<input type="text" value="0" class="dial small" title="Attack" data-osc="/mod/2/attack" data-osc-label="/label/mod/2/attack" />
-				<input type="text" value="0" class="dial small" title="Decay" data-osc="/mod/2/decay" data-osc-label="/label/mod/2/decay" />
+			
+			<div class="innergroup ahd">
+				<label>AHD ENV</label><br/>
+				<input type="text" value="0" class="dial medium" title="Attack" data-osc="/mod/2/attack" data-osc-label="/label/mod/2/attack" />
+				<br/>
+				<input type="text" value="0" class="dial medium" title="Decay" data-osc="/mod/2/decay" data-osc-label="/label/mod/2/decay" />
 			</div>
 			<br/>
 			<div class="innergroup env1">
@@ -198,6 +201,24 @@
 						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/env/2/depth/noise" /></td>
 						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/mod/env/2/depth/filter" /></td>
 						<td><input type="text" value="0" class="dial small" title="Vol" data-cursor="10" data-osc="/mod/env/2/depth/vol"></td>
+					</tr>
+					<tr>
+						<th>VEL</th>
+						<td></td>
+						<td></td>
+						<td><input type="text" value="0" class="dial small" title="PW 1" data-cursor="10" data-osc="/mod/vel/depth/pw/1" /></td>
+						<td><input type="text" value="0" class="dial small" title="PW 2" data-cursor="10" data-osc="/mod/vel/depth/pw/2" /></td>
+						<td><input type="text" value="0" class="dial small" title="Noise" data-cursor="10" data-osc="/mod/vel/depth/noise" /></td>
+						<td><input type="text" value="0" class="dial small" title="Filter Freq" data-cursor="10" data-osc="/mod/vel/depth/filter" /></td>
+						<td><input type="text" value="0" class="dial small" title="Vol" data-cursor="10" data-osc="/mod/vel/depth/vol"></td>
+					</tr>
+					<tr class="ahd">
+						<th>AHD</th>
+						<td><input type="text" value="0" class="dial small" title="LFO Rate" data-cursor="10" data-osc="/mod/2/depth/lforate" /></td>
+						<td><input type="text" value="0" class="dial small" title="LFO Depth" data-cursor="10" data-osc="/mod/2/depth/lfoamount" /></td>
+						<td></td>
+						<td><input type="text" value="0" class="dial small" title="Delay Level" data-cursor="10" data-osc="/mod/2/depth/delaylevel" /></td>
+						<td><input type="text" value="0" class="dial small" title="Delay Time" data-cursor="10" data-osc="/mod/2/depth/delaytime" /></td>
 					</tr>
 				</table>
 			</div>

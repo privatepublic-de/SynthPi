@@ -255,11 +255,6 @@ public class MidiHandler {
 	private static final int CC_FILTER_ENV_DEPTH = 10;
 	private static final int CC_FILTER_TYPE = 72;
 	
-	private static final int CC_FILTER_ENV_A = 79;
-	private static final int CC_FILTER_ENV_D = 78;
-	private static final int CC_FILTER_ENV_S = 26;
-	private static final int CC_FILTER_ENV_R = 27;
-	
 	private static final int CC_OSC1_WAVE = 14;
 	private static final int CC_OSC2_WAVE = 15;
 	private static int CC_OSC2_DETUNE = 16;
@@ -316,15 +311,12 @@ public class MidiHandler {
 		P.FILTER1_RESONANCE,
 		P.FILTER1_TYPE,
 		P.MOD_ENV2_FILTER_AMOUNT,
-		P.FILTER1_ENV_VELOCITY_SENS,
 		P.FILTER1_OVERLOAD,
 		
 		P.OSC_SUB_LOW,
-		P.FILTER2_TRACK_KEYBOARD,
 		P.OSC1_PULSE_WIDTH,
 		P.OSC2_PULSE_WIDTH,
 		P.OSC2_VOLUME,
-		P.FILTER2_ENV_A,
 		P.FILTER2_ENV_D,
 		P.FILTER2_ENV_S,
 		P.FILTER2_ENV_R,
@@ -339,7 +331,6 @@ public class MidiHandler {
 		P.MOD_PW1_AMOUNT,
 		P.MOD_PW2_AMOUNT,
 		P.MOD_FILTER1_AMOUNT,
-		P.MOD_FILTER2_AMOUNT,
 		P.MOD_VOL_AMOUNT,
 		P.MOD_LFO_TYPE,
 		P.MOD_LFO_RESET,
@@ -352,12 +343,13 @@ public class MidiHandler {
 		P.MOD_ENV2_PITCH2_AMOUNT,
 		P.MOD_ENV2_PW1_AMOUNT,
 		P.MOD_ENV2_NOISE_AMOUNT,
+		P.MOD_AHD_ATTACK,
+		P.MOD_AHD_DECAY,
 		
 		P.MOD_ENV1_A,
 		P.MOD_ENV1_D,
 		P.MOD_ENV1_S,
 		P.MOD_ENV1_R,
-		P.AMP_ENV_VELOCITY_SENS,
 		P.MOD_ENV1_LOOP,
 		P.OVERDRIVE,
 		P.CHORUS_DEPTH,
@@ -393,8 +385,6 @@ public class MidiHandler {
 		INDEX_OF_MIDI_CC[CC_MOD_DEPTH_PITCH] = P.MOD_PITCH_AMOUNT;
 		INDEX_OF_MIDI_CC[CC_SET_OSC_SYNC] = P.OSC2_SYNC;
 		INDEX_OF_MIDI_CC[CC_SET_OSC_MONO] = P.OSC_MONO;
-		INDEX_OF_MIDI_CC[CC_SET_AMP_VEL] = P.AMP_ENV_VELOCITY_SENS;
-		INDEX_OF_MIDI_CC[CC_SET_FILTER1_VEL] = P.FILTER1_ENV_VELOCITY_SENS;
 		
 		
 		InputStream in = MidiHandler.class.getResourceAsStream("/midimaps/default.map");

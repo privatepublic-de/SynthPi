@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
+import de.privatepublic.pi.synth.util.FastCalc;
 
 
 public class LFO implements IControlProcessor {
@@ -94,14 +95,15 @@ public class LFO implements IControlProcessor {
 	// 0 - 2
 	// filter
 	public static float lfoAmount(final float depth) {
-		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
+		float useDepth = depth*GLOBAL.valueMod;
+		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*useDepth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch modulation
 	public static float lfoAmount(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
-		// caution! copy & paste
-		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
+		float useDepth = depth*GLOBAL.valueMod;
+		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*useDepth)+modEnv.outValue*modEnvDepth;
 	}
 	
 	
@@ -109,14 +111,15 @@ public class LFO implements IControlProcessor {
 	// voice volume modulation
 	public static float lfoAmountAdd(final float depth) {
 		// caution! copy & paste
-		return (GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
+		float useDepth = depth*GLOBAL.valueMod;
+		return (GLOBAL.value()*P.MOD_AMOUNT_COMBINED*useDepth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch2 modulation
 	public static float lfoAmountAsymm(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
-		// caution! copy & paste
-		return (((GLOBAL.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
+		float useDepth = depth*GLOBAL.valueMod;
+		return (((GLOBAL.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*useDepth)+1)+modEnv.outValue*modEnvDepth;
 	}
 	
 	public LFO() {
@@ -133,14 +136,25 @@ public class LFO implements IControlProcessor {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
 	}
 	
+	private float rateMod = 0;
+	private float valueMod = 1f;
+	
+	public void setRateMod(float mod) {
+		rateMod = 1+mod;
+	}
+	
+	public void setValueMod(float mod) {
+		valueMod = mod!=0?mod:1;
+	}
+	
 	private void nextBufferSlice(final int nframes) {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
-		tableIndexIncrement = (LOW_FREQ+(P.VALX[paraIndexLfoRate]*FREQ_RANGE));
+		tableIndexIncrement = (LOW_FREQ+((P.VALX[paraIndexLfoRate]*rateMod)*FREQ_RANGE));
 		if (currentWave==TABLES[5]) {
 			tableIndexIncrement /= P.SAMPLE_RATE_HZ;
 		}
 		indexOffset = indexOffset+nframes*tableIndexIncrement;
-		if (indexOffset>WAVE_LENGHT) {
+		if (indexOffset>=WAVE_LENGHT) {
 			indexOffset -= WAVE_LENGHT;
 		}
 		index = (int)indexOffset;

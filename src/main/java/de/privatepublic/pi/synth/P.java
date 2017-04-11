@@ -227,9 +227,9 @@ public class P {
 	/** Amplifier master volume */
 	public static final int VOLUME = 23;
 	/** Amplifier envelope velocity sensitivity >0 = true*/
-	public static final int AMP_ENV_VELOCITY_SENS = 24;
+	public static final int MOD_AHD_LFO_RATE_AMOUNT = 24;
 	/** Filter1 mod envelope velocity sensitivity >0 = true*/
-	public static final int FILTER1_ENV_VELOCITY_SENS = 25;
+	public static final int MOD_AHD_LFO_DEPTH_AMOUNT = 25;
 	/** Hard sync oscillator 2 to oscillator 1 */
 	public static final int OSC2_SYNC = 26;
 	/** Oscillator 2 amplitude (ring) modulation with oscillator 1 */
@@ -250,13 +250,12 @@ public class P {
 	public static final int OSC2_PULSE_WIDTH = 34;
 	public static final int OSC2_VOLUME = 35;
 	public static final int OSC_SUB_VOLUME = 36;
-	/** Filter2 LFO modulation amount (use centered) */
-	public static final int MOD_FILTER2_AMOUNT = 37;
+	
+	public static final int MOD_AHD_ATTACK = 37;
 	public static final int OSC_SUB_LOW = 38;
 	/** Filter2 cut off frequency keyboard tracking amount */
-	public static final int FILTER2_TRACK_KEYBOARD = 39;
-	/** Filter2 mod envelope attack time */
-	public static final int FILTER2_ENV_A = 40;
+	public static final int MOD_AHD_DECAY = 39;
+	// 40 is freee
 	/** Filter2 mod envelope decay time */
 	public static final int FILTER2_ENV_D = 41;
 	/** Filter2 mod envelope sustain level */
@@ -353,7 +352,7 @@ public class P {
 	};
 	public static final int SET_INTERPOLATED_SIZE = SET_INTERPOLATED.length;
 	
-	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, AMP_ENV_VELOCITY_SENS, MOD_ENV1_LOOP);
+	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, UNUSED, MOD_ENV1_LOOP);
 	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV = new EnvelopeParamConfig(MOD_ENV2_A, MOD_ENV2_D, MOD_ENV2_S, MOD_ENV2_R, UNUSED, MOD_ENV2_LOOP);
 	public static final String VERSION_STRING = "0.9";
 	
@@ -386,9 +385,6 @@ public class P {
 		OSC_PATH[DELAY_RATE] = "/fx/delay/rate";
 		OSC_PATH[DELAY_FEEDBACK] = "/fx/delay/feedback";
 		
-		OSC_PATH[AMP_ENV_VELOCITY_SENS] = "/amp/velocity";
-		
-		
 		// oscillators
 		OSC_PATH[OSC1_VOLUME] = "/osc/1/vol";
 		OSC_PATH[OSC2_VOLUME] = "/osc/2/vol";
@@ -413,13 +409,17 @@ public class P {
 		OSC_PATH[MOD_LFO_TYPE] = "/mod/1/type";
 		OSC_PATH[MOD_LFO_RESET] = "/mod/1/reset";
 		OSC_PATH[MOD_FILTER1_AMOUNT] = "/mod/1/depth/filter/1";
-		OSC_PATH[MOD_FILTER2_AMOUNT] = "/mod/1/depth/filter/2";
 		OSC_PATH[MOD_PITCH_AMOUNT] = "/mod/1/depth/pitch";
 		OSC_PATH[MOD_PITCH2_AMOUNT] = "/mod/1/depth/pitch/2";
 		OSC_PATH[MOD_PW1_AMOUNT] = "/mod/1/depth/wave/1";
 		OSC_PATH[MOD_PW2_AMOUNT] = "/mod/1/depth/wave/2";
 		OSC_PATH[MOD_VOL_AMOUNT] = "/mod/1/depth/vol";
 		OSC_PATH[MOD_NOISE_AMOUNT] = "/mod/1/depth/noise";
+		
+		OSC_PATH[MOD_AHD_ATTACK] = "/mod/2/attack";
+		OSC_PATH[MOD_AHD_DECAY] = "/mod/2/decay";
+		OSC_PATH[MOD_AHD_LFO_RATE_AMOUNT] = "/mod/2/depth/lforate";
+		OSC_PATH[MOD_AHD_LFO_DEPTH_AMOUNT] = "/mod/2/depth/lfoamount";
 		
 		OSC_PATH[MOD_ENV1_A] = "/mod/env/1/1";
 		OSC_PATH[MOD_ENV1_D] = "/mod/env/1/2";
@@ -457,13 +457,10 @@ public class P {
 		OSC_PATH[FILTER1_RESONANCE] = "/filter/1/res";
 		OSC_PATH[FILTER1_ON] = "/filter/1/enable";
 		OSC_PATH[FILTER1_TRACK_KEYBOARD] = "/filter/1/kbdtracking";
-		OSC_PATH[FILTER1_ENV_VELOCITY_SENS] = "/filter/1/velocity";
 		OSC_PATH[FILTER1_OVERLOAD] = "/filter/1/overload";
 		
 		OSC_PATH[OSC1_PULSE_WIDTH] = "/osc/1/pw";
 		OSC_PATH[OSC2_PULSE_WIDTH] = "/osc/2/pw";
-		OSC_PATH[FILTER2_TRACK_KEYBOARD] = "/filter/2/kbdtracking";
-		OSC_PATH[FILTER2_ENV_A] = "/filter/2/env/1";
 		OSC_PATH[FILTER2_ENV_D] = "/filter/2/env/2";
 		OSC_PATH[FILTER2_ENV_S] = "/filter/2/env/3";
 		OSC_PATH[FILTER2_ENV_R] = "/filter/2/env/4";
@@ -519,14 +516,12 @@ public class P {
 		setDirectly(OSC1_WAVE, 0.5f);
 		setDirectly(OSC2_WAVE, 1f);
 		setDirectly(OSC2_TUNING_FINE, 0.66667f);
-		setDirectly(FILTER1_ENV_VELOCITY_SENS, 0);
 		setDirectly(OSC2_TUNING, .5f);
 		setDirectly(FILTER1_TRACK_KEYBOARD, .5f);
 		setDirectly(FILTER1_ON, 0);		
 		
 		setDirectly(MOD_RATE, .5f);
 		setDirectly(MOD_FILTER1_AMOUNT, .875f);
-		setDirectly(MOD_FILTER2_AMOUNT, .5f);
 		setDirectly(MOD_PW1_AMOUNT, .5f);
 		setDirectly(MOD_PW2_AMOUNT, .5f);
 		setDirectly(MOD_NOISE_AMOUNT, .5f);
