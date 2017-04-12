@@ -1,6 +1,9 @@
 package de.privatepublic.pi.synth.modules.fx;
 
+import com.sun.openpisces.TransformingPathConsumer2D.FilterSet;
+
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
 
 public class TapeDelay implements IProcessorStereo, IControlProcessor {
@@ -52,6 +55,8 @@ public class TapeDelay implements IProcessorStereo, IControlProcessor {
 		boolean lastTrigger = false;
 		int pRate;
 		
+		StateVariableFilter filter = new StateVariableFilter(FilterType.LOWPASS, 440, 0);
+		
 		public DelayLine(int pRate) {
 			frequencyFactor = (float)(2 * Math.PI / P.SAMPLE_RATE_HZ);
 			this.pRate = pRate;
@@ -79,23 +84,25 @@ public class TapeDelay implements IProcessorStereo, IControlProcessor {
 	        lastTrigger = trigger;
 	        
 	        valOut = (valOut+valOut+valOut+targetValue)*.25f;
-	        return valOut;
+	        return filter.processSample(valOut);
 	        
 		}
 
 		@Override
 		public void controlTick() {
-			phaseIncrement = (FREQ_LOW+P.VAL[pRate]*FREQ_RANGE)*frequencyFactor;
+			float freq = (FREQ_LOW+P.VAL[pRate]*FREQ_RANGE);
+			filter.setCutoff(freq/4);
+			phaseIncrement = freq*frequencyFactor;
 			feedbackLevel = P.VAL[P.DELAY_FEEDBACK];
 		}
 		
 	}
 	
 	private static final float FREQ_LOW = 600;
-	private static final float FREQ_HIGH = 20000;
+	private static final float FREQ_HIGH = P.SAMPLE_RATE_HZ/2;
 	private static final float FREQ_RANGE = FREQ_HIGH-FREQ_LOW;
 	
-	private static final int LINE_LENGTH = 2048;
+	private static final int LINE_LENGTH = 4096;
 	private static final int LINE_LENGTH_MASK = LINE_LENGTH-1;
 	private static final float PI2 = (float)(Math.PI*2);
 	
