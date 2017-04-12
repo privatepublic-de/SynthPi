@@ -62,21 +62,23 @@ public class LFO implements IControlProcessor {
 
 			// square
 			TABLES[4] = new float[WAVE_LENGHT];
+			TABLES[5] = new float[WAVE_LENGHT];
 			for (int i=0;i<WAVE_LENGHT;++i) {
 				val = i<WAVE_LENGHT/2?0:1;
 				TABLES[4][i] = val;
+				TABLES[5][i] = val;
 			}
 
-			// sample & hold
-			TABLES[5] = new float[WAVE_LENGHT];
-			Random rand = new Random(1234567);
-			float a = 0.075f;
-			float b = 1-a;
-			float z = 0;
-			for (int i=0;i<WAVE_LENGHT;++i) {
-				z = (2*rand.nextFloat()-1) * b + (z * a); // simple lowpass
-				TABLES[5][i] = z;
-			}
+			// sample & hold - trigger
+//			TABLES[5] = TABLES[4];//new float[WAVE_LENGHT];
+//			Random rand = new Random(1234567);
+//			float a = 0.075f;
+//			float b = 1-a;
+//			float z = 0;
+//			for (int i=0;i<WAVE_LENGHT;++i) {
+//				z = (2*rand.nextFloat()-1) * b + (z * a); // simple lowpass
+//				TABLES[5][i] = z;
+//			}
 
 			log.debug("Created LFO waves with {} samples", (int)P.SAMPLE_RATE_HZ);
 		}
@@ -150,7 +152,7 @@ public class LFO implements IControlProcessor {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
 		tableIndexIncrement = (LOW_FREQ+((P.VALX[paraIndexLfoRate]*rateMod)*FREQ_RANGE));
 		if (currentWave==TABLES[5]) {
-			tableIndexIncrement /= P.SAMPLE_RATE_HZ;
+			tableIndexIncrement *= 2; 
 		}
 		indexOffset = indexOffset+nframes*tableIndexIncrement;
 		if (indexOffset>=WAVE_LENGHT) {
@@ -168,8 +170,21 @@ public class LFO implements IControlProcessor {
 //		return currentWave[idx];
 //	}
 	
+	private float randvalue;
+	private float lastRandTrigger;
+	
 	public float value() {
-		return currentWave[index];
+		if (currentWave==TABLES[5]) {
+			if (currentWave[index]>lastRandTrigger) {
+				randvalue = (float)Math.random()*2-1; 
+				// TODO optimize
+			}
+			lastRandTrigger = currentWave[index]; 
+			return randvalue;
+		}
+		else {
+			return currentWave[index];
+		}
 	}
 	
 	
