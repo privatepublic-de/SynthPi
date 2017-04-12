@@ -13,7 +13,6 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
-import de.privatepublic.pi.synth.modules.fx.Delay;
 import de.privatepublic.pi.synth.modules.fx.DistortionExp;
 import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
 import de.privatepublic.pi.synth.modules.fx.IProcessorMono2Stereo;
@@ -37,11 +36,11 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final float[] outputR = outputs[1];
 	private final float[] renderBuffer = new float[P.SAMPLE_BUFFER_SIZE];
 	
-	private final EnvAHD envAhd = new EnvAHD(P.MOD_AHD_ATTACK, P.MOD_AHD_DECAY);
+//	private final EnvAHD envAhd = new EnvAHD(P.MOD_AHD_ATTACK, P.MOD_AHD_DECAY);
 	private final IProcessorMono2Stereo chorus = new Chorus(25);
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
-	private final IProcessorStereo delay = new Delay();
+//	private final IProcessorStereo delay = new Delay();
 	private final TapeDelay tapeDelay = new TapeDelay();
 	
 	private int numberBufferChunks = P.SAMPLE_BUFFER_SIZE/P.CONTROL_BUFFER_SIZE;
@@ -57,9 +56,9 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
 		// 
 		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {
-			envAhd.controlTick();
-			LFO.GLOBAL.setValueMod(envAhd.outValue*P.VALXC[P.MOD_AHD_LFO_DEPTH_AMOUNT]);
-			LFO.GLOBAL.setRateMod(envAhd.outValue*P.VALXC[P.MOD_AHD_LFO_RATE_AMOUNT]);
+			EnvAHD.GLOBAL.controlTick();
+			LFO.GLOBAL.setValueMod(EnvAHD.GLOBAL.outValue*P.VALXC[P.MOD_AHD_LFO_DEPTH_AMOUNT]);
+			LFO.GLOBAL.setRateMod(EnvAHD.GLOBAL.outValue*P.VALXC[P.MOD_AHD_LFO_RATE_AMOUNT]);
 			LFO.GLOBAL.controlTick();
 			tapeDelay.controlTick();
 			final int startPos = chunkNo*P.CONTROL_BUFFER_SIZE;
@@ -145,14 +144,14 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			if (P.IS[P.MOD_LFO_RESET]) {
 				LFO.GLOBAL.reset();
 			}
-			envAhd.noteOn();
+			EnvAHD.GLOBAL.noteOn();
 //			lastTriggeredFrequency = pk.frequency;
 		}
 		else if (command==ShortMessage.NOTE_OFF) {
 			//			log.debug("Note off @", AU.MIDI_NOTE_NAME[data1]);
 			Key releasedKey = Key.releaseKey(noteNo);
 			if (Key.pressedKeyCount()==0) {
-				envAhd.noteOff();
+				EnvAHD.GLOBAL.noteOff();
 			}
 			if (isMono && Key.pressedKeyCount()>0) {
 				Key tk = Key.lastKey();

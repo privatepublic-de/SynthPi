@@ -6,8 +6,6 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.apple.laf.AquaMenuPainter;
-
 import de.privatepublic.pi.synth.PresetHandler.PatchCategory;
 import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
 import de.privatepublic.pi.synth.comm.MidiHandler;
@@ -322,10 +320,10 @@ public class P {
 	
 	public static final int DELAY_WET = 71;
 	public static final int OSC_MODE = 72;
-	public static final int UNUSED_OSC_GAIN = 73;
+	public static final int MOD_AHD_DELAY_TIME_AMOUNT = 73;
 	public static final int MIDI_VELOCITY_CURVE = 74;
 	public static final int REVERB_ONE_KNOB = 75;
-	public static final int MOD_NOISE_AMOUNT = 76;
+	public static final int MOD_DELAY_TIME_AMOUNT = 76;
 	public static final int MOD_PW2_AMOUNT = 77;
 	public static final int MOD_VOL_AMOUNT = 78;
 	public static final int MOD_ENV1_NOISE_AMOUNT = 79;
@@ -416,12 +414,13 @@ public class P {
 		OSC_PATH[MOD_PW1_AMOUNT] = "/mod/1/depth/wave/1";
 		OSC_PATH[MOD_PW2_AMOUNT] = "/mod/1/depth/wave/2";
 		OSC_PATH[MOD_VOL_AMOUNT] = "/mod/1/depth/vol";
-		OSC_PATH[MOD_NOISE_AMOUNT] = "/mod/1/depth/noise";
+		OSC_PATH[MOD_DELAY_TIME_AMOUNT] = "/mod/1/depth/delaytime";
 		
 		OSC_PATH[MOD_AHD_ATTACK] = "/mod/2/attack";
 		OSC_PATH[MOD_AHD_DECAY] = "/mod/2/decay";
 		OSC_PATH[MOD_AHD_LFO_RATE_AMOUNT] = "/mod/2/depth/lforate";
 		OSC_PATH[MOD_AHD_LFO_DEPTH_AMOUNT] = "/mod/2/depth/lfoamount";
+		OSC_PATH[MOD_AHD_DELAY_TIME_AMOUNT] = "/mod/2/depth/delaytime";
 		
 		OSC_PATH[MOD_ENV1_A] = "/mod/env/1/1";
 		OSC_PATH[MOD_ENV1_D] = "/mod/env/1/2";
@@ -526,7 +525,7 @@ public class P {
 		setDirectly(MOD_FILTER1_AMOUNT, .875f);
 		setDirectly(MOD_PW1_AMOUNT, .5f);
 		setDirectly(MOD_PW2_AMOUNT, .5f);
-		setDirectly(MOD_NOISE_AMOUNT, .5f);
+		setDirectly(MOD_DELAY_TIME_AMOUNT, .5f);
 		setDirectly(MOD_PITCH_AMOUNT, .8335f);
 		setDirectly(MOD_PITCH2_AMOUNT, .5f);
 

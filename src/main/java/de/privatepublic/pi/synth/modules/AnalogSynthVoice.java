@@ -103,7 +103,7 @@ public class AnalogSynthVoice {
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
 		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME];
-		final float noiseLevel = P.VALX[P.OSC_NOISE_LEVEL] + env1.outValue*(P.VALXC[P.MOD_ENV1_NOISE_AMOUNT]+env2.outValue*P.VALXC[P.MOD_ENV2_NOISE_AMOUNT])+LFO.lfoAmountAdd(P.VALXC[P.MOD_NOISE_AMOUNT]);
+		final float noiseLevel = P.VALX[P.OSC_NOISE_LEVEL] + env1.outValue*(P.VALXC[P.MOD_ENV1_NOISE_AMOUNT]+env2.outValue*P.VALXC[P.MOD_ENV2_NOISE_AMOUNT]);
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
 		final float volume = env1.outValue*P.VALXC[P.MOD_ENV1_VOL_AMOUNT]*(1+LFO.lfoAmountAdd(modVol))+env2.outValue*P.VALXC[P.MOD_ENV2_VOL_AMOUNT]*(1+LFO.lfoAmountAdd(modVol));
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {

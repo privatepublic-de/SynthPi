@@ -1,10 +1,10 @@
 package de.privatepublic.pi.synth.modules.fx;
 
-import com.sun.openpisces.TransformingPathConsumer2D.FilterSet;
-
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
+import de.privatepublic.pi.synth.modules.mod.EnvAHD;
+import de.privatepublic.pi.synth.modules.mod.LFO;
 
 public class TapeDelay implements IProcessorStereo, IControlProcessor {
 
@@ -90,7 +90,7 @@ public class TapeDelay implements IProcessorStereo, IControlProcessor {
 
 		@Override
 		public void controlTick() {
-			float freq = (FREQ_LOW+P.VAL[pRate]*FREQ_RANGE);
+			float freq = (FREQ_LOW+P.VAL[pRate]*FREQ_RANGE)*LFO.lfoAmount(P.VALXC[P.MOD_DELAY_TIME_AMOUNT])*(1+EnvAHD.GLOBAL.outValue*P.VALXC[P.MOD_AHD_DELAY_TIME_AMOUNT]);
 			filter.setCutoff(freq/4);
 			phaseIncrement = freq*frequencyFactor;
 			feedbackLevel = P.VAL[P.DELAY_FEEDBACK];
