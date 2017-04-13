@@ -4,8 +4,10 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.modules.AnalogSynth;
 
 
-public abstract class OscillatorBase implements IOscillator {
+public abstract class OscillatorBase {
 	
+	public static enum Mode { PRIMARY, SECONDARY, SUB }
+
 	public static final float PI2 = (float) (2.0*Math.PI);
 	
 	protected float frequency = 440;
@@ -17,17 +19,17 @@ public abstract class OscillatorBase implements IOscillator {
 	protected final boolean isSecond;
 	protected final boolean isSub;
 	
-	protected final Mode mode;
+	protected final Mode oscMode;
 	
 	
 	public OscillatorBase(boolean isPrimary) {
 		isBase = isPrimary;
 		isSecond = !isPrimary;
 		if (isBase) {
-			mode = Mode.PRIMARY;
+			oscMode = Mode.PRIMARY;
 		}
 		else {
-			mode = Mode.SECONDARY;
+			oscMode = Mode.SECONDARY;
 		}
 		isSub = false;
 	}
@@ -37,7 +39,7 @@ public abstract class OscillatorBase implements IOscillator {
 		this.isBase = mode==Mode.PRIMARY;
 		this.isSecond = mode==Mode.SECONDARY;
 		this.isSub = mode==Mode.SUB;
-		this.mode = mode;
+		this.oscMode = mode;
 	}
 	
 	public void trigger(final float frequency, final float velocity) {

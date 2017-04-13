@@ -41,10 +41,10 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
     private EnvADSR env2;
 	
 
-	public BlepOscillator(IOscillator.Mode mode, EnvADSR env1, EnvADSR env2) {
+	public BlepOscillator(OscillatorBase.Mode mode, EnvADSR env1, EnvADSR env2) {
 		super(mode);
 		MidiHandler.registerReceiver(this);
-		if (mode==IOscillator.Mode.SUB) {
+		if (mode==OscillatorBase.Mode.SUB) {
 			wave = Wave.SQUARE;
 		}
 		this.env1 = env1;
@@ -59,11 +59,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 	}
 	
 	
-
-	@Override
 	public float process(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer) {
-		
-		
 		if (isBase) {
 			syncOnFrameBuffer[sampleNo] = false;
 		}
@@ -147,7 +143,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 
 	@Override
 	public void controlTick() {
-		if (mode!=Mode.SUB) { // sub is only square
+		if (oscMode!=Mode.SUB) { // sub is only square
 			float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
 			if (modev<.25) {
 				wave = Wave.SINE;
@@ -181,7 +177,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 				+env1.outValue*P.VALXC[P.MOD_ENV1_PITCH_AMOUNT]
 				+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH_AMOUNT]);
 		
-		switch(mode) {
+		switch(oscMode) {
 		case PRIMARY:
 			break;
 		case SECONDARY:

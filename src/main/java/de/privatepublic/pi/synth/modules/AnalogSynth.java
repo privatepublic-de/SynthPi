@@ -22,7 +22,7 @@ import de.privatepublic.pi.synth.modules.fx.TapeDelay;
 import de.privatepublic.pi.synth.modules.mod.EnvAHD;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
-public class AnalogSynth implements ISynth, IMidiNoteReceiver {
+public class AnalogSynth implements IMidiNoteReceiver {
 
 	
 	public static float lastTriggeredFrequency = 440;
@@ -52,7 +52,6 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 		MidiHandler.registerReceiver(this);
 	}
 	
-	@Override
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
 		// 
 		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {

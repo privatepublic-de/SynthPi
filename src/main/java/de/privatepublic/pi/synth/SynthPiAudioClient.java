@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.comm.MidiPlayback;
 import de.privatepublic.pi.synth.modules.AnalogSynth;
-import de.privatepublic.pi.synth.modules.ISynth;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
 public class SynthPiAudioClient implements AudioClient {
@@ -78,7 +77,7 @@ public class SynthPiAudioClient implements AudioClient {
 		}
 	}
 
-	private ISynth synthengine;
+	private AnalogSynth synthengine;
 	
 	public SynthPiAudioClient() {
 		
