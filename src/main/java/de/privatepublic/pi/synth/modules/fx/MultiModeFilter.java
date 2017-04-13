@@ -50,14 +50,13 @@ public class MultiModeFilter implements IControlProcessor {
 	
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue) {
-		//filterEnv.nextValue();
-		// apply drive
-		drive = sampleValue*(1f + 10f*driveAmount);
-		dsquare = drive*drive;
-		drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
-		inValue = sampleValue*driveAmountHi + drive*driveAmountLo*.334f;
-		
 		if (type==FilterType.LOWPASS24) {
+			
+			drive = sampleValue*(1f + 80f*driveAmount);
+			dsquare = drive*drive;
+			drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
+			inValue = sampleValue*driveAmountHi + drive*driveAmountLo*.334f;
+			
 //			Q = 1-P.VAL[p_resonance];
 //			gain = (float) Math.sqrt(Q);
 //
@@ -97,6 +96,11 @@ public class MultiModeFilter implements IControlProcessor {
 //			Q = P.VAL[p_resonance];
 //			f1 = (2.0f*FastCalc.sin((float)Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
 //			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
+			
+			drive = sampleValue*(1f + 40f*driveAmount);
+			dsquare = drive*drive;
+			drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
+			inValue = sampleValue*driveAmountHi + drive*driveAmountLo*.334f;
 			
 			notch = inValue - damp*band;
 			low   = low + f1*band;
