@@ -1,6 +1,6 @@
 package de.privatepublic.pi.synth.modules.mod;
 
-import java.util.Random;
+import java.util.SplittableRandom;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +21,7 @@ public class LFO implements IControlProcessor {
 	public final static float HI_FREQ = 100;
 	public final static float FREQ_RANGE = HI_FREQ-LOW_FREQ;
 	private final static float[][] TABLES = new float[WAVE_COUNT][];
+	private final SplittableRandom random = new SplittableRandom();
 	
 	public static void init() {
 		if (TABLES[0]==null) {
@@ -68,17 +69,6 @@ public class LFO implements IControlProcessor {
 				TABLES[4][i] = val;
 				TABLES[5][i] = val;
 			}
-
-			// sample & hold - trigger
-//			TABLES[5] = TABLES[4];//new float[WAVE_LENGHT];
-//			Random rand = new Random(1234567);
-//			float a = 0.075f;
-//			float b = 1-a;
-//			float z = 0;
-//			for (int i=0;i<WAVE_LENGHT;++i) {
-//				z = (2*rand.nextFloat()-1) * b + (z * a); // simple lowpass
-//				TABLES[5][i] = z;
-//			}
 
 			log.debug("Created LFO waves with {} samples", (int)P.SAMPLE_RATE_HZ);
 		}
@@ -161,14 +151,6 @@ public class LFO implements IControlProcessor {
 		index = (int)indexOffset;
 	}
 
-
-//	public float valueAt(final int index) {
-//		int idx = (int)(indexOffset + tableIndexIncrement*index);
-//		if (idx>=WAVE_LENGHT) {
-//			idx -= WAVE_LENGHT;
-//		}
-//		return currentWave[idx];
-//	}
 	
 	private float randvalue;
 	private float lastRandTrigger;
@@ -176,8 +158,7 @@ public class LFO implements IControlProcessor {
 	public float value() {
 		if (currentWave==TABLES[5]) {
 			if (currentWave[index]>lastRandTrigger) {
-				randvalue = (float)Math.random()*2-1; 
-				// TODO optimize
+				randvalue = (float)random.nextDouble()*2-1; 
 			}
 			lastRandTrigger = currentWave[index]; 
 			return randvalue;
