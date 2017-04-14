@@ -503,7 +503,7 @@ $(document).ready(function () {
 		if (labelpath) {
 			$("#kn"+id).append("<label class='dynamic' data-osc='"+labelpath+"'>...</label>");
 		}
-		$("#kn"+id+" label").click(function() {
+		$("#kn"+id+" label.static").click(function() {
 			socket.sendValue(el, 0);
 			el.val(0).trigger("change");
 		});
