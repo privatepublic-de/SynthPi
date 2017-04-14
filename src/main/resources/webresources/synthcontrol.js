@@ -499,13 +499,14 @@ $(document).ready(function () {
 				}
 			}
 		});
-		$("#kn"+id).append("<label class='static'>"+el.attr("title")+"</label>").dblclick(function() {
-			socket.sendValue(el, 0);
-			el.val(0).trigger("change");
-		});
+		$("#kn"+id).append("<label class='static'>"+el.attr("title")+"</label>");
 		if (labelpath) {
 			$("#kn"+id).append("<label class='dynamic' data-osc='"+labelpath+"'>...</label>");
 		}
+		$("#kn"+id+" label").click(function() {
+			socket.sendValue(el, 0);
+			el.val(0).trigger("change");
+		});
 		id++;
 	});
 
