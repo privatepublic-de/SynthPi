@@ -15,7 +15,6 @@ import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
 import de.privatepublic.pi.synth.modules.fx.DistortionExp;
 import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
-import de.privatepublic.pi.synth.modules.fx.IProcessorMono2Stereo;
 import de.privatepublic.pi.synth.modules.fx.IProcessorStereo;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
 import de.privatepublic.pi.synth.modules.fx.TapeDelay;
@@ -37,7 +36,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private final float[] renderBuffer = new float[P.SAMPLE_BUFFER_SIZE];
 	
 //	private final EnvAHD envAhd = new EnvAHD(P.MOD_AHD_ATTACK, P.MOD_AHD_DECAY);
-	private final IProcessorMono2Stereo chorus = new Chorus(25);
+	private final IProcessorStereo chorus = new Chorus(25);
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
 //	private final IProcessorStereo delay = new Delay();
@@ -55,9 +54,6 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
 		// 
 		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {
-			EnvAHD.GLOBAL.controlTick();
-			LFO.GLOBAL.setValueMod(EnvAHD.GLOBAL.outValue*P.VALXC[P.MOD_AHD_LFO_DEPTH_AMOUNT]);
-			LFO.GLOBAL.setRateMod(EnvAHD.GLOBAL.outValue*P.VALXC[P.MOD_AHD_LFO_RATE_AMOUNT]);
 			LFO.GLOBAL.controlTick();
 			tapeDelay.controlTick();
 			final int startPos = chunkNo*P.CONTROL_BUFFER_SIZE;
@@ -65,8 +61,8 @@ public class AnalogSynth implements IMidiNoteReceiver {
 				voices[i].process(renderBuffer, startPos);
 			}
 			distort.process(renderBuffer, startPos);
-			chorus.process(renderBuffer, outputs, startPos);
-			tapeDelay.process(outputs, startPos);
+			tapeDelay.process(renderBuffer, outputs, startPos);
+			chorus.process(outputs, startPos);
 			if (P.LIMITER_ENABLED) {
 				limiter.process(outputs, startPos);
 			}
@@ -125,6 +121,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 					}
 				}
 			}
+			int previousKeyCount = Key.pressedKeyCount();
 			Key pk = Key.pressKey(noteNo, selectedVoice);
 			if (isMono) {
 				if (Key.pressedKeyCount()>1) {
@@ -141,17 +138,16 @@ public class AnalogSynth implements IMidiNoteReceiver {
 //				log.debug("Triggered @", selectedVoice);
 			}
 			if (P.IS[P.MOD_LFO_RESET]) {
-				LFO.GLOBAL.reset();
+				LFO.GLOBAL.resetPhase();
 			}
-			EnvAHD.GLOBAL.noteOn();
+			if (previousKeyCount==0) {
+				LFO.GLOBAL.resetDelay();
+			}
 //			lastTriggeredFrequency = pk.frequency;
 		}
 		else if (command==ShortMessage.NOTE_OFF) {
 			//			log.debug("Note off @", AU.MIDI_NOTE_NAME[data1]);
 			Key releasedKey = Key.releaseKey(noteNo);
-			if (Key.pressedKeyCount()==0) {
-				EnvAHD.GLOBAL.noteOff();
-			}
 			if (isMono && Key.pressedKeyCount()>0) {
 				Key tk = Key.lastKey();
 				tk.voice.triggerFreq(tk.midiNoteNumber, tk.frequency, 1, timeStamp);

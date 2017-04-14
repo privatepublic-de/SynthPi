@@ -4,7 +4,7 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
-public class Chorus implements IProcessorMono2Stereo {
+public class Chorus implements IProcessorStereo {
 
 	private final float[] delayLineL;
 	private final float[] delayLineR;
@@ -22,11 +22,12 @@ public class Chorus implements IProcessorMono2Stereo {
 		lfo = new LFO(P.CHORUS_LFO_RATE, P.CHORUS_LFO_TYPE);
 	}
 	
-	float wet, dry, in, sampleval, modval, lfoval, readindexL, readindexR, outL, outR;
+	float wet, dry, in1, in2, sampleval, modval, lfoval, readindexL, readindexR, outL, outR;
 	int indexBaseL, indexBaseR, writeIndex;
 	float[] bufL, bufR;
 	
-	public void process(final float[] inBuffer, final float[][] buffers, final int startPos) {
+	@Override
+	public void process(float[][] buffers, int startPos) {
 		wet = P.VAL[P.CHORUS_DEPTH];
 		dry = 1-wet*.5f;
 		bufL = buffers[0];
@@ -35,13 +36,13 @@ public class Chorus implements IProcessorMono2Stereo {
 		lfoval = lfo.value();
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;
-			in = inBuffer[pos];
-			sampleval = highpass.processSample(in);
+			in1 = bufL[pos];
+			in2 = bufR[pos];
+			sampleval = highpass.processSample((in1+in2)*.5f);
 			if (++writeIndex==delayLineSize) {
 				writeIndex=0;
 			}
 			modval = (1+lfoval)*.5f;
-			
 			readindexL = (writeIndex - delayLineSizeUnder*modval);
 			if (readindexL<0) {	readindexL += delayLineSize; }
 			indexBaseL = (int)readindexL;
@@ -61,10 +62,10 @@ public class Chorus implements IProcessorMono2Stereo {
 			outL += (delayLineL[indexBaseL+1]*wet-outL)*(readindexL-indexBaseL);
 			outR = delayLineR[indexBaseR]*wet;
 			outR += (delayLineR[indexBaseR+1]*wet-outR)*(readindexR-indexBaseR);
-			bufL[pos] = in*dry+outL;
-			bufR[pos] = in*dry-outR;
+			bufL[pos] = in1*dry+outL;
+			bufR[pos] = in2*dry-outR;
 		}
+		
 	}
-
 		
 }

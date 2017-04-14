@@ -4,7 +4,7 @@ import de.privatepublic.pi.synth.P;
 
 public class EnvAHD extends Envelope {
 
-	public static EnvAHD GLOBAL = new EnvAHD(P.MOD_AHD_ATTACK, P.MOD_AHD_DECAY);
+//	public static EnvAHD GLOBAL = new EnvAHD(P.MOD_AHD_ATTACK, P.MOD_AHD_DECAY);
 	
 	public static enum State { REST, ATTACK, DECAY, HOLD }
 	public State state = State.REST;

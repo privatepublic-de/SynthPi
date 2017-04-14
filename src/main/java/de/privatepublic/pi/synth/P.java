@@ -227,9 +227,9 @@ public class P {
 	/** Amplifier master volume */
 	public static final int VOLUME = 23;
 	/** Amplifier envelope velocity sensitivity >0 = true*/
-	public static final int MOD_AHD_LFO_RATE_AMOUNT = 24;
+	public static final int MOD_VEL_VOL_AMOUNT = 24;
 	/** Filter1 mod envelope velocity sensitivity >0 = true*/
-	public static final int MOD_AHD_LFO_DEPTH_AMOUNT = 25;
+	public static final int MOD_VEL_FILTER_AMOUNT = 25;
 	/** Hard sync oscillator 2 to oscillator 1 */
 	public static final int OSC2_SYNC = 26;
 	/** Oscillator 2 amplitude (ring) modulation with oscillator 1 */
@@ -251,9 +251,9 @@ public class P {
 	public static final int OSC2_VOLUME = 35;
 	public static final int OSC_SUB_VOLUME = 36;
 	
-	public static final int MOD_AHD_ATTACK = 37;
+	public static final int MOD_LFO_DELAY = 37;
 	public static final int OSC_SUB_LOW = 38;
-	public static final int MOD_AHD_DECAY = 39;
+//	public static final int MOD_AHD_DECAY = 39;
 	public static final int DELAY_RATE_RIGHT = 40;
 	/** Filter2 mod envelope decay time */
 	public static final int FILTER2_ENV_D = 41;
@@ -320,7 +320,7 @@ public class P {
 	
 	public static final int DELAY_WET = 71;
 	public static final int OSC_MODE = 72;
-	public static final int MOD_AHD_DELAY_TIME_AMOUNT = 73;
+//	public static final int MOD_AHD_DELAY_TIME_AMOUNT = 73;
 	public static final int MIDI_VELOCITY_CURVE = 74;
 	public static final int REVERB_ONE_KNOB = 75;
 	public static final int MOD_DELAY_TIME_AMOUNT = 76;
@@ -415,12 +415,10 @@ public class P {
 		OSC_PATH[MOD_PW2_AMOUNT] = "/mod/1/depth/wave/2";
 		OSC_PATH[MOD_VOL_AMOUNT] = "/mod/1/depth/vol";
 		OSC_PATH[MOD_DELAY_TIME_AMOUNT] = "/mod/1/depth/delaytime";
+		OSC_PATH[MOD_LFO_DELAY] = "/mod/1/delay";
 		
-		OSC_PATH[MOD_AHD_ATTACK] = "/mod/2/attack";
-		OSC_PATH[MOD_AHD_DECAY] = "/mod/2/decay";
-		OSC_PATH[MOD_AHD_LFO_RATE_AMOUNT] = "/mod/2/depth/lforate";
-		OSC_PATH[MOD_AHD_LFO_DEPTH_AMOUNT] = "/mod/2/depth/lfoamount";
-		OSC_PATH[MOD_AHD_DELAY_TIME_AMOUNT] = "/mod/2/depth/delaytime";
+		OSC_PATH[MOD_VEL_VOL_AMOUNT] = "/mod/vel/depth/vol";
+		OSC_PATH[MOD_VEL_FILTER_AMOUNT] = "/mod/vel/depth/filter";
 		
 		OSC_PATH[MOD_ENV1_A] = "/mod/env/1/1";
 		OSC_PATH[MOD_ENV1_D] = "/mod/env/1/2";

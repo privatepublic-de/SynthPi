@@ -49,7 +49,8 @@ public class EnvADSR extends Envelope {
 			break;
 		case DECAY_LOOP:
 			value += decayCoeff * value;
-			if (value<ZERO_THRESHOLD) {
+			if (value<sustainValue) {
+				value = sustainValue;
 				noteOn();
 			}
 			break;
@@ -77,7 +78,7 @@ public class EnvADSR extends Envelope {
 		slope = 4.0f * attackOvershoot * (rdur - rdur2);
 		curve = -8.0f * attackOvershoot * rdur2;
 		// value = ZERO_THRESHOLD;
-		sustainValue = conf.loopMode()?0:conf.sustain();
+		sustainValue = conf.sustain();//conf.loopMode()?0:conf.sustain();
 		decayCoeff = initStep(1, sustainValue, timeDecay);
 		state = State.ATTACK;
 	}

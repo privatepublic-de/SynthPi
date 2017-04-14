@@ -182,8 +182,9 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			break;
 		case SECONDARY:
 			freq = freq 
-					* LFO.lfoAmountAsymm(P.VALXC[P.MOD_PITCH2_AMOUNT], env1, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT])
-					* LFO.lfoAmountAsymm(P.VALXC[P.MOD_PITCH2_AMOUNT], env2, P.VALXC[P.MOD_ENV2_PITCH2_AMOUNT]);;
+					* (LFO.lfoAmount(P.VALXC[P.MOD_PITCH2_AMOUNT])
+							+env1.outValue*P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]
+							+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH2_AMOUNT]);
 			break;
 		case SUB:
 			freq = freq	* (P.IS[P.OSC_SUB_LOW]?.25f:.5f);

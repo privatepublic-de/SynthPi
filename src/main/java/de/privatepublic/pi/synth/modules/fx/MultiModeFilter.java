@@ -18,6 +18,7 @@ public class MultiModeFilter implements IControlProcessor {
 	
 	private EnvADSR env1;
 	private EnvADSR env2;
+	private float veloAmount = 0;
 	
 	
 	public MultiModeFilter(EnvADSR env1, EnvADSR env2) {
@@ -33,6 +34,7 @@ public class MultiModeFilter implements IControlProcessor {
 		else {
 			frqOffset = 0;
 		}
+		veloAmount = 1+16*velocity*P.VALC[P.MOD_VEL_FILTER_AMOUNT];
 	}
 
 
@@ -162,7 +164,8 @@ public class MultiModeFilter implements IControlProcessor {
 					+ (MAX_STABLE_FREQUENCY * (env2.outValue * P.VALXC[P.MOD_ENV2_FILTER_AMOUNT]))
 					+ frqOffset
 				) 
-				* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT]),
+				* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
+				* veloAmount,
 				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 		
 		if (type==FilterType.LOWPASS24) {

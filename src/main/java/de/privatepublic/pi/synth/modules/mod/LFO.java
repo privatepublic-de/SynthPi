@@ -86,15 +86,13 @@ public class LFO implements IControlProcessor {
 	// 0 - 2
 	// filter
 	public static float lfoAmount(final float depth) {
-		float useDepth = depth*GLOBAL.valueMod;
-		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*useDepth);
+		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch modulation
 	public static float lfoAmount(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
-		float useDepth = depth*GLOBAL.valueMod;
-		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*useDepth)+modEnv.outValue*modEnvDepth;
+		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
 	}
 	
 	
@@ -102,15 +100,13 @@ public class LFO implements IControlProcessor {
 	// voice volume modulation
 	public static float lfoAmountAdd(final float depth) {
 		// caution! copy & paste
-		float useDepth = depth*GLOBAL.valueMod;
-		return (GLOBAL.value()*P.MOD_AMOUNT_COMBINED*useDepth);
+		return (GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch2 modulation
 	public static float lfoAmountAsymm(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
-		float useDepth = depth*GLOBAL.valueMod;
-		return (((GLOBAL.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*useDepth)+1)+modEnv.outValue*modEnvDepth;
+		return (((GLOBAL.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
 	}
 	
 	public LFO() {
@@ -127,20 +123,11 @@ public class LFO implements IControlProcessor {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
 	}
 	
-	private float rateMod = 0;
-	private float valueMod = 1f;
 	
-	public void setRateMod(float mod) {
-		rateMod = 1+mod;
-	}
-	
-	public void setValueMod(float mod) {
-		valueMod = mod!=0?mod:1;
-	}
 	
 	private void nextBufferSlice(final int nframes) {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
-		tableIndexIncrement = (LOW_FREQ+((P.VALX[paraIndexLfoRate]*rateMod)*FREQ_RANGE));
+		tableIndexIncrement = (LOW_FREQ+((P.VALX[paraIndexLfoRate])*FREQ_RANGE));
 		if (currentWave==TABLES[5]) {
 			tableIndexIncrement *= 2; 
 		}
@@ -161,21 +148,44 @@ public class LFO implements IControlProcessor {
 				randvalue = (float)random.nextDouble()*2-1; 
 			}
 			lastRandTrigger = currentWave[index]; 
-			return randvalue;
+			return randvalue*delayValue*delayValue;
 		}
 		else {
-			return currentWave[index];
+			return currentWave[index]*delayValue*delayValue;
 		}
 	}
 	
-	
-	public void reset() {
+	public void resetPhase() {
 		indexOffset = 0;
+	}
+	
+	private float slope;
+	private float curve;
+	private float delayValue;
+	private float delayIncrementValue;
+	
+	public void resetDelay() {
+		float attackOvershoot = 1.05f;
+		float timeAttack =  Math.max(Envelope.MAX_TIME_MILLIS*P.VALX[P.MOD_LFO_DELAY], Envelope.MIN_TIME_MILLIS);
+		float dur = (timeAttack*2)/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
+		float rdur = 1.0f / dur;
+		float rdur2 = rdur * rdur;
+		slope = 4.0f * attackOvershoot * (rdur - rdur2);
+		curve = -8.0f * attackOvershoot * rdur2;
+		delayIncrementValue = 0;
 	}
 
 	@Override
 	public void controlTick() {
 		nextBufferSlice(P.CONTROL_BUFFER_SIZE);
+		if (delayIncrementValue<1) {
+			delayIncrementValue += slope;
+		    slope += curve;
+			if (delayIncrementValue>1) {
+				delayIncrementValue = 1;
+			}
+			delayValue = delayIncrementValue*delayIncrementValue*delayIncrementValue*delayIncrementValue; 
+		}
 	}
 	
 }

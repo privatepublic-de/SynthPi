@@ -137,8 +137,7 @@ public class FancyParam {
 		case P.MOD_ENV2_A:
 		case P.MOD_ENV2_D:
 		case P.MOD_ENV2_R:
-		case P.MOD_AHD_ATTACK:
-		case P.MOD_AHD_DECAY:
+		case P.MOD_LFO_DELAY:
 			long millis = Math.round(EnvADSR.MIN_TIME_MILLIS+(EnvADSR.MAX_TIME_MILLIS-EnvADSR.MIN_TIME_MILLIS)*(value*value*value*value));
 			float seconds;
 			if (millis<100) {

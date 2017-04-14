@@ -3,10 +3,9 @@ package de.privatepublic.pi.synth.modules.fx;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
-import de.privatepublic.pi.synth.modules.mod.EnvAHD;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
-public class TapeDelay implements IProcessorStereo, IControlProcessor {
+public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 
 	private DelayLine lineL;
 	private DelayLine lineR;
@@ -19,14 +18,16 @@ public class TapeDelay implements IProcessorStereo, IControlProcessor {
 	}
 	
 	@Override
-	public void process(float[][] buffers, int startPos) {
-		float[] bufferL = buffers[0];
-		float[] bufferR = buffers[1];
+	public void process(float[] inBuffer, float[][] outBuffers, int startPos) {
+		float[] bufferL = outBuffers[0];
+		float[] bufferR = outBuffers[1];
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			int pos = i+startPos;
-			bufferL[pos] = bufferL[pos]*dry + lineL.sample(bufferL[pos])*wet;
-			bufferR[pos] = bufferR[pos]*dry + lineR.sample(bufferR[pos])*wet;
+			float inval = inBuffer[pos];
+			bufferL[pos] = inval*dry + lineL.sample(inval*wet);
+			bufferR[pos] = inval*dry + lineR.sample(inval*wet);
 		}
+		
 	}
 	
 	@Override
@@ -90,7 +91,7 @@ public class TapeDelay implements IProcessorStereo, IControlProcessor {
 
 		@Override
 		public void controlTick() {
-			float freq = (FREQ_LOW+P.VAL[pRate]*FREQ_RANGE)*LFO.lfoAmount(P.VALXC[P.MOD_DELAY_TIME_AMOUNT])*(1+EnvAHD.GLOBAL.outValue*P.VALXC[P.MOD_AHD_DELAY_TIME_AMOUNT]);
+			float freq = (FREQ_LOW+P.VAL[pRate]*FREQ_RANGE)*LFO.lfoAmount(P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
 			filter.setCutoff(freq/4);
 			phaseIncrement = freq*frequencyFactor;
 			feedbackLevel = P.VAL[P.DELAY_FEEDBACK];
@@ -105,5 +106,5 @@ public class TapeDelay implements IProcessorStereo, IControlProcessor {
 	private static final int LINE_LENGTH = 4096;
 	private static final int LINE_LENGTH_MASK = LINE_LENGTH-1;
 	private static final float PI2 = (float)(Math.PI*2);
-	
+
 }
