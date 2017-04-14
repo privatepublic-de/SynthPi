@@ -277,7 +277,7 @@ h3 {
 }
 
 #oscillators {
-	min-width: 355px;
+	
 }
 
 #oscillators .osc {
@@ -297,7 +297,7 @@ h3 {
 }
 
 #filter1 {
-	padding-bottom: 40px;
+	padding-bottom: 16px;
 }
 
 #modulators {
@@ -396,8 +396,7 @@ h3 {
 }
 .exclusive.filtertype {
 	border-bottom: 1px solid;
-	padding: 28px .5em .5em .5em
-	;
+	padding: .5em;
 }
 .exclusive .checkbox,
 .labelbelow .checkbox {
