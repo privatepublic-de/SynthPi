@@ -476,6 +476,7 @@ $(document).ready(function () {
 			},
 			'draw': function() {
 				if (cursor) {
+					console.log(this);
 					var mcol = markercolor;
 					if (hilitenon0 && this.v) {
 						this.o.bgColor = hilitecolor;

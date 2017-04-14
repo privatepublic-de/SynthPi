@@ -296,6 +296,9 @@ h3 {
 	margin-top: 1em;
 }
 
+#filter1 {
+	padding-bottom: 40px;
+}
 
 #modulators {
 	padding: 20px 8px 4px 8px;
@@ -392,10 +395,9 @@ h3 {
 	border-color: inherit;
 }
 .exclusive.filtertype {
-	border: 1px solid;
-	border-radius: 4px;
-	padding: .5em;
-	margin-top: .5em;
+	border-bottom: 1px solid;
+	padding: 28px .5em .5em .5em
+	;
 }
 .exclusive .checkbox,
 .labelbelow .checkbox {
@@ -420,27 +422,8 @@ h3 {
 	display: inline-block;
 }
 .lfotypes .exclusiveunstyled {
-	padding-bottom: 5px;
-	margin-bottom: 5px;
-	border-bottom: 1px solid;
-	border-color: inherit;
-}
-.lfo {
-	border-right: 1px solid;
-	border-color: inherit;
-	width: 50%;
-	min-height: 211px;
-}
-
-div.ahd {
-	width: 48%;
-}
-tr.ahd td, tr.ahd th {
-	padding-top: 1em;
-}
-
-#modulators .innergroup {
-	vertical-align: top;
+	padding-bottom: .5em;
+	maring-bottom: .5em;
 }
 
 .env1, .env2 {
