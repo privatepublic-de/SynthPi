@@ -189,8 +189,9 @@ public class MidiHandler {
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else {
-						P.setFromMIDI(INDEX_OF_MIDI_CC[data1], data2);
-						if (data1==CC_OSC2_DETUNE || data1==CC_OSC2_DETUNE_FINE) {
+						int pIndex = INDEX_OF_MIDI_CC[data1];
+						P.setFromMIDI(pIndex, data2);
+						if (pIndex==P.OSC2_TUNING || pIndex==P.OSC2_TUNING_FINE) {
 							sendPitchBendNotification();
 						}
 						if (data1==CC_SUSTAIN) {
@@ -248,51 +249,12 @@ public class MidiHandler {
 	private static final int CC_SUSTAIN = 64;
 	
 	
-	// Controller numbers for iControl-32 default mapping
-	private static final int CC_VOLUME = 7;
-	private static final int CC_FILTER_FREQ = 73;
-	private static final int CC_FILTER_RESONANCE = 9;
-	private static final int CC_FILTER_ENV_DEPTH = 10;
-	private static final int CC_FILTER_TYPE = 72;
-	
-	private static final int CC_OSC1_WAVE = 14;
-	private static final int CC_OSC2_WAVE = 15;
-	private static int CC_OSC2_DETUNE = 16;
-	public static final int CC_OSC2_DETUNE_VALUE_RANGE = 127;
-	private static final int CC_OSC_NOISE_LEVEL = 20;
-	private static int CC_OSC2_DETUNE_FINE = 17;
-	
-	private static final int CC_AMP_ENV_A = 74;
-	private static final int CC_AMP_ENV_D = 71;
-	private static final int CC_AMP_ENV_S = 18;
-	private static final int CC_AMP_ENV_R = 107;
-	
-//	private static final int CC_AMP_OSC_MIX = 28;
-	
-	private static final int CC_SET_OSC_SYNC = 108;
-	private static final int CC_SET_OSC_MONO = 109;
-	private static final int CC_SET_AMP_VEL = 110;
-	private static final int CC_SET_FILTER1_VEL = 111;
-	
-	
-	private static final int CC_MOD_RATE = 19;
-	private static final int CC_MOD_DEPTH_FILTER1 = 22;
-	private static final int CC_MOD_DEPTH_PITCH = 25;
-	
-	
-	private static final int CC_OSC_RINGMOD = 70;
-	private static final int CC_OSC_PORTAMENTO_TIME = 5;
-//	private static final int CC_LOCAL_ON_OFF = 122;
-	
 	public static int CC_PARAM_SELECT = 26;
 	public static int CC_PARAM_VALUE = 27;
 	private static final int[] CC_PARAM_MAP = new int[] {
 		P.UNUSED,
-		P.OSC_MODE,
 		P.OSC1_WAVE,
-		P.OSC1_WAVE_SET,
 		P.OSC2_WAVE,
-		P.OSC2_WAVE_SET,
 		P.OSC1_VOLUME,
 		P.OSC_NOISE_LEVEL,
 		P.OSC2_TUNING,
@@ -360,31 +322,6 @@ public class MidiHandler {
 	
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
 	static {
-		INDEX_OF_MIDI_CC[CC_VOLUME] = P.VOLUME;
-		INDEX_OF_MIDI_CC[CC_MOD_WHEEL] = P.MOD_WHEEL;
-		INDEX_OF_MIDI_CC[CC_FILTER_FREQ] = P.FILTER1_FREQ;
-		INDEX_OF_MIDI_CC[CC_FILTER_RESONANCE] = P.FILTER1_RESONANCE;
-		INDEX_OF_MIDI_CC[CC_FILTER_TYPE] = P.FILTER1_TYPE;
-		INDEX_OF_MIDI_CC[CC_FILTER_ENV_DEPTH] = P.MOD_ENV2_FILTER_AMOUNT;
-		INDEX_OF_MIDI_CC[CC_OSC1_WAVE] = P.OSC1_WAVE;
-		INDEX_OF_MIDI_CC[CC_OSC2_WAVE] = P.OSC2_WAVE;
-		INDEX_OF_MIDI_CC[CC_OSC2_DETUNE] = P.OSC2_TUNING;
-		INDEX_OF_MIDI_CC[CC_OSC_NOISE_LEVEL] = P.OSC_NOISE_LEVEL;
-		INDEX_OF_MIDI_CC[CC_AMP_ENV_A] = P.MOD_ENV1_A;
-		INDEX_OF_MIDI_CC[CC_AMP_ENV_D] = P.MOD_ENV1_D;
-		INDEX_OF_MIDI_CC[CC_AMP_ENV_S] = P.MOD_ENV1_S;
-		INDEX_OF_MIDI_CC[CC_AMP_ENV_R] = P.MOD_ENV1_R;
-//		INDEX_OF_MIDI_CC[CC_AMP_OSC_MIX] = P.OSC_1_2_MIX;
-		INDEX_OF_MIDI_CC[CC_OSC2_DETUNE_FINE] = P.OSC2_TUNING_FINE;
-		INDEX_OF_MIDI_CC[CC_OSC_RINGMOD] = P.OSC2_AM;
-		INDEX_OF_MIDI_CC[CC_OSC_PORTAMENTO_TIME] = P.OSC_GLIDE_RATE;
-		INDEX_OF_MIDI_CC[CC_MOD_RATE] = P.MOD_RATE;
-		INDEX_OF_MIDI_CC[CC_MOD_DEPTH_FILTER1] = P.MOD_FILTER1_AMOUNT;
-		INDEX_OF_MIDI_CC[CC_MOD_DEPTH_PITCH] = P.MOD_PITCH_AMOUNT;
-		INDEX_OF_MIDI_CC[CC_SET_OSC_SYNC] = P.OSC2_SYNC;
-		INDEX_OF_MIDI_CC[CC_SET_OSC_MONO] = P.OSC_MONO;
-		
-		
 		InputStream in = MidiHandler.class.getResourceAsStream("/midimaps/default.map");
 		try {
 			List<String> lines = IOUtils.readLines(in, "utf-8");
@@ -405,12 +342,6 @@ public class MidiHandler {
 							if(t==int.class){
 							    int pindex = f.getInt(null);
 							    INDEX_OF_MIDI_CC[ccno] = pindex;
-							    if (pindex==P.OSC2_TUNING) {
-							    	CC_OSC2_DETUNE = ccno;
-							    }
-							    else if (pindex==P.OSC2_TUNING_FINE) {
-							    	CC_OSC2_DETUNE_FINE = ccno;
-							    }
 							}
 							else {
 								throw new Exception("Wrong parameter key error");	

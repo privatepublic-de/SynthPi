@@ -18,12 +18,6 @@ public class P {
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(P.class);
 	
-	public static enum OscillatorMode {
-		VIRTUAL_ANALOG,
-		ADDITIVE,
-		EXITER
-	}
-	
 	/** Filter types */
 	public static enum FilterType { 
 		LOWPASS24("LOW24"), 
@@ -166,7 +160,6 @@ public class P {
 	public static final String[] OSC_PATH = new String[PARAM_STORE_SIZE];
 	
 	public static FilterType VAL_FILTER_TYPE = FilterType.LOWPASS;
-	public static OscillatorMode VAL_OSCILLATOR_MODE = OscillatorMode.VIRTUAL_ANALOG;
 	public static Waveform VAL_OSC1_WAVEFORM = Waveform.SAW;
 	public static Waveform VAL_OSC2_WAVEFORM = Waveform.SAW;
 	
@@ -271,9 +264,9 @@ public class P {
 	/** Oscillator1+2 wave form modulation amount */
 	public static final int MOD_PW1_AMOUNT = 47;
 	/** Selected wave set for oscillator 1 */
-	public static final int OSC1_WAVE_SET = 48;
+//	public static final int OSC1_WAVE_SET = 48;
 	/** Selected wave set for oscillator 2 */
-	public static final int OSC2_WAVE_SET = 49;
+//	public static final int OSC2_WAVE_SET = 49;
 	/** Filter1 enabled */
 	public static final int FILTER1_ON = 50;
 	/** Filter chain is parallel (>0) */
@@ -319,7 +312,7 @@ public class P {
 	public static final int MOD_ENV1_LOOP = 70;
 	
 	public static final int DELAY_WET = 71;
-	public static final int OSC_MODE = 72;
+//	public static final int OSC_MODE = 72;
 //	public static final int MOD_AHD_DELAY_TIME_AMOUNT = 73;
 	public static final int MIDI_VELOCITY_CURVE = 74;
 	public static final int REVERB_ONE_KNOB = 75;
@@ -391,16 +384,13 @@ public class P {
 		OSC_PATH[OSC_SUB_VOLUME] = "/osc/sub/vol";
 		OSC_PATH[OSC_NOISE_LEVEL] = "/osc/noiselevel";
 		OSC_PATH[OSC1_WAVE] = "/osc/1/wave";
-		OSC_PATH[OSC1_WAVE_SET] = "/osc/1/waveset";
 		OSC_PATH[OSC2_WAVE] = "/osc/2/wave";
-		OSC_PATH[OSC2_WAVE_SET] = "/osc/2/waveset";
 		OSC_PATH[OSC2_TUNING] = "/osc/2/tuning";
 		OSC_PATH[OSC2_TUNING_FINE] = "/osc/2/tuning/fine";
 		OSC_PATH[OSC2_SYNC] = "/osc/2/sync";
 		OSC_PATH[OSC2_AM] = "/osc/2/am";
 		OSC_PATH[OSC_GLIDE_RATE] = "/osc/gliderate";
 		OSC_PATH[OSC_MONO] = "/osc/mono";
-		OSC_PATH[OSC_MODE] = "/osc/mode";
 		OSC_PATH[OSC_SUB_LOW] = "/osc/sub/low";
 		
 		// modulation
@@ -510,7 +500,6 @@ public class P {
 		setDirectly(OSC2_VOLUME, 0.66667f);
 		setDirectly(OSC_SUB_VOLUME, 0f);
 		setDirectly(FILTER1_TYPE, 0);
-		setDirectly(OSC_MODE, 0);
 		setDirectly(OSC_NOISE_LEVEL, 0);
 		setDirectly(OSC1_WAVE, 0.5f);
 		setDirectly(OSC2_WAVE, 1f);
@@ -623,9 +612,6 @@ public class P {
 		case OSC2_WAVE:
 			VAL_OSC2_WAVEFORM = Waveform.selectedWaveform(val);
 			break;
-		case OSC_MODE:
-			VAL_OSCILLATOR_MODE = selectedOscillatorMode(val);
-			break;
 		case REVERB_ONE_KNOB:
 			// notify reverb object
 			if (reverbObject!=null) {
@@ -639,17 +625,7 @@ public class P {
 	}
 	
 	public static void setFromMIDI(int index, int val) {
-		float v;
-		if (index==P.OSC2_TUNING) {
-			// consider range for midi device
-			v = val/(float)MidiHandler.CC_OSC2_DETUNE_VALUE_RANGE;
-		} else 
-		if (index==P.OSC1_WAVE_SET || index==P.OSC2_WAVE_SET) {
-			v = (val<127?val/127f:126f/127f); // mustn't reach 1
-		}
-		else {
-			v = val==64?.5f:val/127f;
-		}
+		float v = val==64?.5f:val/127f;
 		set(index, v);
 		VAL_RAW_MIDI[index] = (int)val;
 	}
@@ -660,12 +636,6 @@ public class P {
 		P.VAL_RAW_MIDI[P.PITCH_BEND] = 8192; // 0 - 8192 - 16383
 		P.PITCH_BEND_FACTOR = 1;
 		MidiHandler.sendPitchBendNotification();
-	}
-	
-	
-	
-	public static OscillatorMode selectedOscillatorMode(float val) {
-		return OscillatorMode.values()[(int)Math.round(val * (OscillatorMode.values().length-1))];
 	}
 	
 	public static float detuneCents() {

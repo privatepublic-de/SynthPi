@@ -30,16 +30,13 @@ public class FancyParam {
 		NAME[P.OSC_SUB_VOLUME] = "Osc Sub Volume";
 		NAME[P.OSC_NOISE_LEVEL] = "Noise Level";
 		NAME[P.OSC1_WAVE] = "Osc 1 Waveform";
-		NAME[P.OSC1_WAVE_SET] = "Osc 1 Waveset";
 		NAME[P.OSC2_WAVE] = "Osc 2 Waveform";
-		NAME[P.OSC2_WAVE_SET] = "Osc 2 Waveset";
 		NAME[P.OSC2_TUNING] = "Osc 2 Tune";
 		NAME[P.OSC2_TUNING_FINE] = "Osc 2 Fine Tune";
 		NAME[P.OSC2_SYNC] = "Sync Osc 2";
 		NAME[P.OSC2_AM] = "Osc 2 Ringmod";
 		NAME[P.OSC_GLIDE_RATE] = "Glide Rate";
 		NAME[P.OSC_MONO] = "MONO";
-		NAME[P.OSC_MODE] = "Synthesizer Mode";
 		
 		// modulation
 		NAME[P.MOD_RATE] = "LFO Frq";
@@ -160,9 +157,6 @@ public class FancyParam {
 		case P.OSC_MONO:
 		case P.MOD_LFO_RESET:
 			result = value>0?"ON":"OFF";
-			break;
-		case P.OSC_MODE:
-			result = P.VAL_OSCILLATOR_MODE.toString();
 			break;
 		case P.FILTER1_TYPE:
 			result = P.FilterType.selectedFilterType(value).name();

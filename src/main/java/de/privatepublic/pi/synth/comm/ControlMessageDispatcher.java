@@ -13,7 +13,6 @@ import de.privatepublic.pi.synth.FancyParam;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.PresetHandler;
 import de.privatepublic.pi.synth.Randomizer;
-import de.privatepublic.pi.synth.SynthPi;
 import de.privatepublic.pi.synth.comm.web.SynthSocket;
 
 public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendReceiver {
@@ -31,8 +30,6 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		SAVE_PATCH("/command/savepatch"),
 		OSC1_TOGGLE_WAVESET("/command/osc/1/togglewaveset"),
 		OSC2_TOGGLE_WAVESET("/command/osc/2/togglewaveset"),
-		SEQ_STOP("/command/sequence/stop"),
-		SEQ_START("/command/sequence/start"),
 		MIDI_LEARN_START("/command/learn/start"),
 		MIDI_LEARN_STOP("/command/learn/stop"),
 		LOAD_SETTINGS("/command/settings/load"),
@@ -114,23 +111,6 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 					// on delete send saveinfo again to update ui list
 					session.getRemote().sendStringByFuture("/saveinfo="+PresetHandler.patchSaveInfo().toString());
 				}
-				break;
-			case SEQ_START:
-				Matcher matcherseq = Pattern.compile("\\/([^\\/]+?)=").matcher(msg);
-				if (matcherseq.find()) {
-					String number = matcherseq.group(1);
-					if (number.equals("1")) {
-						MidiPlayback.INSTANCE.playMIDI(MidiPlayback.class.getResourceAsStream("/midiseq/simple-sequence1.mid"));
-					}
-					else if (number.equals("2")) {
-						MidiPlayback.INSTANCE.playMIDI(MidiPlayback.class.getResourceAsStream("/midiseq/pad-sequence1.mid"));
-					}
-					SynthPi.uiMessage("Playing MIDI sequence #"+number);
-				}
-				break;
-			case SEQ_STOP:
-				MidiPlayback.INSTANCE.stopMIDI();
-				SynthPi.uiMessage("Stopped MIDI sequence");
 				break;
 			case MIDI_LEARN_START:
 				MidiHandler.INSTANCE.startLearnMode(parts[1]);
@@ -272,21 +252,12 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			msgLabel.append(FancyParam.valueOf(paramIndex));
 			msgLabel.append('\n');
 			// special case for enums
-			if (paramIndex==P.FILTER1_TYPE || paramIndex==P.FILTER_PARALLEL || paramIndex==P.MOD_LFO_TYPE || paramIndex==P.OSC_MODE || paramIndex==P.OSC1_WAVE || paramIndex==P.OSC2_WAVE) {
+			if (paramIndex==P.FILTER1_TYPE || paramIndex==P.FILTER_PARALLEL || paramIndex==P.MOD_LFO_TYPE || paramIndex==P.OSC1_WAVE || paramIndex==P.OSC2_WAVE) {
 				msgLabel.append("/option");
 				msgLabel.append(path);
 				msgLabel.append('/');
-				if (paramIndex==P.OSC_MODE) {
-					msgLabel.append(P.VAL_OSCILLATOR_MODE);
-				}
-				else {
-					msgLabel.append(FancyParam.valueOf(paramIndex));
-				}
+				msgLabel.append(FancyParam.valueOf(paramIndex));
 				msgLabel.append("=1\n");
-				if (paramIndex==P.OSC_MODE) {
-					msgLabel.append(createLabelMessage(P.OSC1_WAVE));
-					msgLabel.append(createLabelMessage(P.OSC2_WAVE));
-				}
 			}
 			return msgLabel.toString();
 		}

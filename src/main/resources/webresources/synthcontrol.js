@@ -2,34 +2,6 @@ $(document).ready(function () {
 	var warnRandomize = true;
 	var dontreconnect = false;
 	var observers = [];
-	var Cookie = {
-			create: function(name, value, days) {
-				var expires;
-				if (days) {
-					var date = new Date();
-					date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-					expires = "; expires=" + date.toGMTString();
-				} else {
-					expires = "";
-				}
-				document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
-			},
-
-			read: function(name) {
-				var nameEQ = encodeURIComponent(name) + "=";
-				var ca = document.cookie.split(';');
-				for (var i = 0; i < ca.length; i++) {
-					var c = ca[i];
-					while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-					if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
-				}
-				return null;
-			},
-
-			erase: function(name) {
-				createCookie(name, "", -1);
-			}	
-	};
 	var socketHandler = function() {
 		// Create new WebSocket
 		this.wsurl = "ws://"+window.location.host+"/oscsocket";
@@ -294,10 +266,6 @@ $(document).ready(function () {
 		elist.append("<div class='headline'>Factory Presets</div>");
 		elist.append("<div><a href='#' class='push' data-osc='/command/initpatch' style='text-align:center'>INIT (start from scratch)</a></div><div></div>");
 		columnsOut(lists.factory, elist);
-		elist.append("<div class='headline'>Play Test Sequences</div>");
-		elist.append("<div><a href='#' class='push seq' data-osc='/command/sequence/start/1'>&#9654; simple-sequence</a></div>");
-		elist.append("<div><a href='#' class='push seq' data-osc='/command/sequence/start/2'>&#9654; pad-sequence</a></div>");
-		elist.append("<div><a href='#' class='push seq' data-osc='/command/sequence/stop'>&#9642; Stop sequencer</a></div>");
 		dimmer.show();
 		$("#patchlistwindow").fadeIn();
 		$("#patchlistwindow .windowtitle").click(function(ev){

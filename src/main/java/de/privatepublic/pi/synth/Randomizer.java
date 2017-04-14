@@ -16,25 +16,10 @@ public class Randomizer {
 	public static void randomize() {
 		P.setToDefaults();
 		
-		// oscillator mode
-		P.setDirectly(P.OSC_MODE, fullRange());
-//		boolean pluck = RANDOM2.nextBoolean();
-//		if (pluck) {
-//			P.setDirectly(P.OSC_MODE, 1d);
-////			P.setDirectly(P.UNUSED_RELIC, 0d);
-//		}
-		
 		
 		// oscillators
 		P.setDirectly(P.OSC1_WAVE, fullRange());
-		P.setDirectly(P.OSC1_WAVE_SET, fullRange());
-		if (P.VAL_OSCILLATOR_MODE==P.OscillatorMode.EXITER) {
-			P.setDirectly(P.OSC2_WAVE, range(0, .667f));
-		}
-		else {
-			P.setDirectly(P.OSC2_WAVE, fullRange());
-			P.setDirectly(P.OSC2_WAVE_SET, fullRange());	
-		}
+		P.setDirectly(P.OSC2_WAVE, fullRange());
 		
 		boolean oscsync = enable(.25f);
 		if (oscsync) {

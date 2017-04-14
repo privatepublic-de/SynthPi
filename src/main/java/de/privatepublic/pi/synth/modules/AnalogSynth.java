@@ -18,7 +18,6 @@ import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
 import de.privatepublic.pi.synth.modules.fx.IProcessorStereo;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
 import de.privatepublic.pi.synth.modules.fx.TapeDelay;
-import de.privatepublic.pi.synth.modules.mod.EnvAHD;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
 public class AnalogSynth implements IMidiNoteReceiver {

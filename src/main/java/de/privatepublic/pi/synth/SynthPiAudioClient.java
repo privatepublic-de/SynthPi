@@ -14,7 +14,6 @@ import org.jaudiolibs.audioservers.javasound.JSTimingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.privatepublic.pi.synth.comm.MidiPlayback;
 import de.privatepublic.pi.synth.modules.AnalogSynth;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
@@ -95,12 +94,6 @@ public class SynthPiAudioClient implements AudioClient {
 		bufferTimeNS = (long)(((double) context.getMaxBufferSize() / context.getSampleRate()) * 1e9);
 		LFO.init();
 		synthengine = new AnalogSynth();
-		if (P.MIDI_FILE_NAME!=null) {
-			MidiPlayback.INSTANCE.playMIDI(P.MIDI_FILE_NAME);
-		}
-		else {
-			MidiPlayback.INSTANCE.stopMIDI();
-		}
 		SynthPi.uiMessage("Audio system: "+P.AUDIO_SYSTEM_NAME);
 		SynthPi.uiMessage("Audio buffer size: "+P.SAMPLE_BUFFER_SIZE);
 		SynthPi.uiMessage("Sample rate: "+(int)P.SAMPLE_RATE_HZ+" Hz");
