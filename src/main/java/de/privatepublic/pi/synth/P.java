@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import de.privatepublic.pi.synth.PresetHandler.PatchCategory;
 import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
 import de.privatepublic.pi.synth.comm.MidiHandler;
-import de.privatepublic.pi.synth.modules.fx.Freeverb;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR.EnvelopeParamConfig;
 
 
@@ -167,164 +166,90 @@ public class P {
 	public static int PORT_HTTP = 31415;
 	public static String CUSTOM_BROWSER_COMMAND = null;
 	
-	/** Unused property (always 0) */
-	public static final int UNUSED = 0;
-	/** Mod wheel amount */
-	public static final int MOD_WHEEL = 1;
-	/** Oscillator 1 wave form */
+	public static final int UNUSED = 0; /** Unused property (always 0) */
+	public static final int MOD_WHEEL = 1; /** Mod wheel amount */
 	public static final int OSC1_WAVE = 2;
-	/** Oscillator 2 wave form */
 	public static final int OSC2_WAVE = 3;
-	/** Oscillator 2 coarse tuning */
 	public static final int OSC2_TUNING = 4;
-	/** Noise level mixed to oscillator sounds */
 	public static final int OSC_NOISE_LEVEL = 5;
-	/** Filter1 cut off frequency */
 	public static final int FILTER1_FREQ = 6;
-	/** Filter1 resonance (Q) level */
 	public static final int FILTER1_RESONANCE = 7;
-	/** Filter1 envelope modulation depth (use centered) */
 	public static final int MOD_ENV2_FILTER_AMOUNT = 8;
-	/** Filter1 type 
-	 * @see FilterType */
 	public static final int FILTER1_TYPE = 9;
-	/** Filter1 mod envelope attack time */
 	public static final int MOD_ENV1_FILTER_AMOUNT = 10;
-	/** Filter1 mod envelope decay time */
 	public static final int MOD_ENV1_PITCH_AMOUNT = 11;
-	/** Filter1 mod envelope sustain level */
 	public static final int MOD_ENV1_PITCH2_AMOUNT = 12;
-	/** Filter1 mod envelope release time */
 	public static final int MOD_ENV2_VOL_AMOUNT = 13;
-	/** Amp envelope attack time */
 	public static final int MOD_ENV1_A = 14;
-	/** Amp envelope decay time */
 	public static final int MOD_ENV1_D = 15;
-	/** Amp envelope sustain level */
 	public static final int MOD_ENV1_S = 16;
-	/** Amp envelope release time */
 	public static final int MOD_ENV1_R = 17;
-	/** Mix balance of oscillators 1 and 2. 
-	 * @see VALMIXLOW, VALMIXHIGH */
 	public static final int OSC1_VOLUME = 18;
-	/** Pitch bend amount */
-	public static final int PITCH_BEND = 19;
-	/** Filter1 LFO modulation amount (use centered) */
+	public static final int PITCH_BEND = 19; /** Pitch bend amount */
 	public static final int MOD_FILTER1_AMOUNT = 20;
-	
 	public static final int MOD_ENV1_VOL_AMOUNT = 21;
-	
-	
-	/** LFO modulation rate */
 	public static final int MOD_RATE = 22;
-	/** Amplifier master volume */
 	public static final int VOLUME = 23;
-	/** Amplifier envelope velocity sensitivity >0 = true*/
 	public static final int MOD_VEL_VOL_AMOUNT = 24;
-	/** Filter1 mod envelope velocity sensitivity >0 = true*/
 	public static final int MOD_VEL_FILTER_AMOUNT = 25;
-	/** Hard sync oscillator 2 to oscillator 1 */
 	public static final int OSC2_SYNC = 26;
-	/** Oscillator 2 amplitude (ring) modulation with oscillator 1 */
 	public static final int OSC2_AM = 27;
-	/** Filter1 cut off frequency keyboard tracking amount */
 	public static final int FILTER1_TRACK_KEYBOARD = 28;
-	/** Amplifier distortion (overdrive) */
 	public static final int OVERDRIVE = 29;
-	/** LFO pitch modulation amount */
 	public static final int MOD_PITCH_AMOUNT = 30;
-	/** Oscillators frequency glide (portamento) rate */
 	public static final int OSC_GLIDE_RATE = 31;
-	/** Play monophonic (use only one synth voice) */
 	public static final int OSC_MONO = 32;
-	
-	
 	public static final int OSC1_PULSE_WIDTH = 33;
 	public static final int OSC2_PULSE_WIDTH = 34;
 	public static final int OSC2_VOLUME = 35;
 	public static final int OSC_SUB_VOLUME = 36;
-	
 	public static final int MOD_LFO_DELAY = 37;
 	public static final int OSC_SUB_LOW = 38;
 //	public static final int MOD_AHD_DECAY = 39;
 	public static final int DELAY_RATE_RIGHT = 40;
-	/** Filter2 mod envelope decay time */
-	public static final int FILTER2_ENV_D = 41;
-	/** Filter2 mod envelope sustain level */
-	public static final int FILTER2_ENV_S = 42;
-	/** Filter2 mod envelope release time */
-	public static final int FILTER2_ENV_R = 43;
-	/** Filter2 mod envelope velocity sensitivity >0 = true*/
-	public static final int FILTER2_ENV_VELOCITY_SENS = 44;
-	
-	/** LFO pitch of oscillator2 modulation amount (use centered) */
+//	public static final int FILTER2_ENV_D = 41;
+//	public static final int FILTER2_ENV_S = 42;
+//	public static final int FILTER2_ENV_R = 43;
+//	public static final int FILTER2_ENV_VELOCITY_SENS = 44;
 	public static final int MOD_PITCH2_AMOUNT = 45;
-	/** Oscillator2 fine tuning -/+100 cents (use centered) */
 	public static final int OSC2_TUNING_FINE = 46;
-	/** Oscillator1+2 wave form modulation amount */
 	public static final int MOD_PW1_AMOUNT = 47;
-	/** Selected wave set for oscillator 1 */
 //	public static final int OSC1_WAVE_SET = 48;
-	/** Selected wave set for oscillator 2 */
 //	public static final int OSC2_WAVE_SET = 49;
-	/** Filter1 enabled */
 	public static final int FILTER1_ON = 50;
-	/** Filter chain is parallel (>0) */
-	public static final int FILTER_PARALLEL = 51;
-	/** Filter parallel mix level 
-	 * @see VALMIXLOW, VALMIXHIGH */
+//	public static final int FILTER_PARALLEL = 51;
 	public static final int MOD_ENV2_PW2_AMOUNT = 52;
-	/** Mod envelope attack time */
 	public static final int MOD_ENV2_A = 53;
-	/** Mod envelope decay time */
 	public static final int MOD_ENV2_D = 54;
-	/** Mod envelope sustain level */
 	public static final int MOD_ENV2_S = 55;
-	/** Mod envelope release time */
 	public static final int MOD_ENV2_R = 56;
-	/** Mod envelope pitch modulation amount (use centered) */
 	public static final int MOD_ENV2_PITCH_AMOUNT = 57;
-	/** Mod envelope pitch of oscillator 2 modulation amount (use centered) */
 	public static final int MOD_ENV2_PITCH2_AMOUNT = 58;
-	/** Mod envelope wave form modulation amount (use centered) */
 	public static final int MOD_ENV2_PW1_AMOUNT = 59;
-	/** Mod envelope noise level modulation amount (use centered) */
 	public static final int MOD_ENV2_NOISE_AMOUNT = 60;
-	/** LFO wave form */
 	public static final int MOD_LFO_TYPE = 61;
-	/** LFO resets on every note on (key stroke) */
 	public static final int MOD_LFO_RESET = 62;
-	/** Chorus modulation rate */
 	public static final int CHORUS_LFO_RATE = 63;
-	/** Chorus modulation wave form rate */
 	public static final int CHORUS_LFO_TYPE = 64;
-	/** Chorus depth */
 	public static final int CHORUS_DEPTH = 65;
-	/** LFO base amount */
 	public static final int MOD_AMOUNT_BASE = 66;
-	/** Mod envelope loop mode */
 	public static final int MOD_ENV2_LOOP = 67;
-	/** Filter 1 envelope loop mode */
 	public static final int MOD_ENV1_PW1_AMOUNT = 68;
-	/** Filter 2 envelope loop mode */
 	public static final int MOD_ENV1_PW2_AMOUNT = 69;
-	/** Amp envelope loop mode */
 	public static final int MOD_ENV1_LOOP = 70;
-	
 	public static final int DELAY_WET = 71;
 //	public static final int OSC_MODE = 72;
 //	public static final int MOD_AHD_DELAY_TIME_AMOUNT = 73;
 	public static final int MIDI_VELOCITY_CURVE = 74;
-	public static final int REVERB_ONE_KNOB = 75;
+//	public static final int REVERB_ONE_KNOB = 75;
 	public static final int MOD_DELAY_TIME_AMOUNT = 76;
 	public static final int MOD_PW2_AMOUNT = 77;
 	public static final int MOD_VOL_AMOUNT = 78;
 	public static final int MOD_ENV1_NOISE_AMOUNT = 79;
 	public static final int DELAY_RATE = 80;
 	public static final int DELAY_FEEDBACK = 81;
-	
 	public static final int FILTER1_OVERLOAD = 82;
-	public static final int FILTER2_OVERLOAD = 83;
+//	public static final int FILTER2_OVERLOAD = 83;
 	
 	public static final int[] SET_INTERPOLATED = new int[] {
 		FILTER1_FREQ,
@@ -337,7 +262,6 @@ public class P {
 		VOLUME,
 		OVERDRIVE,
 		CHORUS_DEPTH,
-		REVERB_ONE_KNOB,
 		OSC_NOISE_LEVEL,
 		DELAY_WET,
 		DELAY_FEEDBACK
@@ -347,8 +271,6 @@ public class P {
 	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, UNUSED, MOD_ENV1_LOOP);
 	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV = new EnvelopeParamConfig(MOD_ENV2_A, MOD_ENV2_D, MOD_ENV2_S, MOD_ENV2_R, UNUSED, MOD_ENV2_LOOP);
 	public static final String VERSION_STRING = "0.9";
-	
-	public static Freeverb reverbObject = null; // TODO more generic with interface and receiver handler!?
 	
 	public static float limiterReductionValue = 0;
 //	public static Limiter limiterObject = null;
@@ -372,7 +294,6 @@ public class P {
 		OSC_PATH[VOLUME] = "/amp/volume"; // TODO paths as constants!
 		OSC_PATH[OVERDRIVE] = "/fx/overdrive";
 		OSC_PATH[CHORUS_DEPTH] = "/fx/chorus/drywet";
-		OSC_PATH[REVERB_ONE_KNOB] = "/fx/reverb/oneknob";
 		OSC_PATH[DELAY_WET] = "/fx/delay/wet";
 		OSC_PATH[DELAY_RATE] = "/fx/delay/rate";
 		OSC_PATH[DELAY_RATE_RIGHT] = "/fx/delay/rateright";
@@ -450,19 +371,11 @@ public class P {
 		
 		OSC_PATH[OSC1_PULSE_WIDTH] = "/osc/1/pw";
 		OSC_PATH[OSC2_PULSE_WIDTH] = "/osc/2/pw";
-		OSC_PATH[FILTER2_ENV_D] = "/filter/2/env/2";
-		OSC_PATH[FILTER2_ENV_S] = "/filter/2/env/3";
-		OSC_PATH[FILTER2_ENV_R] = "/filter/2/env/4";
-		OSC_PATH[FILTER2_ENV_VELOCITY_SENS] = "/filter/2/velocity";
-		OSC_PATH[FILTER2_OVERLOAD] = "/filter/2/overload";
-		
-		OSC_PATH[FILTER_PARALLEL] = "/filter/parallel";
 		
 		// defaults!
 		setToDefaults();
 		
 		// send limiter status thread
-
 		Timer timer = new Timer("LimiterState", true);
 		timer.schedule(new TimerTask() {
 			private boolean lastWasGood = false;
@@ -485,7 +398,6 @@ public class P {
 			}
 		}, 2000, 100);
 
-		
 	}
 	
 	public static void setToDefaults() {
@@ -611,12 +523,6 @@ public class P {
 			break;
 		case OSC2_WAVE:
 			VAL_OSC2_WAVEFORM = Waveform.selectedWaveform(val);
-			break;
-		case REVERB_ONE_KNOB:
-			// notify reverb object
-			if (reverbObject!=null) {
-				reverbObject.updateOneKnobSetting();
-			}
 			break;
 		case MOD_WHEEL:
 		case MOD_AMOUNT_BASE:

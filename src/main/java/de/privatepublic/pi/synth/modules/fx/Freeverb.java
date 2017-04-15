@@ -55,7 +55,6 @@ public final class Freeverb {
         setDry(initialdry);
         setDamp(initialdamp);
         setWidth(initialwidth);
-        P.reverbObject = this; // TODO Architecture!
         initialize(samplerate, maxBufferSize);
     }
 
@@ -156,12 +155,12 @@ public final class Freeverb {
     }
     
     public void updateOneKnobSetting() {
-    	final float val = P.VAL[P.REVERB_ONE_KNOB];
-    	final float valRevExp = (float) (val==0?val:Math.pow(val, 1/4f));
-    	setDry(0.5f+(1-P.VALX[P.REVERB_ONE_KNOB])*0.5f); // exponential
-    	setWet(valRevExp); // fast start
-    	setRoomSize(val); // linear
-    	setDamp(1-val); // reverse linear
+//    	final float val = P.VAL[P.REVERB_ONE_KNOB];
+//    	final float valRevExp = (float) (val==0?val:Math.pow(val, 1/4f));
+//    	setDry(0.5f+(1-P.VALX[P.REVERB_ONE_KNOB])*0.5f); // exponential
+//    	setWet(valRevExp); // fast start
+//    	setRoomSize(val); // linear
+//    	setDamp(1-val); // reverse linear
 //    	log.debug("Reverb settings dry: {}, wet: {}, room: {}, damp: {}", getDry(), getWet(), getRoomSize(), getDamp());
     }
     

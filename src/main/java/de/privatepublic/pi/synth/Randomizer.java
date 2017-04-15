@@ -62,9 +62,6 @@ public class Randomizer {
 		if (enable(.334f)) {
 			P.setDirectly(P.CHORUS_DEPTH, fullRange());
 		}
-		if (enable(.334f)) {
-			P.setDirectly(P.REVERB_ONE_KNOB, range(.1f,.85f));
-		}
 		if (enable(.2f)) {
 			P.setDirectly(P.OVERDRIVE, range(.2f, .7f));
 		}

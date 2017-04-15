@@ -14,7 +14,6 @@ public class FancyParam {
 		NAME[P.VOLUME] = "Volume";
 		NAME[P.OVERDRIVE] = "Overdrive";
 		NAME[P.CHORUS_DEPTH] = "Chorus";
-		NAME[P.REVERB_ONE_KNOB] = "Reverb";
 		NAME[P.DELAY_WET] = "Delay Mix";
 		NAME[P.DELAY_FEEDBACK] = "Delay Feedback";
 		NAME[P.DELAY_RATE] = "Delay Rate";
@@ -69,14 +68,7 @@ public class FancyParam {
 		
 		NAME[P.OSC1_PULSE_WIDTH] = "Osc1 PW";
 		NAME[P.OSC2_PULSE_WIDTH] = "Osc2 PW";
-		NAME[P.FILTER2_ENV_D] = "Filter2 Env. Decay";
-		NAME[P.FILTER2_ENV_S] = "Filter2 Env. Sustain";
-		NAME[P.FILTER2_ENV_R] = "Filter2 Env. Release";
-		NAME[P.FILTER2_ENV_VELOCITY_SENS] = "Filter2 Env. Velocity";
-		
-		NAME[P.FILTER_PARALLEL] = "Filter1/2 Routing";
 		NAME[P.FILTER1_OVERLOAD] = "Filter 1 Drive";
-		NAME[P.FILTER2_OVERLOAD] = "Filter 2 Drive";
 	}
 	
 	public static String nameOf(int paramindex) {
@@ -150,7 +142,6 @@ public class FancyParam {
 			}
 			break;
 		case P.OSC2_SYNC:
-		case P.FILTER2_ENV_VELOCITY_SENS:
 		case P.FILTER1_ON:
 		case P.MOD_ENV2_LOOP:
 		case P.MOD_ENV1_LOOP:
