@@ -1,6 +1,6 @@
 body {
 	font-family: Arial, sans-serif;
-	background: #333;
+	background: #000;
 	color: #999;
 	-webkit-user-select: none;  
 	-moz-user-select: none;    
@@ -27,18 +27,18 @@ th {
 }
 
 #main {
-	padding: 45px 10px 0 10px;
+	padding: 10px;
 	text-align: center;
+	background: #333;
 }
 
 #statuscontainer {
-	background: #000;
-	position: fixed;
-	left: 0;
-	right: 0;
-	top: 0;
-	height: 32px;
-	z-index: 1;
+	background: #222;
+	width: 100%;
+	padding: 4px 10px;
+	font-size: .8em;
+	text-align: center;
+	box-sizing: border-box;
 }
 #statuscontainer a {
 	text-decoration: none;
@@ -47,14 +47,23 @@ th {
 	text-decoration: underline;
 }
 
-#status {
-	position: relative;
-	padding: 6px 0 0 0;
-	text-align: center;
-	font-size: .8em;
-	width: 100%;
-	height: 26px;
-	margin: 0 auto;
+#statuscontainer .left {
+	float: left;
+}
+#statuscontainer .right {
+	float: right;
+}
+#statuscontainer .inner {
+	display: inline-block;
+	padding: 4px;
+}
+
+#statuscontainer a.push {
+	border-color: #666;
+	color: #ccc;
+	background-color: #405055;
+	vertical-align: middle;
+	margin: 0;
 }
 
 #datalight {
@@ -64,9 +73,7 @@ th {
 	background: url(img/green-led.png) no-repeat center center;
 }
 .connection {
-	display: block;
-	position: absolute;
-	right: 0;
+	
 }
 .connecting .connecting {
 	color: #c00;
@@ -86,15 +93,12 @@ th {
 }
 
 
-#status #patch, #learnhint {
-	display: block;
-	position: absolute;
-	left: 10px;
+#patch, #learnhint {
 	color: #fff;
 }
-#status .patchname {
+#statuscontainer .patchname {
 	text-transform: uppercase;
-	width: 180px;
+	min-width: 100px;
 	display: inline-block;
 }
 .iconbutton {
@@ -108,9 +112,7 @@ th {
 .iconbutton:hover {
 	background-color: #999;
 }
-#toggledisplay {
-	background-image: url(img/ic_brightness_medium_white_18dp.png);	
-}
+
 #opensettings {
 	background-image: url(img/ic_settings_white_18dp.png);
 }
@@ -465,13 +467,7 @@ a.push label  {
 	min-width: 74px;
 	display: inline-block;
 }
-#status a.push {
-	border-color: #666;
-	color: #ccc;
-	background-color: #405055;
-	vertical-align: middle;
-	margin: 0;
-}
+
 
 .push.disabled {
 	visibility: hidden;
@@ -703,7 +699,8 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	display: none;
 	text-align: center;
 	background-color: #000;
-	margin-top: 35px;
+	margin-top: .5em;
+	border-top: 1px solid #333;
 	position: relative;
 }
 
@@ -755,6 +752,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	color: #cccccc;
 	display: inline-block;
 	vertical-align: top;
+	margin-bottom: .5em;
 }
 
 #stopbutton {
@@ -813,14 +811,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 }
 
 .valspermidicontainer {
+	/*
 	border: 2px solid gray;
 	border-radius: 4px;
 	border-top: none;
 	padding: 0 10px;
 	font-size: .9em;
+	*/
+	padding: 20px;
 }
 
 .valspermidi {
+	border: 2px solid gray;
+	border-radius: 4px;
+	padding: 4px;
 	font-weight: bold;
 	color: #f33;
 	margin-left: .5em;

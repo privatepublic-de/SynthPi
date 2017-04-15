@@ -12,24 +12,6 @@
 	<script src="synthcontrol.js"></script>
 </head>
 <body class="connecting">
-	<div id="statuscontainer">
-		<div id="status">
-			<span id="rc" class="connection connecting blink">Trying to connect ...</span>
-			<span id="cs" class="connection connected">
-				<a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
-				<a href="#" id="learn" class="iconbutton" title="Learn MIDI controllers"></a>
-				<a href="#" id="update" class="iconbutton" data-osc="/command/updaterequest" title="Refresh all parameters"></a>
-				<span id="datalight"></span> connected
-			</span>
-			<div id="patch">
-				<a href="#" class="push glossy" data-osc="/command/listpatches" title="Load patch"><label class="patchname" data-osc="/patch/name">Patchname</label></a>
-				<a href="#" class="iconbutton" id="randomize" data-osc="/command/randomize" title="Randomize patch"></a>
-				<a href="#" class="iconbutton" id="savepatch" data-osc="/command/getsaveinfo" title="Save patch"></a>
-			</div>
-			<div id="learnhint"><span class="blink">MIDI Learn Mode: Hover a parameter and send MIDI CC to learn</span></div>
-			<a href="#credits" title="Credits" data-ui="togglecredits">SynthPi MK2 // Control Interface</a>
-		</div>
-	</div>
 	<div id="main">
 		<div id="oscillators" class="group yellow">
 			<h2>Oscillators</h2>
@@ -43,7 +25,7 @@
 							<span class="checkbox small saw" title="" data-osc="/option/osc/1/wave/SAW" data-osc-send="/osc/1/wave,0.5"></span>
 							<span class="checkbox small pul" title="" data-osc="/option/osc/1/wave/PULSE" data-osc-send="/osc/1/wave,1"></span>
 						</div>
-						<input type="text" value="0" class="dial small" title="Pulse-width" data-osc="/osc/1/pw" data-osc-label="/label/osc/1/pw"/>				
+						<input type="text" value="0" class="dial small" title="Pulse-width" data-cursor="10" data-osc="/osc/1/pw" data-osc-label="/label/osc/1/pw"/>				
 					</div>
 					<br />
 					<div class="innergroup osc">
@@ -54,7 +36,7 @@
 							<span class="checkbox small saw" title="" data-osc="/option/osc/2/wave/SAW" data-osc-send="/osc/2/wave,0.5"></span>
 							<span class="checkbox small pul" title="" data-osc="/option/osc/2/wave/PULSE" data-osc-send="/osc/2/wave,1"></span>
 						</div>
-						<input type="text" value="0" class="dial small" title="Pulse-width" data-osc="/osc/2/pw" data-osc-label="/label/osc/2/pw"/>
+						<input type="text" value="0" class="dial small" title="Pulse-width" data-cursor="10" data-osc="/osc/2/pw" data-osc-label="/label/osc/2/pw"/>
 						<br />
 						<input type="text" value="0" class="dial small" title="Semis" data-cursor="10" data-osc="/osc/2/tuning" data-osc-label="/label/osc/2/tuning" />
 						<input type="text" value="0" class="dial small" title="Fine" data-cursor="10" data-osc="/osc/2/tuning/fine" />
@@ -101,7 +83,7 @@
 			<br/>
 			<div class="innergroup">
 				<input type="text" value="0" class="dial small" title="Drive" data-osc="/filter/1/overload" data-osc-label="/label/filter/1/overload" />
-				<input type="text" value="0" class="dial small" title="Keyboard" data-osc="/filter/1/kbdtracking" />
+				<input type="text" value="0" class="dial small" title="Key-Tracking" data-osc="/filter/1/kbdtracking" />
 			</div>
 		</div>
 
@@ -209,12 +191,37 @@
 			</div>
 		</div>
 		
-		<div class="show-learning valspermidicontainer">
-			MIDI Parameter Select:
-			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/select"><span>Value SELECT</span></div>
-			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/value"><span>Value CHANGE</span></div>
+		<div class="group gray show-learning valspermidicontainer">
+			<h2>MIDI Parameter Change</h2>
+			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/select"><span>SELECT Parameter</span></div>
+			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/value"><span>CHANGE Parameter</span></div>
 		</div>
 	</div>
+	
+	<div id="statuscontainer">
+		<div class="right">
+			<span id="rc" class="connection connecting blink">Trying to connect ...</span>
+			<span id="cs" class="connection connected">
+				<a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
+				<a href="#" id="learn" class="iconbutton" title="Learn MIDI controllers"></a>
+				<a href="#" id="update" class="iconbutton" data-osc="/command/updaterequest" title="Refresh all parameters"></a>
+				<span id="datalight"></span> connected
+			</span>
+		</div>
+		<div class="left">
+			<div id="patch">
+				<a href="#" class="push glossy" data-osc="/command/listpatches" title="Load patch"><label class="patchname" data-osc="/patch/name">Patchname</label></a>
+				<a href="#" class="iconbutton" id="randomize" data-osc="/command/randomize" title="Randomize patch"></a>
+				<a href="#" class="iconbutton" id="savepatch" data-osc="/command/getsaveinfo" title="Save patch"></a>
+			</div>
+			
+		</div>
+		<div class="inner">
+			<div id="learnhint"><span class="blink">MIDI Learn Mode: Hover a parameter and send MIDI CC to learn</span></div>
+			<a href="#credits" title="Credits" data-ui="togglecredits">SynthPi MK2 // Control Interface</a>
+		</div>
+	</div>
+	
 	<div id="keyboard">
 		<div class="perfcontrols">
 			<input type="text" value="0" class="dial small" title="Pitch" data-cursor="10" data-osc="/play/mod/pitchbend" />
