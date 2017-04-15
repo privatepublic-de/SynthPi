@@ -180,7 +180,7 @@ public class MidiHandler {
 						storeLearnedCCNumber(data1);
 					}
 					if (data1==CC_PARAM_SELECT) {
-						param_selected = CC_PARAM_MAP[Math.min(data2, CC_PARAM_MAP.length-1)];
+						param_selected = CC_TO_PARAM_SELECT_ORDER_MAP[Math.min(data2, CC_TO_PARAM_SELECT_ORDER_MAP.length-1)];
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
@@ -251,7 +251,7 @@ public class MidiHandler {
 	
 	public static int CC_PARAM_SELECT = 26;
 	public static int CC_PARAM_VALUE = 27;
-	private static final int[] CC_PARAM_MAP = new int[] {
+	private static final int[] CC_TO_PARAM_SELECT_ORDER_MAP = new int[] {
 		P.UNUSED,
 		P.OSC1_WAVE,
 		P.OSC2_WAVE,
