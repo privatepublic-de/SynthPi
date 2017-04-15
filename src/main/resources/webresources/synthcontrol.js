@@ -413,7 +413,8 @@ $(document).ready(function () {
 		else {
 			var bgcolor = $.Color(el, "color").lightness(0.2).saturation(0.0).toHexString();
 		}
-		var markercolor = $.Color(el, "color").lightness(0.4).toHexString();
+		var markercolor = fgcolor; //$.Color(el, "color").lightness(0.5).toHexString();
+		var scalecolor = $.Color(el, "color").lightness(0.1).toHexString();
 		var hilitecolor = "#7F337F";
 		var width = el.width();
 		var cursor = el.attr("data-cursor");
@@ -443,28 +444,40 @@ $(document).ready(function () {
 				} 
 			},
 			'draw': function() {
+				var mcol = markercolor;
+				if (hilitenon0 && this.v) {
+					this.o.bgColor = hilitecolor;
+					mcol = fgcolor;
+				}
+				else {
+					this.o.bgColor = bgcolor;
+				}
+				this.draw();
+				var ctx = this.c;
+				var cx = ctx.canvas.width/2;
+				var steps = 10;
+				var angleStep = (this.endAngle-this.startAngle)/steps;
+				ctx.strokeStyle = scalecolor;
+				ctx.lineWidth = 1;
+				var r1 = this.radius - this.lineWidth/2;
+				var r2 = this.radius + this.lineWidth/2;
+				for (var i=0;i<steps+1;i++) {
+					ctx.beginPath();
+					ctx.moveTo(cx+Math.cos(this.startAngle+angleStep*i)*r1, cx+Math.sin(this.startAngle+angleStep*i)*r1);
+					ctx.lineTo(cx+Math.cos(this.startAngle+angleStep*i)*r2, cx+Math.sin(this.startAngle+angleStep*i)*r2);
+					ctx.closePath();
+					ctx.stroke();
+				}
 				if (cursor) {
 					console.log(this);
-					var mcol = markercolor;
-					if (hilitenon0 && this.v) {
-						this.o.bgColor = hilitecolor;
-						mcol = fgcolor;
-					}
-					else {
-						this.o.bgColor = bgcolor;
-					}
-					this.draw();
-					var ctx = this.c;
-					var cx = ctx.canvas.width/2;
 					ctx.strokeStyle = mcol;
-					ctx.lineWidth = 1;
 					ctx.beginPath();
 					ctx.moveTo(cx, 0);
 					ctx.lineTo(cx, this.lineWidth*1.5);
 					ctx.closePath();
 					ctx.stroke();
-					return false;
 				}
+				return false;
 			}
 		});
 		$("#kn"+id).append("<label class='static'>"+el.attr("title")+"</label>");
