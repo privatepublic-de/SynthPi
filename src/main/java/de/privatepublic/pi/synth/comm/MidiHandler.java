@@ -317,6 +317,10 @@ public class MidiHandler {
 		try {
 			List<String> lines = IOUtils.readLines(in, "utf-8");
 			for (String line:lines) {
+				line = line.trim();
+				if (line.length()==0) {
+					continue; 
+				}
 				if (line.startsWith("#")) {
 					if (line.startsWith("##")) {
 						log.info("Loading MIDI CC map: {}", line);
