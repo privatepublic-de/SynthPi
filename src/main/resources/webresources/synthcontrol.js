@@ -458,10 +458,15 @@ $(document).ready(function () {
 				var steps = 10;
 				var angleStep = (this.endAngle-this.startAngle)/steps;
 				ctx.strokeStyle = scalecolor;
-				ctx.lineWidth = 1;
 				var r1 = this.radius;
 				var r2 = this.radius + this.lineWidth/2;
 				for (var i=0;i<steps+1;i++) {
+					if (i==2 || i==5 || i==8) {
+						ctx.lineWidth = 3;						
+					}
+					else {
+						ctx.lineWidth = 1;
+					}
 					ctx.beginPath();
 					ctx.moveTo(cx+Math.cos(this.startAngle+angleStep*i)*r1, cx+Math.sin(this.startAngle+angleStep*i)*r1);
 					ctx.lineTo(cx+Math.cos(this.startAngle+angleStep*i)*r2, cx+Math.sin(this.startAngle+angleStep*i)*r2);
@@ -472,8 +477,8 @@ $(document).ready(function () {
 					console.log(this);
 					ctx.strokeStyle = mcol;
 					ctx.beginPath();
-					ctx.moveTo(cx, 0);
-					ctx.lineTo(cx, this.lineWidth*1.5);
+					ctx.moveTo(cx, this.lineWidth);
+					ctx.lineTo(cx, this.lineWidth*2);
 					ctx.closePath();
 					ctx.stroke();
 				}
