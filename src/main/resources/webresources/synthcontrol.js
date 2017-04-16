@@ -459,7 +459,7 @@ $(document).ready(function () {
 				var angleStep = (this.endAngle-this.startAngle)/steps;
 				ctx.strokeStyle = scalecolor;
 				ctx.lineWidth = 1;
-				var r1 = this.radius - this.lineWidth/2;
+				var r1 = this.radius;
 				var r2 = this.radius + this.lineWidth/2;
 				for (var i=0;i<steps+1;i++) {
 					ctx.beginPath();
