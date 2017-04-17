@@ -45,7 +45,12 @@ public abstract class OscillatorBase {
 	public void trigger(final float frequency, final float velocity) {
 		this.frequency = frequency;
 		if (P.IS[P.OSC_GLIDE_RATE]) {
-			effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
+			if (isSecond) {
+				effectiveFrequency = (float) (Math.pow(2d, P.detuneCents())*AnalogSynth.lastTriggeredFrequency);				
+			}
+			else {
+				effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
+			}
 			glideStepSize = Math.abs((AnalogSynth.lastTriggeredFrequency-frequency)/(P.SAMPLE_RATE_HZ/P.CONTROL_BUFFER_SIZE*P.VALX[P.OSC_GLIDE_RATE]));
 		}
 		else {
