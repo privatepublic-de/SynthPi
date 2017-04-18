@@ -46,7 +46,7 @@ public abstract class OscillatorBase {
 		this.frequency = frequency;
 		if (P.IS[P.OSC_GLIDE_RATE]) {
 			if (isSecond) {
-				effectiveFrequency = (float) (Math.pow(2d, P.detuneCents())*AnalogSynth.lastTriggeredFrequency);				
+				effectiveFrequency = P.osc2DetuneFactor*AnalogSynth.lastTriggeredFrequency;				
 			}
 			else {
 				effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
@@ -61,9 +61,9 @@ public abstract class OscillatorBase {
 	}
 	
 	protected void setTargetFrequency(final float frequency) {
-		final float detunecents = P.detuneCents();
+		final float detunecents = P.osc2DetuneCents;
 		if (isSecond && detunecents!=0) {
-			targetFrequency =  (float) (Math.pow(2d, detunecents)*frequency);
+			targetFrequency =  P.osc2DetuneFactor*frequency;
 		}
 		else {
 			targetFrequency = frequency;

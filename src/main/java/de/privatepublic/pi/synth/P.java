@@ -161,6 +161,9 @@ public class P {
 	public static FilterType VAL_FILTER_TYPE = FilterType.LOWPASS;
 	public static Waveform VAL_OSC1_WAVEFORM = Waveform.SAW;
 	public static Waveform VAL_OSC2_WAVEFORM = Waveform.SAW;
+	public static float osc2DetuneCents;
+	public static float osc2DetuneFactor;
+
 	
 	public static int MIDI_CHANNEL = 1 -1; // CAUTION 0-based
 	public static int PORT_HTTP = 31415;
@@ -515,6 +518,10 @@ public class P {
 		VALMIXHIGH[index]  = (float) Math.sqrt(0.5*(1-cv));
 		
 		switch (index) {
+		case OSC2_TUNING:
+			osc2DetuneCents = (Math.round(VALC[P.OSC2_TUNING]*24)*100+VALXC[P.OSC2_TUNING_FINE]*100)/OCTAVE_CENTS;
+			osc2DetuneFactor = (float)Math.pow(2f, osc2DetuneCents);
+			break;
 		case FILTER1_TYPE:
 			VAL_FILTER_TYPE = FilterType.selectedFilterType(val);
 			break;
@@ -544,8 +551,5 @@ public class P {
 		MidiHandler.sendPitchBendNotification();
 	}
 	
-	public static float detuneCents() {
-		return (Math.round(VALC[P.OSC2_TUNING]*24)*100+VALXC[P.OSC2_TUNING_FINE]*100)/OCTAVE_CENTS;
-	}
 	
 }
