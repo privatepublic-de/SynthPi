@@ -49,6 +49,8 @@ public class MultiModeFilter implements IControlProcessor {
 //	private float dnormoffset =  1.0E-25;
 	private float drive, dsquare, inValue, driveAmount, driveAmountHi, driveAmountLo;
 	private FilterType type;
+	private float cutoff, resonance, feedbackAmount, buf0, buf1, buf2, buf3;
+	
 	
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue) {
@@ -93,6 +95,18 @@ public class MultiModeFilter implements IControlProcessor {
 			state3 = K*stage1 + A5/A3*input;
 
 			return input;
+		}
+		else if (type==FilterType.ALLPASS) {
+			drive = (buf0 - buf1)*(1f + 10f*driveAmount);
+			dsquare = drive*drive;
+			drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
+			inValue = (buf0 - buf1)*driveAmountHi + drive*driveAmountLo*.334f;
+			
+			buf0 += cutoff * (sampleValue - buf0 + feedbackAmount * inValue);
+		    buf1 += cutoff * (buf0 - buf1);
+		    buf2 += cutoff * (buf1 - buf2);
+		    buf3 += cutoff * (buf2 - buf3);
+		    return buf1;
 		}
 		else {
 //			Q = P.VAL[p_resonance];
@@ -176,6 +190,13 @@ public class MultiModeFilter implements IControlProcessor {
 			a = 0.76536686473f * QtimesK;
 			b = 1.84775906502f * QtimesK;
 			K = K*K;
+		}
+		else if (type==FilterType.ALLPASS) {
+			cutoff = FastCalc.ensureRange(
+					P.VALX[P.FILTER1_FREQ],
+						0, 0.999998f);
+			resonance = P.VAL[P.FILTER1_RESONANCE];
+			feedbackAmount = resonance + resonance/(1.0f - cutoff);
 		}
 		else {
 			Q = P.VAL[P.FILTER1_RESONANCE];
