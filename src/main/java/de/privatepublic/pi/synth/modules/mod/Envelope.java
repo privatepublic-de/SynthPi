@@ -5,7 +5,7 @@ import de.privatepublic.pi.synth.modules.IControlProcessor;
 public abstract class Envelope implements IControlProcessor {
 
 	public static final float MIN_TIME_MILLIS = 2;
-	public static final float MAX_TIME_MILLIS = 16000;
+	public static final float MAX_TIME_MILLIS = 30000;
 	
 	protected static final float ZERO_THRESHOLD = (float) 1.0E-4;
 	
