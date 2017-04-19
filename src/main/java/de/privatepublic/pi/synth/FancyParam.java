@@ -111,15 +111,15 @@ public class FancyParam {
 		case P.MOD_LFO_TYPE:
 			result = LFO.WAVE_NAMES[(int)(P.VAL[P.MOD_LFO_TYPE]*LFO.WAVE_COUNT_CALC)];
 			break;
-		case P.FILTER1_FREQ:
-			calculatedVal = MultiModeFilter.MIN_STABLE_FREQUENCY+MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value);
-			if (calculatedVal>=100) {
-				result = Math.round(calculatedVal)+" Hz";
-			}
-			else {
-				result = FORMAT_FLOAT2.format(calculatedVal)+" Hz";
-			}
-			break;
+//		case P.FILTER1_FREQ:
+//			calculatedVal = MultiModeFilter.MIN_STABLE_FREQUENCY+MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value);
+//			if (calculatedVal>=100) {
+//				result = Math.round(calculatedVal)+" Hz";
+//			}
+//			else {
+//				result = FORMAT_FLOAT2.format(calculatedVal)+" Hz";
+//			}
+//			break;
 		case P.MOD_ENV1_A:
 		case P.MOD_ENV1_D:
 		case P.MOD_ENV1_R:
