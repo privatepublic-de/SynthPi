@@ -42,14 +42,14 @@ public class EnvADSR extends Envelope {
 			break;
 		case DECAY:
 			value += decayCoeff * value;
-			if (value<sustainValue) {
+			if (value<sustainValue || value<ZERO_THRESHOLD) {
 				value = sustainValue;
 				state = State.HOLD;
 			}
 			break;
 		case DECAY_LOOP:
 			value += decayCoeff * value;
-			if (value<sustainValue) {
+			if (value<sustainValue || value<ZERO_THRESHOLD) {
 				value = sustainValue;
 				noteOn();
 			}
