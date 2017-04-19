@@ -461,6 +461,7 @@ $(document).ready(function () {
 				var r1 = this.radius;
 				var r2 = this.radius + this.lineWidth/2;
 				for (var i=0;i<steps+1;i++) {
+					if (cursor && i==5) continue;
 					if (i==2 || i==5 || i==8) {
 						ctx.lineWidth = 3;						
 					}
@@ -477,7 +478,7 @@ $(document).ready(function () {
 					console.log(this);
 					ctx.strokeStyle = mcol;
 					ctx.beginPath();
-					ctx.moveTo(cx, this.lineWidth);
+					ctx.moveTo(cx, 0);
 					ctx.lineTo(cx, this.lineWidth*2);
 					ctx.closePath();
 					ctx.stroke();
