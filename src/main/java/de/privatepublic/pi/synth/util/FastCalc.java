@@ -22,6 +22,12 @@ public final class FastCalc {
 		return (float) Double.longBitsToDouble(tmp2);
 	}
 	
+	public static float asymmSaturate(float sampleValue, float driveAmount) {
+		float drive = sampleValue*(1f + driveAmount);
+		float dsquare = drive*drive;
+		return drive * (27+dsquare)/(27+9*dsquare);
+	}
+	
 	public static final float ensureRange(final float val, final float min, final float max) {
 		return val<min?min:(val>max?max:val);
 	}
