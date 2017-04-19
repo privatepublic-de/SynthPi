@@ -61,7 +61,7 @@ public class StateVariableFilter {
 		case NOTCH:
 			out = notch;
 			break;
-		case ALLPASS:
+		case ACID:
 		default:
 			out = low+band+high;
 		}

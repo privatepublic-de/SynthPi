@@ -71,7 +71,7 @@ public class EnvADSR extends Envelope {
 		float attackOvershoot = 1.05f;
 		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack());
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
-		float dur = (timeAttack*2)/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
+		float dur = timeAttack/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
 		float rdur = 1.0f / dur;
 		float rdur2 = rdur * rdur;
 

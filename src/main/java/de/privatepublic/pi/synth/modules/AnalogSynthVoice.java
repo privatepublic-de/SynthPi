@@ -94,12 +94,12 @@ public class AnalogSynthVoice {
 	
 	
 	public void process(final float[] buffer, final int startPos) {
-		env1.controlTick();
-		env2.controlTick();
 		osc1.controlTick();
 		osc2.controlTick();
 		oscSub.controlTick();
 		filter.controlTick();
+		env1.controlTick();
+		env2.controlTick();
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = P.VALX[P.OSC2_VOLUME];

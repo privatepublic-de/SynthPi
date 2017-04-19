@@ -24,7 +24,7 @@ public class P {
 		BANDPASS("BAND "), 
 		HIGHPASS("HIGH "), 
 		NOTCH("NOTCH"), 
-		ALLPASS("ALLP ");
+		ACID("ACID ");
 		
 		private final String shortName;
 		FilterType(String s) {

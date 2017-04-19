@@ -49,17 +49,17 @@ public class MultiModeFilter implements IControlProcessor {
 //	private float dnormoffset =  1.0E-25;
 	private float drive, dsquare, inValue, driveAmount, driveAmountHi, driveAmountLo;
 	private FilterType type;
-	private float cutoff, resonance, feedbackAmount, buf0, buf1, buf2, buf3;
+	private float cutoff, resonance, feedbackAmount, buf0, buf1;
 	
 	
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue) {
 		if (type==FilterType.LOWPASS24) {
 			
-			drive = sampleValue*(1f + 80f*driveAmount);
+			drive = sampleValue*(1f + 2*driveAmount);
 			dsquare = drive*drive;
 			drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
-			inValue = sampleValue*driveAmountHi + drive*driveAmountLo*.334f;
+			inValue = sampleValue*driveAmountHi + drive*driveAmountLo;
 			
 //			Q = 1-P.VAL[p_resonance];
 //			gain = (float) Math.sqrt(Q);
@@ -96,16 +96,17 @@ public class MultiModeFilter implements IControlProcessor {
 
 			return input;
 		}
-		else if (type==FilterType.ALLPASS) {
-			drive = (buf0 - buf1)*(1f + 10f*driveAmount);
+		else if (type==FilterType.ACID) {
+			drive = (buf0 - buf1)*(1f + driveAmount);
 			dsquare = drive*drive;
 			drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
-			inValue = (buf0 - buf1)*driveAmountHi + drive*driveAmountLo*.334f;
+			inValue = (buf0 - buf1)*driveAmountHi + drive*driveAmountLo;
+			
 			
 			buf0 += cutoff * (sampleValue - buf0 + feedbackAmount * inValue);
 		    buf1 += cutoff * (buf0 - buf1);
-		    buf2 += cutoff * (buf1 - buf2);
-		    buf3 += cutoff * (buf2 - buf3);
+//		    buf2 += cutoff * (buf1 - buf2);
+//		    buf3 += cutoff * (buf2 - buf3);
 		    return buf1;
 		}
 		else {
@@ -113,10 +114,10 @@ public class MultiModeFilter implements IControlProcessor {
 //			f1 = (2.0f*FastCalc.sin((float)Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
 //			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
 			
-			drive = sampleValue*(1f + 40f*driveAmount);
+			drive = sampleValue*(1f + 2*driveAmount);
 			dsquare = drive*drive;
 			drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
-			inValue = sampleValue*driveAmountHi + drive*driveAmountLo*.334f;
+			inValue = sampleValue*driveAmountHi + drive*driveAmountLo;
 			
 			notch = inValue - damp*band;
 			low   = low + f1*band;
@@ -135,7 +136,6 @@ public class MultiModeFilter implements IControlProcessor {
 			case NOTCH:
 				out = notch;
 				break;
-			case ALLPASS:
 			default:
 				out = low+band+high;
 			}
@@ -191,10 +191,15 @@ public class MultiModeFilter implements IControlProcessor {
 			b = 1.84775906502f * QtimesK;
 			K = K*K;
 		}
-		else if (type==FilterType.ALLPASS) {
+		else if (type==FilterType.ACID) {
 			cutoff = FastCalc.ensureRange(
-					P.VALX[P.FILTER1_FREQ],
-						0, 0.999998f);
+							(P.VALX[P.FILTER1_FREQ]
+							+ env1.outValue * P.VALXC[P.MOD_ENV1_FILTER_AMOUNT]
+							+ env2.outValue * P.VALXC[P.MOD_ENV2_FILTER_AMOUNT]
+							+ frqOffset/6000)
+							* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
+							* veloAmount,
+						0, 0.99f);
 			resonance = P.VAL[P.FILTER1_RESONANCE];
 			feedbackAmount = resonance + resonance/(1.0f - cutoff);
 		}
