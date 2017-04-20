@@ -30,7 +30,7 @@ public class EnvADSR extends Envelope {
 		case ATTACK: 
 			value += slope;
 		    slope += curve;
-			if (value>1) {
+			if (value>=1) {
 				value = 1;
 				if (conf.loopMode()) {
 					state = State.DECAY_LOOP;
@@ -74,7 +74,6 @@ public class EnvADSR extends Envelope {
 		float dur = timeAttack/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
 		float rdur = 1.0f / dur;
 		float rdur2 = rdur * rdur;
-
 		slope = 4.0f * attackOvershoot * (rdur - rdur2);
 		curve = -8.0f * attackOvershoot * rdur2;
 		// value = ZERO_THRESHOLD;
