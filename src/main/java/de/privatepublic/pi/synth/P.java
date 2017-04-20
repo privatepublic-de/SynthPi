@@ -519,6 +519,7 @@ public class P {
 		
 		switch (index) {
 		case OSC2_TUNING:
+		case OSC2_TUNING_FINE:
 			osc2DetuneCents = (Math.round(VALC[P.OSC2_TUNING]*24)*100+VALXC[P.OSC2_TUNING_FINE]*100)/OCTAVE_CENTS;
 			osc2DetuneFactor = (float)Math.pow(2f, osc2DetuneCents);
 			break;
