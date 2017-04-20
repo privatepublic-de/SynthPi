@@ -54,7 +54,9 @@ public class SynthSocket {
 
 	@OnWebSocketMessage
 	public void onText(String msg) {
-		ControlMessageDispatcher.INSTANCE.handleOscMessage(msg, session);
+		if (!"*".equals(msg)) { // ping
+			ControlMessageDispatcher.INSTANCE.handleOscMessage(msg, session);
+		}
 	}
 
 	@OnWebSocketError    
