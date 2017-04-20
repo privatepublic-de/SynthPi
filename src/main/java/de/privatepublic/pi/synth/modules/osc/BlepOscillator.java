@@ -65,6 +65,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		}
 		else {
 			if (isSecond && P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
+//				syncPhase = phase;
 				phase = 0;
 			}			
 		}
@@ -75,8 +76,12 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		case SINE:
 	        outVal = FastCalc.sin(phase);
 	        if (isSecond && P.IS[P.OSC2_SYNC]) {
-	        	outVal -= pblep((syncPhase/PI2)%PI2);
+//	        	outVal -= pblep(syncPhase/PI2);
 	        	outVal = phaseIncrement * outVal + (1 - phaseIncrement) * lastOutput;
+//	        	syncPhase += phaseIncrement;
+//	        	while (syncPhase >= PI2) {
+//	        		syncPhase -= PI2;
+//	        	}
 	        }
 			break;
 		case SAW:
@@ -112,7 +117,6 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
             phase -= PI2;
             if (isBase) {
             	syncOnFrameBuffer[sampleNo] = true;
-            	syncPhase = phase;
             }
         }
         lastOutput = outVal;
