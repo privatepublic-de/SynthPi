@@ -97,7 +97,9 @@ public class MidiHandler {
 									log.info("Opened MIDI device: {}", device.getDeviceInfo());
 									SynthPi.uiMessage("MIDI device opened: "+ device.getDeviceInfo());
 								}
-							} catch (MidiUnavailableException e) {/* fail silently */}
+							} catch (MidiUnavailableException e) {
+								// ignore silently
+							} catch (Exception e) { log.info("Error opening MIDI device: {} {}", infos[i], e); }
 						}
 						// check removed devices
 						Vector<MidiDevice> removedDev = new Vector<MidiDevice>();
@@ -110,7 +112,7 @@ public class MidiHandler {
 										stillThere = true;
 										break;
 									}
-								} catch (MidiUnavailableException e) { /* fail silently */ }
+								} catch (Exception e) { log.info("Missing MIDI device: {}", infos[i]); }
 							}
 							if (!stillThere) {
 								removedDev.add(dev);
