@@ -208,7 +208,7 @@ public class P {
 	public static final int OSC_SUB_VOLUME = 36;
 	public static final int MOD_LFO_DELAY = 37;
 	public static final int OSC_SUB_LOW = 38;
-//	public static final int MOD_AHD_DECAY = 39;
+	public static final int OSC_SUB_SQUARE = 39;
 	public static final int DELAY_RATE_RIGHT = 40;
 //	public static final int FILTER2_ENV_D = 41;
 //	public static final int FILTER2_ENV_S = 42;
@@ -316,6 +316,7 @@ public class P {
 		OSC_PATH[OSC_GLIDE_RATE] = "/osc/gliderate";
 		OSC_PATH[OSC_MONO] = "/osc/mono";
 		OSC_PATH[OSC_SUB_LOW] = "/osc/sub/low";
+		OSC_PATH[OSC_SUB_SQUARE] = "/osc/sub/square";
 		
 		// modulation
 		OSC_PATH[MOD_RATE] = "/mod/1/rate";

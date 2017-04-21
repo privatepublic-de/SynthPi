@@ -45,7 +45,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		super(mode);
 		MidiHandler.registerReceiver(this);
 		if (mode==OscillatorBase.Mode.SUB) {
-			wave = Wave.SQUARE;
+			wave = Wave.TRIANGLE;
 		}
 		this.env1 = env1;
 		this.env2 = env2;
@@ -147,7 +147,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 
 	@Override
 	public void controlTick() {
-		if (oscMode!=Mode.SUB) { // sub is only square
+		if (oscMode!=Mode.SUB) { // sub is only square/triangle
 			float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
 			if (modev<.25) {
 				wave = Wave.SINE;
@@ -161,6 +161,9 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			else {
 				wave = Wave.SQUARE;
 			}
+		}
+		else {
+			wave = P.IS[P.OSC_SUB_SQUARE]?Wave.SQUARE:Wave.TRIANGLE;
 		}
 		ampmod = isSecond && P.IS[P.OSC2_AM];
 		if (effectiveFrequency!=targetFrequency) {
