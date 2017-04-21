@@ -39,6 +39,8 @@ public class EnvADSR extends Envelope {
 					state = State.DECAY;
 				}
 			}
+//			if (conf.indexA==P.MOD_ENV1_A)
+//				log.debug("Attack {}", value);
 			break;
 		case DECAY:
 			value += decayCoeff * value;
@@ -72,11 +74,10 @@ public class EnvADSR extends Envelope {
 		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack());
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
 		float dur = timeAttack/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
-		float rdur = 1.0f / dur;
+		float rdur = (1.0f-value) / dur;
 		float rdur2 = rdur * rdur;
 		slope = 4.0f * attackOvershoot * (rdur - rdur2);
 		curve = -8.0f * attackOvershoot * rdur2;
-		// value = ZERO_THRESHOLD;
 		sustainValue = conf.sustain();//conf.loopMode()?0:conf.sustain();
 		decayCoeff = initStep(1, sustainValue, timeDecay);
 		state = State.ATTACK;
