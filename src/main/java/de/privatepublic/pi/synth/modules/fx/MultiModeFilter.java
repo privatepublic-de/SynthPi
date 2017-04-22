@@ -39,7 +39,7 @@ public class MultiModeFilter implements IControlProcessor {
 	private float frqOffset, state0, state1, state2, state3, gain;
 	private float f1, damp;
 	private float notch, low, high, band, out;
-	private float inValue, driveAmount, driveAmountHi, driveAmountLo;
+	private float inValue, fbValue, driveAmount, driveAmountHi, driveAmountLo;
 	private FilterType type;
 	private float cutoff, resonance, feedbackAmount, buf0, buf1;
 
@@ -63,8 +63,9 @@ public class MultiModeFilter implements IControlProcessor {
 			return input;
 		}
 		else if (type==FilterType.ACID) {
-			inValue = (buf0 - buf1)*driveAmountHi + FastCalc.asymmSaturate((buf0 - buf1), driveAmount)*driveAmountLo;
-			buf0 += cutoff * (sampleValue - buf0 + feedbackAmount * inValue);
+			inValue = ((sampleValue)*driveAmountHi + FastCalc.asymmSaturate(sampleValue, driveAmount)*driveAmountLo)*1.5f;
+			fbValue = (buf0 - buf1)*driveAmountHi + FastCalc.asymmSaturate((buf0 - buf1), driveAmount)*driveAmountLo;
+			buf0 += cutoff * (inValue - buf0 + feedbackAmount * fbValue);
 			buf1 += cutoff * (buf0 - buf1);
 			return buf1;
 		}
