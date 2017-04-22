@@ -26,14 +26,16 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 			float inval = inBuffer[pos];
 			bufferL[pos] = inval*dry + lineL.sample(inval*wet);
 			bufferR[pos] = inval*dry + lineR.sample(inval*wet);
+			bufferL[pos] += lineL.sample(inval*wet);
+			bufferR[pos] += lineR.sample(inval*wet);
 		}
 		
 	}
 	
 	@Override
 	public void controlTick() {
-		wet = P.VAL[P.DELAY_WET];
-		dry = 1-P.VAL[P.DELAY_WET];
+		wet = P.VALX[P.DELAY_WET];
+		dry = 1;//1-wet;
 		lineL.controlTick();
 		lineR.controlTick();
 	}
@@ -99,8 +101,8 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 		
 	}
 	
-	private static final float FREQ_LOW = 600;
-	private static final float FREQ_HIGH = P.SAMPLE_RATE_HZ/2;
+	private static final float FREQ_LOW = 400;
+	private static final float FREQ_HIGH = P.SAMPLE_RATE_HZ;
 	private static final float FREQ_RANGE = FREQ_HIGH-FREQ_LOW;
 	
 	private static final int LINE_LENGTH = 4096;
