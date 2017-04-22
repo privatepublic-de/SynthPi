@@ -210,7 +210,7 @@ public class P {
 	public static final int OSC_SUB_LOW = 38;
 	public static final int OSC_SUB_SQUARE = 39;
 	public static final int DELAY_RATE_RIGHT = 40;
-//	public static final int FILTER2_ENV_D = 41;
+	public static final int BASS_BOOSTER_ON = 41;
 //	public static final int FILTER2_ENV_S = 42;
 //	public static final int FILTER2_ENV_R = 43;
 //	public static final int FILTER2_ENV_VELOCITY_SENS = 44;
@@ -295,6 +295,7 @@ public class P {
 		
 		// amplifier
 		OSC_PATH[VOLUME] = "/amp/volume"; // TODO paths as constants!
+		OSC_PATH[BASS_BOOSTER_ON] = "/amp/bassboost";
 		OSC_PATH[OVERDRIVE] = "/fx/overdrive";
 		OSC_PATH[CHORUS_DEPTH] = "/fx/chorus/drywet";
 		OSC_PATH[DELAY_WET] = "/fx/delay/wet";
@@ -450,7 +451,11 @@ public class P {
 		setDirectly(MOD_ENV2_FILTER_AMOUNT, 0.5f);
 		setDirectly(MOD_ENV2_VOL_AMOUNT, 0.5f);
 		
+		setDirectly(MOD_VEL_FILTER_AMOUNT, 0.5f);
+		
 		setDirectly(DELAY_RATE, .66f);
+		setDirectly(DELAY_RATE_RIGHT, .62f);
+		setDirectly(DELAY_FEEDBACK, .34f);
 		setDirectly(MIDI_VELOCITY_CURVE, 0.0f);
 		P.VAL[P.PITCH_BEND] = 0;
 		P.VAL_RAW_MIDI[P.PITCH_BEND] = 8192;

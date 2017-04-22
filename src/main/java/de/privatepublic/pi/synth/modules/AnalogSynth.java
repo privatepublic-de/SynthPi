@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
@@ -17,6 +18,7 @@ import de.privatepublic.pi.synth.modules.fx.DistortionExp;
 import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
 import de.privatepublic.pi.synth.modules.fx.IProcessorStereo;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
+import de.privatepublic.pi.synth.modules.fx.StateVariableFilter;
 import de.privatepublic.pi.synth.modules.fx.TapeDelay;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
@@ -38,6 +40,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private final IProcessorStereo chorus = new Chorus(25);
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
+	private final IProcessorMono booster = new StateVariableFilter(FilterType.BANDPASS, 80, 1/3f);
 //	private final IProcessorStereo delay = new Delay();
 	private final TapeDelay tapeDelay = new TapeDelay();
 	
@@ -60,6 +63,9 @@ public class AnalogSynth implements IMidiNoteReceiver {
 				voices[i].process(renderBuffer, startPos);
 			}
 			distort.process(renderBuffer, startPos);
+			if (P.IS[P.BASS_BOOSTER_ON]) {
+				booster.process(renderBuffer, startPos);
+			}
 			tapeDelay.process(renderBuffer, outputs, startPos);
 			chorus.process(outputs, startPos);
 			if (P.LIMITER_ENABLED) {

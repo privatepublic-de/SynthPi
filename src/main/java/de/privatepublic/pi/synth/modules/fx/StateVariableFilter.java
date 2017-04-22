@@ -7,7 +7,7 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.util.FastCalc;
 
-public class StateVariableFilter {
+public class StateVariableFilter implements IProcessorMono {
 
 	private static final float DOUBLE_SAMPLE_RATE = P.SAMPLE_RATE_HZ*2;
 	
@@ -85,4 +85,12 @@ public class StateVariableFilter {
 	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(MultiModeFilter.class);
+
+	@Override
+	public void process(float[] buffer, int startPos) {
+		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
+			int pos = i + startPos;
+			buffer[pos] += processSample(buffer[pos]);
+		}		
+	}
 }
