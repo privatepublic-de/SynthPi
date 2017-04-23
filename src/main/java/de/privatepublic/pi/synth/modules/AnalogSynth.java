@@ -35,13 +35,14 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private final float[] outputL = outputs[0];
 	private final float[] outputR = outputs[1];
 	private final float[] renderBuffer = new float[P.SAMPLE_BUFFER_SIZE];
+	private float boosterAmount = 0;
+	private float boosterTargetAmount = 0;
+	private final float boosterIncrement = .01f;
 	
-//	private final EnvAHD envAhd = new EnvAHD(P.MOD_AHD_ATTACK, P.MOD_AHD_DECAY);
 	private final IProcessorStereo chorus = new Chorus(25);
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
-	private final IProcessorMono booster = new StateVariableFilter(FilterType.BANDPASS, 80, 1/3f);
-//	private final IProcessorStereo delay = new Delay();
+	private final StateVariableFilter booster = new StateVariableFilter(FilterType.BANDPASS, 80f, 1/3f);
 	private final TapeDelay tapeDelay = new TapeDelay();
 	
 	private int numberBufferChunks = P.SAMPLE_BUFFER_SIZE/P.CONTROL_BUFFER_SIZE;
@@ -54,7 +55,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	}
 	
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
-		// 
+		boosterTargetAmount = P.IS[P.BASS_BOOSTER_ON]?1f:0;
 		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {
 			LFO.GLOBAL.controlTick();
 			tapeDelay.controlTick();
@@ -63,9 +64,13 @@ public class AnalogSynth implements IMidiNoteReceiver {
 				voices[i].process(renderBuffer, startPos);
 			}
 			distort.process(renderBuffer, startPos);
-			if (P.IS[P.BASS_BOOSTER_ON]) {
-				booster.process(renderBuffer, startPos);
+			if (boosterAmount<boosterTargetAmount) {
+				boosterAmount += boosterIncrement;
 			}
+			if (boosterAmount>boosterTargetAmount) {
+				boosterAmount -= boosterIncrement;
+			}
+			booster.processBuffer(renderBuffer, startPos, boosterAmount);
 			tapeDelay.process(renderBuffer, outputs, startPos);
 			chorus.process(outputs, startPos);
 			if (P.LIMITER_ENABLED) {
