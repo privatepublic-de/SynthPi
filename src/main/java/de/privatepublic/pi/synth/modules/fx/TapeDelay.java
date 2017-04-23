@@ -86,14 +86,14 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 	        }
 	        lastTrigger = trigger;
 	        
-	        valOut = (valOut+valOut+valOut+targetValue)*.25f;
+	        valOut = (valOut+valOut+targetValue)*.33334f;
 	        return filter.processSample(valOut);
 	        
 		}
 
 		@Override
 		public void controlTick() {
-			float freq = (FREQ_LOW+P.VAL[pRate]*FREQ_RANGE)*LFO.lfoAmount(P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
+			float freq = (FREQ_LOW+P.VALX[pRate]*FREQ_RANGE)*LFO.lfoAmount(P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
 			filter.setCutoff(freq/4);
 			phaseIncrement = freq*frequencyFactor;
 			feedbackLevel = P.VAL[P.DELAY_FEEDBACK];
@@ -102,10 +102,10 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 	}
 	
 	private static final float FREQ_LOW = 400;
-	private static final float FREQ_HIGH = P.SAMPLE_RATE_HZ;
+	private static final float FREQ_HIGH = P.SAMPLE_RATE_HZ/2;
 	private static final float FREQ_RANGE = FREQ_HIGH-FREQ_LOW;
 	
-	private static final int LINE_LENGTH = 4096;
+	private static final int LINE_LENGTH = 2048;
 	private static final int LINE_LENGTH_MASK = LINE_LENGTH-1;
 	private static final float PI2 = (float)(Math.PI*2);
 
