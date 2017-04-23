@@ -12,6 +12,28 @@
 	<script src="synthcontrol.js"></script>
 </head>
 <body class="connecting">
+	<div id="statuscontainer">
+		<div class="left">
+			<div id="patch">
+				<a href="#" class="push glossy" data-osc="/command/listpatches" title="Load patch"><label class="patchname" data-osc="/patch/name">Patchname</label></a>
+				<a href="#" class="iconbutton" id="randomize" data-osc="/command/randomize" title="Randomize patch"></a>
+				<a href="#" class="iconbutton" id="savepatch" data-osc="/command/getsaveinfo" title="Save patch"></a>
+			</div>
+		</div>
+		<div class="right">
+			<span id="rc" class="connection connecting blink">Trying to connect ...</span>
+			<span id="cs" class="connection connected">
+				<a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
+				<a href="#" id="learn" class="iconbutton" title="Learn MIDI controllers"></a>
+				<a href="#" id="update" class="iconbutton" data-osc="/command/updaterequest" title="Refresh all parameters"></a>
+				<span id="datalight"></span> connected
+			</span>
+		</div>
+		<div class="inner">
+			<div id="learnhint"><span class="blink">MIDI Learn Mode: Hover a parameter and send MIDI CC to learn</span></div>
+			<a href="#credits" title="Credits" data-ui="togglecredits">SynthPi MK2 // Control Interface</a>
+		</div>
+	</div>
 	<div id="main">
 		<div id="oscillators" class="group yellow">
 			<h2>Oscillators</h2>
@@ -201,30 +223,6 @@
 			<h2>MIDI Parameter Change</h2>
 			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/select"><span>SELECT Parameter</span></div>
 			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/value"><span>CHANGE Parameter</span></div>
-		</div>
-	</div>
-	
-	<div id="statuscontainer">
-		<div class="right">
-			<span id="rc" class="connection connecting blink">Trying to connect ...</span>
-			<span id="cs" class="connection connected">
-				<a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
-				<a href="#" id="learn" class="iconbutton" title="Learn MIDI controllers"></a>
-				<a href="#" id="update" class="iconbutton" data-osc="/command/updaterequest" title="Refresh all parameters"></a>
-				<span id="datalight"></span> connected
-			</span>
-		</div>
-		<div class="left">
-			<div id="patch">
-				<a href="#" class="push glossy" data-osc="/command/listpatches" title="Load patch"><label class="patchname" data-osc="/patch/name">Patchname</label></a>
-				<a href="#" class="iconbutton" id="randomize" data-osc="/command/randomize" title="Randomize patch"></a>
-				<a href="#" class="iconbutton" id="savepatch" data-osc="/command/getsaveinfo" title="Save patch"></a>
-			</div>
-			
-		</div>
-		<div class="inner">
-			<div id="learnhint"><span class="blink">MIDI Learn Mode: Hover a parameter and send MIDI CC to learn</span></div>
-			<a href="#credits" title="Credits" data-ui="togglecredits">SynthPi MK2 // Control Interface</a>
 		</div>
 	</div>
 	
