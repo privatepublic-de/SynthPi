@@ -315,6 +315,7 @@ public class MidiHandler {
 	
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
 	static {
+		INDEX_OF_MIDI_CC[CC_MOD_WHEEL] = P.MOD_WHEEL;
 		InputStream in = MidiHandler.class.getResourceAsStream("/midimaps/default.map");
 		try {
 			List<String> lines = IOUtils.readLines(in, "utf-8");
@@ -355,7 +356,6 @@ public class MidiHandler {
 		} catch (IOException e) {
 			log.error("Error loading midi parameter mapping - using basic default!");
 		}
-		
 	}
 	
 	public static int[] getMidiMappings() {

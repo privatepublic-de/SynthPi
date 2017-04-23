@@ -362,8 +362,6 @@ public class P {
 		OSC_PATH[MOD_ENV2_FILTER_AMOUNT] = "/mod/env/2/depth/filter";
 		OSC_PATH[MOD_ENV2_VOL_AMOUNT] = "/mod/env/2/depth/vol";
 		
-		
-		
 		OSC_PATH[MOD_WHEEL] = "/play/mod/wheel";
 		
 		// filters
@@ -376,7 +374,6 @@ public class P {
 		
 		OSC_PATH[OSC1_PULSE_WIDTH] = "/osc/1/pw";
 		OSC_PATH[OSC2_PULSE_WIDTH] = "/osc/2/pw";
-		
 		// defaults!
 		setToDefaults();
 		
