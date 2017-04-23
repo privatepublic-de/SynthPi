@@ -456,9 +456,9 @@ public class P {
 		setDirectly(MIDI_VELOCITY_CURVE, 0.0f);
 		P.VAL[P.PITCH_BEND] = 0;
 		P.VAL_RAW_MIDI[P.PITCH_BEND] = 8192;
-		P.VAL[P.CHORUS_LFO_RATE] = 1/12f;
+		P.VAL[P.CHORUS_LFO_RATE] = 1/16f;
 		P.VALX[P.CHORUS_LFO_RATE] =  (float) Math.pow(P.VAL[P.CHORUS_LFO_RATE], 4);
-		P.VAL[P.CHORUS_LFO_TYPE] = 0;
+		P.VAL[P.CHORUS_LFO_TYPE] = .2f;
 	}
 	
 	public static void set(int index, float val) {

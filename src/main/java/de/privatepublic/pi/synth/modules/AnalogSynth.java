@@ -39,7 +39,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private float boosterTargetAmount = 0;
 	private final float boosterIncrement = .01f;
 	
-	private final IProcessorStereo chorus = new Chorus(25);
+	private final IProcessorStereo chorus = new Chorus(80);
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
 	private final StateVariableFilter booster = new StateVariableFilter(FilterType.BANDPASS, 80f, 1/3f);

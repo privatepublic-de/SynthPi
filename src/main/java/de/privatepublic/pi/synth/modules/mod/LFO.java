@@ -121,6 +121,8 @@ public class LFO implements IControlProcessor {
 		this.paraIndexLfoRate = paraIndexLfoRate;
 		this.paraIndexLfoType = paraIndexLfoType;
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
+		delayValue = 1;
+		delayIncrementValue = 1;
 	}
 	
 	

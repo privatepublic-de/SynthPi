@@ -12,7 +12,8 @@ public class Chorus implements IProcessorStereo {
 	private final int delayLineSizeUnder;
 	private final float feedback = 0;//.4f;
 	private final LFO lfo;
-	private StateVariableFilter highpass = new StateVariableFilter(FilterType.HIGHPASS, 100, 0);
+	private StateVariableFilter highpass1 = new StateVariableFilter(FilterType.HIGHPASS, 100, 0);
+	private StateVariableFilter highpass2 = new StateVariableFilter(FilterType.HIGHPASS, 100, 0);
 	
 	public Chorus(float maxDelayMS) {
 		delayLineSize = (int)(maxDelayMS/P.MILLIS_PER_SAMPLE_FRAME);
@@ -22,23 +23,26 @@ public class Chorus implements IProcessorStereo {
 		lfo = new LFO(P.CHORUS_LFO_RATE, P.CHORUS_LFO_TYPE);
 	}
 	
-	float wet, dry, in1, in2, sampleval, modval, lfoval, readindexL, readindexR, outL, outR;
+	float wet, dry, in1, in2, hin1, hin2, modval, lfoval, readindexL, readindexR, outL, outR;
 	int indexBaseL, indexBaseR, writeIndex;
 	float[] bufL, bufR;
 	
 	@Override
 	public void process(float[][] buffers, int startPos) {
-		wet = P.VAL[P.CHORUS_DEPTH];
-		dry = 1-wet*.5f;
+		wet = P.VAL[P.CHORUS_DEPTH]*.7f;
+		dry = 1-wet;
 		bufL = buffers[0];
 		bufR = buffers[1];
 		lfo.controlTick();
 		lfoval = lfo.value();
+//		System.out.println(lfoval);
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;
 			in1 = bufL[pos];
 			in2 = bufR[pos];
-			sampleval = highpass.processSample((in1+in2)*.5f);
+			hin1 = highpass1.processSample(in1);
+			hin2 = highpass2.processSample(in2);
+//			sampleval = highpass.processSample((in1+in2)*.5f);
 			if (++writeIndex==delayLineSize) {
 				writeIndex=0;
 			}
@@ -52,8 +56,8 @@ public class Chorus implements IProcessorStereo {
 			if (readindexR<0) {	readindexR += delayLineSize; }
 			indexBaseR = (int)readindexR;
 			
-			delayLineL[writeIndex] = delayLineL[indexBaseL]*feedback + sampleval;
-			delayLineR[writeIndex] = delayLineR[indexBaseR]*feedback + sampleval;
+			delayLineL[writeIndex] = delayLineL[indexBaseL]*feedback + hin1;
+			delayLineR[writeIndex] = delayLineR[indexBaseR]*feedback + hin2;
 			if (writeIndex==0) {
 				delayLineL[delayLineSize] = delayLineL[0];
 				delayLineR[delayLineSize] = delayLineR[0];
