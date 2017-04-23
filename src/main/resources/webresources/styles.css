@@ -880,3 +880,20 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 .pul .inner {
 	background-image: url(img/bg_pul_sel.png);
 }
+
+.subwave .inner {
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: 100% 100%;
+}
+
+.subwave .inner {
+	background-image: url(img/bg_tri.png);
+	visibility: visible;
+	background-color: transparent;
+}
+
+.checked.subwave .inner {
+	background-image: url(img/bg_pul_sel.png);
+	background-color: #ff0;
+}
