@@ -103,7 +103,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 				vel = (float) (vel==0?vel:Math.pow(vel, 1/4f));
 			} else {
 				// hard
-				vel = vel*vel*vel*vel;
+				vel = (float)Math.pow(vel,1.5);//vel*vel*vel*vel;
 			}
 			// find free oscillator
 			AnalogSynthVoice selectedVoice = null;
