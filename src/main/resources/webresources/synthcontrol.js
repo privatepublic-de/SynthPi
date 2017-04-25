@@ -47,7 +47,7 @@ $(document).ready(function () {
 						this.reconnectTimer = setTimeout(function() {
 							console.log("Reconnecting ...");
 							this.createAndConnect()
-						}.bind(this), 2000);
+						}.bind(this), 5000);
 					}
 				}
 			},

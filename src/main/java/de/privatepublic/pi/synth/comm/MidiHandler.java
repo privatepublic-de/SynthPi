@@ -215,6 +215,12 @@ public class MidiHandler {
 						}
 					}
 				}
+				else if (command==ShortMessage.CHANNEL_PRESSURE) {
+					P.CHANNEL_PRESSURE = data1/127f; // TODO Interpolate value
+					if (P.IS[P.MOD_PRESS_PITCH_AMOUNT] || P.IS[P.MOD_PRESS_PITCH2_AMOUNT]) {
+						sendPitchBendNotification();
+					}
+				}
 				else if (command==ShortMessage.PITCH_BEND) {
 					int val = (data1+(data2<<7)) - 8192;
 					if (P.FIX_STRANGE_MIDI_PITCH_BEND) {

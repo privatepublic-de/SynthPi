@@ -32,7 +32,7 @@ public class MultiModeFilter implements IControlProcessor {
 		else {
 			frqOffset = 0;
 		}
-		veloAmount = 1+16*velocity*P.VALC[P.MOD_VEL_FILTER_AMOUNT];
+		veloAmount = 1+16*velocity*P.VALXC[P.MOD_VEL_FILTER_AMOUNT];
 	}
 
 	private float K, Q, QtimesK, a, b, A0, A1, A2, B1, A3, A5, stage1, input;
@@ -125,6 +125,7 @@ public class MultiModeFilter implements IControlProcessor {
 						+ MAX_STABLE_FREQUENCY*P.VALX[P.FILTER1_FREQ]
 								+ (MAX_STABLE_FREQUENCY * (env1.outValue * P.VALXC[P.MOD_ENV1_FILTER_AMOUNT]))
 								+ (MAX_STABLE_FREQUENCY * (env2.outValue * P.VALXC[P.MOD_ENV2_FILTER_AMOUNT]))
+								+ (MAX_STABLE_FREQUENCY * (P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_FILTER_AMOUNT]))
 								+ frqOffset
 						) 
 						* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
@@ -145,6 +146,7 @@ public class MultiModeFilter implements IControlProcessor {
 					(P.VALX[P.FILTER1_FREQ]
 							+ env1.outValue * P.VALXC[P.MOD_ENV1_FILTER_AMOUNT]
 									+ env2.outValue * P.VALXC[P.MOD_ENV2_FILTER_AMOUNT]
+										+ (P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_FILTER_AMOUNT])
 											+ frqOffset/6000)
 											* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
 											* veloAmount,

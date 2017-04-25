@@ -182,7 +182,9 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		freq = effectiveFrequency * P.PITCH_BEND_FACTOR
 				* (LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT])
 				+env1.outValue*P.VALXC[P.MOD_ENV1_PITCH_AMOUNT]
-				+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH_AMOUNT]);
+				+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH_AMOUNT]
+				+P.CHANNEL_PRESSURE*P.VALXC[P.MOD_PRESS_PITCH_AMOUNT]
+				);
 		
 		switch(oscMode) {
 		case PRIMARY:
@@ -191,7 +193,8 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			freq = freq 
 					* (LFO.lfoAmount(P.VALXC[P.MOD_PITCH2_AMOUNT])
 							+env1.outValue*P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]
-							+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH2_AMOUNT]);
+							+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH2_AMOUNT]
+							+P.CHANNEL_PRESSURE*P.VALXC[P.MOD_PRESS_PITCH2_AMOUNT]);
 			break;
 		case SUB:
 			freq = freq	* (P.IS[P.OSC_SUB_LOW]?.25f:.5f);

@@ -59,25 +59,6 @@ public class P {
 		}
 	}
 	
-	/** Available filter routings */
-	public static enum FilterRouting { 
-		SERIAL("Serial", "serial"), 
-		PARALLEL("Parallel", "parall"), 
-		PEROSC("Per Oscillator", "osc   ");
-		
-		private final String descName;
-		private final String shortName;
-		FilterRouting(String s, String sShort) {
-			descName = s;
-			shortName = sShort;
-		}
-		public String descName() {
-			return descName;
-		}
-		public String shortName() {
-			return shortName;
-		}
-	}
 	
 	
 	public static String AUDIO_SYSTEM_NAME = "JavaSound";
@@ -156,6 +137,8 @@ public class P {
 	/** Combined lfo modulation amount: max(MOD_WHEEL, MOD_AMOUNT_BASE) */
 	public static float MOD_AMOUNT_COMBINED = 0;
 	
+	public static float CHANNEL_PRESSURE = 0;
+	
 	public static final String[] OSC_PATH = new String[PARAM_STORE_SIZE];
 	
 	public static FilterType VAL_FILTER_TYPE = FilterType.LOWPASS;
@@ -211,13 +194,13 @@ public class P {
 	public static final int OSC_SUB_SQUARE = 39;
 	public static final int DELAY_RATE_RIGHT = 40;
 	public static final int BASS_BOOSTER_ON = 41;
-//	public static final int FILTER2_ENV_S = 42;
-//	public static final int FILTER2_ENV_R = 43;
-//	public static final int FILTER2_ENV_VELOCITY_SENS = 44;
+	public static final int MOD_PRESS_FILTER_AMOUNT = 42;
+	public static final int MOD_PRESS_PITCH_AMOUNT = 43;
+	public static final int MOD_PRESS_PITCH2_AMOUNT = 44;
 	public static final int MOD_PITCH2_AMOUNT = 45;
 	public static final int OSC2_TUNING_FINE = 46;
 	public static final int MOD_PW1_AMOUNT = 47;
-//	public static final int OSC1_WAVE_SET = 48;
+	public static final int MOD_PRESS_NOISE_AMOUNT = 48;
 //	public static final int OSC2_WAVE_SET = 49;
 	public static final int FILTER1_ON = 50;
 //	public static final int FILTER_PARALLEL = 51;
@@ -362,6 +345,11 @@ public class P {
 		OSC_PATH[MOD_ENV2_FILTER_AMOUNT] = "/mod/env/2/depth/filter";
 		OSC_PATH[MOD_ENV2_VOL_AMOUNT] = "/mod/env/2/depth/vol";
 		
+		OSC_PATH[MOD_PRESS_FILTER_AMOUNT] = "/mod/press/depth/filter";
+		OSC_PATH[MOD_PRESS_PITCH_AMOUNT] = "/mod/press/depth/pitch";
+		OSC_PATH[MOD_PRESS_PITCH2_AMOUNT] = "/mod/press/depth/pitch2";
+		OSC_PATH[MOD_PRESS_NOISE_AMOUNT] = "/mod/press/depth/noise";
+		
 		OSC_PATH[MOD_WHEEL] = "/play/mod/wheel";
 		
 		// filters
@@ -453,7 +441,7 @@ public class P {
 		setDirectly(DELAY_RATE, .66f);
 		setDirectly(DELAY_RATE_RIGHT, .62f);
 		setDirectly(DELAY_FEEDBACK, .34f);
-		setDirectly(MIDI_VELOCITY_CURVE, 0.0f);
+		setDirectly(MIDI_VELOCITY_CURVE, 0.8f);
 		P.VAL[P.PITCH_BEND] = 0;
 		P.VAL_RAW_MIDI[P.PITCH_BEND] = 8192;
 		P.VAL[P.CHORUS_LFO_RATE] = 1/16f;
@@ -473,6 +461,8 @@ public class P {
 			TARGET_STEP_COUNT[index] = 0;
 		}
 	}
+	
+	private static int PRESS_TARGET_STEP_COUNT = 0;
 	
 	public static void interpolate() {
 		for (int i=0;i<SET_INTERPOLATED_SIZE;i++) {
