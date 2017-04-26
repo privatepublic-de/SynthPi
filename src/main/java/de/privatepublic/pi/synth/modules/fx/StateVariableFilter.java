@@ -9,7 +9,7 @@ import de.privatepublic.pi.synth.util.FastCalc;
 
 public class StateVariableFilter {
 
-	private static final float DOUBLE_SAMPLE_RATE = P.SAMPLE_RATE_HZ*2;
+	private float DOUBLE_SAMPLE_RATE = P.SAMPLE_RATE_HZ*2;
 	
 	private FilterType type;
 	
@@ -28,13 +28,17 @@ public class StateVariableFilter {
 		update();
 	}
 	
+	public void setSampleRate(float sampleRate) {
+		DOUBLE_SAMPLE_RATE = sampleRate*2;
+	}
+	
 	public void setResonance(float resonance) {
 		Q = resonance;
 		update();
 	}
 	
 	private void update() {
-		f1 = (float) (2.0*Math.sin(Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
+		f1 =  2.0f * FastCalc.sin(((float)Math.PI*(frq/DOUBLE_SAMPLE_RATE)));
 		damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
 	}
 
@@ -84,7 +88,7 @@ public class StateVariableFilter {
 	}
 	
 	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(MultiModeFilter.class);
+	private static final Logger log = LoggerFactory.getLogger(StateVariableFilter.class);
 
 	
 	public void processBuffer(float[] buffer, int startPos, float depth) {
