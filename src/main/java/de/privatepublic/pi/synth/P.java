@@ -128,7 +128,7 @@ public class P {
 	
 	public static final float[] TARGET_VAL = new float[PARAM_STORE_SIZE];
 	private static final int[] TARGET_STEP_COUNT = new int[PARAM_STORE_SIZE];
-	private static final float TARGET_STEPS = 12f; // 1536 / BUFFERSIZE
+	private static final float TARGET_STEPS = 48f; // 1536 / BUFFERSIZE
 	
 	public static boolean FIX_STRANGE_MIDI_PITCH_BEND = true;
 	public static boolean PEDAL = false;
@@ -138,6 +138,7 @@ public class P {
 	public static float MOD_AMOUNT_COMBINED = 0;
 	
 	public static float CHANNEL_PRESSURE = 0;
+	public static float CHANNEL_PRESSURE_TARGET = 0;
 	
 	public static final String[] OSC_PATH = new String[PARAM_STORE_SIZE];
 	
@@ -193,7 +194,7 @@ public class P {
 	public static final int OSC_SUB_LOW = 38;
 	public static final int OSC_SUB_SQUARE = 39;
 	public static final int DELAY_RATE_RIGHT = 40;
-	public static final int BASS_BOOSTER_ON = 41;
+	public static final int BASS_BOOSTER_LEVEL = 41;
 	public static final int MOD_PRESS_FILTER_AMOUNT = 42;
 	public static final int MOD_PRESS_PITCH_AMOUNT = 43;
 	public static final int MOD_PRESS_PITCH2_AMOUNT = 44;
@@ -249,6 +250,7 @@ public class P {
 		OVERDRIVE,
 		CHORUS_DEPTH,
 		OSC_NOISE_LEVEL,
+		BASS_BOOSTER_LEVEL,
 		DELAY_WET,
 		DELAY_FEEDBACK
 	};
@@ -259,7 +261,6 @@ public class P {
 	public static final String VERSION_STRING = "0.9";
 	
 	public static float limiterReductionValue = 0;
-//	public static Limiter limiterObject = null;
 	
 	static {
 		
@@ -278,7 +279,7 @@ public class P {
 		
 		// amplifier
 		OSC_PATH[VOLUME] = "/amp/volume"; // TODO paths as constants!
-		OSC_PATH[BASS_BOOSTER_ON] = "/amp/bassboost";
+		OSC_PATH[BASS_BOOSTER_LEVEL] = "/amp/bassboost";
 		OSC_PATH[OVERDRIVE] = "/fx/overdrive";
 		OSC_PATH[CHORUS_DEPTH] = "/fx/chorus/drywet";
 		OSC_PATH[DELAY_WET] = "/fx/delay/wet";
@@ -462,7 +463,6 @@ public class P {
 		}
 	}
 	
-	private static int PRESS_TARGET_STEP_COUNT = 0;
 	
 	public static void interpolate() {
 		for (int i=0;i<SET_INTERPOLATED_SIZE;i++) {
@@ -474,6 +474,7 @@ public class P {
 				setDirectly(pi, (y1*(1-stepfactor)+y2*stepfactor), false);
 			}
 		}
+		CHANNEL_PRESSURE = (CHANNEL_PRESSURE+CHANNEL_PRESSURE_TARGET)/2f;
 	}
 	
 	

@@ -110,7 +110,6 @@ public class SynthPiAudioClient implements AudioClient {
 		if (synthengine!=null) {
 			try {
 				long startnanos = System.nanoTime();
-				P.interpolate();
 				synthengine.process(outputs, nframes);
 				LOAD = (System.nanoTime()-startnanos)/(float)bufferTimeNS;
 			}

@@ -50,6 +50,7 @@ th {
 	text-decoration: underline;
 }
 
+
 #statuscontainer .left {
 	float: left;
 }
@@ -60,6 +61,29 @@ th {
 	display: inline-block;
 	padding: 4px;
 }
+
+@media only screen and (max-width: 768px) {
+	#statuscontainer .right,
+	#statuscontainer .left,
+	#statuscontainer .inner {
+		float: none;
+		display: block;
+		padding: 8px 4px;
+		border-bottom: 1px solid #444;
+	}
+	#learn {
+		display: none;
+	}
+	#statuscontainer .iconbutton {
+		width: 36px;
+		height: 36px;
+		background-size: 100% 100%;
+	}
+	body.performancedata #keyboard {
+		display: none;
+	}
+}
+
 
 #statuscontainer a.push {
 	border-color: #666;
@@ -111,6 +135,7 @@ th {
 	display: inline-block;
 	vertical-align: middle;
 	background: no-repeat center center;
+	background-size: 100% 100%;
 	margin-left: 8px;
 }
 .iconbutton:hover {
@@ -118,19 +143,19 @@ th {
 }
 
 #opensettings {
-	background-image: url(img/ic_settings_white_18dp.png);
+	background-image: url(img/ic_settings_white_36dp.png);
 }
 #update {
-	background-image: url(img/ic_refresh_white_18dp.png);
+	background-image: url(img/ic_refresh_white_36dp.png);
 }
 #learn {
 	background-image: url(img/ic_midi.png);
 }
 #randomize {
-	background-image: url(img/ic_shuffle_white_18dp.png);
+	background-image: url(img/ic_shuffle_white_36dp.png);
 }
 #savepatch {
-	background-image: url(img/ic_save_white_18dp.png);
+	background-image: url(img/ic_save_white_36dp.png);
 }
 #exit {
 	background-image: url(img/ic_close_white_18dp.png);
@@ -882,19 +907,4 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 	background-image: url(img/bg_pul_sel.png);
 }
 
-.subwave .inner {
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-size: 100% 100%;
-}
 
-.subwave .inner {
-	background-image: url(img/bg_tri.png);
-	visibility: visible;
-	background-color: transparent;
-}
-
-.checked.subwave .inner {
-	background-image: url(img/bg_pul_sel.png);
-	background-color: #ff0;
-}

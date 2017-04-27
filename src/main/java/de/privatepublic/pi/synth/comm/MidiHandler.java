@@ -216,7 +216,7 @@ public class MidiHandler {
 					}
 				}
 				else if (command==ShortMessage.CHANNEL_PRESSURE) {
-					P.CHANNEL_PRESSURE = data1/127f; // TODO Interpolate value
+					P.CHANNEL_PRESSURE_TARGET = data1/127f;
 					if (P.IS[P.MOD_PRESS_PITCH_AMOUNT] || P.IS[P.MOD_PRESS_PITCH2_AMOUNT]) {
 						sendPitchBendNotification();
 					}

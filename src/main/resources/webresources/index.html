@@ -13,6 +13,10 @@
 </head>
 <body class="connecting">
 	<div id="statuscontainer">
+		<div class="inner">
+			<div id="learnhint"><span class="blink">MIDI Learn Mode: Hover a parameter and send MIDI CC to learn</span></div>
+			<a href="#credits" title="Credits" data-ui="togglecredits">SynthPi MK2 // Control Interface</a>
+		</div>
 		<div class="left">
 			<div id="patch">
 				<a href="#" class="push glossy" data-osc="/command/listpatches" title="Load patch"><label class="patchname" data-osc="/patch/name">Patchname</label></a>
@@ -29,10 +33,7 @@
 				<span id="datalight"></span> connected
 			</span>
 		</div>
-		<div class="inner">
-			<div id="learnhint"><span class="blink">MIDI Learn Mode: Hover a parameter and send MIDI CC to learn</span></div>
-			<a href="#credits" title="Credits" data-ui="togglecredits">SynthPi MK2 // Control Interface</a>
-		</div>
+		
 	</div>
 	<div id="main">
 		<div id="oscillators" class="group yellow">
@@ -74,7 +75,10 @@
 					<span class="checkbox smaller" title="Mono" data-osc="/osc/mono"></span>
 					<div class="innergroup subosc">
 						<label>Sub Osc</label><br />
-						<span class="checkbox smaller subwave" title="Wave" data-osc="/osc/sub/square"></span><br />
+						<div class="exclusive subwave" data-control-path="/osc/sub/square">
+							<span class="checkbox small tri" title="" data-osc="/option/osc/sub/square/OFF" data-osc-send="/osc/sub/square,0"></span>
+							<span class="checkbox small pul" title="" data-osc="/option/osc/sub/square/ON" data-osc-send="/osc/sub/square,1"></span>
+						</div>
 						<span class="checkbox smaller" title="-2 Oct" data-osc="/osc/sub/low"></span>
 					</div>
 				</div>
@@ -116,7 +120,7 @@
 		<div id="amplifier" class="group blue">
 			<h2>Amplifier</h2>
 			<input type="text" value="0" class="dial small" title="Drive" data-osc="/fx/overdrive" data-osc-label="/label/fx/overdrive" />
-			<span class="checkbox smaller" title="Bass Booster" data-osc="/amp/bassboost"></span>
+			<input type="text" value="0" class="dial small" title="Bass Boost" data-osc="/amp/bassboost" data-osc-label="/label/amp/bassboost"/>
 			<br />
 			<div class="innergroup delay">
 				<input type="text" value="0" class="dial small" title="Delay" data-osc="/fx/delay/wet" data-osc-label="/label/fx/delay/wet" />

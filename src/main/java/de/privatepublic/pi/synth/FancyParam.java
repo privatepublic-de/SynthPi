@@ -2,7 +2,6 @@ package de.privatepublic.pi.synth;
 
 import java.text.DecimalFormat;
 
-import de.privatepublic.pi.synth.modules.fx.MultiModeFilter;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
@@ -147,6 +146,7 @@ public class FancyParam {
 		case P.MOD_ENV1_LOOP:
 		case P.OSC_MONO:
 		case P.MOD_LFO_RESET:
+		case P.OSC_SUB_SQUARE:
 			result = value>0?"ON":"OFF";
 			break;
 		case P.FILTER1_TYPE:
