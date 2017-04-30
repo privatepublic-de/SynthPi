@@ -15,10 +15,11 @@ public class AnalogSynthVoice {
 
 	private final EnvADSR env1 = new EnvADSR(P.ENV_CONF_AMP);
 	private final EnvADSR env2 = new EnvADSR(P.ENV_CONF_MOD_ENV);
+	private final LFO lfo = new LFO();
 	
-	private final BlepOscillator osc1 = new BlepOscillator(OscillatorBase.Mode.PRIMARY, env1, env2);
-	private final BlepOscillator osc2 = new BlepOscillator(OscillatorBase.Mode.SECONDARY, env1, env2);
-	private final BlepOscillator oscSub = new BlepOscillator(OscillatorBase.Mode.SUB, env1, env2);
+	private final BlepOscillator osc1 = new BlepOscillator(OscillatorBase.Mode.PRIMARY, env1, env2, lfo);
+	private final BlepOscillator osc2 = new BlepOscillator(OscillatorBase.Mode.SECONDARY, env1, env2, lfo);
+	private final BlepOscillator oscSub = new BlepOscillator(OscillatorBase.Mode.SUB, env1, env2, lfo);
 	
 	private final MultiModeFilter filter;
 	
@@ -37,7 +38,7 @@ public class AnalogSynthVoice {
 	
 	
 	public AnalogSynthVoice() {
-		filter = new MultiModeFilter(env1, env2);
+		filter = new MultiModeFilter(env1, env2, lfo);
 	}
 	
 	public float captureWeight(long timestamp) {
@@ -75,6 +76,10 @@ public class AnalogSynthVoice {
 		filter.trigger(frequency, velocity);
 		env1.noteOn();
 		env2.noteOn();
+		lfo.resetDelay();
+		if (P.IS[P.MOD_LFO_RESET]) {
+			lfo.resetPhase();
+		}
 		velocityFactor = (1-P.VAL[P.MOD_VEL_VOL_AMOUNT])+(P.VAL[P.MOD_VEL_VOL_AMOUNT]*velocity);
 		AnalogSynth.lastTriggeredFrequency = frequency;
 	}
@@ -101,13 +106,14 @@ public class AnalogSynthVoice {
 		filter.controlTick();
 		env1.controlTick();
 		env2.controlTick();
+		lfo.controlTick();
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
 		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME];
 		final float noiseLevel = P.VALX[P.OSC_NOISE_LEVEL] + env1.outValue*(P.VALXC[P.MOD_ENV1_NOISE_AMOUNT]+env2.outValue*P.VALXC[P.MOD_ENV2_NOISE_AMOUNT])+P.CHANNEL_PRESSURE*P.VALXC[P.MOD_PRESS_NOISE_AMOUNT];
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
-		final float volume = velocityFactor*env1.outValue*P.VALXC[P.MOD_ENV1_VOL_AMOUNT]*(1+LFO.lfoAmountAdd(modVol))+env2.outValue*P.VALXC[P.MOD_ENV2_VOL_AMOUNT]*(1+LFO.lfoAmountAdd(modVol));
+		final float volume = velocityFactor*env1.outValue*P.VALXC[P.MOD_ENV1_VOL_AMOUNT]*(1+lfo.lfoAmountAdd(modVol))+env2.outValue*P.VALXC[P.MOD_ENV2_VOL_AMOUNT]*(1+lfo.lfoAmountAdd(modVol));
 		final float volumeIncrement = (volume-outVolume)/P.CONTROL_BUFFER_SIZE;
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;

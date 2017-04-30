@@ -405,12 +405,12 @@ public class PresetHandler {
 		if (settings.has(K.PREF_AUDIO_BUFFER_SIZE.key())) {
 			P.SAMPLE_BUFFER_SIZE = settings.getInt(K.PREF_AUDIO_BUFFER_SIZE.key());
 		}
-		if (settings.has(K.PREF_MIDI_CC_SELECT.key())) {
-			MidiHandler.CC_PARAM_SELECT = settings.getInt(K.PREF_MIDI_CC_SELECT.key());
-		}
-		if (settings.has(K.PREF_MIDI_CC_VALUE.key())) {
-			MidiHandler.CC_PARAM_VALUE = settings.getInt(K.PREF_MIDI_CC_VALUE.key());
-		}
+//		if (settings.has(K.PREF_MIDI_CC_SELECT.key())) {
+//			MidiHandler.CC_PARAM_SELECT = settings.getInt(K.PREF_MIDI_CC_SELECT.key());
+//		}
+//		if (settings.has(K.PREF_MIDI_CC_VALUE.key())) {
+//			MidiHandler.CC_PARAM_VALUE = settings.getInt(K.PREF_MIDI_CC_VALUE.key());
+//		}
 		if (settings.has(K.PREF_MIDI_CC_MAPPING_LIST.key())) {
 			try {
 				JSONArray ja = settings.getJSONArray(K.PREF_MIDI_CC_MAPPING_LIST.key());
@@ -439,10 +439,8 @@ public class PresetHandler {
 	}
 	
 	public static void loadRecentPatch() {
-		
 		try {
 			JSONObject patch = new JSONObject(FileUtils.readFileToString(userRecentFile(), "utf-8"));
-			
 			JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
 			P.setToDefaults();
 			for (int ix=0;ix<params.length();++ix) {
@@ -463,7 +461,6 @@ public class PresetHandler {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public static enum K {

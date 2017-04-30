@@ -40,7 +40,8 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
 	private final StateVariableFilter booster = new StateVariableFilter(FilterType.BANDPASS, 80f, 1/3f);
-	private final TapeDelay tapeDelay = new TapeDelay();
+	private final LFO lfo = new LFO();
+	private final TapeDelay tapeDelay = new TapeDelay(lfo);
 	
 	private int numberBufferChunks = P.SAMPLE_BUFFER_SIZE/P.CONTROL_BUFFER_SIZE;
 	
@@ -54,7 +55,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
 		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {
 			P.interpolate();
-			LFO.GLOBAL.controlTick();
+			lfo.controlTick();
 			tapeDelay.controlTick();
 			final int startPos = chunkNo*P.CONTROL_BUFFER_SIZE;
 			for (int i=0; i<P.POLYPHONY; i++) {
@@ -139,10 +140,10 @@ public class AnalogSynth implements IMidiNoteReceiver {
 //				log.debug("Triggered @", selectedVoice);
 			}
 			if (P.IS[P.MOD_LFO_RESET]) {
-				LFO.GLOBAL.resetPhase();
+				lfo.resetPhase();
 			}
 			if (previousKeyCount==0) {
-				LFO.GLOBAL.resetDelay();
+				lfo.resetDelay();
 			}
 //			lastTriggeredFrequency = pk.frequency;
 		}

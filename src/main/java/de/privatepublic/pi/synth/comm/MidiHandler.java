@@ -182,7 +182,7 @@ public class MidiHandler {
 						storeLearnedCCNumber(data1);
 					}
 					if (data1==CC_PARAM_SELECT) {
-						param_selected = CC_TO_PARAM_SELECT_ORDER_MAP[Math.min(data2, CC_TO_PARAM_SELECT_ORDER_MAP.length-1)];
+						param_selected = P.PARAMETER_ORDER[Math.min((int)(data2/127.0*P.PARAMETER_ORDER.length-1)+1, P.PARAMETER_ORDER.length-1)];
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
@@ -257,68 +257,8 @@ public class MidiHandler {
 	private static final int CC_SUSTAIN = 64;
 	
 	
-	public static int CC_PARAM_SELECT = 26;
-	public static int CC_PARAM_VALUE = 27;
-	private static final int[] CC_TO_PARAM_SELECT_ORDER_MAP = new int[] {
-		P.UNUSED,
-		P.OSC1_WAVE,
-		P.OSC2_WAVE,
-		P.OSC1_VOLUME,
-		P.OSC_NOISE_LEVEL,
-		P.OSC2_TUNING,
-		P.OSC2_TUNING_FINE,
-		P.OSC2_SYNC,
-		P.OSC2_AM,
-		P.OSC_GLIDE_RATE,
-		P.OSC_MONO,
-		P.FILTER1_ON,
-		P.FILTER1_TRACK_KEYBOARD,
-		P.FILTER1_FREQ,
-		P.FILTER1_RESONANCE,
-		P.FILTER1_TYPE,
-		P.MOD_ENV2_FILTER_AMOUNT,
-		P.FILTER1_OVERLOAD,
-		
-		P.OSC_SUB_LOW,
-		P.OSC1_PULSE_WIDTH,
-		P.OSC2_PULSE_WIDTH,
-		P.OSC2_VOLUME,
-		P.OSC_SUB_VOLUME,
-		
-		P.MOD_RATE,
-		P.MOD_AMOUNT_BASE,
-		P.MOD_PITCH_AMOUNT,
-		P.MOD_PITCH2_AMOUNT,
-		P.MOD_PW1_AMOUNT,
-		P.MOD_PW2_AMOUNT,
-		P.MOD_FILTER1_AMOUNT,
-		P.MOD_VOL_AMOUNT,
-		P.MOD_LFO_TYPE,
-		P.MOD_LFO_RESET,
-		P.MOD_ENV2_A,
-		P.MOD_ENV2_D,
-		P.MOD_ENV2_S,
-		P.MOD_ENV2_R,
-		P.MOD_ENV2_LOOP,
-		P.MOD_ENV2_PITCH_AMOUNT,
-		P.MOD_ENV2_PITCH2_AMOUNT,
-		P.MOD_ENV2_PW1_AMOUNT,
-		P.MOD_ENV2_NOISE_AMOUNT,
-		P.MOD_LFO_DELAY,
-		
-		P.MOD_ENV1_A,
-		P.MOD_ENV1_D,
-		P.MOD_ENV1_S,
-		P.MOD_ENV1_R,
-		P.MOD_ENV1_LOOP,
-		P.OVERDRIVE,
-		P.CHORUS_DEPTH,
-		P.DELAY_WET,
-		P.DELAY_RATE,
-		P.DELAY_FEEDBACK,
-		P.VOLUME
-	};
-	
+	public static int CC_PARAM_SELECT = 102;
+	public static int CC_PARAM_VALUE = 103;
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
 	static {
 		INDEX_OF_MIDI_CC[CC_MOD_WHEEL] = P.MOD_WHEEL;

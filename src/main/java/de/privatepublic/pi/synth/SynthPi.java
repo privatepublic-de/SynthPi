@@ -59,22 +59,22 @@ public class SynthPi {
 			SynthPiAudioClient.start();
 			JettyWebServerInterface.init();
 			if (window!=null) {
-			Timer timer = new Timer("LoadWatch", true);
-			timer.schedule(new TimerTask() {
-				// private float averaged;
-				private float[] recent = new float[5];
-				private int pos = 0;
-				@Override
-				public void run() {
-					recent[pos] = SynthPiAudioClient.LOAD;
-					window.setLoad(0.2f*(recent[0]+recent[1]+recent[2]+recent[3]+recent[4]));
-					pos = ++pos%5;
-				}}, 1000, 50);
+				Timer timer = new Timer("LoadWatch", true);
+				timer.schedule(new TimerTask() {
+					// private float averaged;
+					private float[] recent = new float[5];
+					private int pos = 0;
+					@Override
+					public void run() {
+						recent[pos] = SynthPiAudioClient.LOAD;
+						window.setLoad(0.2f*(recent[0]+recent[1]+recent[2]+recent[3]+recent[4]));
+						pos = ++pos%5;
+					}}, 1000, 50);
 			}
 		} catch (Exception e1) {
 			logger.error(e1.getMessage(),e1);
 		}
-		
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
 		    	PresetHandler.saveCurrentPatch();

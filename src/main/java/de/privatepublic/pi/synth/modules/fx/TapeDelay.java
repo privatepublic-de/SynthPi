@@ -14,10 +14,12 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 	private DelayLine lineR;
 	private float wet;
 	private float dry;
+	private LFO lfo;
 	
-	public TapeDelay() {
+	public TapeDelay(LFO lfo) {
 		lineL = new DelayLine(P.DELAY_RATE, 1);
 		lineR = new DelayLine(P.DELAY_RATE_RIGHT, -1);
+		this.lfo = lfo;
 	}
 	
 	@Override
@@ -42,7 +44,7 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 	}
 
 	
-	private static class DelayLine implements IControlProcessor {
+	private class DelayLine implements IControlProcessor {
 		
 		float[] buffer = new float[LINE_LENGTH];
 		float accumulator = 0;
@@ -91,7 +93,7 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 		@Override
 		public void controlTick() {
 			feedbackLevel = P.VAL[P.DELAY_FEEDBACK];
-			float freq = (FREQ_LOW+P.VALX[pRate]*FREQ_RANGE)*LFO.lfoAmount(modSign*P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
+			float freq = (FREQ_LOW+P.VALX[pRate]*FREQ_RANGE)*lfo.lfoAmount(modSign*P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
 			filter.setCutoff(freq);
 			filter2.setCutoff(freq);
 			phaseIncrement = freq*INC_FACTOR;

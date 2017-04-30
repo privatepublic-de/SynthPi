@@ -18,11 +18,13 @@ public class MultiModeFilter implements IControlProcessor {
 
 	private EnvADSR env1;
 	private EnvADSR env2;
+	private LFO lfo;
 	private float veloAmount = 0;
 
-	public MultiModeFilter(EnvADSR env1, EnvADSR env2) {
+	public MultiModeFilter(EnvADSR env1, EnvADSR env2, LFO lfo) {
 		this.env1 = env1;
 		this.env2 = env2;
+		this.lfo = lfo;
 	}
 
 	public void trigger(final float freq, final float velocity) {
@@ -128,7 +130,7 @@ public class MultiModeFilter implements IControlProcessor {
 								+ (MAX_STABLE_FREQUENCY * (P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_FILTER_AMOUNT]))
 								+ frqOffset
 						) 
-						* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
+						* lfo.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
 						* veloAmount,
 						MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
@@ -148,7 +150,7 @@ public class MultiModeFilter implements IControlProcessor {
 									+ env2.outValue * P.VALXC[P.MOD_ENV2_FILTER_AMOUNT]
 										+ (P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_FILTER_AMOUNT])
 											+ frqOffset/6000)
-											* LFO.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
+											* lfo.lfoAmount(P.VALXC[P.MOD_FILTER1_AMOUNT])
 											* veloAmount,
 											0, 0.99f);
 			resonance = P.VAL[P.FILTER1_RESONANCE];

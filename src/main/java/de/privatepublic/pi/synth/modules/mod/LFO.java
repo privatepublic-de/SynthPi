@@ -81,32 +81,32 @@ public class LFO implements IControlProcessor {
 	private final int paraIndexLfoRate;
 	private int index = 0;
 
-	public static final LFO GLOBAL = new LFO();
+//	public static final LFO GLOBAL = new LFO();
 	
 	// 0 - 2
 	// filter
-	public static float lfoAmount(final float depth) {
-		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
+	public float lfoAmount(final float depth) {
+		return (1-this.value()*P.MOD_AMOUNT_COMBINED*depth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch modulation
-	public static float lfoAmount(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
-		return (1-GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
+	public float lfoAmount(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
+		return (1-this.value()*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
 	}
 	
 	
 	// -1 - 1
 	// voice volume modulation
-	public static float lfoAmountAdd(final float depth) {
+	public float lfoAmountAdd(final float depth) {
 		// caution! copy & paste
-		return (GLOBAL.value()*P.MOD_AMOUNT_COMBINED*depth);
+		return (this.value()*P.MOD_AMOUNT_COMBINED*depth);
 	}
 	
 	// 0 - 2 + env
 	// oscillators pitch2 modulation
-	public static float lfoAmountAsymm(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
-		return (((GLOBAL.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
+	public float lfoAmountAsymm(final float depth, final EnvADSR modEnv, final float modEnvDepth) {
+		return (((this.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
 	}
 	
 	public LFO() {

@@ -39,9 +39,10 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
     private SplittableRandom random = new SplittableRandom();
     private EnvADSR env1;
     private EnvADSR env2;
+    private LFO lfo;
 	
 
-	public BlepOscillator(OscillatorBase.Mode mode, EnvADSR env1, EnvADSR env2) {
+	public BlepOscillator(OscillatorBase.Mode mode, EnvADSR env1, EnvADSR env2, LFO lfo) {
 		super(mode);
 		MidiHandler.registerReceiver(this);
 		if (mode==OscillatorBase.Mode.SUB) {
@@ -49,6 +50,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		}
 		this.env1 = env1;
 		this.env2 = env2;
+		this.lfo = lfo;
 	}
 	
 	@Override
@@ -180,7 +182,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		drift = ((float)random.nextDouble()*.5f-.25f)*2;
 		
 		freq = effectiveFrequency * P.PITCH_BEND_FACTOR
-				* (LFO.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT])
+				* (lfo.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT])
 				+env1.outValue*P.VALXC[P.MOD_ENV1_PITCH_AMOUNT]
 				+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH_AMOUNT]
 				+P.CHANNEL_PRESSURE*P.VALXC[P.MOD_PRESS_PITCH_AMOUNT]
@@ -191,7 +193,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 			break;
 		case SECONDARY:
 			freq = freq 
-					* (LFO.lfoAmount(P.VALXC[P.MOD_PITCH2_AMOUNT])
+					* (lfo.lfoAmount(P.VALXC[P.MOD_PITCH2_AMOUNT])
 							+env1.outValue*P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]
 							+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH2_AMOUNT]
 							+P.CHANNEL_PRESSURE*P.VALXC[P.MOD_PRESS_PITCH2_AMOUNT]);
@@ -204,10 +206,10 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		phaseIncrementDiv = phaseIncrement/PI2;
 		
 		if (isBase) {
-			pulsewidth = FastCalc.ensureRange(P.VAL[P.OSC1_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_PW1_AMOUNT])+env1.outValue*P.VALC[P.MOD_ENV1_PW1_AMOUNT]+env2.outValue*P.VALC[P.MOD_ENV2_PW1_AMOUNT], 0, 1);
+			pulsewidth = FastCalc.ensureRange(P.VAL[P.OSC1_PULSE_WIDTH]+lfo.lfoAmountAdd(P.VALXC[P.MOD_PW1_AMOUNT])+env1.outValue*P.VALC[P.MOD_ENV1_PW1_AMOUNT]+env2.outValue*P.VALC[P.MOD_ENV2_PW1_AMOUNT], 0, 1);
 		}
 		else if (isSecond) {
-			pulsewidth = FastCalc.ensureRange(P.VAL[P.OSC2_PULSE_WIDTH]+LFO.lfoAmountAdd(P.VALXC[P.MOD_PW2_AMOUNT])+env1.outValue*P.VALC[P.MOD_ENV1_PW2_AMOUNT]+env2.outValue*P.VALC[P.MOD_ENV2_PW2_AMOUNT], 0, 1);
+			pulsewidth = FastCalc.ensureRange(P.VAL[P.OSC2_PULSE_WIDTH]+lfo.lfoAmountAdd(P.VALXC[P.MOD_PW2_AMOUNT])+env1.outValue*P.VALC[P.MOD_ENV1_PW2_AMOUNT]+env2.outValue*P.VALC[P.MOD_ENV2_PW2_AMOUNT], 0, 1);
 		}
 		
 	}
