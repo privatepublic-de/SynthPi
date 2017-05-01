@@ -164,9 +164,9 @@ public class P {
 	public static final int MOD_ENV2_FILTER_AMOUNT = 8;
 	public static final int FILTER1_TYPE = 9;
 	public static final int MOD_ENV1_FILTER_AMOUNT = 10;
-	public static final int MOD_ENV1_PITCH_AMOUNT = 11;
+//	public static final int MOD_ENV1_PITCH_AMOUNT = 11;
 	public static final int MOD_ENV1_PITCH2_AMOUNT = 12;
-	public static final int MOD_ENV2_VOL_AMOUNT = 13;
+//	public static final int MOD_ENV2_VOL_AMOUNT = 13;
 	public static final int MOD_ENV1_A = 14;
 	public static final int MOD_ENV1_D = 15;
 	public static final int MOD_ENV1_S = 16;
@@ -174,7 +174,7 @@ public class P {
 	public static final int OSC1_VOLUME = 18;
 	public static final int PITCH_BEND = 19; /** Pitch bend amount */
 	public static final int MOD_FILTER1_AMOUNT = 20;
-	public static final int MOD_ENV1_VOL_AMOUNT = 21;
+	//public static final int MOD_ENV1_VOL_AMOUNT = 21;
 	public static final int MOD_RATE = 22;
 	public static final int VOLUME = 23;
 	public static final int MOD_VEL_VOL_AMOUNT = 24;
@@ -201,7 +201,7 @@ public class P {
 	public static final int MOD_PITCH2_AMOUNT = 45;
 	public static final int OSC2_TUNING_FINE = 46;
 	public static final int MOD_PW1_AMOUNT = 47;
-	public static final int MOD_PRESS_NOISE_AMOUNT = 48;
+//	public static final int MOD_PRESS_NOISE_AMOUNT = 48;
 //	public static final int OSC2_WAVE_SET = 49;
 	public static final int FILTER1_ON = 50;
 //	public static final int FILTER_PARALLEL = 51;
@@ -232,7 +232,7 @@ public class P {
 	public static final int MOD_DELAY_TIME_AMOUNT = 76;
 	public static final int MOD_PW2_AMOUNT = 77;
 	public static final int MOD_VOL_AMOUNT = 78;
-	public static final int MOD_ENV1_NOISE_AMOUNT = 79;
+//	public static final int MOD_ENV1_NOISE_AMOUNT = 79;
 	public static final int DELAY_RATE = 80;
 	public static final int DELAY_FEEDBACK = 81;
 	public static final int FILTER1_OVERLOAD = 82;
@@ -325,13 +325,10 @@ public class P {
 		OSC_PATH[MOD_ENV1_S] = "/mod/env/1/3";
 		OSC_PATH[MOD_ENV1_R] = "/mod/env/1/4";
 		OSC_PATH[MOD_ENV1_LOOP] = "/mod/env/1/loop";
-		OSC_PATH[MOD_ENV1_PITCH_AMOUNT] = "/mod/env/1/depth/pitch";
 		OSC_PATH[MOD_ENV1_PITCH2_AMOUNT] = "/mod/env/1/depth/pitch/2";
 		OSC_PATH[MOD_ENV1_PW1_AMOUNT] = "/mod/env/1/depth/pw/1";
 		OSC_PATH[MOD_ENV1_PW2_AMOUNT] = "/mod/env/1/depth/pw/2";
-		OSC_PATH[MOD_ENV1_NOISE_AMOUNT] = "/mod/env/1/depth/noise";
 		OSC_PATH[MOD_ENV1_FILTER_AMOUNT] = "/mod/env/1/depth/filter";
-		OSC_PATH[MOD_ENV1_VOL_AMOUNT] = "/mod/env/1/depth/vol";
 		
 		OSC_PATH[MOD_ENV2_A] = "/mod/env/2/1";
 		OSC_PATH[MOD_ENV2_D] = "/mod/env/2/2";
@@ -344,12 +341,11 @@ public class P {
 		OSC_PATH[MOD_ENV2_PW2_AMOUNT] = "/mod/env/2/depth/pw/2";
 		OSC_PATH[MOD_ENV2_NOISE_AMOUNT] = "/mod/env/2/depth/noise";
 		OSC_PATH[MOD_ENV2_FILTER_AMOUNT] = "/mod/env/2/depth/filter";
-		OSC_PATH[MOD_ENV2_VOL_AMOUNT] = "/mod/env/2/depth/vol";
+//		OSC_PATH[MOD_ENV2_VOL_AMOUNT] = "/mod/env/2/depth/vol";
 		
 		OSC_PATH[MOD_PRESS_FILTER_AMOUNT] = "/mod/press/depth/filter";
 		OSC_PATH[MOD_PRESS_PITCH_AMOUNT] = "/mod/press/depth/pitch";
 		OSC_PATH[MOD_PRESS_PITCH2_AMOUNT] = "/mod/press/depth/pitch2";
-		OSC_PATH[MOD_PRESS_NOISE_AMOUNT] = "/mod/press/depth/noise";
 		
 		OSC_PATH[MOD_WHEEL] = "/play/mod/wheel";
 		
@@ -421,13 +417,10 @@ public class P {
 
 		
 		setDirectly(MOD_ENV1_S, 1);
-		setDirectly(MOD_ENV1_PITCH_AMOUNT, .5f);
 		setDirectly(MOD_ENV1_PITCH2_AMOUNT, .5f);
 		setDirectly(MOD_ENV1_PW1_AMOUNT, .5f);
 		setDirectly(MOD_ENV1_PW2_AMOUNT, .5f);
-		setDirectly(MOD_ENV1_NOISE_AMOUNT, .5f);
 		setDirectly(MOD_ENV1_FILTER_AMOUNT, 0.5f);
-		setDirectly(MOD_ENV1_VOL_AMOUNT, 1f);
 		
 		setDirectly(MOD_ENV2_PITCH_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_PITCH2_AMOUNT, .5f);
@@ -610,13 +603,10 @@ public class P {
 		MOD_FILTER1_AMOUNT,
 		MOD_VOL_AMOUNT,
 		
-		MOD_ENV1_PITCH_AMOUNT,
 		MOD_ENV1_PITCH2_AMOUNT,
 		MOD_ENV1_PW1_AMOUNT,
 		MOD_ENV1_PW2_AMOUNT,
-		MOD_ENV1_NOISE_AMOUNT,
 		MOD_ENV1_FILTER_AMOUNT,
-		MOD_ENV1_VOL_AMOUNT,
 		
 		MOD_ENV2_PITCH_AMOUNT,
 		MOD_ENV2_PITCH2_AMOUNT,
@@ -624,14 +614,12 @@ public class P {
 		MOD_ENV2_PW2_AMOUNT,
 		MOD_ENV2_NOISE_AMOUNT,
 		MOD_ENV2_FILTER_AMOUNT,
-		MOD_ENV2_VOL_AMOUNT,
 		
 		MOD_VEL_FILTER_AMOUNT,
 		MOD_VEL_VOL_AMOUNT,
 		
 		MOD_PRESS_PITCH_AMOUNT,
 		MOD_PRESS_PITCH2_AMOUNT,
-		MOD_PRESS_NOISE_AMOUNT,
 		MOD_PRESS_FILTER_AMOUNT
 		
 	};

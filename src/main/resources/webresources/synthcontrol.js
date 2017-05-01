@@ -475,7 +475,6 @@ $(document).ready(function () {
 					ctx.stroke();
 				}
 				if (cursor) {
-					console.log(this);
 					ctx.strokeStyle = mcol;
 					ctx.beginPath();
 					ctx.moveTo(cx, 0);

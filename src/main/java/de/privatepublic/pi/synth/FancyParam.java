@@ -24,13 +24,10 @@ public class FancyParam {
 		NAME[P.MOD_ENV1_S]       = "ENV1 Sustain";
 		NAME[P.MOD_ENV1_R]       = "ENV1 Release";
 		NAME[P.MOD_ENV1_LOOP]    = "ENV1 Loop";
-		NAME[P.MOD_ENV1_PITCH_AMOUNT]  = "ENV1 > Pitch";
 		NAME[P.MOD_ENV1_PITCH2_AMOUNT] = "ENV1 > Pitch2";
 		NAME[P.MOD_ENV1_PW1_AMOUNT]    = "ENV1 > PW1";
 		NAME[P.MOD_ENV1_PW2_AMOUNT]    = "ENV1 > PW2";
-		NAME[P.MOD_ENV1_NOISE_AMOUNT]  = "ENV1 > Noise";
 		NAME[P.MOD_ENV1_FILTER_AMOUNT] = "ENV1 > Filter";
-		NAME[P.MOD_ENV1_VOL_AMOUNT]    = "ENV1 > Volume";
 		
 		// oscillators
 		NAME[P.OSC1_VOLUME]      = "OSC1 Level";
@@ -75,12 +72,10 @@ public class FancyParam {
 		NAME[P.MOD_ENV2_PW2_AMOUNT]    = "ENV2 > PW2";
 		NAME[P.MOD_ENV2_NOISE_AMOUNT]  = "ENV2 > Noise";
 		NAME[P.MOD_ENV2_FILTER_AMOUNT] = "ENV2 > Filter";
-		NAME[P.MOD_ENV2_VOL_AMOUNT]    = "ENV2 > Volume";
 		NAME[P.MOD_VOL_AMOUNT]         = "LFO > Volume";
         //                                -------------	
 		NAME[P.MOD_PRESS_PITCH_AMOUNT] = "PRESS > Pitch";
 		NAME[P.MOD_PRESS_PITCH2_AMOUNT]= "PRESS > Pit.2";
-		NAME[P.MOD_PRESS_NOISE_AMOUNT] = "PRESS > Noise";
 		NAME[P.MOD_PRESS_FILTER_AMOUNT]= "PRESS > Filtr";
 		NAME[P.MOD_VEL_VOL_AMOUNT]     = "VELO > Volume";
 		NAME[P.MOD_VEL_FILTER_AMOUNT]  = "VELO > Filter";
@@ -178,9 +173,7 @@ public class FancyParam {
 			break;
 		case P.OSC2_TUNING_FINE:
 		case P.MOD_ENV1_FILTER_AMOUNT:
-		case P.MOD_ENV1_NOISE_AMOUNT:
 		case P.MOD_ENV1_PITCH2_AMOUNT:
-		case P.MOD_ENV1_PITCH_AMOUNT:
 		case P.MOD_ENV1_PW1_AMOUNT:
 		case P.MOD_ENV1_PW2_AMOUNT:
 		case P.MOD_ENV2_FILTER_AMOUNT:
@@ -197,7 +190,6 @@ public class FancyParam {
 		case P.MOD_DELAY_TIME_AMOUNT:
 		case P.MOD_VEL_FILTER_AMOUNT:
 		case P.MOD_PRESS_FILTER_AMOUNT:
-		case P.MOD_PRESS_NOISE_AMOUNT:
 		case P.MOD_PRESS_PITCH2_AMOUNT:
 		case P.MOD_PRESS_PITCH_AMOUNT:
 			result = FORMAT_FLOAT.format(((value-.5)*2)*100);

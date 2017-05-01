@@ -183,7 +183,6 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		
 		freq = effectiveFrequency * P.PITCH_BEND_FACTOR
 				* (lfo.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT])
-				+env1.outValue*P.VALXC[P.MOD_ENV1_PITCH_AMOUNT]
 				+env2.outValue*P.VALXC[P.MOD_ENV2_PITCH_AMOUNT]
 				+P.CHANNEL_PRESSURE*P.VALXC[P.MOD_PRESS_PITCH_AMOUNT]
 				);
