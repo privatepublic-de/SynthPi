@@ -324,11 +324,8 @@ h3 {
 	border-color: inherit;
 	padding: 12px 0;
 }
-#oscillators .mixer {
-	margin-left: 1em;
-	padding-left: 1em;
-	border-left: 1px solid;
-	border-color: inherit;
+#oscmix {
+	padding: 17px 0;
 }
 
 .divup {
@@ -336,7 +333,11 @@ h3 {
 }
 
 #filter1 {
-	padding-bottom: 16px;
+	padding-bottom: 33px;
+}
+
+#amplifier {
+	padding: 13px 0;
 }
 
 .delay {
@@ -357,6 +358,20 @@ h3 {
 	border-color: inherit;
 	padding: 4px 0 0 4px;
 }
+
+#modmatrix {
+	text-align: left;
+}
+
+#modmatrix > .innergroup > label {
+	width: 70px;
+	display: inline-block;
+}
+
+#modmatrix > .innergroup {
+	border-bottom: 1px solid #333;
+}
+
 
 .container {
 	display: inline-block;
