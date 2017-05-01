@@ -72,6 +72,7 @@ public class FancyParam {
 		NAME[P.MOD_ENV2_PW2_AMOUNT]    = "ENV2 > PW2";
 		NAME[P.MOD_ENV2_NOISE_AMOUNT]  = "ENV2 > Noise";
 		NAME[P.MOD_ENV2_FILTER_AMOUNT] = "ENV2 > Filter";
+		NAME[P.MOD_ENV2_LFORATE_AMOUNT]= "ENV2 >LFORate";
 		NAME[P.MOD_VOL_AMOUNT]         = "LFO > Volume";
         //                                -------------	
 		NAME[P.MOD_PRESS_PITCH_AMOUNT] = "PRESS > Pitch";
@@ -192,6 +193,7 @@ public class FancyParam {
 		case P.MOD_PRESS_FILTER_AMOUNT:
 		case P.MOD_PRESS_PITCH2_AMOUNT:
 		case P.MOD_PRESS_PITCH_AMOUNT:
+		case P.MOD_ENV2_LFORATE_AMOUNT:
 			result = FORMAT_FLOAT.format(((value-.5)*2)*100);
 			break;
 //		case P.DELAY_RATE:

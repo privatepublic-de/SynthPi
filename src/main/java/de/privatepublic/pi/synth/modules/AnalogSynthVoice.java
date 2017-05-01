@@ -15,7 +15,7 @@ public class AnalogSynthVoice {
 
 	private final EnvADSR env1 = new EnvADSR(P.ENV_CONF_AMP);
 	private final EnvADSR env2 = new EnvADSR(P.ENV_CONF_MOD_ENV);
-	private final LFO lfo = new LFO();
+	private final LFO lfo = new LFO(env2);
 	
 	private final BlepOscillator osc1 = new BlepOscillator(OscillatorBase.Mode.PRIMARY, env1, env2, lfo);
 	private final BlepOscillator osc2 = new BlepOscillator(OscillatorBase.Mode.SECONDARY, env1, env2, lfo);

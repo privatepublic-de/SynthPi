@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
+import de.privatepublic.pi.synth.util.FastCalc;
 
 
 public class LFO implements IControlProcessor {
@@ -75,14 +76,12 @@ public class LFO implements IControlProcessor {
 	}
 	
 	private float indexOffset = 0;
-	private float tableIndexIncrement = 0;
 	private float[] currentWave = TABLES[0];
 	private final int paraIndexLfoType;
 	private final int paraIndexLfoRate;
 	private int index = 0;
+	private EnvADSR env;
 
-//	public static final LFO GLOBAL = new LFO();
-	
 	// 0 - 2
 	// filter
 	public float lfoAmount(final float depth) {
@@ -109,8 +108,9 @@ public class LFO implements IControlProcessor {
 		return (((this.value()+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
 	}
 	
-	public LFO() {
+	public LFO(EnvADSR env) {
 		init();
+		this.env = env;
 		paraIndexLfoRate = P.MOD_RATE;
 		paraIndexLfoType = P.MOD_LFO_TYPE;
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
@@ -125,21 +125,6 @@ public class LFO implements IControlProcessor {
 		delayIncrementValue = 1;
 	}
 	
-	
-	
-	private void nextBufferSlice(final int nframes) {
-		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
-		tableIndexIncrement = (LOW_FREQ+((P.VALX[paraIndexLfoRate])*FREQ_RANGE));
-		if (currentWave==TABLES[5]) {
-			tableIndexIncrement *= 2; 
-		}
-		indexOffset = indexOffset+nframes*tableIndexIncrement;
-		if (indexOffset>=WAVE_LENGHT) {
-			indexOffset -= WAVE_LENGHT;
-		}
-		index = (int)indexOffset;
-	}
-
 	
 	private float randvalue;
 	private float lastRandTrigger;
@@ -179,7 +164,24 @@ public class LFO implements IControlProcessor {
 
 	@Override
 	public void controlTick() {
-		nextBufferSlice(P.CONTROL_BUFFER_SIZE);
+		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
+		float frequency;
+		if (env!=null) {
+			frequency = 
+					LOW_FREQ+
+					(P.VALX[paraIndexLfoRate]+P.VALXC[P.MOD_ENV2_LFORATE_AMOUNT]*env.outValue)*FREQ_RANGE;
+		}
+		else {
+			frequency = (LOW_FREQ+((P.VALX[paraIndexLfoRate])*FREQ_RANGE));
+		}
+		if (currentWave==TABLES[5]) {
+			frequency *= 2; 
+		}
+		indexOffset = indexOffset+P.CONTROL_BUFFER_SIZE*FastCalc.ensureRange(frequency, LOW_FREQ, HI_FREQ);
+		if (indexOffset>=WAVE_LENGHT) {
+			indexOffset -= WAVE_LENGHT;
+		}
+		index = (int)indexOffset;
 		if (delayIncrementValue<1) {
 			delayIncrementValue += slope;
 		    slope += curve;

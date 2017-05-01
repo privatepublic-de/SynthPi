@@ -40,7 +40,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
 	private final StateVariableFilter booster = new StateVariableFilter(FilterType.BANDPASS, 80f, 1/3f);
-	private final LFO lfo = new LFO();
+	private final LFO lfo = new LFO(null);
 	private final TapeDelay tapeDelay = new TapeDelay(lfo);
 	
 	private int numberBufferChunks = P.SAMPLE_BUFFER_SIZE/P.CONTROL_BUFFER_SIZE;
