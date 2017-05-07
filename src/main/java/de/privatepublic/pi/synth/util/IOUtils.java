@@ -108,7 +108,7 @@ public class IOUtils {
 				return parts[0];
 			}
 		}
-		return null;
+		return "127.0.0.1";
 	}
 	
 	public static InetAddress localV4InetAddress() {

@@ -84,7 +84,8 @@ public class SynthPiAudioClient implements AudioClient {
 	
 	@Override
 	public void configure(AudioConfiguration context) throws Exception {
-		log.info("Audio configured:\n{}", context);
+		String configDesc = context.toString().replaceAll("\n", ", ");
+		log.info(configDesc);
 		P.SAMPLE_BUFFER_SIZE = context.getMaxBufferSize();
 		P.SAMPLE_RATE_HZ = context.getSampleRate();
 		P.CONTROL_BUFFER_SIZE = (int)(P.SAMPLE_RATE_HZ/3000);
