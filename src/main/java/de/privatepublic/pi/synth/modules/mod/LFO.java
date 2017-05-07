@@ -16,7 +16,7 @@ public class LFO implements IControlProcessor {
 
 	public final static int WAVE_COUNT = 6;
 	public final static int WAVE_COUNT_CALC = WAVE_COUNT-1;
-	public final static String[] WAVE_NAMES = new String[] {"SIN","TRG","RUP","RDN", "SQR", "SH"};
+	public final static String[] WAVE_NAMES = new String[] {"SINE","TRIANGLE","RAMP UP","RAMP DOWN", "SQUARE", "SAMPLE+HOLD"};
 	public static int WAVE_LENGHT = (int)P.SAMPLE_RATE_HZ;
 	public final static float LOW_FREQ = 0.03f;
 	public final static float HI_FREQ = 100;
