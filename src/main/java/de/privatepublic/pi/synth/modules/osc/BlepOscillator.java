@@ -179,7 +179,7 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 				effectiveFrequency = targetFrequency;
 			}
 		}
-		drift = ((float)random.nextDouble()*.5f-.25f)*2;
+		drift = (drift+((float)random.nextDouble()*.5f-.25f)*2)*.5f;
 		
 		freq = effectiveFrequency * P.PITCH_BEND_FACTOR
 				* (lfo.lfoAmount(P.VALXC[P.MOD_PITCH_AMOUNT])
