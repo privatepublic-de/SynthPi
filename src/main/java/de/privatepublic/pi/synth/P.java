@@ -74,12 +74,9 @@ public class P {
 	public static int POLYPHONY = POLYPHONY_MAX;
 	public static boolean HTTP_SEND_PERFORMACE_DATA = false;
 	public static boolean LIMITER_ENABLED = false;
-	public static boolean LOW_BUDGET_ADDITIVE = false;
 
 	public static final float ROOT_FREQUENCY = 440;	
 	public static final float OCTAVE_CENTS = 1200f;
-	
-	public static String MIDI_FILE_NAME;
 	
 	public static final float[] MIDI_NOTE_FREQUENCY_HZ = new float[128];
 	public static final String[] MIDI_NOTE_NAME = new String[128];
@@ -261,6 +258,7 @@ public class P {
 	public static final String VERSION_STRING = "0.9";
 	
 	public static float limiterReductionValue = 0;
+	public static String CUSTOM_SETTINGS_DIR = null;
 	
 	static {
 		
@@ -595,7 +593,6 @@ public class P {
 		MOD_ENV2_S,
 		MOD_ENV2_R,
 		
-		
 		MOD_PITCH_AMOUNT,
 		MOD_PITCH2_AMOUNT,
 		MOD_PW1_AMOUNT,
@@ -623,7 +620,6 @@ public class P {
 		MOD_PRESS_PITCH_AMOUNT,
 		MOD_PRESS_PITCH2_AMOUNT,
 		MOD_PRESS_FILTER_AMOUNT
-		
 	};
 	
 	

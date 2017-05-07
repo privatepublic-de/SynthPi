@@ -1,5 +1,6 @@
 package de.privatepublic.pi.synth;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -34,9 +35,21 @@ public class SynthPi {
 	
 	public static void main(String[] args) {
 
+		CommandLine cmdline = parseCommandLine(args);
+		PresetHandler.initDirectories();
 		PresetHandler.loadSettings();
-		parseCommandLine(args); // command line arguments overwrite local user settings
+		readCommandLineSettings(cmdline); // command line arguments overwrite local user settings
 		
+		logger.info("Configuration:");
+		logger.info("  Audio system: {}", P.AUDIO_SYSTEM_NAME);
+		logger.info("  Audio buffer size: {}", P.SAMPLE_BUFFER_SIZE);
+		logger.info("  MIDI channel: {}", P.MIDI_CHANNEL+1);
+		logger.info("  MIDI pitch bend mode: {}", P.FIX_STRANGE_MIDI_PITCH_BEND?0:1);
+		logger.info("  Web interface: http://{}:{}", IOUtils.localV4InetAddressDisplayString(), P.PORT_HTTP);
+		logger.info("  Start web browser: {}", JettyWebServerInterface.DISABLE_BROWSER_START?"no":"yes");
+		if (HEADLESS) {
+			logger.info("  Starting HEADLESS without ui window!");	
+		}
 		if (!HEADLESS) {
 			try {
 				EventQueue.invokeAndWait(new Runnable() {
@@ -111,38 +124,51 @@ public class SynthPi {
 		}
 	}
 	
+	public static void uiLCDMessage(final String line1, final String line2, final Color color) {
+		if (HEADLESS) {
+			return;
+		}
+		if (window!=null) {
+			EventQueue.invokeLater(new Runnable() {
+		        public void run() {
+		        	window.lcdMessage(line1, line2, color);
+		        }
+		    });
+		}
+	}
+	
+	public static void uiLCDMessage(String line1, String line2) {
+		uiLCDMessage(line1, line2, Color.GREEN);
+	}
+	
+	
+	final static String ARG_HELP = "help";
+	final static String ARG_MIDI_CHANNEL = "midich";
+	final static String ARG_PORT_HTTP = "httpport";
+	final static String ARG_SETTINGS_DIR = "settingsdir";
+	final static String ARG_PITCH_BEND_MODE = "pitchbendmode";
+	final static String ARG_DISABLE_WEB_CACHE = "disablewebcache";
+	final static String ARG_DISABLE_BROWSER_START = "disablebrowserstart";
+	final static String ARG_HEADLESS = "headless";
+	final static String ARG_USE_JACK_AUDIO_SERVER = "usejackaudioserver";
+	final static String ARG_AUDIO_BUFFER_SIZE = "audiobuffersize";
+	final static String ARG_OPEN_BROWSER_COMMAND = "openbrowsercmd";
+	
 	@SuppressWarnings("static-access") // prevent warnings because of implementation of commons-cli
-	private static void parseCommandLine(String[] args) {
-		
-		// create the command line parser
+	private static CommandLine parseCommandLine(String[] args) {
 		CommandLineParser parser = new BasicParser();
-
-		// create the Options
-		final String ARG_HELP = "help";
-		final String ARG_MIDI_CHANNEL = "midich";
-		final String ARG_PORT_HTTP = "httpport";
-		final String ARG_MIDI_FILENAME = "midifile";
-		final String ARG_PITCH_BEND_MODE = "pitchbendmode";
-		final String ARG_DISABLE_WEB_CACHE = "disablewebcache";
-		final String ARG_DISABLE_BROWSER_START = "disablebrowserstart";
-		final String ARG_HEADLESS = "headless";
-		final String ARG_USE_JACK_AUDIO_SERVER = "usejackaudioserver";
-		final String ARG_AUDIO_BUFFER_SIZE = "audiobuffersize";
-		final String ARG_OPEN_BROWSER_COMMAND = "openbrowsercmd";
-		final String ARG_LOW_BUDGET_ADDITIVE = "lowbudgetadditive";
 		Options options = new Options();
 		options.addOption(OptionBuilder.withArgName(ARG_HELP).withDescription("Print this help message and exit").create(ARG_HELP));
 		options.addOption(OptionBuilder.withArgName("channel").hasArg().withDescription("MIDI channel number (1-16, default 1)").create(ARG_MIDI_CHANNEL));
 		options.addOption(OptionBuilder.withArgName("port").hasArg().withDescription("Port number for the included web server (1024-65535, default "+P.PORT_HTTP+")").create(ARG_PORT_HTTP));
-		options.addOption(OptionBuilder.withArgName("file").hasArg().withDescription("MIDI file to play in loop. Good for testing.").create(ARG_MIDI_FILENAME));
 		options.addOption(OptionBuilder.withArgName("0/1").hasArg().withDescription("Set specific MIDI pitch bend mode. Try this if strange pitch bending effects occur; e.g. on Mac OS systems use 0.").create(ARG_PITCH_BEND_MODE));
 		options.addOption(OptionBuilder.withDescription("(only for development)").create(ARG_DISABLE_WEB_CACHE));
 		options.addOption(OptionBuilder.withDescription("Don't start web browser on launch").create(ARG_DISABLE_BROWSER_START));
 		options.addOption(OptionBuilder.withDescription("Don't open user interface window").create(ARG_HEADLESS));
 		options.addOption(OptionBuilder.withDescription("Use JACK audio server for playback. Fails if JACK isn't installed and started.").create(ARG_USE_JACK_AUDIO_SERVER));
-		options.addOption(OptionBuilder.withDescription("Low budget additive (more description please).").create(ARG_LOW_BUDGET_ADDITIVE));
 		options.addOption(OptionBuilder.withArgName("size").hasArg().withDescription("Playback audio buffer size. Smaller values for less latency, higher values for less drop-outs and crackles (default 64)").create(ARG_AUDIO_BUFFER_SIZE));
-		options.addOption(OptionBuilder.withArgName("cmd").hasArg().withDescription("Command line to open web browser.").create(ARG_OPEN_BROWSER_COMMAND));		
+		options.addOption(OptionBuilder.withArgName("cmd").hasArg().withDescription("Command line to open web browser.").create(ARG_OPEN_BROWSER_COMMAND));
+		options.addOption(OptionBuilder.withArgName("directory").hasArg().withDescription("Directory to store settings and patches.").create(ARG_SETTINGS_DIR));
 		try {
 			CommandLine commandline = parser.parse(options, args);
 			if (commandline.hasOption(ARG_HELP)) {
@@ -157,16 +183,35 @@ public class SynthPi {
 				P.AUDIO_SYSTEM_NAME = "JACK";
 			}
 			
-			P.LOW_BUDGET_ADDITIVE = commandline.hasOption(ARG_LOW_BUDGET_ADDITIVE);
-			
-			Integer bufferSize = getOptionInt(commandline, ARG_AUDIO_BUFFER_SIZE, 16, 4096);
-			if (bufferSize!=null) {
-				P.SAMPLE_BUFFER_SIZE = bufferSize;
+			if (commandline.hasOption(ARG_SETTINGS_DIR)) {
+				P.CUSTOM_SETTINGS_DIR = commandline.getOptionValue(ARG_SETTINGS_DIR);
 			}
 			
 			JettyWebServerInterface.DISABLE_CACHING = commandline.hasOption(ARG_DISABLE_WEB_CACHE);
 			JettyWebServerInterface.DISABLE_BROWSER_START = commandline.hasOption(ARG_DISABLE_BROWSER_START);
 			
+			Integer httpPort = getOptionInt(commandline, ARG_PORT_HTTP, 1024, 65535);
+			if (httpPort!=null) {
+				P.PORT_HTTP = httpPort;
+			}
+			
+			if (JettyWebServerInterface.DISABLE_CACHING) {
+				logger.info("  Web caching disabled for development");
+			}
+			if (args.length>0) {
+				uiMessage("Started with command line parameters: "+StringUtils.join(args, ' '));
+			}
+			return commandline;
+			
+		} catch (ParseException e) {
+			logger.error("Error parsing command line options", e);
+			uiMessage("Error reading command line options: "+e.getMessage());
+		}
+		return null;
+	}
+	
+	private static void readCommandLineSettings(CommandLine commandline) {
+		if (commandline!=null) {
 			Integer pitchBendMode = getOptionInt(commandline, ARG_PITCH_BEND_MODE, 0, 1);
 			if (pitchBendMode!=null) {
 				P.FIX_STRANGE_MIDI_PITCH_BEND = pitchBendMode==1;
@@ -176,40 +221,13 @@ public class SynthPi {
 			if (midiChannel!=null) {
 				P.MIDI_CHANNEL = midiChannel-1;
 			}
-			Integer httpPort = getOptionInt(commandline, ARG_PORT_HTTP, 1024, 65535);
-			if (httpPort!=null) {
-				P.PORT_HTTP = httpPort;
+			
+			Integer bufferSize = getOptionInt(commandline, ARG_AUDIO_BUFFER_SIZE, 16, 4096);
+			if (bufferSize!=null) {
+				P.SAMPLE_BUFFER_SIZE = bufferSize;
 			}
 			
-			P.CUSTOM_BROWSER_COMMAND = commandline.getOptionValue(ARG_OPEN_BROWSER_COMMAND);
-			
-			String midifile = commandline.getOptionValue(ARG_MIDI_FILENAME);
-			logger.info("Configuration:");
-			logger.info("  Audio system: {}", P.AUDIO_SYSTEM_NAME);
-			logger.info("  Audio buffer size: {}", P.SAMPLE_BUFFER_SIZE);
-			logger.info("  MIDI channel: {}", P.MIDI_CHANNEL+1);
-			logger.info("  MIDI pitch bend mode: {}", P.FIX_STRANGE_MIDI_PITCH_BEND?0:1);
-			if (midifile!=null) {
-				P.MIDI_FILE_NAME = midifile;
-				logger.info("  MIDI file to play: {}", P.MIDI_FILE_NAME);
-			}
-			logger.info("  Web interface: http://{}:{}", IOUtils.localV4InetAddressDisplayString(), P.PORT_HTTP);
-			logger.info("  Start web browser: {}", JettyWebServerInterface.DISABLE_BROWSER_START?"no":"yes");
-			if (HEADLESS) {
-				logger.info("  Starting HEADLESS without ui window!");	
-			}
-			if (JettyWebServerInterface.DISABLE_CACHING) {
-				logger.info("  Web caching disabled for development");
-			}
-			if (args.length>0) {
-				uiMessage("Started with command line parameters: "+StringUtils.join(args, ' '));
-			}
-			
-		} catch (ParseException e) {
-			logger.error("Error parsing command line options", e);
-			uiMessage("Error reading command line options: "+e.getMessage());
 		}
-		
 	}
 	
 	

@@ -41,8 +41,12 @@ public class PresetHandler {
 		}
 	};
 	
-	private static final File PATCH_DIR = new File(System.getProperty("user.home"), "synthpi");
-	static {
+	private static File PATCH_DIR = new File(System.getProperty("user.home"), "synthpi");
+	
+	public static void initDirectories() {
+		if (P.CUSTOM_SETTINGS_DIR!=null) {
+			PATCH_DIR = new File(P.CUSTOM_SETTINGS_DIR, "synthpi");
+		}
 		try {
 			FileUtils.forceMkdir(PATCH_DIR);
 			if (PATCH_DIR.exists()) {
@@ -53,8 +57,9 @@ public class PresetHandler {
 			}
 		} catch (IOException e) {
 			log.error("Could not create patch directory {}", e, PATCH_DIR);
-		}
+		}		
 	}
+	
 	
 	public static void initPatch() {
 		P.setToDefaults();
@@ -81,9 +86,6 @@ public class PresetHandler {
 		return preset;
 	}
 	
-//	private static JSONObject createJSONFromCurrentPatch(String name) {
-//		return createJSONFromCurrentPatch(name, PatchCategory.WHATEVER);
-//	}
 	
 	public static void loadPatchFromProgramNumber(int programNo) {
 		JSONObject allPatches = listPatchFiles(true);
@@ -142,6 +144,7 @@ public class PresetHandler {
 							P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);
+							SynthPi.uiLCDMessage("Loaded patch", P.LAST_LOADED_PATCH_NAME);
 							return true;
 						}
 					}
@@ -457,6 +460,7 @@ public class PresetHandler {
 			P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 			log.debug("Loaded recent patch {}", P.LAST_LOADED_PATCH_NAME);
 			SynthPi.uiMessage("Loaded recent patch: "+P.LAST_LOADED_PATCH_NAME);
+			SynthPi.uiLCDMessage("Restored patch", P.LAST_LOADED_PATCH_NAME);
 		} catch (JSONException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
