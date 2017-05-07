@@ -13,6 +13,7 @@ import de.privatepublic.pi.synth.FancyParam;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.PresetHandler;
 import de.privatepublic.pi.synth.Randomizer;
+import de.privatepublic.pi.synth.SynthPi;
 import de.privatepublic.pi.synth.comm.web.SynthSocket;
 
 public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendReceiver {
@@ -150,6 +151,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 	
 	public void updateSelectedParam(int paramSelected) {
 		sendToAll("/paramselected="+P.OSC_PATH[paramSelected]);
+		SynthPi.uiLCDMessage(FancyParam.nameOf(paramSelected), FancyParam.valueOf(paramSelected), FancyParam.colorOf(paramSelected));
 		log.info("Parameter: {} = {}", FancyParam.nameOf(paramSelected), FancyParam.valueOf(paramSelected));
 	}
 	
@@ -207,6 +209,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		// all osc-aware thingys are updated with value and label, matching websocket session only gets label update
 		String labelMsg = createLabelMessage(paramIndex);
 		String labelAndValueMsg = createValueAndLabelMessage(paramIndex);
+		SynthPi.uiLCDMessage(FancyParam.nameOf(paramIndex), FancyParam.valueOf(paramIndex), FancyParam.colorOf(paramIndex));
 		synchronized (SynthSocket.ACTIVE_SESSIONS) {
 			for (Session aSession:SynthSocket.ACTIVE_SESSIONS) {
 				if (!aSession.isOpen()) continue;

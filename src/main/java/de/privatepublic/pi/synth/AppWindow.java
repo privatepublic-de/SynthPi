@@ -8,6 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -22,8 +26,14 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.Color;
+
+import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 
 public class AppWindow {
 
@@ -32,6 +42,7 @@ public class AppWindow {
 	private JFrame frame;
 	private JTextArea textArea;
 	private JProgressBar progressBarLoad;
+	private JLabel lblLCDLabel;
 
 	/**
 	 * Create the application.
@@ -82,6 +93,14 @@ public class AppWindow {
 		JLabel lblDspLoad = new JLabel("DSP load:");
 		lblDspLoad.setLabelFor(progressBarLoad);
 		lblDspLoad.setFont(new Font("Dialog", Font.PLAIN, 12));
+		
+		lblLCDLabel = new JLabel("<html>1234567890123456<br>1234567890123456</html>");
+		lblLCDLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		lblLCDLabel.setForeground(Color.GREEN);
+		lblLCDLabel.setOpaque(true);
+		lblLCDLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLCDLabel.setFont(new Font("Monospaced", lblLCDLabel.getFont().getStyle(), 17));
+		lblLCDLabel.setBackground(Color.decode("#484848"));
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
@@ -90,18 +109,21 @@ public class AppWindow {
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGap(15)
 							.addComponent(lblSynthpi)
-							.addPreferredGap(ComponentPlacement.RELATED, 107, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 129, Short.MAX_VALUE)
 							.addComponent(lblDspLoad)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(progressBarLoad, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(btnOpenBrowserInterface)
-							.addPreferredGap(ComponentPlacement.RELATED, 162, Short.MAX_VALUE)
-							.addComponent(btnExit))
+							.addComponent(scrollPane))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)))
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblLCDLabel, GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnOpenBrowserInterface)
+									.addPreferredGap(ComponentPlacement.RELATED, 174, Short.MAX_VALUE)
+									.addComponent(btnExit)))))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -116,12 +138,14 @@ public class AppWindow {
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 								.addComponent(lblSynthpi)
 								.addComponent(lblDspLoad))))
-					.addGap(18)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
+					.addGap(9)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnExit)
-						.addComponent(btnOpenBrowserInterface))
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(btnOpenBrowserInterface)
+						.addComponent(btnExit))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(lblLCDLabel, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
 		textArea = new JTextArea();
@@ -149,6 +173,17 @@ public class AppWindow {
 		textArea.setCaretPosition(textArea.getText().length());
 	}
 	
+	public void lcdMessage(String line1, String line2, Color color) {
+		line1 = StringUtils.rightPad(line1, 16);
+		line2 = StringUtils.rightPad(line2, 16);
+		if (line1.length()>16) { line1 = line1.substring(0, 16); }
+		if (line2.length()>16) { line2 = line2.substring(0, 16); }
+		line1 = line1.replaceAll(" ", "&nbsp;");
+		line2 = line2.replaceAll(" ", "&nbsp;");;
+		lblLCDLabel.setText("<html>"+line1+"<br>"+line2+"</html>");
+		lblLCDLabel.setForeground(color);
+	}
+	
 	public void setLoad(float load) {
 		progressBarLoad.setValue((int)(100*load));
 	}
@@ -161,7 +196,18 @@ public class AppWindow {
 			if (P.CUSTOM_BROWSER_COMMAND!=null) {
 				log.info("Starting browser: {} {}", P.CUSTOM_BROWSER_COMMAND, uri);
 				SynthPi.uiMessage("Starting browser "+P.CUSTOM_BROWSER_COMMAND+" "+uri);
-				Runtime.getRuntime().exec(P.CUSTOM_BROWSER_COMMAND.concat(" ").concat(uri).split(" "));
+				List<String> cmdParts = new ArrayList<String>();
+				Matcher m = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'").matcher(P.CUSTOM_BROWSER_COMMAND.concat(" ").concat(uri));
+				while (m.find()) {
+				    if (m.group(1) != null) {
+				        cmdParts.add(m.group(1)); // "
+				    } else if (m.group(2) != null) {
+				        cmdParts.add(m.group(2)); // '
+				    } else {
+				        cmdParts.add(m.group());
+				    }
+				} 
+				Runtime.getRuntime().exec(cmdParts.toArray(new String[cmdParts.size()]));
 			}
 			else {
 				log.info("Starting desktop browser...");
@@ -192,4 +238,6 @@ public class AppWindow {
 			// fail silently
 		}
 	}
+
+
 }

@@ -86,6 +86,7 @@ public class MidiHandler {
 				MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 				if (infos.length!=detectedDevices) {
 					log.info("MIDI device change. Scanning devices...");
+					StringBuilder opened = new StringBuilder();
 						for (int i=0; i<infos.length; i++) {
 							try {
 								MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
@@ -94,12 +95,18 @@ public class MidiHandler {
 									trans.setReceiver(s_receiver);
 									device.open();
 									openedDevices.add(device);
-									log.info("Opened MIDI device: {}", device.getDeviceInfo());
-									SynthPi.uiMessage("MIDI device opened: "+ device.getDeviceInfo());
+									if (opened.length()>0) {
+										opened.append(", ");
+									}
+									opened.append(device.getDeviceInfo());
 								}
 							} catch (MidiUnavailableException e) {
 								// ignore silently
 							} catch (Exception e) { log.info("Error opening MIDI device: {} {}", infos[i], e); }
+						}
+						if (opened.length()>0) {
+							log.info("Opened MIDI devices: {}", opened);
+							SynthPi.uiMessage("MIDI devices opened: "+ opened);							
 						}
 						// check removed devices
 						Vector<MidiDevice> removedDev = new Vector<MidiDevice>();
