@@ -1,5 +1,6 @@
 package de.privatepublic.pi.synth;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
@@ -37,24 +38,24 @@ public class FancyParam {
 		NAME[P.OSC_NOISE_LEVEL]  = "Noise Level";
 		NAME[P.OSC1_WAVE]        = "OSC1 Waveform";
 		NAME[P.OSC2_WAVE]        = "OSC2 Waveform";
-		NAME[P.OSC1_PULSE_WIDTH] = "OSC1 Pulse-w.";
-		NAME[P.OSC2_PULSE_WIDTH] = "OSC2 Pulse-w.";
+		NAME[P.OSC1_PULSE_WIDTH] = "OSC1 Pulse-width";
+		NAME[P.OSC2_PULSE_WIDTH] = "OSC2 Pulse-width";
 		NAME[P.OSC2_TUNING]      = "OSC2 Tune";
 		NAME[P.OSC2_TUNING_FINE] = "OSC2 Fine";
 		NAME[P.OSC2_SYNC]        = "OSC2 Sync";
 		NAME[P.OSC2_AM]          = "OSC2 Ringmod";
 		NAME[P.OSC_GLIDE_RATE]   = "Glide Rate";
-		NAME[P.OSC_MONO]         = "MONO";
+		NAME[P.OSC_MONO]         = "Monophonic";
 		NAME[P.OSC_SUB_SQUARE]   = "OSCSub Wave";
-		NAME[P.OSC_SUB_LOW]      = "OSCSub -2Oct";
+		NAME[P.OSC_SUB_LOW]      = "OSCSub 2 Oct";
         //                          -------------
 		// modulation
 		NAME[P.MOD_RATE]               = "LFO Rate";
 		NAME[P.MOD_AMOUNT_BASE]        = "LFO Amount";
 		NAME[P.MOD_LFO_TYPE]           = "LFO Type";
-		NAME[P.MOD_LFO_DELAY]          = "LFO Delayrate";
+		NAME[P.MOD_LFO_DELAY]          = "LFO Delay Rate";
 		NAME[P.MOD_LFO_RESET]          = "LFO Key-Reset";
-		NAME[P.MOD_FILTER1_AMOUNT]     = "LFO > Filter1";
+		NAME[P.MOD_FILTER1_AMOUNT]     = "LFO > Filter";
 		NAME[P.MOD_PITCH_AMOUNT]       = "LFO > Pitch";
 		NAME[P.MOD_PITCH2_AMOUNT]      = "LFO > Pitch2";
 		NAME[P.MOD_DELAY_TIME_AMOUNT]  = "LFO > Delay";
@@ -67,25 +68,25 @@ public class FancyParam {
 		NAME[P.MOD_ENV2_R]             = "ENV2 Release";
 		NAME[P.MOD_ENV2_LOOP]          = "ENV2 Loop";
 		NAME[P.MOD_ENV2_PITCH_AMOUNT]  = "ENV2 > Pitch";
-		NAME[P.MOD_ENV2_PITCH2_AMOUNT] = "ENV2 > Pitch2";
+		NAME[P.MOD_ENV2_PITCH2_AMOUNT] = "ENV2 > Pitch 2";
 		NAME[P.MOD_ENV2_PW1_AMOUNT]    = "ENV2 > PW1";
 		NAME[P.MOD_ENV2_PW2_AMOUNT]    = "ENV2 > PW2";
 		NAME[P.MOD_ENV2_NOISE_AMOUNT]  = "ENV2 > Noise";
 		NAME[P.MOD_ENV2_FILTER_AMOUNT] = "ENV2 > Filter";
-		NAME[P.MOD_ENV2_LFORATE_AMOUNT]= "ENV2 >LFORate";
+		NAME[P.MOD_ENV2_LFORATE_AMOUNT]= "ENV2 > LFO Rate";
 		NAME[P.MOD_VOL_AMOUNT]         = "LFO > Volume";
-        //                                -------------	
+        //                                ----------------	
 		NAME[P.MOD_PRESS_PITCH_AMOUNT] = "PRESS > Pitch";
-		NAME[P.MOD_PRESS_PITCH2_AMOUNT]= "PRESS > Pit.2";
-		NAME[P.MOD_PRESS_FILTER_AMOUNT]= "PRESS > Filtr";
+		NAME[P.MOD_PRESS_PITCH2_AMOUNT]= "PRESS > Pitch 2";
+		NAME[P.MOD_PRESS_FILTER_AMOUNT]= "PRESS > Filter";
 		NAME[P.MOD_VEL_VOL_AMOUNT]     = "VELO > Volume";
 		NAME[P.MOD_VEL_FILTER_AMOUNT]  = "VELO > Filter";
 		// filters
 		NAME[P.FILTER1_TYPE]           = "Filter Type"; 
-		NAME[P.FILTER1_FREQ]           = "Filter Cutoff";
-		NAME[P.FILTER1_RESONANCE]      = "Filter Reso";
+		NAME[P.FILTER1_FREQ]           = "Filter Cut-off";
+		NAME[P.FILTER1_RESONANCE]      = "Filter Resonance";
 		NAME[P.FILTER1_ON]             = "Filter Enable";
-		NAME[P.FILTER1_TRACK_KEYBOARD] = "Filter Keytrk";
+		NAME[P.FILTER1_TRACK_KEYBOARD] = "Filter Keytrack";
 		NAME[P.FILTER1_OVERLOAD]       = "Filter Drive";
 	}
 	
@@ -221,5 +222,26 @@ public class FancyParam {
 		return result;
 	}
 	
-	
+	public static Color colorOf(int paramindex) {
+		int order = P.PARAMETER_ORDER.length;
+		for (int n=0;n<P.PARAMETER_ORDER.length;n++) {
+			if (P.PARAMETER_ORDER[n]==paramindex) {
+				order = n;
+				break;
+			}
+		}
+		if (order<16) {
+			return Color.YELLOW;
+		}
+		if (order<22) {
+			return Color.ORANGE;
+		}
+		if (order<30) {
+			return Color.CYAN;
+		}
+		if (order<45) {
+			return Color.MAGENTA;
+		}
+		return Color.LIGHT_GRAY;
+	}
 }
