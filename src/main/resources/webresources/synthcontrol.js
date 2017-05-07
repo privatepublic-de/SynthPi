@@ -22,9 +22,12 @@ $(document).ready(function () {
 				this.mySocket.onopen = function(event) {
 					console.log("Socket opened "+event);
 					this.setStatus(true);
+					let self = this;
+					this.pingInterval = setInterval(function(){ self.sendValueDirectly('*','*')},15000);
 				}.bind(this);
 				this.mySocket.onclose = function(event) {
 					console.log("Socket closed ", event);
+					clearInterval(this.pingInterval);
 					this.setStatus(false);
 				}.bind(this);
 				this.mySocket.onerror = function(event) {
