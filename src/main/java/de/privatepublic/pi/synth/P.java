@@ -163,7 +163,7 @@ public class P {
 	public static final int MOD_ENV1_FILTER_AMOUNT = 10;
 	public static final int MOD_ENV2_LFORATE_AMOUNT = 11;
 	public static final int MOD_ENV1_PITCH2_AMOUNT = 12;
-//	public static final int MOD_ENV2_VOL_AMOUNT = 13;
+	public static final int MOD_ENV2_OSC2_VOL_AMOUNT = 13;
 	public static final int MOD_ENV1_A = 14;
 	public static final int MOD_ENV1_D = 15;
 	public static final int MOD_ENV1_S = 16;
@@ -338,6 +338,7 @@ public class P {
 		OSC_PATH[MOD_ENV2_PW1_AMOUNT] = "/mod/env/2/depth/pw/1";
 		OSC_PATH[MOD_ENV2_PW2_AMOUNT] = "/mod/env/2/depth/pw/2";
 		OSC_PATH[MOD_ENV2_NOISE_AMOUNT] = "/mod/env/2/depth/noise";
+		OSC_PATH[MOD_ENV2_OSC2_VOL_AMOUNT] = "/mod/env/2/depth/osc2vol";
 		OSC_PATH[MOD_ENV2_FILTER_AMOUNT] = "/mod/env/2/depth/filter";
 		OSC_PATH[MOD_ENV2_LFORATE_AMOUNT] = "/mod/env/2/depth/lforate";
 		
@@ -425,10 +426,15 @@ public class P {
 		setDirectly(MOD_ENV2_PW1_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_PW2_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_NOISE_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_OSC2_VOL_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_FILTER_AMOUNT, 0.5f);
 		setDirectly(MOD_ENV2_LFORATE_AMOUNT, 0.5f);
 		
 		setDirectly(MOD_VEL_FILTER_AMOUNT, 0.5f);
+		setDirectly(MOD_VEL_VOL_AMOUNT, 0.5f);
+		setDirectly(MOD_PRESS_FILTER_AMOUNT, 0.5f);
+		setDirectly(MOD_PRESS_PITCH_AMOUNT, 0.5f);
+		setDirectly(MOD_PRESS_PITCH2_AMOUNT, 0.5f);
 		
 		setDirectly(DELAY_RATE, .66f);
 		setDirectly(DELAY_RATE_RIGHT, .62f);

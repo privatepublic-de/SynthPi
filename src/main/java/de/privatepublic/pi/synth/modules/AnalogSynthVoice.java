@@ -109,7 +109,7 @@ public class AnalogSynthVoice {
 		lfo.controlTick();
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
-		final float osc2Vol = P.VALX[P.OSC2_VOLUME];
+		final float osc2Vol = P.VALX[P.OSC2_VOLUME]+env2.outValue*P.VALXC[P.MOD_ENV2_OSC2_VOL_AMOUNT];
 		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME];
 		final float noiseLevel = P.VALX[P.OSC_NOISE_LEVEL] + env2.outValue*P.VALXC[P.MOD_ENV2_NOISE_AMOUNT];
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];

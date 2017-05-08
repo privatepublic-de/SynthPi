@@ -50,6 +50,7 @@ public class FancyParam {
 		NAME[P.OSC_SUB_LOW]      = "OSCSub 2 Oct";
         //                          -------------
 		// modulation
+		NAME[P.MOD_WHEEL]              = "Mod Wheel";
 		NAME[P.MOD_RATE]               = "LFO Rate";
 		NAME[P.MOD_AMOUNT_BASE]        = "LFO Amount";
 		NAME[P.MOD_LFO_TYPE]           = "LFO Type";
@@ -71,6 +72,7 @@ public class FancyParam {
 		NAME[P.MOD_ENV2_PITCH2_AMOUNT] = "ENV2 > Pitch 2";
 		NAME[P.MOD_ENV2_PW1_AMOUNT]    = "ENV2 > PW1";
 		NAME[P.MOD_ENV2_PW2_AMOUNT]    = "ENV2 > PW2";
+		NAME[P.MOD_ENV2_OSC2_VOL_AMOUNT]="ENV2 > OSC2 Vol";
 		NAME[P.MOD_ENV2_NOISE_AMOUNT]  = "ENV2 > Noise";
 		NAME[P.MOD_ENV2_FILTER_AMOUNT] = "ENV2 > Filter";
 		NAME[P.MOD_ENV2_LFORATE_AMOUNT]= "ENV2 > LFO Rate";
@@ -195,6 +197,7 @@ public class FancyParam {
 		case P.MOD_PRESS_PITCH2_AMOUNT:
 		case P.MOD_PRESS_PITCH_AMOUNT:
 		case P.MOD_ENV2_LFORATE_AMOUNT:
+		case P.MOD_ENV2_OSC2_VOL_AMOUNT:
 			result = FORMAT_FLOAT.format(((value-.5)*2)*100);
 			break;
 //		case P.DELAY_RATE:
