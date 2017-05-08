@@ -124,22 +124,32 @@ public class SynthPi {
 		}
 	}
 	
-	public static void uiLCDMessage(final String line1, final String line2, final Color color) {
+	public static void uiLCDMessage(final String line1, final String line2) {
 		if (HEADLESS) {
 			return;
 		}
 		if (window!=null) {
 			EventQueue.invokeLater(new Runnable() {
 		        public void run() {
-		        	window.lcdMessage(line1, line2, color);
+		        	window.lcdMessage(line1, line2, Color.GREEN);
 		        }
 		    });
 		}
 	}
 	
-	public static void uiLCDMessage(String line1, String line2) {
-		uiLCDMessage(line1, line2, Color.GREEN);
+	public static void uiLCDMessage(final int paramindex) {
+		if (HEADLESS || paramindex==0) {
+			return;
+		}
+		if (window!=null) {
+			EventQueue.invokeLater(new Runnable() {
+		        public void run() {
+		        	window.lcdMessage(FancyParam.nameOf(paramindex), FancyParam.valueOf(paramindex), FancyParam.colorOf(paramindex));
+		        }
+		    });
+		}
 	}
+
 	
 	
 	final static String ARG_HELP = "help";
@@ -183,9 +193,9 @@ public class SynthPi {
 				P.AUDIO_SYSTEM_NAME = "JACK";
 			}
 			
-			if (commandline.hasOption(ARG_SETTINGS_DIR)) {
-				P.CUSTOM_SETTINGS_DIR = commandline.getOptionValue(ARG_SETTINGS_DIR);
-			}
+			
+			P.CUSTOM_SETTINGS_DIR = commandline.getOptionValue(ARG_SETTINGS_DIR);
+			P.CUSTOM_BROWSER_COMMAND = commandline.getOptionValue(ARG_OPEN_BROWSER_COMMAND);
 			
 			JettyWebServerInterface.DISABLE_CACHING = commandline.hasOption(ARG_DISABLE_WEB_CACHE);
 			JettyWebServerInterface.DISABLE_BROWSER_START = commandline.hasOption(ARG_DISABLE_BROWSER_START);
