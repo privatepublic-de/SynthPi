@@ -152,7 +152,6 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 	public void updateSelectedParam(int paramSelected) {
 		sendToAll("/paramselected="+P.OSC_PATH[paramSelected]);
 		SynthPi.uiLCDMessage(paramSelected);
-		log.info("Parameter: {} = {}", FancyParam.nameOf(paramSelected), FancyParam.valueOf(paramSelected));
 	}
 	
 	/**

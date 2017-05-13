@@ -17,9 +17,9 @@ public class FancyParam {
 		NAME[P.CHORUS_DEPTH]       = "Chorus";
 		NAME[P.DELAY_WET]          = "Delay Level";
 		NAME[P.DELAY_FEEDBACK]     = "Delay Feedbck";
-        //                            -------------
-		NAME[P.DELAY_RATE]       = "Delay Rate L";
-		NAME[P.DELAY_RATE_RIGHT] = "Delay Rate R";
+        //                          ----------------
+		NAME[P.DELAY_RATE]       = "Delay Rate Left";
+		NAME[P.DELAY_RATE_RIGHT] = "Delay Rate Right";
 		NAME[P.MOD_ENV1_A]       = "ENV1 Attack";
 		NAME[P.MOD_ENV1_D]       = "ENV1 Decay";
 		NAME[P.MOD_ENV1_S]       = "ENV1 Sustain";
@@ -148,10 +148,13 @@ public class FancyParam {
 		case P.MOD_ENV2_D:
 		case P.MOD_ENV2_R:
 		case P.MOD_LFO_DELAY:
-			long millis = Math.round(EnvADSR.MIN_TIME_MILLIS+(EnvADSR.MAX_TIME_MILLIS-EnvADSR.MIN_TIME_MILLIS)*(value*value*value*value));
+			float millis = EnvADSR.MIN_TIME_MILLIS+(EnvADSR.MAX_TIME_MILLIS-EnvADSR.MIN_TIME_MILLIS)*(value*value*value*value)/2;
 			float seconds;
-			if (millis<100) {
-				result = millis +"ms";
+			if (millis<10) {
+				result = Math.round(millis*100)/100f +"ms";
+			}
+			else if (millis<1000) {
+				result = Math.round(millis) +"ms";
 			}
 			else if (millis<10000) {
 				seconds = (float) Math.round(millis/1000d * 100) / 100;
@@ -168,9 +171,12 @@ public class FancyParam {
 		case P.MOD_ENV1_LOOP:
 		case P.OSC_MONO:
 		case P.MOD_LFO_RESET:
-		case P.OSC_SUB_SQUARE:
 		case P.OSC_SUB_LOW:
+		case P.OSC2_AM:
 			result = value>0?"ON":"OFF";
+			break;
+		case P.OSC_SUB_SQUARE:
+			result = value>0?"SQUARE":"TRIANGLE";
 			break;
 		case P.FILTER1_TYPE:
 			result = P.FilterType.selectedFilterType(value).name();
@@ -225,6 +231,8 @@ public class FancyParam {
 		return result;
 	}
 	
+	private static final Color COLOR_ORANGE =Color.decode("#ff5500"); 
+	
 	public static Color colorOf(int paramindex) {
 		int order = P.PARAMETER_ORDER.length;
 		for (int n=0;n<P.PARAMETER_ORDER.length;n++) {
@@ -237,7 +245,7 @@ public class FancyParam {
 			return Color.YELLOW;
 		}
 		if (order<22) {
-			return Color.ORANGE;
+			return COLOR_ORANGE;
 		}
 		if (order<30) {
 			return Color.CYAN;
@@ -245,6 +253,6 @@ public class FancyParam {
 		if (order<45) {
 			return Color.MAGENTA;
 		}
-		return Color.LIGHT_GRAY;
+		return Color.DARK_GRAY;
 	}
 }

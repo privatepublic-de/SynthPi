@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.privatepublic.pi.synth.comm.LCD;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.comm.web.JettyWebServerInterface;
 import de.privatepublic.pi.synth.util.IOUtils;
@@ -90,6 +91,7 @@ public class SynthPi {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
+		    	LCD.shutdown();
 		    	PresetHandler.saveCurrentPatch();
 		    	logger.info("Shutting down ...");
 		    	SynthPiAudioClient.shutdownAudio();
@@ -125,6 +127,7 @@ public class SynthPi {
 	}
 	
 	public static void uiLCDMessage(final String line1, final String line2) {
+		LCD.message(line1, line2, Color.GREEN);
 		if (HEADLESS) {
 			return;
 		}
@@ -138,7 +141,11 @@ public class SynthPi {
 	}
 	
 	public static void uiLCDMessage(final int paramindex) {
-		if (HEADLESS || paramindex==0) {
+		if (paramindex==0) {
+			return;
+		}
+		LCD.displayParameter(paramindex);
+		if (HEADLESS) {
 			return;
 		}
 		if (window!=null) {
@@ -163,6 +170,7 @@ public class SynthPi {
 	final static String ARG_USE_JACK_AUDIO_SERVER = "usejackaudioserver";
 	final static String ARG_AUDIO_BUFFER_SIZE = "audiobuffersize";
 	final static String ARG_OPEN_BROWSER_COMMAND = "openbrowsercmd";
+	final static String ARG_LCD_PORT = "lcdport";
 	
 	@SuppressWarnings("static-access") // prevent warnings because of implementation of commons-cli
 	private static CommandLine parseCommandLine(String[] args) {
@@ -179,6 +187,7 @@ public class SynthPi {
 		options.addOption(OptionBuilder.withArgName("size").hasArg().withDescription("Playback audio buffer size. Smaller values for less latency, higher values for less drop-outs and crackles (default 64)").create(ARG_AUDIO_BUFFER_SIZE));
 		options.addOption(OptionBuilder.withArgName("cmd").hasArg().withDescription("Command line to open web browser.").create(ARG_OPEN_BROWSER_COMMAND));
 		options.addOption(OptionBuilder.withArgName("directory").hasArg().withDescription("Directory to store settings and patches.").create(ARG_SETTINGS_DIR));
+		options.addOption(OptionBuilder.withArgName("name").hasArg().withDescription("Name of serial port with LCD display.").create(ARG_LCD_PORT));
 		try {
 			CommandLine commandline = parser.parse(options, args);
 			if (commandline.hasOption(ARG_HELP)) {
@@ -208,6 +217,9 @@ public class SynthPi {
 			if (JettyWebServerInterface.DISABLE_CACHING) {
 				logger.info("  Web caching disabled for development");
 			}
+			String lcdPort = commandline.getOptionValue(ARG_LCD_PORT);
+			LCD.init(lcdPort!=null?lcdPort:"/dev/cu.usbmodem14341");
+			
 			if (args.length>0) {
 				uiMessage("Started with command line parameters: "+StringUtils.join(args, ' '));
 			}

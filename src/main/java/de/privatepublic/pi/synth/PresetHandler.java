@@ -136,15 +136,11 @@ public class PresetHandler {
 									log.debug("Error reading param at pos "+ix, e);
 								}
 							}
-//							if (params.length()<P.DELAY_RATE+1) { // TODO fix old patch files!
-//								// saved before delay params were introduced
-//								P.setDirectly(P.DELAY_WET, 0); // turn off delay
-//							}
 							P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
 							P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);
-							SynthPi.uiLCDMessage("Loaded patch", P.LAST_LOADED_PATCH_NAME);
+							SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "PATCH LOADED");
 							return true;
 						}
 					}
@@ -460,7 +456,7 @@ public class PresetHandler {
 			P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 			log.debug("Loaded recent patch {}", P.LAST_LOADED_PATCH_NAME);
 			SynthPi.uiMessage("Loaded recent patch: "+P.LAST_LOADED_PATCH_NAME);
-			SynthPi.uiLCDMessage("Restored patch", P.LAST_LOADED_PATCH_NAME);
+			SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "RECENT PATCH");
 		} catch (JSONException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

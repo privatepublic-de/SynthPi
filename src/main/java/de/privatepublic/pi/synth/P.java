@@ -542,7 +542,7 @@ public class P {
 		P.PITCH_BEND_FACTOR = 1;
 		MidiHandler.sendPitchBendNotification();
 	}
-
+	
 	public static final int[] PARAMETER_ORDER = new int[] {
 		OSC1_WAVE,
 		OSC1_PULSE_WIDTH,
@@ -627,6 +627,5 @@ public class P {
 		MOD_PRESS_PITCH2_AMOUNT,
 		MOD_PRESS_FILTER_AMOUNT
 	};
-	
 	
 }

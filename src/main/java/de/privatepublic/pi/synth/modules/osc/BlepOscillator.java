@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IPitchBendReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
+import de.privatepublic.pi.synth.modules.AnalogSynth;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
@@ -51,6 +52,25 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 		this.env1 = env1;
 		this.env2 = env2;
 		this.lfo = lfo;
+	}
+	
+
+	public void trigger(final float frequency, final float velocity) {
+		this.frequency = frequency;
+		if (P.IS[P.OSC_GLIDE_RATE]) {
+			if (isSecond) {
+				effectiveFrequency = P.osc2DetuneFactor*AnalogSynth.lastTriggeredFrequency;				
+			}
+			else {
+				effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
+			}
+			glideStepSize = Math.abs((AnalogSynth.lastTriggeredFrequency-frequency)/(P.SAMPLE_RATE_HZ/P.CONTROL_BUFFER_SIZE*P.VALX[P.OSC_GLIDE_RATE]));
+		}
+		else {
+			glideStepSize = 0;
+		}
+		setTargetFrequency(frequency);
+//		phase = 0;
 	}
 	
 	@Override

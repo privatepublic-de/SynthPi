@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
+import de.privatepublic.pi.synth.comm.LCD;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
 import de.privatepublic.pi.synth.modules.fx.DistortionExp;
@@ -163,7 +164,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 				}
 			}
 		}
-		
+		LCD.displayInfo(Key.pressedKeyCount());
 	}
 	
 	@Override
