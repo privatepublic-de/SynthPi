@@ -1,6 +1,7 @@
 package de.privatepublic.pi.synth.comm;
 
 import java.awt.Color;
+import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
@@ -45,11 +46,12 @@ public class LCD {
 	}
 	
 	private static boolean isActive() {
-		return instance!=null && instance.outputThread!=null;
+		return instance!=null && instance.active;
 	}
 	
 	private OutputThread outputThread;	
-	private SerialPort serialPort;	
+	private SerialPort serialPort;
+	private boolean active;
 	
 	private LCD(String portName) {
 		serialPort = new SerialPort(portName);
@@ -57,10 +59,11 @@ public class LCD {
 			serialPort.openPort();
 			serialPort.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 			serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-			serialPort.writeIntArray(new int[] {0xFE, 0x58}); // clear screen
-			serialPort.writeIntArray(new int[] {0xFE, 0x52}); // autoscroll off
-			serialPort.writeIntArray(new int[] {0xFE, 0x50, 200}); // contrast
-			outputThread = new OutputThread(serialPort);
+			outputThread = new OutputThread();
+			active = true;
+			send(Cmd.CLR);
+			send(Cmd.SCROLL_OFF);
+			send(Cmd.CONTRAST, 200);
     		outputThread.start();
     		log.debug("Started LCD update thread");
     		outputThread.addMessage(new Message("SynthPi is","up and running!",Color.DARK_GRAY, Message.Type.LONG));
@@ -83,6 +86,8 @@ public class LCD {
 		private static boolean recentStatus = false;
 		private int upperChar = 0x20;
 		private int lowerChar = 0x20;
+		private boolean isNegative = false;
+		private static boolean recentPolarity = false;
 
 		public Message(String line1, String line2, Color color) {
 			this.line1 = line1;
@@ -108,13 +113,23 @@ public class LCD {
 			line1 = FancyParam.nameOf(paramindex);
 			line2 = FancyParam.valueOf(paramindex);
 			color = FancyParam.colorOf(paramindex);
+			isNegative = P.IS_BIPOLAR[paramindex] && P.VALC[paramindex]<0;
 			int v = (int)(P.VAL[paramindex]*16);
 			if (v>7) {
-				upperChar = v-8;
+				upperChar = v-8==0?32:v-9;
 				lowerChar = 7;
 			}
 			else {
-				lowerChar = v;
+				// _ 0 1 2 3 4 5 6 7
+				if (isNegative) {
+					lowerChar = v;
+				}
+				else {
+					lowerChar = v==0?32:v-1;
+				}
+			}
+			if (P.IS_BIPOLAR[paramindex] && v>7) {
+				lowerChar = 32;
 			}
 		}
 		
@@ -123,38 +138,45 @@ public class LCD {
 			case NORMAL:
 			case LONG:
 			case PARAM:
-				serialPort.writeIntArray(new int[] { 0xFE, 0x48 }); // home
-				Thread.sleep(40);
+				LCD.send(serialPort, Cmd.HOME);
+				Thread.sleep(10);
 				serialPort.writeString(getLine1());
-				Thread.sleep(20);
-				serialPort.writeIntArray(new int[] { 0xFE, 0x47, 1, 2 });
+				Thread.sleep(10);
+				LCD.send(serialPort, Cmd.MOVE_TO, 2, 2);
 				serialPort.writeString(getLine2());
-				Thread.sleep(20);
-				if (type==Type.PARAM) {
-					serialPort.writeIntArray(new int[] { 0xFE, 0x47, 16, 1 });
-					serialPort.writeInt(upperChar);
-					serialPort.writeIntArray(new int[] { 0xFE, 0x47, 16, 2 });
-					serialPort.writeInt(lowerChar);
-					Thread.sleep(20);
+				Thread.sleep(10);
+				LCD.send(serialPort, Cmd.MOVE_TO, 16, 1);
+				if (type==Type.PARAM && recentPolarity!=isNegative) {
+					if (isNegative) {
+						LCD.send(serialPort, Cmd.SELECT_BANK, 2);
+					}
+					else {
+						LCD.send(serialPort, Cmd.SELECT_BANK, 1);
+					}
+					recentPolarity = isNegative;
 				}
+				serialPort.writeInt(type==Type.PARAM?upperChar:32); // clear if no param message
+				LCD.send(serialPort, Cmd.MOVE_TO, 16, 2);
+				serialPort.writeInt(type==Type.PARAM?lowerChar:32); // clear if no param message
+				Thread.sleep(10);
 				Color col = getColor();
 				if (col!=null && !col.equals(recentCol)) {
-					serialPort.writeIntArray(new int[] { 0xFE, 0xD0, col.getRed(), col.getGreen(), col.getBlue() });
+					LCD.send(serialPort, Cmd.COLOR, col.getRed(), col.getGreen(), col.getBlue());
 					recentCol = col;
 				}
 				if (type==Message.Type.LONG) {
 					Thread.sleep(1500);
 				}
 				else {
-					Thread.sleep(40);
+					Thread.sleep(10);
 				}
 				break;
 			case STATUS:
 				if (recentStatus!=status) {
-					serialPort.writeIntArray(new int[] { 0xFE, 0x47, 15, 2 }); // set cursor
-					Thread.sleep(40);
-					serialPort.writeInt(status?'*':0x20);
-					Thread.sleep(40);
+					LCD.send(serialPort, Cmd.MOVE_TO, 1, 2);
+					Thread.sleep(10);
+					serialPort.writeInt(status?0xA5:0x20);
+					Thread.sleep(10);
 					recentStatus = status;
 				}
 				break;
@@ -162,11 +184,11 @@ public class LCD {
 		}
 
 		public String getLine1() {
-			return normalize(line1, type!=Type.STATUS?15:1);
+			return normalize(line1, type!=Type.STATUS?15:1, type==Type.PARAM?true:false);
 		}
 
 		public String getLine2() {
-			return normalize(line2, 14);
+			return normalize(line2, 14, type==Type.PARAM?true:false);
 		}
 
 		public Color getColor() {
@@ -177,32 +199,30 @@ public class LCD {
 			return type;
 		}
 
-		private String normalize(String s, int len) {
+		private String normalize(String s, int len, boolean leftPad) {
 			if (s==null) {
 				s="";
 			}
 			if (s.length()>len) {
 				return s.substring(0, len);
 			}
-			if (type!=Type.STATUS) {
-				return StringUtils.rightPad(s, len);
+			if (leftPad) {
+				return StringUtils.leftPad(s, len);
 			}
 			else {
-				return StringUtils.leftPad(s, len);
+				return StringUtils.rightPad(s, len);
 			}
 				
 		}
-
+		
 	}
 
-	private static class OutputThread extends Thread {
+	private class OutputThread extends Thread {
 		private final BlockingQueue<Message> queue = new LinkedBlockingQueue<Message>();
-		private SerialPort serialPort;
 		private boolean running = true;
 		private Timer timer;
 
-		public OutputThread(SerialPort serialPort) {
-			this.serialPort = serialPort;
+		public OutputThread() {
 			this.setPriority(Thread.NORM_PRIORITY);
 			setName("LCDOutputThread");
 		}
@@ -227,12 +247,12 @@ public class LCD {
 								@Override
 								public void run() {
 									try {
-										serialPort.writeIntArray(new int[] {0xFE, 0x99, 0x01});
+										send(Cmd.BRIGHTNESS, 0x02);
 									} catch (SerialPortException e) {
 									} // brightness
 								}
 							}, 60000);
-							serialPort.writeIntArray(new int[] {0xFE, 0x99, 0x80}); // brightness
+							send(Cmd.BRIGHTNESS, 0x80);
 							Thread.sleep(20);
 							msg.send(serialPort);
 						}
@@ -247,40 +267,82 @@ public class LCD {
 		}
 		
 		private void initCharset() throws SerialPortException, InterruptedException {
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 0,   0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf });
+			Thread.sleep(40);
+			// up/positive, bank 1
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 1,   0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf });
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 2,   0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf });
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 2, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 3,   0x0, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf });
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 3, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 4,   0x0, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf });
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 4, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 5,   0x0, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf });
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 5, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 6,   0x0, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf });
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 6, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 7,   0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf });
+			send(Cmd.CREATE_CHAR_IN_BANK, 1, 7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf);
 			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC0, 1});
+			// down/negative, bank 2
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 7, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0);
+			Thread.sleep(20);
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 6, 0xa, 0x5, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0);
+			Thread.sleep(20);
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 5, 0xa, 0x5, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0);
+			Thread.sleep(20);
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 4, 0xa, 0x5, 0xa, 0x5, 0x0, 0x0, 0x0, 0x0);
+			Thread.sleep(20);
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 3, 0xa, 0x5, 0xa, 0x5, 0xa, 0x0, 0x0, 0x0);
+			Thread.sleep(20);
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 2, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5, 0x0, 0x0);
+			Thread.sleep(20);
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 1, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5, 0xa, 0x0);
+			Thread.sleep(20);
+			send(Cmd.CREATE_CHAR_IN_BANK, 2, 0, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5);
+			Thread.sleep(20);
+			send(Cmd.SELECT_BANK, 1);
 			Thread.sleep(20);
 		}
 
 	}
 	
+	private synchronized void send(Cmd cmd) throws SerialPortException {
+		LCD.send(serialPort, cmd);
+	}
+	
+	private synchronized void send(Cmd cmd, int... params) throws SerialPortException {
+		LCD.send(serialPort, cmd, params);
+	}
+	
+	private static synchronized void send(SerialPort serialPort, Cmd cmd) throws SerialPortException {
+		if (isActive()) {
+			serialPort.writeInt(0xFE);
+			serialPort.writeInt(cmd.getByte());
+		}
+	}
+	
+	private static synchronized void send(SerialPort serialPort, Cmd cmd, int... params) throws SerialPortException {
+		if (isActive()) {
+			send(serialPort, cmd);
+			if (params!=null) {
+				serialPort.writeIntArray(params);
+			}
+		}
+		return;
+	}
 	
 	public static void shutdown() {
 		if (isActive() && instance.serialPort.isOpened()) {
 			instance.outputThread.running = false;
 			instance.outputThread.interrupt();
 			try {
-				instance.serialPort.writeIntArray(new int[] {0xFE, 0x99, 0x20});
-				instance.serialPort.writeIntArray(new int[] {0xFE, 0x58}); // clear screen
+				LCD.send(instance.serialPort, Cmd.BRIGHTNESS, 0x20);
+				LCD.send(instance.serialPort, Cmd.CLR);
 				Thread.sleep(80);
-				instance.serialPort.writeIntArray(new int[] { 0xFE, 0x48 }); // home
-				instance.serialPort.writeString("SynthPi finished  Bye-bye!");
-				instance.serialPort.writeIntArray(new int[] { 0xFE, 0xD0, 0xff, 0, 0 });
+				instance.serialPort.writeString(" Bye-bye!                 ");
+				LCD.send(instance.serialPort, Cmd.COLOR, 0xff, 0, 0);
 				instance.serialPort.closePort();
 			} catch (SerialPortException | InterruptedException e) {
 				log.debug("Strange", e);
@@ -288,7 +350,25 @@ public class LCD {
 		}
 	}
 	
-	
+	private static enum Cmd {
+		HOME(0x48), 
+		MOVE_TO(0x47), 
+		CLR(0x58), 
+		BRIGHTNESS(0x99), 
+		CONTRAST(0x50), 
+		COLOR(0xD0),
+		SCROLL_OFF(0x52), 
+		SELECT_BANK(0xC0), 
+		CREATE_CHAR_IN_BANK(0xC1);
+		
+		private int b;
+		Cmd(int b) {
+			this.b = b;
+		}
+		public int getByte() {
+			return b;
+		}
+	}
 	
 	
 	public static void main(String[] args) {
@@ -297,32 +377,16 @@ public class LCD {
 			serialPort.openPort();
 			serialPort.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 			serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | SerialPort.FLOWCONTROL_RTSCTS_OUT);
-			serialPort.writeIntArray(new int[] {0xFE, 0x58}); // clear screen
-			serialPort.writeIntArray(new int[] {0xFE, 0x52}); // autoscroll off
-			serialPort.writeIntArray(new int[] {0xFE, 0x50, 200}); // contrast
-			serialPort.writeIntArray(new int[] {0xFE, 0x99, 0x80}); // brightness
-			//
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 0,   0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf });
-			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 1,   0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0x0 });
-			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 2,   0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0x0, 0x0 });
-			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 3,   0x0, 0x0, 0x0, 0x0, 0xf, 0x0, 0x0, 0x0 });
-			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 4,   0x0, 0x0, 0x0, 0xf, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 5,   0x0, 0x0, 0xf, 0x0, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 6,   0x0, 0xf, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(20);
-			serialPort.writeIntArray(new int[] {0xFE, 0xC1, 1, 7,   0xf, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(20);
 			
-			serialPort.writeIntArray(new int[] {0xFE, 0xC0, 1});
+			// splash screen text
 			Thread.sleep(20);
-
-			serialPort.writeIntArray(new int[] { 0, 1, 2, 3, 4, 5, 6, 7 });
+			serialPort.writeIntArray(new int[] {0xFE, 0x40 });
+			Thread.sleep(20);
+			for (byte b :("----SynthPi-----"+"privatepublic.de").getBytes(StandardCharsets.US_ASCII)) {
+				serialPort.writeByte(b);
+				Thread.sleep(100);
+			}
+			//                      ----------------
 			
 			
 		} catch (SerialPortException | InterruptedException e) {

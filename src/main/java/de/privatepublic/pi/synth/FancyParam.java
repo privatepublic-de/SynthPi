@@ -132,15 +132,6 @@ public class FancyParam {
 		case P.MOD_LFO_TYPE:
 			result = LFO.WAVE_NAMES[(int)(P.VAL[P.MOD_LFO_TYPE]*LFO.WAVE_COUNT_CALC)];
 			break;
-//		case P.FILTER1_FREQ:
-//			calculatedVal = MultiModeFilter.MIN_STABLE_FREQUENCY+MultiModeFilter.MAX_STABLE_FREQUENCY*(value*value*value*value);
-//			if (calculatedVal>=100) {
-//				result = Math.round(calculatedVal)+" Hz";
-//			}
-//			else {
-//				result = FORMAT_FLOAT2.format(calculatedVal)+" Hz";
-//			}
-//			break;
 		case P.MOD_ENV1_A:
 		case P.MOD_ENV1_D:
 		case P.MOD_ENV1_R:
@@ -181,51 +172,13 @@ public class FancyParam {
 		case P.FILTER1_TYPE:
 			result = P.FilterType.selectedFilterType(value).name();
 			break;
-		case P.OSC2_TUNING_FINE:
-		case P.MOD_ENV1_FILTER_AMOUNT:
-		case P.MOD_ENV1_PITCH2_AMOUNT:
-		case P.MOD_ENV1_PW1_AMOUNT:
-		case P.MOD_ENV1_PW2_AMOUNT:
-		case P.MOD_ENV2_FILTER_AMOUNT:
-		case P.MOD_ENV2_NOISE_AMOUNT:
-		case P.MOD_ENV2_PITCH2_AMOUNT:
-		case P.MOD_ENV2_PITCH_AMOUNT:
-		case P.MOD_ENV2_PW1_AMOUNT:
-		case P.MOD_ENV2_PW2_AMOUNT:
-		case P.MOD_FILTER1_AMOUNT:
-		case P.MOD_PW1_AMOUNT:
-		case P.MOD_PW2_AMOUNT:
-		case P.MOD_PITCH_AMOUNT:
-		case P.MOD_PITCH2_AMOUNT:
-		case P.MOD_DELAY_TIME_AMOUNT:
-		case P.MOD_VEL_FILTER_AMOUNT:
-		case P.MOD_PRESS_FILTER_AMOUNT:
-		case P.MOD_PRESS_PITCH2_AMOUNT:
-		case P.MOD_PRESS_PITCH_AMOUNT:
-		case P.MOD_ENV2_LFORATE_AMOUNT:
-		case P.MOD_ENV2_OSC2_VOL_AMOUNT:
-			result = FORMAT_FLOAT.format(((value-.5)*2)*100);
-			break;
-//		case P.DELAY_RATE:
-//			float freq = 2000.0f*(.001f+.999f*P.VALX[P.DELAY_RATE]);
-//			millis = Math.round(freq);
-//			if (millis<10) {
-//				result = FORMAT_FLOAT2.format(freq) +"ms";
-//			}
-//			else if (millis<100) {
-//				result = millis +"ms";
-//			}
-//			else if (millis<10000) {
-//				seconds = (float) Math.round(millis/1000d * 100) / 100;
-//				result = seconds +"s";
-//			}
-//			else {
-//				seconds = (float) Math.round(millis/1000d * 10) / 10;
-//				result = seconds +"s";
-//			}
-//			break;
 		default:
-			result = FORMAT_FLOAT.format(value*100);
+			if (P.IS_BIPOLAR[paramindex]) {
+				result = FORMAT_FLOAT.format(((value-.5)*2)*100);	
+			}
+			else {
+				result = FORMAT_FLOAT.format(value*100);				
+			}
 			break;
 		}
 		return result;

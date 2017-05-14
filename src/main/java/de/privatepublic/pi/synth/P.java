@@ -123,6 +123,8 @@ public class P {
 	/** 7-Bit MIDI value of parameter (0 - 127) */
 	public static final int[] VAL_RAW_MIDI = new int[PARAM_STORE_SIZE];
 	
+	public static final boolean[] IS_BIPOLAR = new boolean[PARAM_STORE_SIZE];
+	
 	public static final float[] TARGET_VAL = new float[PARAM_STORE_SIZE];
 	private static final int[] TARGET_STEP_COUNT = new int[PARAM_STORE_SIZE];
 	private static final float TARGET_STEPS = 48f; // 1536 / BUFFERSIZE
@@ -271,6 +273,37 @@ public class P {
 			else {
 				MIDI_NOTE_NAME[i] = basenames[(i-21)%basenames.length]+((i-12)/basenames.length);
 			}
+		}
+		
+		// mark bipolar params
+		final int[] bipolarlist = new int[] {
+			P.OSC2_TUNING,
+			P.OSC2_TUNING_FINE,
+			P.MOD_ENV1_FILTER_AMOUNT,
+			P.MOD_ENV1_PITCH2_AMOUNT,
+			P.MOD_ENV1_PW1_AMOUNT,
+			P.MOD_ENV1_PW2_AMOUNT,
+			P.MOD_ENV2_FILTER_AMOUNT,
+			P.MOD_ENV2_NOISE_AMOUNT,
+			P.MOD_ENV2_PITCH2_AMOUNT,
+			P.MOD_ENV2_PITCH_AMOUNT,
+			P.MOD_ENV2_PW1_AMOUNT,
+			P.MOD_ENV2_PW2_AMOUNT,
+			P.MOD_FILTER1_AMOUNT,
+			P.MOD_PW1_AMOUNT,
+			P.MOD_PW2_AMOUNT,
+			P.MOD_PITCH_AMOUNT,
+			P.MOD_PITCH2_AMOUNT,
+			P.MOD_DELAY_TIME_AMOUNT,
+			P.MOD_VEL_FILTER_AMOUNT,
+			P.MOD_PRESS_FILTER_AMOUNT,
+			P.MOD_PRESS_PITCH2_AMOUNT,
+			P.MOD_PRESS_PITCH_AMOUNT,
+			P.MOD_ENV2_LFORATE_AMOUNT,
+			P.MOD_ENV2_OSC2_VOL_AMOUNT		
+		};
+		for (int i=0;i<bipolarlist.length;i++) {
+			IS_BIPOLAR[bipolarlist[i]] = true;
 		}
 		
 		// map osc paths to params
