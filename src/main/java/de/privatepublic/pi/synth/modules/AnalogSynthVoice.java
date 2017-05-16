@@ -9,7 +9,6 @@ import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR.State;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.modules.osc.BlepOscillator;
-import de.privatepublic.pi.synth.modules.osc.OscillatorBase;
 
 public class AnalogSynthVoice {
 
@@ -17,9 +16,9 @@ public class AnalogSynthVoice {
 	private final EnvADSR env2 = new EnvADSR(P.ENV_CONF_MOD_ENV);
 	private final LFO lfo = new LFO(env2);
 	
-	private final BlepOscillator osc1 = new BlepOscillator(OscillatorBase.Mode.PRIMARY, env1, env2, lfo);
-	private final BlepOscillator osc2 = new BlepOscillator(OscillatorBase.Mode.SECONDARY, env1, env2, lfo);
-	private final BlepOscillator oscSub = new BlepOscillator(OscillatorBase.Mode.SUB, env1, env2, lfo);
+	private final BlepOscillator osc1 = new BlepOscillator(BlepOscillator.Mode.PRIMARY, env1, env2, lfo);
+	private final BlepOscillator osc2 = new BlepOscillator(BlepOscillator.Mode.SECONDARY, env1, env2, lfo);
+	private final BlepOscillator oscSub = new BlepOscillator(BlepOscillator.Mode.SUB, env1, env2, lfo);
 	
 	private final MultiModeFilter filter;
 	

@@ -14,11 +14,23 @@ import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.util.FastCalc;
 
-public class BlepOscillator extends OscillatorBase implements IControlProcessor, IPitchBendReceiver{
+public class BlepOscillator implements IControlProcessor, IPitchBendReceiver{
 	
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(BlepOscillator.class);
 	
+	public static final float PI2 = (float) (2.0*Math.PI);
+	
+	protected float frequency = 440;
+	protected float effectiveFrequency = 440;
+	protected float targetFrequency = 440;
+	protected float glideStepSize = 0;
+	
+	protected final boolean isBase;
+	protected final boolean isSecond;
+	protected final boolean isSub;
+	
+	protected final BlepOscillator.Mode oscMode;
 	
 	private static enum Wave {
 	    SINE,
@@ -27,7 +39,9 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 	    TRIANGLE
 	};
 	
-	Wave wave = Wave.SAW;
+	public static enum Mode { PRIMARY, SECONDARY, SUB }
+
+	BlepOscillator.Wave wave = BlepOscillator.Wave.SAW;
     float phase = 0;
     float phaseIncrement;
     float phaseIncrementDiv;
@@ -43,11 +57,14 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
     private LFO lfo;
 	
 
-	public BlepOscillator(OscillatorBase.Mode mode, EnvADSR env1, EnvADSR env2, LFO lfo) {
-		super(mode);
+	public BlepOscillator(BlepOscillator.Mode mode, EnvADSR env1, EnvADSR env2, LFO lfo) {
+		this.isBase = mode==BlepOscillator.Mode.PRIMARY;
+		this.isSecond = mode==BlepOscillator.Mode.SECONDARY;
+		this.isSub = mode==BlepOscillator.Mode.SUB;
+		this.oscMode = mode;
 		MidiHandler.registerReceiver(this);
-		if (mode==OscillatorBase.Mode.SUB) {
-			wave = Wave.TRIANGLE;
+		if (mode==BlepOscillator.Mode.SUB) {
+			wave = BlepOscillator.Wave.TRIANGLE;
 		}
 		this.env1 = env1;
 		this.env2 = env2;
@@ -73,9 +90,17 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 //		phase = 0;
 	}
 	
-	@Override
 	protected void setTargetFrequency(float frequency) {
-		super.setTargetFrequency(frequency);
+		final float detunecents = P.osc2DetuneCents;
+		if (isSecond && detunecents!=0) {
+			targetFrequency =  P.osc2DetuneFactor*frequency;
+		}
+		else {
+			targetFrequency = frequency;
+		}
+		if (glideStepSize==0) {
+			effectiveFrequency = targetFrequency;
+		}
 		phaseIncrement = effectiveFrequency * PI2 / P.SAMPLE_RATE_HZ;
 		phaseIncrementDiv = phaseIncrement/PI2;
 	}
@@ -169,23 +194,23 @@ public class BlepOscillator extends OscillatorBase implements IControlProcessor,
 
 	@Override
 	public void controlTick() {
-		if (oscMode!=Mode.SUB) { // sub is only square/triangle
+		if (oscMode!=BlepOscillator.Mode.SUB) { // sub is only square/triangle
 			float modev = P.VAL[isSecond?P.OSC2_WAVE:P.OSC1_WAVE];
 			if (modev<.25) {
-				wave = Wave.SINE;
+				wave = BlepOscillator.Wave.SINE;
 			}
 			else if (modev<.5) {
-				wave = Wave.TRIANGLE;
+				wave = BlepOscillator.Wave.TRIANGLE;
 			}
 			else if (modev<.75) {
-				wave = Wave.SAW;
+				wave = BlepOscillator.Wave.SAW;
 			}
 			else {
-				wave = Wave.SQUARE;
+				wave = BlepOscillator.Wave.SQUARE;
 			}
 		}
 		else {
-			wave = P.IS[P.OSC_SUB_SQUARE]?Wave.SQUARE:Wave.TRIANGLE;
+			wave = P.IS[P.OSC_SUB_SQUARE]?BlepOscillator.Wave.SQUARE:BlepOscillator.Wave.TRIANGLE;
 		}
 		ampmod = isSecond && P.IS[P.OSC2_AM];
 		if (effectiveFrequency!=targetFrequency) {
