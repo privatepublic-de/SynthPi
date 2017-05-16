@@ -11,85 +11,85 @@ public class FancyParam {
 	private static final String[] NAME = new String[P.PARAM_STORE_SIZE];
 	static {
 		// amplifier
-		NAME[P.VOLUME]             = "Volume";
-		NAME[P.OVERDRIVE]          = "Overdrive";
-		NAME[P.BASS_BOOSTER_LEVEL] = "Bass-Boost";
-		NAME[P.CHORUS_DEPTH]       = "Chorus";
-		NAME[P.DELAY_WET]          = "Delay Level";
-		NAME[P.DELAY_FEEDBACK]     = "Delay Feedbck";
-        //                          ----------------
-		NAME[P.DELAY_RATE]       = "Delay Rate Left";
-		NAME[P.DELAY_RATE_RIGHT] = "Delay Rate Right";
-		NAME[P.MOD_ENV1_A]       = "ENV1 Attack";
-		NAME[P.MOD_ENV1_D]       = "ENV1 Decay";
-		NAME[P.MOD_ENV1_S]       = "ENV1 Sustain";
-		NAME[P.MOD_ENV1_R]       = "ENV1 Release";
-		NAME[P.MOD_ENV1_LOOP]    = "ENV1 Loop";
-		NAME[P.MOD_ENV1_PITCH2_AMOUNT] = "ENV1 > Pitch2";
-		NAME[P.MOD_ENV1_PW1_AMOUNT]    = "ENV1 > PW1";
-		NAME[P.MOD_ENV1_PW2_AMOUNT]    = "ENV1 > PW2";
-		NAME[P.MOD_ENV1_FILTER_AMOUNT] = "ENV1 > Filter";
+		NAME[P.VOLUME]                   = "Volume";
+		NAME[P.OVERDRIVE]                = "Overdrive";
+		NAME[P.BASS_BOOSTER_LEVEL]       = "Bass-Boost";
+		NAME[P.CHORUS_DEPTH]             = "Chorus";
+		NAME[P.DELAY_WET]                = "Delay Level";
+		NAME[P.DELAY_FEEDBACK]           = "Delay Feedback";
+        //                                  ---------------
+		NAME[P.DELAY_RATE]               = "Delay Rate Left";
+		NAME[P.DELAY_RATE_RIGHT]         = "Delay Rate Rght";
+		NAME[P.MOD_ENV1_A]               = "ENV1 Attack";
+		NAME[P.MOD_ENV1_D]               = "ENV1 Decay";
+		NAME[P.MOD_ENV1_S]               = "ENV1 Sustain";
+		NAME[P.MOD_ENV1_R]               = "ENV1 Release";
+		NAME[P.MOD_ENV1_LOOP]            = "ENV1 Loop";
+		NAME[P.MOD_ENV1_PITCH2_AMOUNT]   = "ENV1 > Pitch2";
+		NAME[P.MOD_ENV1_PW1_AMOUNT]      = "ENV1 > PW1";
+		NAME[P.MOD_ENV1_PW2_AMOUNT]      = "ENV1 > PW2";
+		NAME[P.MOD_ENV1_FILTER_AMOUNT]   = "ENV1 > Filter";
 		
 		// oscillators
-		NAME[P.OSC1_VOLUME]      = "OSC1 Level";
-		NAME[P.OSC2_VOLUME]      = "OSC2 Level";
-		NAME[P.OSC_SUB_VOLUME]   = "OSCSub Level";
-        //                          -------------
-		NAME[P.OSC_NOISE_LEVEL]  = "Noise Level";
-		NAME[P.OSC1_WAVE]        = "OSC1 Waveform";
-		NAME[P.OSC2_WAVE]        = "OSC2 Waveform";
-		NAME[P.OSC1_PULSE_WIDTH] = "OSC1 Pulse-width";
-		NAME[P.OSC2_PULSE_WIDTH] = "OSC2 Pulse-width";
-		NAME[P.OSC2_TUNING]      = "OSC2 Tune";
-		NAME[P.OSC2_TUNING_FINE] = "OSC2 Fine";
-		NAME[P.OSC2_SYNC]        = "OSC2 Sync";
-		NAME[P.OSC2_AM]          = "OSC2 Ringmod";
-		NAME[P.OSC_GLIDE_RATE]   = "Glide Rate";
-		NAME[P.OSC_MONO]         = "Monophonic";
-		NAME[P.OSC_SUB_SQUARE]   = "OSCSub Wave";
-		NAME[P.OSC_SUB_LOW]      = "OSCSub 2 Oct";
-        //                          -------------
+		NAME[P.OSC1_VOLUME]              = "OSC1 Level";
+		NAME[P.OSC2_VOLUME]              = "OSC2 Level";
+		NAME[P.OSC_SUB_VOLUME]           = "OSCSub Level";
+        //                                  ---------------
+		NAME[P.OSC_NOISE_LEVEL]          = "Noise Level";
+		NAME[P.OSC1_WAVE]                = "OSC1 Waveform";
+		NAME[P.OSC2_WAVE]                = "OSC2 Waveform";
+		NAME[P.OSC1_PULSE_WIDTH]         = "OSC1 Pulse-wdth";
+		NAME[P.OSC2_PULSE_WIDTH]         = "OSC2 Pulse-wdth";
+		NAME[P.OSC2_TUNING]              = "OSC2 Tune";
+		NAME[P.OSC2_TUNING_FINE]         = "OSC2 Fine";
+		NAME[P.OSC2_SYNC]                = "OSC2 Sync";
+		NAME[P.OSC2_AM]                  = "OSC2 Ringmod";
+		NAME[P.OSC_GLIDE_RATE]           = "Glide Rate";
+		NAME[P.OSC_MONO]                 = "Monophonic";
+		NAME[P.OSC_SUB_SQUARE]           = "OSCSub Wave";
+		NAME[P.OSC_SUB_LOW]              = "OSCSub 2 Oct";
+        //                                  ---------------
 		// modulation
-		NAME[P.MOD_WHEEL]              = "Mod Wheel";
-		NAME[P.MOD_RATE]               = "LFO Rate";
-		NAME[P.MOD_AMOUNT_BASE]        = "LFO Amount";
-		NAME[P.MOD_LFO_TYPE]           = "LFO Type";
-		NAME[P.MOD_LFO_DELAY]          = "LFO Delay Rate";
-		NAME[P.MOD_LFO_RESET]          = "LFO Key-Reset";
-		NAME[P.MOD_FILTER1_AMOUNT]     = "LFO > Filter";
-		NAME[P.MOD_PITCH_AMOUNT]       = "LFO > Pitch";
-		NAME[P.MOD_PITCH2_AMOUNT]      = "LFO > Pitch2";
-		NAME[P.MOD_DELAY_TIME_AMOUNT]  = "LFO > Delay";
-		NAME[P.MOD_PW1_AMOUNT]         = "LFO > PW1";
-		NAME[P.MOD_PW2_AMOUNT]         = "LFO > PW2";
-        //                                -------------		
-		NAME[P.MOD_ENV2_A]             = "ENV2 Attack";
-		NAME[P.MOD_ENV2_D]             = "ENV2 Decay";
-		NAME[P.MOD_ENV2_S]             = "ENV2 Sustain";
-		NAME[P.MOD_ENV2_R]             = "ENV2 Release";
-		NAME[P.MOD_ENV2_LOOP]          = "ENV2 Loop";
-		NAME[P.MOD_ENV2_PITCH_AMOUNT]  = "ENV2 > Pitch";
-		NAME[P.MOD_ENV2_PITCH2_AMOUNT] = "ENV2 > Pitch 2";
-		NAME[P.MOD_ENV2_PW1_AMOUNT]    = "ENV2 > PW1";
-		NAME[P.MOD_ENV2_PW2_AMOUNT]    = "ENV2 > PW2";
-		NAME[P.MOD_ENV2_OSC2_VOL_AMOUNT]="ENV2 > OSC2 Vol";
-		NAME[P.MOD_ENV2_NOISE_AMOUNT]  = "ENV2 > Noise";
-		NAME[P.MOD_ENV2_FILTER_AMOUNT] = "ENV2 > Filter";
-		NAME[P.MOD_ENV2_LFORATE_AMOUNT]= "ENV2 > LFO Rate";
-		NAME[P.MOD_VOL_AMOUNT]         = "LFO > Volume";
-        //                                ----------------	
-		NAME[P.MOD_PRESS_PITCH_AMOUNT] = "PRESS > Pitch";
-		NAME[P.MOD_PRESS_PITCH2_AMOUNT]= "PRESS > Pitch 2";
-		NAME[P.MOD_PRESS_FILTER_AMOUNT]= "PRESS > Filter";
-		NAME[P.MOD_VEL_VOL_AMOUNT]     = "VELO > Volume";
-		NAME[P.MOD_VEL_FILTER_AMOUNT]  = "VELO > Filter";
+		NAME[P.MOD_WHEEL]                = "Mod Wheel";
+		NAME[P.MOD_RATE]                 = "LFO Rate";
+		NAME[P.MOD_AMOUNT_BASE]          = "LFO Amount";
+		NAME[P.MOD_LFO_TYPE]             = "LFO Type";
+		NAME[P.MOD_LFO_DELAY]            = "LFO Delay Rate";
+		NAME[P.MOD_LFO_RESET]            = "LFO Key-Reset";
+		NAME[P.MOD_FILTER1_AMOUNT]       = "LFO > Filter";
+		NAME[P.MOD_PITCH_AMOUNT]         = "LFO > Pitch";
+		NAME[P.MOD_PITCH2_AMOUNT]        = "LFO > Pitch2";
+		NAME[P.MOD_DELAY_TIME_AMOUNT]    = "LFO > Delay";
+		NAME[P.MOD_PW1_AMOUNT]           = "LFO > PW1";
+		NAME[P.MOD_PW2_AMOUNT]           = "LFO > PW2";
+        //                                  ---------------
+		NAME[P.MOD_ENV2_A]               = "ENV2 Attack";
+		NAME[P.MOD_ENV2_D]               = "ENV2 Decay";
+		NAME[P.MOD_ENV2_S]               = "ENV2 Sustain";
+		NAME[P.MOD_ENV2_R]               = "ENV2 Release";
+		NAME[P.MOD_ENV2_LOOP]            = "ENV2 Loop";
+		NAME[P.MOD_ENV2_PITCH_AMOUNT]    = "ENV2 > Pitch";
+		NAME[P.MOD_ENV2_PITCH2_AMOUNT]   = "ENV2 > Pitch2";
+		NAME[P.MOD_ENV2_PW1_AMOUNT]      = "ENV2 > PW1";
+		NAME[P.MOD_ENV2_PW2_AMOUNT]      = "ENV2 > PW2";
+		NAME[P.MOD_ENV2_OSC2_VOL_AMOUNT] = "ENV2 > OSC2 Vol";
+		NAME[P.MOD_ENV2_NOISE_AMOUNT]    = "ENV2 > Noise";
+		NAME[P.MOD_ENV2_FILTER_AMOUNT]   = "ENV2 > Filter";
+		NAME[P.MOD_ENV2_LFORATE_AMOUNT]  = "ENV2 > LFO Rate";
+		NAME[P.MOD_VOL_AMOUNT]           = "LFO > Volume";
+        //                                  ---------------
+		NAME[P.MOD_PRESS_PITCH_AMOUNT]   = "PRESS > Pitch";
+		NAME[P.MOD_PRESS_PITCH2_AMOUNT]  = "PRESS > Pitch2";
+		NAME[P.MOD_PRESS_FILTER_AMOUNT]  = "PRESS > Filter";
+		NAME[P.MOD_VEL_VOL_AMOUNT]       = "VELO > Volume";
+		NAME[P.MOD_VEL_FILTER_AMOUNT]    = "VELO > Filter";
 		// filters
-		NAME[P.FILTER1_TYPE]           = "Filter Type"; 
-		NAME[P.FILTER1_FREQ]           = "Filter Cut-off";
-		NAME[P.FILTER1_RESONANCE]      = "Filter Resonance";
-		NAME[P.FILTER1_ON]             = "Filter Enable";
-		NAME[P.FILTER1_TRACK_KEYBOARD] = "Filter Keytrack";
-		NAME[P.FILTER1_OVERLOAD]       = "Filter Drive";
+		NAME[P.FILTER1_TYPE]             = "Filter Type"; 
+		NAME[P.FILTER1_FREQ]             = "Filter Cut-off";
+		NAME[P.FILTER1_RESONANCE]        = "Filter Reso";
+		NAME[P.FILTER1_ON]               = "Filter Enable";
+		NAME[P.FILTER1_TRACK_KEYBOARD]   = "Filter Keytrack";
+		NAME[P.FILTER1_OVERLOAD]         = "Filter Drive";
 	}
 	
 	public static String nameOf(int paramindex) {
