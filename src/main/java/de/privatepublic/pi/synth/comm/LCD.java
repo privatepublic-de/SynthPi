@@ -111,7 +111,7 @@ public class LCD {
 		public Message(int paramindex) {
 			type = Type.PARAM;
 			line1 = FancyParam.nameOf(paramindex);
-			line2 = FancyParam.valueOf(paramindex);
+			line2 = FancyParam.valueOf(paramindex)+" "+StringUtils.leftPad(String.valueOf(P.VAL_RAW_MIDI[paramindex]), 3, '0');
 			color = FancyParam.colorOf(paramindex);
 			isNegative = P.IS_BIPOLAR[paramindex] && P.VALC[paramindex]<0;
 			int v = (int)(P.VAL[paramindex]*16);
@@ -175,7 +175,7 @@ public class LCD {
 				if (recentStatus!=status) {
 					LCD.send(serialPort, Cmd.MOVE_TO, 1, 2);
 					Thread.sleep(10);
-					serialPort.writeInt(status?0xA5:0x20);
+					serialPort.writeInt(status?'*':0x20); // 0xA5 = middle dot
 					Thread.sleep(10);
 					recentStatus = status;
 				}
