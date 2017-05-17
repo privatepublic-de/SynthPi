@@ -1,6 +1,7 @@
 package de.privatepublic.pi.synth.comm;
 
 import java.awt.Color;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -331,6 +332,18 @@ public class LCD {
 			}
 		}
 		return;
+	}
+	
+	private static void sendString(SerialPort serialPort, String s) throws SerialPortException {
+		try {
+			byte[] values = s.getBytes("iso-8859-1");
+			// remove 0xfe command
+			for (int i=0;i<values.length;i++) {
+				if (values[i]==-2 /*signed 0xFE*/) { values[i]='_'; }
+			}
+			serialPort.writeBytes(values);
+		} catch (UnsupportedEncodingException e) {
+		}
 	}
 	
 	public static void shutdown() {
