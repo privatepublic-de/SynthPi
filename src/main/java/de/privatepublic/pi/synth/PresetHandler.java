@@ -87,29 +87,49 @@ public class PresetHandler {
 	}
 	
 	
-	public static void loadPatchFromProgramNumber(int programNo) {
+	public static int loadPatchFromProgramNumber(int programNo) {
 		JSONObject allPatches = listPatchFiles(true);
-		JSONArray list = null;
+//		JSONArray list = null;
 		String pid = null;
-		if (programNo<64) {
-			// 0-63 factory presets
-			list = allPatches.optJSONArray(K.UI_FACTORY_PATCH_LIST.key());
-			if (list.length()>0) {
-				programNo = programNo%list.length();
-				pid = "f"+programNo;
+		JSONArray fList = allPatches.optJSONArray(K.UI_FACTORY_PATCH_LIST.key());
+		JSONArray uList = allPatches.optJSONArray(K.UI_USER_PATCH_LIST.key());
+		int maxCount = fList.length() + uList.length();
+		int appliedNo = programNo;
+		if (maxCount>0) {
+			if (programNo<uList.length()) {
+				pid = "u"+(programNo%uList.length());
 			}
-		}
-		else {
-			// 64-127 user presets
-			list = allPatches.optJSONArray(K.UI_USER_PATCH_LIST.key());
-			if (list.length()>0) {
-				programNo = (programNo-64)%list.length();
-				pid = "u"+programNo;
+			else {
+				int fNo = (programNo-uList.length());
+				if (fNo>=fList.length()) {
+					appliedNo = programNo-(fNo-fList.length()+1);
+					fNo = fList.length()-1;
+				}
+				pid = "f"+fNo;
 			}
-		}
-		if (list!=null && pid!=null) {
 			loadPatchWithId(pid);
 		}
+		return appliedNo;
+//		
+//		if (programNo<64) {
+//			// 0-63 factory presets
+//			list = allPatches.optJSONArray(K.UI_FACTORY_PATCH_LIST.key());
+//			if (list.length()>0) {
+//				programNo = programNo%list.length();
+//				pid = "f"+programNo;
+//			}
+//		}
+//		else {
+//			// 64-127 user presets
+//			list = allPatches.optJSONArray(K.UI_USER_PATCH_LIST.key());
+//			if (list.length()>0) {
+//				programNo = (programNo-64)%list.length();
+//				pid = "u"+programNo;
+//			}
+//		}
+//		if (list!=null && pid!=null) {
+//			loadPatchWithId(pid);
+//		}
 	}
 	
 
@@ -410,16 +430,16 @@ public class PresetHandler {
 //		if (settings.has(K.PREF_MIDI_CC_VALUE.key())) {
 //			MidiHandler.CC_PARAM_VALUE = settings.getInt(K.PREF_MIDI_CC_VALUE.key());
 //		}
-		if (settings.has(K.PREF_MIDI_CC_MAPPING_LIST.key())) {
-			try {
-				JSONArray ja = settings.getJSONArray(K.PREF_MIDI_CC_MAPPING_LIST.key());
-				for (int i=0;i<ja.length();i++) {
-					MidiHandler.getMidiMappings()[i] = ja.getInt(i);
-				}
-			} catch (JSONException | ArrayIndexOutOfBoundsException e) {
-				log.warn("Error reading midi mappings", e);
-			}
-		}
+//		if (settings.has(K.PREF_MIDI_CC_MAPPING_LIST.key())) {
+//			try {
+//				JSONArray ja = settings.getJSONArray(K.PREF_MIDI_CC_MAPPING_LIST.key());
+//				for (int i=0;i<ja.length();i++) {
+//					MidiHandler.getMidiMappings()[i] = ja.getInt(i);
+//				}
+//			} catch (JSONException | ArrayIndexOutOfBoundsException e) {
+//				log.warn("Error reading midi mappings", e);
+//			}
+//		}
 	}
 	
 	public static void updateAndSaveSettings(String jsonString) {

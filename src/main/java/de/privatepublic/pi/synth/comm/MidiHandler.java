@@ -69,10 +69,10 @@ public class MidiHandler {
 	private static List<IMidiNoteReceiver>noteReceivers = new ArrayList<IMidiNoteReceiver>();
 	private static List<IPitchBendReceiver>pitchbendReceivers = new ArrayList<IPitchBendReceiver>();
 	public static Receiver s_receiver;
-	private boolean receiveAllChannels = false;
 	private boolean isLearnMode = false;
 	private int learnParameterIndex = 0;
 	private int param_selected = -1;
+	private int programNumber = -1; // first change should hit 0
 	
 	private MidiHandler() {
 		log.info("Initializing MIDI handler");
@@ -157,19 +157,12 @@ public class MidiHandler {
 		}
 	}
 	
-	public void seqLoopStart() {
-		receiveAllChannels = true;
-	}
-	
-	public void seqLoopEnd() {
-		receiveAllChannels = false;
-	}
 	
 	private class MidiInputFilter implements Receiver {
 		public void send(final MidiMessage msg, final long timeStamp) {
 			if (msg instanceof ShortMessage) {
 				final ShortMessage smsg = (ShortMessage)msg;
-				if (smsg.getChannel()!=P.MIDI_CHANNEL && !receiveAllChannels) {
+				if (smsg.getChannel()!=P.MIDI_CHANNEL) {
 					return;
 				}
 				int command = smsg.getCommand();
@@ -189,13 +182,28 @@ public class MidiHandler {
 						storeLearnedCCNumber(data1);
 					}
 					if (data1==CC_PARAM_SELECT) {
-						param_selected = P.PARAMETER_ORDER[Math.min((int)(data2/127.0*P.PARAMETER_ORDER.length-1)+1, P.PARAMETER_ORDER.length-1)];
+//						param_selected = P.PARAMETER_ORDER[Math.min((int)(data2/127.0*P.PARAMETER_ORDER.length-1)+1, P.PARAMETER_ORDER.length-1)];
+						param_selected = P.PARAMETER_ORDER[Math.min(data2,P.PARAMETER_ORDER.length-1)];
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
 					}
 					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
 						P.setFromMIDI(param_selected, data2);
 						ControlMessageDispatcher.INSTANCE.update(param_selected);
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
+					}
+					else if (data1==CC_PROGRAM_CHANGE) {
+						if (data2==0) {
+							programNumber = programNumber>0?programNumber-1:0;
+						}
+						else if (data2==127) {
+							programNumber = programNumber<127?(programNumber+1):127;
+						}
+						else {
+							// ignore
+							return;
+						}
+						programNumber = PresetHandler.loadPatchFromProgramNumber(programNumber);
+						ControlMessageDispatcher.INSTANCE.updateAllParams();
 					}
 					else {
 						int pIndex = INDEX_OF_MIDI_CC[data1];
@@ -266,6 +274,7 @@ public class MidiHandler {
 	
 	public static int CC_PARAM_SELECT = 102;
 	public static int CC_PARAM_VALUE = 103;
+	public static int CC_PROGRAM_CHANGE = 104;
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
 	static {
 		INDEX_OF_MIDI_CC[CC_MOD_WHEEL] = P.MOD_WHEEL;
