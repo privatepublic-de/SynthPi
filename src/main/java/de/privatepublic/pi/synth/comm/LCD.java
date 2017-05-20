@@ -112,7 +112,7 @@ public class LCD {
 		public Message(int paramindex) {
 			type = Type.PARAM;
 			line1 = FancyParam.nameOf(paramindex);
-			line2 = FancyParam.valueOf(paramindex)+" "+StringUtils.leftPad(String.valueOf(P.VAL_RAW_MIDI[paramindex]), 3, '0');
+			line2 = FancyParam.valueOf(paramindex)+"  "+StringUtils.leftPad(String.valueOf(P.VAL_RAW_MIDI[paramindex]), 3, '0');
 			color = FancyParam.colorOf(paramindex);
 			isNegative = P.IS_BIPOLAR[paramindex] && P.VALC[paramindex]<0;
 			int v = (int)(P.VAL[paramindex]*16);
