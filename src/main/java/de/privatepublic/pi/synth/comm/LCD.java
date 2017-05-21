@@ -68,6 +68,7 @@ public class LCD {
     		outputThread.start();
     		log.debug("Started LCD update thread");
     		outputThread.addMessage(new Message("SynthPi is","up and running!",Color.DARK_GRAY, Message.Type.LONG));
+    		outputThread.addMessage(new Message(Message.Type.SET_SPLASHSCREEN));
 		} catch (SerialPortException e) {
 			log.debug("Could not open serial port to LCD display: {}", e.getMessage());
 		}
@@ -78,7 +79,7 @@ public class LCD {
 		
 		private static Color recentCol = null;
 		
-		enum Type { NORMAL, LONG, STATUS, PARAM };
+		enum Type { NORMAL, LONG, STATUS, PARAM, SET_SPLASHSCREEN };
 		private String line1;
 		private String line2;
 		private Color color;
@@ -101,6 +102,10 @@ public class LCD {
 			this.line1 = line1;
 			this.line2 = line2;
 			this.color = color;
+			this.type = type;
+		}
+		
+		public Message(Type type) {
 			this.type = type;
 		}
 		
@@ -136,15 +141,23 @@ public class LCD {
 		
 		public void send(SerialPort serialPort) throws SerialPortException, InterruptedException {
 			switch(type) {
+			case SET_SPLASHSCREEN:
+				serialPort.writeIntArray(new int[] {0xFE, 0x40 });
+				Thread.sleep(20);
+				for (byte b :("----SynthPi-----"+"privatepublic.de").getBytes(StandardCharsets.US_ASCII)) {
+					serialPort.writeByte(b);
+					Thread.sleep(100);
+				}
+				break;
 			case NORMAL:
 			case LONG:
 			case PARAM:
 				LCD.send(serialPort, Cmd.HOME);
 				Thread.sleep(10);
-				serialPort.writeString(getLine1());
+				LCD.sendString(serialPort, getLine1());
 				Thread.sleep(10);
 				LCD.send(serialPort, Cmd.MOVE_TO, 2, 2);
-				serialPort.writeString(getLine2());
+				LCD.sendString(serialPort, getLine2());
 				Thread.sleep(10);
 				LCD.send(serialPort, Cmd.MOVE_TO, 16, 1);
 				if (type==Type.PARAM && recentPolarity!=isNegative) {
@@ -339,7 +352,7 @@ public class LCD {
 			byte[] values = s.getBytes("iso-8859-1");
 			// remove 0xfe command
 			for (int i=0;i<values.length;i++) {
-				if (values[i]==-2 /*signed 0xFE*/) { values[i]='_'; }
+				if (values[i]==-2 /*signed 0xFE*/ || values[i]==0xfe) { values[i]='_'; }
 			}
 			serialPort.writeBytes(values);
 		} catch (UnsupportedEncodingException e) {
