@@ -171,6 +171,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		StringBuilder completeMsg = new StringBuilder();
 		for (int i=0;i<P.PARAM_STORE_SIZE;++i) {
 			completeMsg.append(createValueAndLabelMessage(i));
+			MidiHandler.INSTANCE.updateMIDIDevices(i);
 		}
 		// meta data
 		completeMsg.append("/config/performancedata="+P.HTTP_SEND_PERFORMACE_DATA+"\n");
@@ -209,6 +210,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		String labelMsg = createLabelMessage(paramIndex);
 		String labelAndValueMsg = createValueAndLabelMessage(paramIndex);
 		SynthPi.uiLCDMessage(paramIndex);
+		MidiHandler.INSTANCE.updateMIDIDevices(paramIndex);
 		synchronized (SynthSocket.ACTIVE_SESSIONS) {
 			for (Session aSession:SynthSocket.ACTIVE_SESSIONS) {
 				if (!aSession.isOpen()) continue;

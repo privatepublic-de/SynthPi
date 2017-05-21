@@ -73,6 +73,7 @@ public class MidiHandler {
 	private int learnParameterIndex = 0;
 	private int param_selected = -1;
 	private int programNumber = -1; // first change should hit 0
+	private List<Receiver> updateReceivers = new ArrayList<Receiver>();
 	
 	private MidiHandler() {
 		log.info("Initializing MIDI handler");
@@ -90,15 +91,30 @@ public class MidiHandler {
 						for (int i=0; i<infos.length; i++) {
 							try {
 								MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
-								Transmitter trans = device.getTransmitter();
-								if (device.getMaxReceivers()>=0 && !openedDevices.contains(device)) {
-									trans.setReceiver(s_receiver);
-									device.open();
-									openedDevices.add(device);
-									if (opened.length()>0) {
-										opened.append(", ");
+								if (!openedDevices.contains(device)) {
+									try {
+										Receiver r = device.getReceiver();
+										if (!device.isOpen())
+											device.open();
+										if (device.isOpen()) {
+											updateReceivers.add(r);
+											// log.debug("Added updateReceiver for {}", infos[i]);
+										}
+									} catch(MidiUnavailableException e) { 
 									}
-									opened.append(device.getDeviceInfo());
+									try {
+										Transmitter trans = device.getTransmitter();
+										trans.setReceiver(s_receiver);
+										if (!device.isOpen())
+											device.open();
+										openedDevices.add(device);
+										if (opened.length()>0) {
+											opened.append(", ");
+										}
+										opened.append(device.getDeviceInfo());
+									} catch(MidiUnavailableException e) { 
+									}
+									
 								}
 							} catch (MidiUnavailableException e) {
 								// ignore silently
@@ -185,6 +201,7 @@ public class MidiHandler {
 //						param_selected = P.PARAMETER_ORDER[Math.min((int)(data2/127.0*P.PARAMETER_ORDER.length-1)+1, P.PARAMETER_ORDER.length-1)];
 						param_selected = P.PARAMETER_ORDER[Math.min(data2,P.PARAMETER_ORDER.length-1)];
 						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
+						MidiHandler.INSTANCE.updateMIDIDevicesSelectedParam();
 					}
 					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
 						P.setFromMIDI(param_selected, data2);
@@ -266,7 +283,28 @@ public class MidiHandler {
 		}
 	}
 	
+	public void updateMIDIDevices(int paramindex) {
+		int ccno = MIDI_CC_FOR_INDEX[paramindex];
+		if (ccno>0) {
+			try {
+				ShortMessage msg = new ShortMessage(ShortMessage.CONTROL_CHANGE, P.MIDI_CHANNEL, ccno, P.VAL_RAW_MIDI[paramindex]);
+				for (Receiver receiver: updateReceivers) {
+					receiver.send(msg, -1);
+				}
+			} catch (Exception e) {
+			}
+		}
+	}
 	
+	public void updateMIDIDevicesSelectedParam() {
+			try {
+				ShortMessage msg = new ShortMessage(ShortMessage.CONTROL_CHANGE, P.MIDI_CHANNEL, CC_PARAM_VALUE, P.VAL_RAW_MIDI[param_selected]);
+				for (Receiver receiver: updateReceivers) {
+					receiver.send(msg, -1);
+				}
+			} catch (Exception e) {
+			}
+	}
 	
 	private static final int CC_MOD_WHEEL = 1;
 	private static final int CC_SUSTAIN = 64;
@@ -276,8 +314,10 @@ public class MidiHandler {
 	public static int CC_PARAM_VALUE = 103;
 	public static int CC_PROGRAM_CHANGE = 104;
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
+	private static final int[] MIDI_CC_FOR_INDEX = new int[P.PARAM_STORE_SIZE];
 	static {
 		INDEX_OF_MIDI_CC[CC_MOD_WHEEL] = P.MOD_WHEEL;
+		MIDI_CC_FOR_INDEX[P.MOD_WHEEL] = CC_MOD_WHEEL;
 		InputStream in = MidiHandler.class.getResourceAsStream("/midimaps/default.map");
 		try {
 			List<String> lines = IOUtils.readLines(in, "utf-8");
@@ -302,6 +342,7 @@ public class MidiHandler {
 							if(t==int.class){
 							    int pindex = f.getInt(null);
 							    INDEX_OF_MIDI_CC[ccno] = pindex;
+							    MIDI_CC_FOR_INDEX[pindex] = ccno;
 							}
 							else {
 								throw new Exception("Wrong parameter key error");	
