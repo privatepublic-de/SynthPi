@@ -204,10 +204,10 @@ public class FancyParam {
 		if (order<22) {
 			return COLOR_ORANGE;
 		}
-		if (order<30) {
+		if (order<31) {
 			return Color.CYAN;
 		}
-		if (order<45) {
+		if (order<46) {
 			return Color.MAGENTA;
 		}
 		return Color.DARK_GRAY;
