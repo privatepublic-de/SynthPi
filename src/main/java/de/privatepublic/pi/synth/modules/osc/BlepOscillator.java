@@ -14,6 +14,7 @@ import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.util.FastCalc;
 
+
 public class BlepOscillator implements IControlProcessor, IPitchBendReceiver{
 	
 	@SuppressWarnings("unused")
@@ -171,7 +172,8 @@ public class BlepOscillator implements IControlProcessor, IPitchBendReceiver{
         return ampmod ? am_buffer[sampleNo]*outVal*volume : outVal*volume;
 	}
 
-	
+	// the polyblep approach used here is as suggested by Martin Finke
+	// http://www.martin-finke.de/blog/articles/audio-plugins-018-polyblep-oscillator/
 	private float pblep(float t) {
 	    // 0 <= t < 1
 	    if (t < phaseIncrementDiv) {

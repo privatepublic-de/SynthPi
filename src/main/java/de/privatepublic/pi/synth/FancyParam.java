@@ -20,6 +20,7 @@ public class FancyParam {
         //                                  ---------------
 		NAME[P.DELAY_RATE]               = "Delay Rate Left";
 		NAME[P.DELAY_RATE_RIGHT]         = "Delay Rate Rght";
+		NAME[P.DELAY_TYPE]               = "Delay Type";
 		NAME[P.MOD_ENV1_A]               = "ENV1 Attack";
 		NAME[P.MOD_ENV1_D]               = "ENV1 Decay";
 		NAME[P.MOD_ENV1_S]               = "ENV1 Sustain";
@@ -171,6 +172,9 @@ public class FancyParam {
 			break;
 		case P.FILTER1_TYPE:
 			result = P.FilterType.selectedFilterType(value).name();
+			break;
+		case P.DELAY_TYPE:
+			result = value>0?"DIGITAL":"LOW-FI";
 			break;
 		default:
 			if (P.IS_BIPOLAR[paramindex]) {

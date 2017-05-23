@@ -337,7 +337,7 @@ h3 {
 }
 
 #amplifier {
-	padding: 13px 0;
+	padding: 0;
 }
 
 .delay {
@@ -346,6 +346,9 @@ h3 {
 	border-top: 1px solid;
 	border-bottom: 1px solid;
 	border-color: inherit;
+}
+.delay .exclusiveunstyled {
+	padding: 8px 0 0 0;
 }
 
 #modulators {

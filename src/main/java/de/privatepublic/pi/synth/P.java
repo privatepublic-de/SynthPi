@@ -173,7 +173,7 @@ public class P {
 	public static final int OSC1_VOLUME = 18;
 	public static final int PITCH_BEND = 19; /** Pitch bend amount */
 	public static final int MOD_FILTER1_AMOUNT = 20;
-	//public static final int MOD_ENV1_VOL_AMOUNT = 21;
+	public static final int DELAY_TYPE = 21;
 	public static final int MOD_RATE = 22;
 	public static final int VOLUME = 23;
 	public static final int MOD_VEL_VOL_AMOUNT = 24;
@@ -317,6 +317,7 @@ public class P {
 		OSC_PATH[DELAY_RATE] = "/fx/delay/rate";
 		OSC_PATH[DELAY_RATE_RIGHT] = "/fx/delay/rateright";
 		OSC_PATH[DELAY_FEEDBACK] = "/fx/delay/feedback";
+		OSC_PATH[DELAY_TYPE] = "/fx/delay/type";
 		
 		// oscillators
 		OSC_PATH[OSC1_VOLUME] = "/osc/1/vol";
@@ -611,6 +612,7 @@ public class P {
 		DELAY_FEEDBACK,
 		DELAY_RATE,
 		DELAY_RATE_RIGHT,
+		DELAY_TYPE,
 		CHORUS_DEPTH,
 		VOLUME,
 		
