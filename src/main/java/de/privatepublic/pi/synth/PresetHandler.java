@@ -29,7 +29,16 @@ public class PresetHandler {
 	private static final Logger log = LoggerFactory.getLogger(PresetHandler.class);
 	
 	public static enum PatchCategory {
-		POLY, PAD, LEAD, BASS, KEYS, VOX, EFFECTS, PERC, PLUCKED, WHATEVER;
+		POLY("PL"), PAD("PD"), LEAD("LD"), BASS("BS"), KEYS("KY"), FX("FX"), PERC("PC"), MISC("MC");
+		
+		private String shortName;
+		private PatchCategory(String shortName) {
+			this.shortName = shortName;
+		}
+		
+		public String getShortName() {
+			return shortName;
+		}
 		
 		public static PatchCategory find(String s) {
 			for (PatchCategory p:PatchCategory.values()) {
@@ -37,7 +46,7 @@ public class PresetHandler {
 					return p;
 				}
 			}
-			return WHATEVER;
+			return MISC;
 		}
 	};
 	
@@ -64,7 +73,7 @@ public class PresetHandler {
 	public static void initPatch() {
 		P.setToDefaults();
 		P.LAST_LOADED_PATCH_NAME = "(INITIALIZED)";
-		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
+		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
 		SynthPi.uiMessage("Patch initialized to defaults");
 	}
 	
@@ -93,14 +102,15 @@ public class PresetHandler {
 		String pid = null;
 		JSONArray fList = allPatches.optJSONArray(K.UI_FACTORY_PATCH_LIST.key());
 		JSONArray uList = allPatches.optJSONArray(K.UI_USER_PATCH_LIST.key());
-		int maxCount = fList.length() + uList.length();
+		int uListLength = (uList!=null?uList.length():0);
+		int maxCount = fList.length() + uListLength;
 		int appliedNo = programNo;
 		if (maxCount>0) {
-			if (programNo<uList.length()) {
+			if (programNo<uListLength) {
 				pid = "u"+(programNo%uList.length());
 			}
 			else {
-				int fNo = (programNo-uList.length());
+				int fNo = (programNo-uListLength);
 				if (fNo>=fList.length()) {
 					appliedNo = programNo-(fNo-fList.length()+1);
 					fNo = fList.length()-1;
@@ -157,10 +167,11 @@ public class PresetHandler {
 								}
 							}
 							P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
-							P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
+							PatchCategory cat = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
+							P.LAST_LOADED_PATCH_CATEGORY = cat;
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);
-							SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "PATCH LOADED");
+							SynthPi.uiLCDMessage(cat.getShortName()+" "+P.LAST_LOADED_PATCH_NAME, "PATCH LOADED");
 							return true;
 						}
 					}
@@ -220,7 +231,7 @@ public class PresetHandler {
 		try {
 			cat = PatchCategory.valueOf(category);
 		} catch (Exception e) {
-			cat = PatchCategory.WHATEVER;
+			cat = PatchCategory.MISC;
 		}
 		JSONObject patch = createJSONFromCurrentPatch(name, cat);
 		
@@ -476,7 +487,7 @@ public class PresetHandler {
 			P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 			log.debug("Loaded recent patch {}", P.LAST_LOADED_PATCH_NAME);
 			SynthPi.uiMessage("Loaded recent patch: "+P.LAST_LOADED_PATCH_NAME);
-			SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "RECENT PATCH");
+			SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "up and running");
 		} catch (JSONException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

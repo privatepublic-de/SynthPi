@@ -168,7 +168,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 				}
 			}
 		}
-		LCD.displayInfo(Key.pressedKeyCount());
+		LCD.displayKeypress(Key.pressedKeyCount());
 	}
 	
 	@Override

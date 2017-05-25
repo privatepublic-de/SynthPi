@@ -83,7 +83,7 @@ public class P {
 
 	/** Last used (loaded or saved) patch name */
 	public static String LAST_LOADED_PATCH_NAME = "INITIAL";
-	public static PatchCategory LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
+	public static PatchCategory LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
 	
 	/** Number of available parameters */
 	public static final int PARAM_STORE_SIZE = 84;

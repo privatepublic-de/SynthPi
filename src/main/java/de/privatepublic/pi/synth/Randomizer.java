@@ -66,7 +66,7 @@ public class Randomizer {
 			P.setDirectly(P.OVERDRIVE, range(.2f, .7f));
 		}
 		P.LAST_LOADED_PATCH_NAME = createFancyPatchName();
-		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
+		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
 		log.info("Randomized patch: {}", P.LAST_LOADED_PATCH_NAME);
 		SynthPi.uiMessage("Randomized patch ("+P.LAST_LOADED_PATCH_NAME+")");
 	}

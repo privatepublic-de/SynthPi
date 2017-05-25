@@ -14,12 +14,13 @@ public class KeypressUpdate extends DisplayUpdate {
 	
 	@Override
 	protected void sendUpdate() throws SerialPortException, InterruptedException {
-		if (recentStatus!=status) {
-			LCD.send(serialPort, Cmd.MOVE_TO, 1, 2);
+		boolean renderStatus = status;
+		if (recentStatus!=renderStatus) {
+			LCD.send(serialPort, Cmd.MOVE_TO, 16, 2);
 			Thread.sleep(10);
-			serialPort.writeInt(status?'*':0x20); // 0xA5 = middle dot
+			serialPort.writeInt(renderStatus?'*':0x20); // 0xA5 = middle dot
 			Thread.sleep(10);
-			recentStatus = status;
+			recentStatus = renderStatus;
 		}
 	}
 

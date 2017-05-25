@@ -81,6 +81,7 @@ public class MidiHandler {
 		Timer timer = new Timer("MIDIWatcher", true);
 		timer.schedule(new TimerTask() {
 			int detectedDevices = 0;
+			boolean isFirstScan = true;
 			Vector<MidiDevice> openedDevices = new Vector<MidiDevice>();
 			@Override
 			public void run() {
@@ -96,7 +97,7 @@ public class MidiHandler {
 								MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
 								if (!openedDevices.contains(device)) {
 									try {
-										log.debug("Handling {}", infos[i].toString());
+//										log.debug("Handling {}", infos[i].toString());
 										Receiver r = device.getReceiver();
 										if (!device.isOpen())
 											device.open();
@@ -116,7 +117,7 @@ public class MidiHandler {
 										if (opened.length()>0) {
 											opened.append(", ");
 										}
-										opened.append(device.getDeviceInfo());
+										opened.append(device.getDeviceInfo().getName());
 									} catch(MidiUnavailableException e) { 
 									}
 									
@@ -127,8 +128,12 @@ public class MidiHandler {
 						}
 						if (opened.length()>0) {
 							log.info("Opened MIDI devices: {}", opened);
-							SynthPi.uiMessage("MIDI devices opened: "+ opened);							
+							SynthPi.uiMessage("MIDI devices opened: "+ opened);
+							if (!isFirstScan) {
+								SynthPi.uiLCDMessage(opened.toString(), "MIDI Devices");
+							}
 						}
+						isFirstScan = false;
 						// check removed devices
 						Vector<MidiDevice> removedDev = new Vector<MidiDevice>();
 						for (MidiDevice dev:openedDevices) {
