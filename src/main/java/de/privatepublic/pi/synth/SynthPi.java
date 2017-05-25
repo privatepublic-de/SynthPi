@@ -19,8 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.privatepublic.pi.synth.comm.LCD;
 import de.privatepublic.pi.synth.comm.MidiHandler;
+import de.privatepublic.pi.synth.comm.lcd.LCD;
 import de.privatepublic.pi.synth.comm.web.JettyWebServerInterface;
 import de.privatepublic.pi.synth.util.IOUtils;
 

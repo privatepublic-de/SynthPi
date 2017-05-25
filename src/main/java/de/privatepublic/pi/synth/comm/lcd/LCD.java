@@ -1,4 +1,4 @@
-package de.privatepublic.pi.synth.comm;
+package de.privatepublic.pi.synth.comm.lcd;
 
 import java.awt.Color;
 import java.io.UnsupportedEncodingException;
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.FancyParam;
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.comm.lcd.LCD.Cmd;
 
 public class LCD {
 
@@ -337,7 +338,7 @@ public class LCD {
 		}
 	}
 	
-	private static synchronized void send(SerialPort serialPort, Cmd cmd, int... params) throws SerialPortException {
+	protected static synchronized void send(SerialPort serialPort, Cmd cmd, int... params) throws SerialPortException {
 		if (isActive()) {
 			send(serialPort, cmd);
 			if (params!=null) {
@@ -347,7 +348,17 @@ public class LCD {
 		return;
 	}
 	
-	private static void sendString(SerialPort serialPort, String s) throws SerialPortException {
+	private static Color recentColor = null;
+	
+	protected static synchronized void changeColor(SerialPort serialPort, Color color) throws SerialPortException, InterruptedException {
+		if (!color.equals(recentColor)) {
+			recentColor = color;
+			LCD.send(serialPort, Cmd.COLOR, color.getRed(), color.getGreen(), color.getBlue());
+			Thread.sleep(10);
+		}
+	}
+	
+	protected static void sendString(SerialPort serialPort, String s) throws SerialPortException {
 		try {
 			byte[] values = s.getBytes("iso-8859-1");
 			// remove 0xfe command
@@ -376,7 +387,7 @@ public class LCD {
 		}
 	}
 	
-	private static enum Cmd {
+	protected static enum Cmd {
 		HOME(0x48), 
 		MOVE_TO(0x47), 
 		CLR(0x58), 
