@@ -89,10 +89,14 @@ public class MidiHandler {
 					log.info("MIDI device change. Scanning devices...");
 					StringBuilder opened = new StringBuilder();
 						for (int i=0; i<infos.length; i++) {
+							if ("Gervill".equals(infos[i].getName())) {
+								continue;
+							}
 							try {
 								MidiDevice device = MidiSystem.getMidiDevice(infos[i]);
 								if (!openedDevices.contains(device)) {
 									try {
+										log.debug("Handling {}", infos[i].toString());
 										Receiver r = device.getReceiver();
 										if (!device.isOpen())
 											device.open();
@@ -100,7 +104,8 @@ public class MidiHandler {
 											updateReceivers.add(r);
 											// log.debug("Added updateReceiver for {}", infos[i]);
 										}
-									} catch(MidiUnavailableException e) { 
+									} catch(Exception e) {
+										log.warn(e.getMessage());
 									}
 									try {
 										Transmitter trans = device.getTransmitter();
