@@ -565,7 +565,7 @@ a.push label  {
 	}
 }
 
-.window input, .window select {
+.window input {
 	background-color: rgba(255,255,255,0.1);
 	color: inherit;
 	border-style: solid;
