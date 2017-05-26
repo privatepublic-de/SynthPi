@@ -21,6 +21,31 @@ public class Randomizer {
 		P.setDirectly(P.OSC1_WAVE, fullRange());
 		P.setDirectly(P.OSC2_WAVE, fullRange());
 		
+		if (P.Waveform.selectedWaveform(P.VAL[P.OSC1_WAVE])==P.Waveform.PULSE) {
+			float pw = range(.1f, .9f);
+			P.setDirectly(P.OSC1_PULSE_WIDTH, pw);
+			if (enable()) {
+				float modamount = range(.2f, .4f);
+				P.setDirectly(P.MOD_ENV2_PW1_AMOUNT, pw<.5?.5f+modamount:5f-modamount);
+			}
+			if (enable()) {
+				float modamount = range(.2f, .4f);
+				P.setDirectly(P.MOD_PW1_AMOUNT, pw<.5?.5f+modamount:5f-modamount);
+			}
+		}
+		if (P.Waveform.selectedWaveform(P.VAL[P.OSC2_WAVE])==P.Waveform.PULSE) {
+			float pw = range(.1f, .9f);
+			P.setDirectly(P.OSC2_PULSE_WIDTH, pw);
+			if (enable()) {
+				float modamount = range(.2f, .4f);
+				P.setDirectly(P.MOD_ENV2_PW2_AMOUNT, pw<.5?.5f+modamount:.5f-modamount);
+			}
+			if (enable()) {
+				float modamount = range(.2f, .4f);
+				P.setDirectly(P.MOD_PW2_AMOUNT, pw<.5?.5f+modamount:.5f-modamount);
+			}
+		}
+		
 		boolean oscsync = enable(.25f);
 		if (oscsync) {
 			P.setDirectly(P.OSC2_SYNC, 1);
@@ -34,12 +59,28 @@ public class Randomizer {
 			}
 			// am
 			if (enable(.25f)) {
-				P.setDirectly(P.OSC2_AM, fullRange());
+				P.setDirectly(P.OSC2_AM, 1);
 			}
 		}
-		// noise
 		if (enable(.334f)) {
-			P.setDirectly(P.OSC_NOISE_LEVEL, range(.2f, .667f));
+			P.setDirectly(P.OSC_NOISE_LEVEL, range(.1f, .4f));
+		}
+		if (enable(.334f)) {
+			P.setDirectly(P.MOD_ENV2_NOISE_AMOUNT, range(.667f, .8f));
+		}
+		if (enable(.5f)) {
+			P.setDirectly(P.OSC_SUB_VOLUME, range(.334f, .8f));
+			P.setDirectly(P.OSC_SUB_SQUARE, enable(.5f)?0:1);
+			P.setDirectly(P.OSC_SUB_LOW, enable(.3f)?0:1);
+		}
+		
+		// delay
+		if (enable(.334f)) {
+			P.setDirectly(P.DELAY_WET, range(.5f, .9f));
+			P.setDirectly(P.DELAY_FEEDBACK, range(.2f, .9f));
+			P.setDirectly(P.DELAY_RATE, range(.4f, .9f));
+			P.setDirectly(P.DELAY_RATE_RIGHT, range(.4f, .9f));
+			P.setDirectly(P.DELAY_TYPE, enable(.5f)?0:1);
 		}
 
 		// filters
@@ -47,11 +88,35 @@ public class Randomizer {
 		if (filter1on) {
 			P.setDirectly(P.FILTER1_ON, 1);
 			P.setDirectly(P.FILTER1_FREQ, range(.2f,.8f));
-			P.setDirectly(P.FILTER1_RESONANCE, range(0, .7f));
+			P.setDirectly(P.FILTER1_RESONANCE, range(0, .9f));
 			P.setDirectly(P.FILTER1_TYPE, fullRange());
+			P.setDirectly(P.FILTER1_OVERLOAD, fullRange());
+			
+			if (enable()) {
+				// filter mod
+				if (enable()) {
+					P.setDirectly(P.MOD_ENV1_FILTER_AMOUNT, .5f+(enable()?1:-1)*range(.25f, .4f));
+				}
+				if (enable()) {
+					P.setDirectly(P.MOD_ENV2_FILTER_AMOUNT, .5f-(enable()?1:-1)*range(.25f, .4f));
+				}
+			}
+			
 		}
 		else {
 			P.setDirectly(P.FILTER1_ON, 0);
+		}
+		
+		P.setDirectly(P.MOD_PITCH_AMOUNT, .5f);
+		if (enable()) {
+			P.setDirectly(P.MOD_AMOUNT_BASE, range(.334f, .7f));
+			P.setDirectly(P.MOD_RATE, range(.334f, .7f));
+			if (enable()) {
+				P.setDirectly(P.MOD_LFO_DELAY, range(0, .667f));
+			}
+			if (enable()) {
+				P.setDirectly(P.MOD_LFO_TYPE, fullRange());
+			}
 		}
 		
 		// amp
@@ -59,6 +124,16 @@ public class Randomizer {
 		P.setDirectly(P.MOD_ENV1_D, range(.2f, .8f));
 		P.setDirectly(P.MOD_ENV1_S, fullRange());
 		P.setDirectly(P.MOD_ENV1_R, fullRange());
+		P.setDirectly(P.MOD_ENV1_LOOP, enable(.2f)?1:0);
+		
+		P.setDirectly(P.MOD_ENV2_A, range(0,.8f));
+		P.setDirectly(P.MOD_ENV2_D, range(.2f, .8f));
+		P.setDirectly(P.MOD_ENV2_S, fullRange());
+		P.setDirectly(P.MOD_ENV2_R, fullRange());
+		P.setDirectly(P.MOD_ENV2_LOOP, enable(.2f)?1:0);
+		
+		P.setDirectly(P.BASS_BOOSTER_LEVEL, fullRange());
+		
 		if (enable(.334f)) {
 			P.setDirectly(P.CHORUS_DEPTH, fullRange());
 		}
@@ -69,6 +144,7 @@ public class Randomizer {
 		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
 		log.info("Randomized patch: {}", P.LAST_LOADED_PATCH_NAME);
 		SynthPi.uiMessage("Randomized patch ("+P.LAST_LOADED_PATCH_NAME+")");
+		SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "RANDOMIZED");
 	}
 	
 	private static boolean enable(float probability) {
