@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.modules.fx.DistortionExp;
+import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
 import de.privatepublic.pi.synth.modules.fx.MultiModeFilter;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR.State;
@@ -21,6 +23,7 @@ public class AnalogSynthVoice {
 	private final BlepOscillator oscSub = new BlepOscillator(BlepOscillator.Mode.SUB, env1, env2, lfo);
 	
 	private final MultiModeFilter filter;
+	private final DistortionExp distort = new DistortionExp();
 	
 	private final float[] am_buffer = new float[P.SAMPLE_BUFFER_SIZE];
 	private final boolean[] syncBuffer = new boolean[P.SAMPLE_BUFFER_SIZE];
@@ -106,6 +109,7 @@ public class AnalogSynthVoice {
 		env1.controlTick();
 		env2.controlTick();
 		lfo.controlTick();
+		distort.controlTick();
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = Math.max(P.VALX[P.OSC2_VOLUME]+env2.outValue*P.VALXC[P.MOD_ENV2_OSC2_VOL_AMOUNT], 0);
@@ -127,7 +131,8 @@ public class AnalogSynthVoice {
 				val = filter.processSample(val);
 			else
 				filter.processSample(val);
-			buffer[pos] += val * outVolume;
+			
+			buffer[pos] += distort.process(val) * outVolume;
 			am_buffer[pos] = 0;
 			outVolume += volumeIncrement;
 		}

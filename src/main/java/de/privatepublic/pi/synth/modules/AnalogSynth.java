@@ -39,7 +39,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private final float[] renderBuffer = new float[P.SAMPLE_BUFFER_SIZE];
 	
 	private final IProcessorStereo chorus = new Chorus(80);
-	private final IProcessorMono distort = new DistortionExp();
+//	private final IProcessorMono distort = new DistortionExp();
 	private final IProcessorStereo limiter = new Limiter(20, 500);
 	private final StateVariableFilter booster = new StateVariableFilter(FilterType.BANDPASS, 80f, 1/3f);
 	private final LFO lfo = new LFO(null);
@@ -66,7 +66,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 			for (int i=0; i<P.POLYPHONY; i++) {
 				voices[i].process(renderBuffer, startPos);
 			}
-			distort.process(renderBuffer, startPos);
+			// distort.process(renderBuffer, startPos);
 			booster.processBuffer(renderBuffer, startPos, P.VAL[P.BASS_BOOSTER_LEVEL]);
 			if (usedelay2) delayDigital.process(renderBuffer, outputs, startPos); else delayTape.process(renderBuffer, outputs, startPos);
 			chorus.process(outputs, startPos);
