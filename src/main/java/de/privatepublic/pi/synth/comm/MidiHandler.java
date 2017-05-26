@@ -111,13 +111,15 @@ public class MidiHandler {
 									try {
 										Transmitter trans = device.getTransmitter();
 										trans.setReceiver(s_receiver);
-										if (!device.isOpen())
+										if (!device.isOpen()) {
 											device.open();
-										openedDevices.add(device);
-										if (opened.length()>0) {
-											opened.append(", ");
+											openedDevices.add(device);
+											if (opened.length()>0) {
+												opened.append(", ");
+											}
+											opened.append(device.getDeviceInfo().getName());
 										}
-										opened.append(device.getDeviceInfo().getName());
+										
 									} catch(MidiUnavailableException e) { 
 									}
 									
