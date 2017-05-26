@@ -47,6 +47,7 @@ public class Randomizer {
 		}
 		
 		boolean oscsync = enable(.25f);
+		boolean ringmod = false;
 		if (oscsync) {
 			P.setDirectly(P.OSC2_SYNC, 1);
 			P.setDirectly(P.OSC2_TUNING, range(.6f, 1));
@@ -58,8 +59,19 @@ public class Randomizer {
 				P.setDirectly(P.OSC2_TUNING, 0.5f+factor/48f);
 			}
 			// am
-			if (enable(.25f)) {
+			ringmod = enable(.25f);
+			if (ringmod) {
 				P.setDirectly(P.OSC2_AM, 1);
+			}
+		}
+		if (ringmod) {
+			if (enable(.25f)) {
+				P.setDirectly(P.MOD_ENV2_PITCH2_AMOUNT, .5f+(enable()?-1:1)*range(.2f,.5f));
+			}
+		}
+		if (oscsync) {
+			if (enable(.25f)) {
+				P.setDirectly(P.MOD_ENV2_PITCH2_AMOUNT, .5f+(enable()?-1:1)*range(.2f,.5f));
 			}
 		}
 		if (enable(.334f)) {
