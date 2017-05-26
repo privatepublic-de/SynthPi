@@ -210,6 +210,6 @@ public class FancyParam {
 		if (order<46) {
 			return Color.MAGENTA;
 		}
-		return Color.DARK_GRAY;
+		return Color.GRAY;
 	}
 }
