@@ -465,7 +465,6 @@ public class P {
 		setDirectly(MOD_ENV2_LFORATE_AMOUNT, 0.5f);
 		
 		setDirectly(MOD_VEL_FILTER_AMOUNT, 0.5f);
-		setDirectly(MOD_VEL_VOL_AMOUNT, 0.5f);
 		setDirectly(MOD_PRESS_FILTER_AMOUNT, 0.5f);
 		setDirectly(MOD_PRESS_PITCH_AMOUNT, 0.5f);
 		setDirectly(MOD_PRESS_PITCH2_AMOUNT, 0.5f);
@@ -663,5 +662,6 @@ public class P {
 		MOD_PRESS_PITCH2_AMOUNT,
 		MOD_PRESS_FILTER_AMOUNT
 	};
+	
 	
 }
