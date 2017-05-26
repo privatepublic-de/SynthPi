@@ -240,60 +240,21 @@ public class LCD {
 			serialPort.setParams(SerialPort.BAUDRATE_9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 			
 			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CLR.getByte()});
-			serialPort.writeString("Sp");
+			serialPort.writeString("Writing splash  screen...");
 			// set splash screen
 			Thread.sleep(100);
 			serialPort.writeIntArray(new int[] { 0xfe, Cmd.WRITE_SPLASH_SCREEN.getByte() });
 			Thread.sleep(100);
-			for (byte b :("                "+"                ").getBytes(StandardCharsets.ISO_8859_1)) {
+			String splash = 
+					"                "+
+					"... booting ... ";
+			for (byte b :(splash).getBytes(StandardCharsets.ISO_8859_1)) {
 				serialPort.writeByte(b);
 				Thread.sleep(100);
 			}
 			Thread.sleep(100);
-			serialPort.writeString(",");
-			int sleep = 40;
-			Thread.sleep(sleep);
-			// up/positive, bank 1
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 1, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 2, 0x0, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 3, 0x0, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 4, 0x0, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 5, 0x0, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 6, 0x0, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 1, 7, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf, 0xf });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.SELECT_BANK.getByte(), 1});
-			serialPort.writeString("1,");
-			// down/negative, bank 2
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 0, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5 });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 1, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5, 0xa, 0x0 });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 2, 0xa, 0x5, 0xa, 0x5, 0xa, 0x5, 0x0, 0x0 });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 3, 0xa, 0x5, 0xa, 0x5, 0xa, 0x0, 0x0, 0x0 });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 4, 0xa, 0x5, 0xa, 0x5, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 5, 0xa, 0x5, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 6, 0xa, 0x5, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(sleep);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CREATE_CHAR_IN_BANK.getByte(), 2, 7, 0xa, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 });
-			Thread.sleep(100);
-			serialPort.writeIntArray(new int[] { 0xfe, Cmd.SELECT_BANK.getByte(), 2});
-			serialPort.writeString("2,");
-			Thread.sleep(10);
-			serialPort.writeString("Done");
-			
+			serialPort.writeIntArray(new int[] { 0xfe, Cmd.CLR.getByte()});
+			serialPort.writeString(splash);
 		} catch (SerialPortException | InterruptedException e) {
 			log.debug("Could not open serial port to LCD display: {}", e.getMessage());
 		}
