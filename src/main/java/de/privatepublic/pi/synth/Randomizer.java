@@ -26,11 +26,11 @@ public class Randomizer {
 			P.setDirectly(P.OSC1_PULSE_WIDTH, pw);
 			if (enable()) {
 				float modamount = range(.2f, .4f);
-				P.setDirectly(P.MOD_ENV2_PW1_AMOUNT, pw<.5?.5f+modamount:5f-modamount);
+				P.setDirectly(P.MOD_ENV2_PW1_AMOUNT, pw<.5?.5f+modamount:.5f-modamount);
 			}
 			if (enable()) {
 				float modamount = range(.2f, .4f);
-				P.setDirectly(P.MOD_PW1_AMOUNT, pw<.5?.5f+modamount:5f-modamount);
+				P.setDirectly(P.MOD_PW1_AMOUNT, pw<.5?.5f+modamount:.5f-modamount);
 			}
 		}
 		if (P.Waveform.selectedWaveform(P.VAL[P.OSC2_WAVE])==P.Waveform.PULSE) {
@@ -77,7 +77,7 @@ public class Randomizer {
 		if (enable(.334f)) {
 			P.setDirectly(P.OSC_NOISE_LEVEL, range(.1f, .4f));
 		}
-		if (enable(.334f)) {
+		if (enable(.2f)) {
 			P.setDirectly(P.MOD_ENV2_NOISE_AMOUNT, range(.667f, .8f));
 		}
 		if (enable(.5f)) {
