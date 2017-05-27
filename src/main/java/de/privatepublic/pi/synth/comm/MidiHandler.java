@@ -223,6 +223,11 @@ public class MidiHandler {
 					}
 					else if (data1==CC_PROGRAM_CHANGE) {
 						if (data2==0) {
+							if (programNumber==0) {
+								PresetHandler.initPatch();
+								ControlMessageDispatcher.INSTANCE.updateAllParams();
+								return;
+							}
 							programNumber = programNumber>0?programNumber-1:0;
 						}
 						else if (data2==127) {
