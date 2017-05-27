@@ -75,8 +75,8 @@ public class AnalogSynthVoice {
 		osc2.trigger(frequency, velocity);
 		oscSub.trigger(frequency, velocity);
 		filter.trigger(frequency, velocity);
-		env1.noteOn();
-		env2.noteOn();
+		env1.noteOn(velocity);
+		env2.noteOn(velocity);
 		lfo.resetDelay();
 		if (P.IS[P.MOD_LFO_RESET]) {
 			lfo.resetPhase();
@@ -94,9 +94,9 @@ public class AnalogSynthVoice {
 		AnalogSynth.lastTriggeredFrequency = frequency;
 	}
 	
-	public void noteOff() {
-		env1.noteOff();
-		env2.noteOff();
+	public void noteOff(float velocity) {
+		env1.noteOff(velocity);
+		env2.noteOff(velocity);
 	}
 	
 	

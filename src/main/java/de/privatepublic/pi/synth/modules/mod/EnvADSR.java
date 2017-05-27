@@ -15,6 +15,7 @@ public class EnvADSR extends Envelope {
 	}
 
 	private final EnvelopeParamConfig conf;
+	private float velocity;
 	private float value = 0;
 	private float sustainValue;
 	private float decayCoeff;
@@ -53,7 +54,7 @@ public class EnvADSR extends Envelope {
 			value += decayCoeff * value;
 			if (value<sustainValue || value<ZERO_THRESHOLD) {
 				value = sustainValue;
-				noteOn();
+				noteOn(velocity);
 			}
 			break;
 		case RELEASE:
@@ -69,9 +70,10 @@ public class EnvADSR extends Envelope {
 	}
 	
 	
-	public void noteOn() {
+	public void noteOn(float velocity) {
+		this.velocity = velocity;
 		float attackOvershoot = 1.05f;
-		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack());
+		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack()*P.VALMIXHIGH[P.MOD_VEL_ATTACK_AMOUNT] + (1-velocity)*P.VALMIXLOW[P.MOD_VEL_ATTACK_AMOUNT]*1000);
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
 		float dur = timeAttack/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
 		float rdur = (1.0f-value) / dur;
@@ -84,9 +86,9 @@ public class EnvADSR extends Envelope {
 	}
 	
 	
-	public void noteOff() {
+	public void noteOff(float velocity) {
 		if (state==State.ATTACK || state==State.DECAY || state==State.DECAY_LOOP || state==State.HOLD) {
-			releaseCoeff = initStep(value, ZERO_THRESHOLD, threshold(MAX_TIME_MILLIS*conf.release()));
+			releaseCoeff = initStep(value, ZERO_THRESHOLD, threshold(MAX_TIME_MILLIS*conf.release()*P.VALMIXHIGH[P.MOD_VEL_RELEASE_AMOUNT]+(1-velocity)*(MAX_TIME_MILLIS/4)*P.VALMIXLOW[P.MOD_VEL_RELEASE_AMOUNT]));
 			state = State.RELEASE;
 		}
 	}
@@ -96,7 +98,7 @@ public class EnvADSR extends Envelope {
 	}
 	
 	private static float threshold(float v) {
-		return Math.max(v, MIN_TIME_MILLIS);
+		return Math.min(Math.max(v, MIN_TIME_MILLIS), MAX_TIME_MILLIS);
 	}
 	
 //	public static void main(String[] args) {
@@ -130,15 +132,13 @@ public class EnvADSR extends Envelope {
 		public final int indexD;
 		public final int indexS;
 		public final int indexR;
-		public final int indexVelSensitive;
 		public final int indexLoop;
 		
-		public EnvelopeParamConfig(int paramIndexA, int paramIndexD, int paramIndexS, int paramIndexR, int paramIndexVelSensitive, int paramIndexLoop) {
+		public EnvelopeParamConfig(int paramIndexA, int paramIndexD, int paramIndexS, int paramIndexR, int paramIndexLoop) {
 			indexA = paramIndexA;
 			indexD = paramIndexD;
 			indexS = paramIndexS;
 			indexR = paramIndexR;
-			indexVelSensitive = paramIndexVelSensitive;
 			indexLoop = paramIndexLoop;
 		}
 		
@@ -153,9 +153,6 @@ public class EnvADSR extends Envelope {
 		}
 		public float release() {
 			return P.VALX[indexR];
-		}
-		public boolean velSens() {
-			return P.IS[indexVelSensitive];
 		}
 		public boolean loopMode() {
 			return P.IS[indexLoop];

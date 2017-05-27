@@ -11,7 +11,7 @@ public abstract class Envelope implements IControlProcessor {
 	
 	public float outValue = 0;
 	
-	public abstract void noteOn();
-	public abstract void noteOff();
+	public abstract void noteOn(float velocity);
+	public abstract void noteOff(float velocity);
 	
 }

@@ -569,55 +569,7 @@ $(document).ready(function () {
 		var path = el.attr("data-osc-observe");
 		observers.push({ path: path, element: el});
 	});
-	var learnmode = false;
-	$("#learn").click(function() {
-		learnmode = !learnmode;
-		
-		if (learnmode) {
-			$("body").addClass("learnselected");
-			var learnpath;
-			$("#main").on("mouseover", function(ev) {
-				$("#main *").removeClass("learnselected");
-				var el = $(ev.target);
-				var container = el.parents("*[data-control-path]").first();
-				var detectedpath;
-				if (container.length>0) {
-					container.addClass("learnselected");
-					detectedpath = container.attr("data-control-path");
-				}
-				else {
-					if (el.prev().hasClass("checkbox")) {
-						el.addClass("learnselected");
-						el.prev().addClass("learnselected");
-						detectedpath = el.prev().attr("data-osc");
-					}
-					else if (el.hasClass("checkbox")) {
-						el.addClass("learnselected");
-						el.next().addClass("learnselected");
-						detectedpath = el.attr("data-osc");
-					}
-				}
-				if (detectedpath) {
-					if (learnpath!=detectedpath) {
-						socket.sendValueDirectly("/command/learn/start", detectedpath);
-						console.log("Start learning:", detectedpath);
-					}
-				}
-				else {
-					if (learnpath) {
-						socket.sendValueDirectly("/command/learn/stop", "1");
-						console.log("Stop learning");
-					}
-				}
-				learnpath = detectedpath;
-			});
-		}
-		else {
-			$("#main").unbind();
-			$("body").removeClass("learnselected");
-			socket.sendValueDirectly("/command/learn/stop", "1");
-		}
-	});
+	
 	function blink(selector) {
 		$(selector).animate({opacity:0}, 100, "linear", function(){
 			$(this).delay(100);

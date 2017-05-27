@@ -200,8 +200,8 @@ public class P {
 	public static final int MOD_PITCH2_AMOUNT = 45;
 	public static final int OSC2_TUNING_FINE = 46;
 	public static final int MOD_PW1_AMOUNT = 47;
-//	public static final int MOD_PRESS_NOISE_AMOUNT = 48;
-//	public static final int OSC2_WAVE_SET = 49;
+	public static final int MOD_VEL_ATTACK_AMOUNT = 48;
+	public static final int MOD_VEL_RELEASE_AMOUNT = 49;
 	public static final int FILTER1_ON = 50;
 //	public static final int FILTER_PARALLEL = 51;
 	public static final int MOD_ENV2_PW2_AMOUNT = 52;
@@ -255,8 +255,8 @@ public class P {
 	};
 	public static final int SET_INTERPOLATED_SIZE = SET_INTERPOLATED.length;
 	
-	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, UNUSED, MOD_ENV1_LOOP);
-	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV = new EnvelopeParamConfig(MOD_ENV2_A, MOD_ENV2_D, MOD_ENV2_S, MOD_ENV2_R, UNUSED, MOD_ENV2_LOOP);
+	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, MOD_ENV1_LOOP);
+	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV = new EnvelopeParamConfig(MOD_ENV2_A, MOD_ENV2_D, MOD_ENV2_S, MOD_ENV2_R, MOD_ENV2_LOOP);
 	public static final String VERSION_STRING = "0.9";
 	
 	public static float limiterReductionValue = 0;
@@ -300,7 +300,9 @@ public class P {
 			P.MOD_PRESS_PITCH2_AMOUNT,
 			P.MOD_PRESS_PITCH_AMOUNT,
 			P.MOD_ENV2_LFORATE_AMOUNT,
-			P.MOD_ENV2_OSC2_VOL_AMOUNT		
+			P.MOD_ENV2_OSC2_VOL_AMOUNT,
+			P.OSC1_PULSE_WIDTH,
+			P.OSC2_PULSE_WIDTH
 		};
 		for (int i=0;i<bipolarlist.length;i++) {
 			IS_BIPOLAR[bipolarlist[i]] = true;
@@ -351,6 +353,8 @@ public class P {
 		
 		OSC_PATH[MOD_VEL_VOL_AMOUNT] = "/mod/vel/depth/vol";
 		OSC_PATH[MOD_VEL_FILTER_AMOUNT] = "/mod/vel/depth/filter";
+		OSC_PATH[MOD_VEL_ATTACK_AMOUNT] = "/mod/vel/depth/attack";
+		OSC_PATH[MOD_VEL_RELEASE_AMOUNT] = "/mod/vel/depth/release";
 		
 		OSC_PATH[MOD_ENV1_A] = "/mod/env/1/1";
 		OSC_PATH[MOD_ENV1_D] = "/mod/env/1/2";
@@ -655,6 +659,8 @@ public class P {
 		MOD_ENV2_FILTER_AMOUNT,
 		MOD_ENV2_LFORATE_AMOUNT,
 		
+		MOD_VEL_ATTACK_AMOUNT,
+		MOD_VEL_RELEASE_AMOUNT,
 		MOD_VEL_FILTER_AMOUNT,
 		MOD_VEL_VOL_AMOUNT,
 		

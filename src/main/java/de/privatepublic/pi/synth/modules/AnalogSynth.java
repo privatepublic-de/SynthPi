@@ -89,8 +89,8 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	public void onMidiNoteMessage(ShortMessage msg, int command, int noteNo, int midiVelocity, long timeStampMidi) {
 		final boolean isMono = P.IS[P.OSC_MONO];
 		final long timeStamp = System.nanoTime();
+		float vel = midiVelocity/127f;
 		if (command==ShortMessage.NOTE_ON) {
-			float vel = midiVelocity/127f;
 			if (P.VAL[P.MIDI_VELOCITY_CURVE]<.3334) {
 				// linear
 			} else if (P.VAL[P.MIDI_VELOCITY_CURVE]<.6667) {
@@ -161,7 +161,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 			else {
 				if (!P.PEDAL) {
 					if (releasedKey!=null && releasedKey.voice!=null) {
-						releasedKey.voice.noteOff();
+						releasedKey.voice.noteOff(vel);
 					}
 				}
 			}
@@ -174,7 +174,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 //		log.debug("Killing notes");
 		for (int i=0;i<voices.length;++i) {
 			if (!Key.keyIsPressed(voices[i])) {
-				voices[i].noteOff();
+				voices[i].noteOff(.5f);
 			}
 		}
 	}

@@ -14,7 +14,6 @@
 <body class="connecting">
 	<div id="statuscontainer">
 		<div class="inner">
-			<div id="learnhint"><span class="blink">MIDI Learn Mode: Hover a parameter and send MIDI CC to learn</span></div>
 			<a href="#credits" title="Credits" data-ui="togglecredits">SynthPi MK2 // Control Interface</a>
 		</div>
 		<div class="left">
@@ -28,7 +27,6 @@
 			<span id="rc" class="connection connecting blink">Trying to connect ...</span>
 			<span id="cs" class="connection connected">
 				<a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
-				<a href="#" id="learn" class="iconbutton" title="Learn MIDI controllers"></a>
 				<a href="#" id="update" class="iconbutton" data-osc="/command/updaterequest" title="Refresh all parameters"></a>
 				<span id="datalight"></span> connected
 			</span>
@@ -219,6 +217,8 @@
 			<br/>
 			<div class="innergroup">
 				<label>VEL</label>
+				<input type="text" value="0" class="dial small" title="Attack" data-osc="/mod/vel/depth/attack" />
+				<input type="text" value="0" class="dial small" title="Release" data-osc="/mod/vel/depth/release" />
 				<input type="text" value="0" class="dial small" title="Filter" data-cursor="10" data-osc="/mod/vel/depth/filter" />
 				<input type="text" value="0" class="dial small" title="Vol" data-osc="/mod/vel/depth/vol" />
 				<label>PRESS</label>
@@ -226,12 +226,6 @@
 				<input type="text" value="0" class="dial small" title="Pitch2" data-cursor="10" data-osc="/mod/press/depth/pitch2" />
 				<input type="text" value="0" class="dial small" title="Filter" data-cursor="10" data-osc="/mod/press/depth/filter" />
 			</div>
-		</div>
-		
-		<div class="group gray show-learning valspermidicontainer">
-			<h2>MIDI Parameter Change</h2>
-			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/select"><span>SELECT Parameter</span></div>
-			<div class="show-learning valspermidi" data-control-path="/option/midicontrol/value"><span>CHANGE Parameter</span></div>
 		</div>
 	</div>
 	

@@ -29,10 +29,6 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		LOAD_PATCH("/command/loadpatch"),
 		SAVE_INFO("/command/getsaveinfo"),
 		SAVE_PATCH("/command/savepatch"),
-		OSC1_TOGGLE_WAVESET("/command/osc/1/togglewaveset"),
-		OSC2_TOGGLE_WAVESET("/command/osc/2/togglewaveset"),
-		MIDI_LEARN_START("/command/learn/start"),
-		MIDI_LEARN_STOP("/command/learn/stop"),
 		LOAD_SETTINGS("/command/settings/load"),
 		SAVE_SETTINGS("/command/settings/save"),
 		PARAMETER_MESSAGE("\\uNkNoWn");
@@ -112,12 +108,6 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 					// on delete send saveinfo again to update ui list
 					session.getRemote().sendStringByFuture("/saveinfo="+PresetHandler.patchSaveInfo().toString());
 				}
-				break;
-			case MIDI_LEARN_START:
-				MidiHandler.INSTANCE.startLearnMode(parts[1]);
-				break;
-			case MIDI_LEARN_STOP:
-				MidiHandler.INSTANCE.stopLearnMode();
 				break;
 			case LOAD_SETTINGS:
 				session.getRemote().sendStringByFuture("/settings="+PresetHandler.settingsJSON());

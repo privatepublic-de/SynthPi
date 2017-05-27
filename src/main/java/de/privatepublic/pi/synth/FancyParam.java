@@ -84,6 +84,8 @@ public class FancyParam {
 		NAME[P.MOD_PRESS_FILTER_AMOUNT]  = "PRESS > Filter";
 		NAME[P.MOD_VEL_VOL_AMOUNT]       = "VELO > Volume";
 		NAME[P.MOD_VEL_FILTER_AMOUNT]    = "VELO > Filter";
+		NAME[P.MOD_VEL_ATTACK_AMOUNT]       = "VELO > Attack";
+		NAME[P.MOD_VEL_RELEASE_AMOUNT]    = "VELO > Release";
 		// filters
 		NAME[P.FILTER1_TYPE]             = "Filter Type"; 
 		NAME[P.FILTER1_FREQ]             = "Filter Cut-off";

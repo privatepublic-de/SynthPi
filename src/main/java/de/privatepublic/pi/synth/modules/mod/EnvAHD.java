@@ -53,7 +53,7 @@ public class EnvAHD extends Envelope {
 	}
 	
 	
-	public void noteOn() {
+	public void noteOn(float velocity) {
 		float attackOvershoot = 1.05f;
 		timeAttack = threshold(MAX_TIME_MILLIS*P.VALX[pAttack]);
 		float dur = (timeAttack*2)/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
@@ -67,7 +67,7 @@ public class EnvAHD extends Envelope {
 	}
 	
 	
-	public void noteOff() {
+	public void noteOff(float velocity) {
 		if (state==State.ATTACK || state==State.HOLD) {
 			decayCoeff = initStep(value, ZERO_THRESHOLD, threshold(MAX_TIME_MILLIS*P.VALX[pDecay]));
 			state = State.DECAY;

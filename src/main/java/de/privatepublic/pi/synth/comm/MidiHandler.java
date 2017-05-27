@@ -22,7 +22,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.privatepublic.pi.synth.FancyParam;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.PresetHandler;
 import de.privatepublic.pi.synth.Randomizer;
@@ -70,8 +69,6 @@ public class MidiHandler {
 	private static List<IMidiNoteReceiver>noteReceivers = new ArrayList<IMidiNoteReceiver>();
 	private static List<IPitchBendReceiver>pitchbendReceivers = new ArrayList<IPitchBendReceiver>();
 	public static Receiver s_receiver;
-	private boolean isLearnMode = false;
-	private int learnParameterIndex = 0;
 	private int param_selected = -1;
 	private int programNumber = -1; // first change should hit 0
 	private List<Receiver> updateReceivers = new ArrayList<Receiver>();
@@ -207,9 +204,6 @@ public class MidiHandler {
 					}
 				}
 				else if (command==ShortMessage.CONTROL_CHANGE) {
-					if (isLearnMode) {
-						storeLearnedCCNumber(data1);
-					}
 					if (data1==CC_PARAM_SELECT) {
 //						param_selected = P.PARAMETER_ORDER[Math.min((int)(data2/127.0*P.PARAMETER_ORDER.length-1)+1, P.PARAMETER_ORDER.length-1)];
 						param_selected = P.PARAMETER_ORDER[Math.min(data2,P.PARAMETER_ORDER.length-1)];
@@ -244,6 +238,17 @@ public class MidiHandler {
 						if (data2>0) {
 							Randomizer.randomize();
 							ControlMessageDispatcher.INSTANCE.updateAllParams();
+						}
+					}
+					else if (data1==CC_LIMITER_ENABLE) {
+						if (data2>0) {
+							P.LIMITER_ENABLED = !P.LIMITER_ENABLED;
+							if (P.LIMITER_ENABLED) {
+								SynthPi.uiLCDMessage("Limiter", "ENABLED");
+							}
+							else {
+								SynthPi.uiLCDMessage("Limiter", "OFF");
+							}
 						}
 					}
 					else {
@@ -338,6 +343,7 @@ public class MidiHandler {
 	public static int CC_PARAM_VALUE = 103;
 	public static int CC_PROGRAM_CHANGE = 104;
 	public static int CC_RANDOMIZE = 105;
+	public static int CC_LIMITER_ENABLE = 111;
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
 	private static final int[] MIDI_CC_FOR_INDEX = new int[P.PARAM_STORE_SIZE];
 	static {
@@ -389,75 +395,5 @@ public class MidiHandler {
 	public static int[] getMidiMappings() {
 		return INDEX_OF_MIDI_CC;
 	}
-	
-	public void stopLearnMode() {
-		if (isLearnMode) {
-			isLearnMode = false;
-			log.info("MIDI learn mode stopped.");
-		}
-	}
-
-	public void startLearnMode(String path) {
-		// find path's parameter #
-		int paramIndex = 0;
-		for (int i=0;i<P.PARAM_STORE_SIZE;i++) {
-			if (path.equals(P.OSC_PATH[i])) {
-				paramIndex = i;
-				break;
-			}
-		}
-		if (paramIndex>0) {
-			learnParameterIndex = paramIndex;
-			isLearnMode = true;
-			log.info("Started MIDI learning for {}", path);
-		}
-		else {
-			if (path.equals("/option/midicontrol/select")) {
-				learnParameterIndex = -1;  // TODO constant
-				isLearnMode = true;
-				log.info("Started MIDI learning for {}", path);
-			}
-			else if (path.equals("/option/midicontrol/value")) {
-				learnParameterIndex = -2; // TODO constant
-				isLearnMode = true;
-				log.info("Started MIDI learning for {}", path);
-			} 
-			else {
-				log.warn("No mapping found for path {} to MIDI learn.", path);
-			}
-		}
-	}
-	
-	private void storeLearnedCCNumber(int ccNumber) {
-		if (isLearnMode) {
-			if (learnParameterIndex==-1 && CC_PARAM_SELECT!=ccNumber) {
-				// value select
-				CC_PARAM_SELECT = ccNumber;
-				INDEX_OF_MIDI_CC[ccNumber] = P.UNUSED;
-				SynthPi.uiMessage("Mapped MIDI CC#"+ccNumber+" to value select function.");
-			}
-			else if (learnParameterIndex==-2 && CC_PARAM_VALUE!=ccNumber) {
-				// value change
-				CC_PARAM_VALUE = ccNumber;
-				INDEX_OF_MIDI_CC[ccNumber] = P.UNUSED;
-				SynthPi.uiMessage("Mapped MIDI CC#"+ccNumber+" to value change function.");
-			}
-			else if (INDEX_OF_MIDI_CC[ccNumber]!=learnParameterIndex) {
-				// clear all occurences of learned parameterIndex
-				for (int i=0;i<INDEX_OF_MIDI_CC.length;i++) {
-					if (INDEX_OF_MIDI_CC[i]==learnParameterIndex) {
-						INDEX_OF_MIDI_CC[i] = P.UNUSED;
-					}
-				}
-				INDEX_OF_MIDI_CC[ccNumber] = learnParameterIndex;
-				log.info("Learned MIDI CC #{}", ccNumber);
-				SynthPi.uiMessage("Mapped MIDI CC#"+ccNumber+" to "+FancyParam.nameOf(learnParameterIndex));
-			}
-		}
-		else {
-			log.warn("Learn mode not correctly initialised.");
-		}
-	}
-	
 	
 }
