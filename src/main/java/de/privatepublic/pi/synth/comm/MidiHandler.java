@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import de.privatepublic.pi.synth.FancyParam;
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.PresetHandler;
+import de.privatepublic.pi.synth.Randomizer;
 import de.privatepublic.pi.synth.SynthPi;
 
 public class MidiHandler {
@@ -234,6 +235,12 @@ public class MidiHandler {
 						programNumber = PresetHandler.loadPatchFromProgramNumber(programNumber);
 						ControlMessageDispatcher.INSTANCE.updateAllParams();
 					}
+					else if (data1==CC_RANDOMIZE) {
+						if (data2>0) {
+							Randomizer.randomize();
+							ControlMessageDispatcher.INSTANCE.updateAllParams();
+						}
+					}
 					else {
 						int pIndex = INDEX_OF_MIDI_CC[data1];
 						P.setFromMIDI(pIndex, data2);
@@ -325,6 +332,7 @@ public class MidiHandler {
 	public static int CC_PARAM_SELECT = 102;
 	public static int CC_PARAM_VALUE = 103;
 	public static int CC_PROGRAM_CHANGE = 104;
+	public static int CC_RANDOMIZE = 105;
 	private static final int[] INDEX_OF_MIDI_CC = new int[128];
 	private static final int[] MIDI_CC_FOR_INDEX = new int[P.PARAM_STORE_SIZE];
 	static {
