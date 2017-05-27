@@ -4,8 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
-import de.privatepublic.pi.synth.modules.fx.DistortionExp;
-import de.privatepublic.pi.synth.modules.fx.IProcessorMono;
 import de.privatepublic.pi.synth.modules.fx.MultiModeFilter;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR.State;
@@ -23,11 +21,11 @@ public class AnalogSynthVoice {
 	private final BlepOscillator oscSub = new BlepOscillator(BlepOscillator.Mode.SUB, env1, env2, lfo);
 	
 	private final MultiModeFilter filter;
-	private final DistortionExp distort = new DistortionExp();
 	
 	private final float[] am_buffer = new float[P.SAMPLE_BUFFER_SIZE];
 	private final boolean[] syncBuffer = new boolean[P.SAMPLE_BUFFER_SIZE];
 	
+	private static final float MAX_GAIN = 5;
 	private static final float NOISE_SCALE = (2.0f / 0xffffffff) / 4294967296.0f;
 	private int noiseX1 = (int) 0x67452301;
 	private int noiseX2 = (int) 0xefcdab89;
@@ -38,6 +36,7 @@ public class AnalogSynthVoice {
 	private float velocityFactor = 1;
 	private float outVolume = 0;
 	
+	private float gain, gainDry, gainWet;
 	
 	public AnalogSynthVoice() {
 		filter = new MultiModeFilter(env1, env2, lfo);
@@ -109,7 +108,9 @@ public class AnalogSynthVoice {
 		env1.controlTick();
 		env2.controlTick();
 		lfo.controlTick();
-		distort.controlTick();
+		gain = 1f + MAX_GAIN*P.VALX[P.OVERDRIVE];
+		gainDry = P.VALMIXHIGH[P.OVERDRIVE];
+		gainWet = P.VALMIXLOW[P.OVERDRIVE];
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
 		final float osc2Vol = Math.max(P.VALX[P.OSC2_VOLUME]+env2.outValue*P.VALXC[P.MOD_ENV2_OSC2_VOL_AMOUNT], 0);
@@ -132,7 +133,12 @@ public class AnalogSynthVoice {
 			else
 				filter.processSample(val);
 			
-			buffer[pos] += distort.process(val) * outVolume;
+			// post filter drive
+			float x = val*gain;
+			float x2 = x*x;
+			float y = x * ( 27 + x2 ) / ( 27 + 9 * x2 );
+			
+			buffer[pos] += (val*gainDry + y*gainWet) * outVolume;
 			am_buffer[pos] = 0;
 			outVolume += volumeIncrement;
 		}
