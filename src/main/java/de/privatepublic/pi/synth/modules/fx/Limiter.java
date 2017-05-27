@@ -22,7 +22,7 @@ public class Limiter implements IProcessorStereo {
 		outR = input[1];
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;
-			val = outL[pos] + outR[pos];
+			val = Math.abs(outL[pos] + outR[pos])*.5f;
 			if( val>envelope )
 	            envelope = attack * ( envelope - val ) + val;
 	        else
