@@ -21,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
-import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
-import de.privatepublic.pi.synth.comm.IPitchBendReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 
 
@@ -280,6 +278,7 @@ public class PresetHandler {
 			FileUtils.write(userDataFile(), userData.toString(2), "utf-8");
 			log.info("Saved patch: {} to user data",name);
 			SynthPi.uiMessage("Saved patch: "+name+" ("+cat+")");
+			SynthPi.uiLCDMessage(name, "SAVED PATCH");
 			P.LAST_LOADED_PATCH_NAME = name;
 			P.LAST_LOADED_PATCH_CATEGORY = cat;
 			ControlMessageDispatcher.INSTANCE.updateAllParams();
