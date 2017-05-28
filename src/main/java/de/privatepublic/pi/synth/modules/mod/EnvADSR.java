@@ -73,7 +73,7 @@ public class EnvADSR extends Envelope {
 	public void noteOn(float velocity) {
 		this.velocity = velocity;
 		float attackOvershoot = 1.05f;
-		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack()*P.VALMIXHIGH[P.MOD_VEL_ATTACK_AMOUNT] + (1-velocity)*P.VALMIXLOW[P.MOD_VEL_ATTACK_AMOUNT]*1000);
+		timeAttack = threshold(MAX_TIME_MILLIS*conf.attack() - (velocity)*P.VALX[P.MOD_VEL_ATTACK_AMOUNT]*MAX_TIME_MILLIS);
 		timeDecay = threshold(MAX_TIME_MILLIS*conf.decay());
 		float dur = timeAttack/P.MILLIS_PER_CONTROL_FRAME;//    P.MILLIS_PER_SAMPLE_FRAME;
 		float rdur = (1.0f-value) / dur;
@@ -88,7 +88,7 @@ public class EnvADSR extends Envelope {
 	
 	public void noteOff(float velocity) {
 		if (state==State.ATTACK || state==State.DECAY || state==State.DECAY_LOOP || state==State.HOLD) {
-			releaseCoeff = initStep(value, ZERO_THRESHOLD, threshold(MAX_TIME_MILLIS*conf.release()*P.VALMIXHIGH[P.MOD_VEL_RELEASE_AMOUNT]+(1-velocity)*(MAX_TIME_MILLIS/4)*P.VALMIXLOW[P.MOD_VEL_RELEASE_AMOUNT]));
+			releaseCoeff = initStep(value, ZERO_THRESHOLD, threshold(MAX_TIME_MILLIS*conf.release()*P.VALMIXHIGH[P.MOD_VEL_RELEASE_AMOUNT]-(velocity)*MAX_TIME_MILLIS*P.VALX[P.MOD_VEL_RELEASE_AMOUNT]));
 			state = State.RELEASE;
 		}
 	}

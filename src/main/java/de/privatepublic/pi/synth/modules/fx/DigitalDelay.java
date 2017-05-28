@@ -4,10 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.PresetHandler;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
-public class DigitalDelay implements IProcessorMono2Stereo, IControlProcessor {
+public class DigitalDelay extends DelayBase {
 
 	private DelayLine lineL;
 	private DelayLine lineR;
@@ -18,6 +19,7 @@ public class DigitalDelay implements IProcessorMono2Stereo, IControlProcessor {
 		lineL = new DelayLine(P.DELAY_RATE, 1);
 		lineR = new DelayLine(P.DELAY_RATE_RIGHT, -1);
 		this.lfo = lfo;
+		PresetHandler.registerReceiver(this);
 	}
 	
 	@Override
@@ -94,4 +96,10 @@ public class DigitalDelay implements IProcessorMono2Stereo, IControlProcessor {
 	private static final int LINE_LENGTH_MASK = LINE_LENGTH-1;
 	
 	private static final Logger log = LoggerFactory.getLogger(DigitalDelay.class);
+
+	@Override
+	public void initPatch() {
+		lineL.buffer = new float[LINE_LENGTH];
+		lineR.buffer = new float[LINE_LENGTH];
+	}
 }

@@ -5,10 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
+import de.privatepublic.pi.synth.PresetHandler;
 import de.privatepublic.pi.synth.modules.IControlProcessor;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 
-public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
+public class TapeDelay extends DelayBase {
 
 	private DelayLine lineL;
 	private DelayLine lineR;
@@ -20,6 +21,7 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 		lineL = new DelayLine(P.DELAY_RATE, 1);
 		lineR = new DelayLine(P.DELAY_RATE_RIGHT, -1);
 		this.lfo = lfo;
+		PresetHandler.registerReceiver(this);
 	}
 	
 	@Override
@@ -114,4 +116,10 @@ public class TapeDelay implements IProcessorMono2Stereo, IControlProcessor {
 
 	
 	private static final Logger log = LoggerFactory.getLogger(TapeDelay.class);
+
+	@Override
+	public void initPatch() {
+		lineL.buffer = new float[LINE_LENGTH];
+		lineR.buffer = new float[LINE_LENGTH];
+	}
 }

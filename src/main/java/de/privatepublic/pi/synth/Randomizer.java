@@ -155,6 +155,7 @@ public class Randomizer {
 		P.LAST_LOADED_PATCH_NAME = createFancyPatchName();
 		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
 		log.info("Randomized patch: {}", P.LAST_LOADED_PATCH_NAME);
+		PresetHandler.sendPatchInitNotification();
 		SynthPi.uiMessage("Randomized patch ("+P.LAST_LOADED_PATCH_NAME+")");
 		SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "RANDOMIZED");
 	}

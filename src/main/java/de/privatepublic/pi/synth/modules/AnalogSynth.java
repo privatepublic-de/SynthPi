@@ -15,6 +15,7 @@ import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.comm.lcd.LCD;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
+import de.privatepublic.pi.synth.modules.fx.DelayBase;
 import de.privatepublic.pi.synth.modules.fx.DigitalDelay;
 import de.privatepublic.pi.synth.modules.fx.IProcessorStereo;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
@@ -43,7 +44,8 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	private final LFO lfo = new LFO(null);
 	private final TapeDelay delayTape = new TapeDelay(lfo);
 	private final DigitalDelay delayDigital = new DigitalDelay(lfo);
-	
+	private DelayBase delay = delayTape; 
+
 	private int numberBufferChunks = P.SAMPLE_BUFFER_SIZE/P.CONTROL_BUFFER_SIZE;
 	
 	public AnalogSynth() {
@@ -57,8 +59,12 @@ public class AnalogSynth implements IMidiNoteReceiver {
 		for (int chunkNo=0;chunkNo<numberBufferChunks;chunkNo++) {
 			P.interpolate();
 			lfo.controlTick();
-			boolean usedelay2 = P.IS[P.DELAY_TYPE];
-			if (usedelay2) delayDigital.controlTick(); else delayTape.controlTick();
+			DelayBase usedelay = P.IS[P.DELAY_TYPE]?delayDigital:delayTape;
+			if (delay!=usedelay) {
+				usedelay.initPatch();
+				delay = usedelay;
+			}
+			delay.controlTick();
 			
 			final int startPos = chunkNo*P.CONTROL_BUFFER_SIZE;
 			for (int i=0; i<P.POLYPHONY; i++) {
@@ -66,7 +72,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 			}
 			// distort.process(renderBuffer, startPos);
 			booster.processBuffer(renderBuffer, startPos, P.VAL[P.BASS_BOOSTER_LEVEL]);
-			if (usedelay2) delayDigital.process(renderBuffer, outputs, startPos); else delayTape.process(renderBuffer, outputs, startPos);
+			delay.process(renderBuffer, outputs, startPos);
 			chorus.process(outputs, startPos);
 			if (P.LIMITER_ENABLED) {
 				limiter.process(outputs, startPos);

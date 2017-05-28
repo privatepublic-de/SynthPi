@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
+import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
+import de.privatepublic.pi.synth.comm.IPitchBendReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 
 
@@ -52,6 +54,20 @@ public class PresetHandler {
 	
 	private static File PATCH_DIR = new File(System.getProperty("user.home"), "synthpi");
 	
+	private static List<IPatchInitReceiver>initReceivers = new ArrayList<IPatchInitReceiver>();
+	
+	public static void registerReceiver(IPatchInitReceiver receiver) {
+		if (!initReceivers.contains(receiver)) {
+			initReceivers.add(receiver);
+		}
+	}
+	
+	protected static void sendPatchInitNotification() {
+		for (IPatchInitReceiver rc:initReceivers) {
+			rc.initPatch();
+		}
+	}
+	
 	public static void initDirectories() {
 		if (P.CUSTOM_SETTINGS_DIR!=null) {
 			PATCH_DIR = new File(P.CUSTOM_SETTINGS_DIR, "synthpi");
@@ -74,6 +90,7 @@ public class PresetHandler {
 		P.setToDefaults();
 		P.LAST_LOADED_PATCH_NAME = "(INITIALIZED)";
 		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
+		sendPatchInitNotification();
 		SynthPi.uiMessage("Patch initialized to defaults");
 		SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "PATCH");
 	}
@@ -170,9 +187,10 @@ public class PresetHandler {
 							P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
 							PatchCategory cat = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 							P.LAST_LOADED_PATCH_CATEGORY = cat;
+							sendPatchInitNotification();
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);
-							SynthPi.uiLCDMessage(cat.getShortName()+" "+P.LAST_LOADED_PATCH_NAME, "PATCH LOADED");
+							SynthPi.uiLCDMessage(cat.getShortName()+" "+P.LAST_LOADED_PATCH_NAME, "PATCH");
 							return true;
 						}
 					}
@@ -488,7 +506,7 @@ public class PresetHandler {
 			P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));
 			log.debug("Loaded recent patch {}", P.LAST_LOADED_PATCH_NAME);
 			SynthPi.uiMessage("Loaded recent patch: "+P.LAST_LOADED_PATCH_NAME);
-			SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "up and running");
+			SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "UP AND RUNNING");
 		} catch (JSONException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
