@@ -267,7 +267,7 @@ $(document).ready(function () {
 		elist.append("<div class='headline'>Your Patches</div>");
 		columnsOut(lists.user, elist);
 		elist.append("<div class='headline'>Factory Presets</div>");
-		elist.append("<div><a href='#' class='push' data-osc='/command/initpatch' style='text-align:center'>INIT (start from scratch)</a></div><div></div>");
+		elist.append("<div><a href='#' class='push' data-osc='/command/initpatch' style='text-align:center'>INIT (start from scratch)</a></div><br/>");
 		columnsOut(lists.factory, elist);
 		dimmer.show();
 		$("#patchlistwindow").fadeIn();
