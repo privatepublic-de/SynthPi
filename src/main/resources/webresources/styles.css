@@ -260,6 +260,7 @@ th {
 	margin-top: 12px;
 	text-align: center;
 	vertical-align: top;
+	min-height: 368px;
 }
 
 .groupcontainer {
@@ -319,7 +320,7 @@ h3 {
 	padding: 12px 0;
 }
 #oscmix {
-	padding: 17px 0;
+	
 }
 
 .divup {
@@ -327,11 +328,11 @@ h3 {
 }
 
 #filter1 {
-	padding-bottom: 33px;
+	
 }
 
 #amplifier {
-	padding: 0;
+	
 }
 
 .delay {
@@ -346,7 +347,7 @@ h3 {
 }
 
 #modulators {
-	padding: 20px 8px 4px 8px;
+	
 }
 
 #modulators .env {
