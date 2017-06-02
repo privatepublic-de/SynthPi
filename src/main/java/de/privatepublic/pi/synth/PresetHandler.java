@@ -98,16 +98,15 @@ public class PresetHandler {
 		preset.put(K.PATCH_NAME.key(), name);
 		preset.put(K.PATCH_CATEGORY.key(), category);
 		preset.put(K.PATCH_DATE.key(), System.currentTimeMillis());
-		JSONArray params = new JSONArray();
+		JSONArray paramsList = new JSONArray();
 		for (int i=0; i<P.PARAM_STORE_SIZE;i++) {
 			if (P.OSC_PATH[i]!=null) { // only performance parameters
-				JSONObject param = new JSONObject();
-				param.put(K.PATCH_PARAM_INDEX.key(), i);
-				param.put(K.PATCH_PARAM_VAL.key(), P.VAL[i]);
-				params.put(param);
+				JSONArray oneParam = new JSONArray();
+				oneParam.put(i).put(P.VAL[i]);
+				paramsList.put(oneParam);
 			}
 		}
-		preset.put(K.PATCH_PARAMS_LIST.key(), params);
+		preset.put(K.PATCH_PARAMS_LIST_SHORT.key(), paramsList);
 		return preset;
 	}
 	
@@ -170,16 +169,32 @@ public class PresetHandler {
 					for (int i=0;i<list.length();i++) {
 						JSONObject patch = list.getJSONObject(i);
 						if (patch.getString(K.UI_PATCH_ID.key()).equals(pid)) {
-							JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
 							P.setToDefaults();
-							for (int ix=0;ix<params.length();++ix) {
-								try {
-									JSONObject param = params.getJSONObject(ix);
-									int pindex = param.getInt(K.PATCH_PARAM_INDEX.key());
-									float val = (float) param.getDouble(K.PATCH_PARAM_VAL.key());
-									P.set(pindex, val);
-								} catch (JSONException e) {
-									log.debug("Error reading param at pos "+ix, e);
+							JSONArray paramsShort = patch.optJSONArray(K.PATCH_PARAMS_LIST_SHORT.key());
+							if (paramsShort!=null) {
+								for (int ix=0;ix<paramsShort.length();++ix) {
+									try {
+										JSONArray param = paramsShort.getJSONArray(ix);
+										int pindex = param.getInt(0);
+										float val = (float)param.getDouble(1);
+										P.set(pindex, val);
+									} catch (JSONException e) {
+										log.debug("Error reading param at pos "+ix, e);
+									}
+								}
+							}
+							else {
+								// old style verbose param list
+								JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
+								for (int ix=0;ix<params.length();++ix) {
+									try {
+										JSONObject param = params.getJSONObject(ix);
+										int pindex = param.getInt(K.PATCH_PARAM_INDEX.key());
+										float val = (float) param.getDouble(K.PATCH_PARAM_VAL.key());
+										P.set(pindex, val);
+									} catch (JSONException e) {
+										log.debug("Error reading param at pos "+ix, e);
+									}
 								}
 							}
 							P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
@@ -275,7 +290,7 @@ public class PresetHandler {
 		
 		// write file
 		try {
-			FileUtils.write(userDataFile(), userData.toString(2), "utf-8");
+			FileUtils.write(userDataFile(), userData.toString(), "utf-8");
 			log.info("Saved patch: {} to user data",name);
 			SynthPi.uiMessage("Saved patch: "+name+" ("+cat+")");
 			SynthPi.uiLCDMessage(name, "SAVED PATCH");
@@ -296,7 +311,7 @@ public class PresetHandler {
 		} catch (FileNotFoundException e) {
 			log.warn("No user patches file found!");
 		} catch (JSONException e) {
-			log.warn("Error reading user patch file.");
+			log.error("Error reading user patch file.", e);
 		}
 		JSONArray catlist = new JSONArray();
 		for (PatchCategory cat:PatchCategory.values()) {
@@ -317,7 +332,7 @@ public class PresetHandler {
 		} catch (FileNotFoundException e) {
 			log.warn("No user patches file found!");
 		} catch (JSONException e) {
-			log.warn("Error reading user patch file.");
+			log.error("Error reading user patch file.",e);
 		}
 		return result;
 	}
@@ -332,7 +347,10 @@ public class PresetHandler {
 				entry.put(K.PATCH_CATEGORY.key(), p.getString(K.PATCH_CATEGORY.key()));
 				entry.put(K.UI_PATCH_ID.key(), prefix+i);
 				if (complete) {
-					entry.put(K.PATCH_PARAMS_LIST.key(), p.getJSONArray(K.PATCH_PARAMS_LIST.key()));
+					if (p.has(K.PATCH_PARAMS_LIST_SHORT.key())) {
+						entry.put(K.PATCH_PARAMS_LIST_SHORT.key(), p.getJSONArray(K.PATCH_PARAMS_LIST_SHORT.key()));
+					} else if (p.has(K.PATCH_PARAMS_LIST.key()))
+						entry.put(K.PATCH_PARAMS_LIST.key(), p.getJSONArray(K.PATCH_PARAMS_LIST.key()));
 				}
 				outlist.put(entry);
 			}
@@ -519,6 +537,7 @@ public class PresetHandler {
 		PATCH_PARAM_INDEX("index"), 
 		PATCH_PARAM_VAL("val"), 
 		PATCH_PARAMS_LIST("params"), 
+		PATCH_PARAMS_LIST_SHORT("p"), 
 		
 		PREF_MIDI_CHANNEL("midichannel"), 
 		PREF_PITCH_BEND_RANGE("pitchbendrange"), 
