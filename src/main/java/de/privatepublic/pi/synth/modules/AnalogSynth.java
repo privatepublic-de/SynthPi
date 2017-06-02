@@ -39,7 +39,7 @@ public class AnalogSynth implements IMidiNoteReceiver {
 	
 	private final IProcessorStereo chorus = new Chorus(80);
 //	private final IProcessorMono distort = new DistortionExp();
-	private final IProcessorStereo limiter = new Limiter(10, 500);
+	private final IProcessorStereo limiter = new Limiter(10, 1000);
 	private final StateVariableFilter booster = new StateVariableFilter(FilterType.BANDPASS, 80f, 1/3f);
 	private final LFO lfo = new LFO(null);
 	private final TapeDelay delayTape = new TapeDelay(lfo);
