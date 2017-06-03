@@ -397,7 +397,7 @@ public class P {
 		OSC_PATH[OSC1_PULSE_WIDTH] = "/osc/1/pw";
 		OSC_PATH[OSC2_PULSE_WIDTH] = "/osc/2/pw";
 		// defaults!
-		setToDefaults();
+		setToDefaults(true);
 		
 		// send limiter status thread
 		Timer timer = new Timer("LimiterState", true);
@@ -424,11 +424,14 @@ public class P {
 
 	}
 	
-	public static void setToDefaults() {
+	public static void setToDefaults(boolean setvolume) {
 		for (int i=0;i<PARAM_STORE_SIZE;++i) {
+			if (i==P.VOLUME && !setvolume) continue;
 			setDirectly(i,0);
 		}
-		setDirectly(VOLUME, 0.79f);
+		if (setvolume) {
+			setDirectly(VOLUME, 0.79f);
+		}
 		setDirectly(FILTER1_FREQ, 0.5f);
 		setDirectly(OSC1_PULSE_WIDTH, 0.5f);
 		setDirectly(OSC2_PULSE_WIDTH, 0.5f);

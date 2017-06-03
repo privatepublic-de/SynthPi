@@ -85,7 +85,7 @@ public class PresetHandler {
 	
 	
 	public static void initPatch() {
-		P.setToDefaults();
+		P.setToDefaults(true);
 		P.LAST_LOADED_PATCH_NAME = "(INITIALIZED)";
 		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
 		sendPatchInitNotification();
@@ -169,13 +169,16 @@ public class PresetHandler {
 					for (int i=0;i<list.length();i++) {
 						JSONObject patch = list.getJSONObject(i);
 						if (patch.getString(K.UI_PATCH_ID.key()).equals(pid)) {
-							P.setToDefaults();
+							P.setToDefaults(false);
 							JSONArray paramsShort = patch.optJSONArray(K.PATCH_PARAMS_LIST_SHORT.key());
 							if (paramsShort!=null) {
 								for (int ix=0;ix<paramsShort.length();++ix) {
 									try {
 										JSONArray param = paramsShort.getJSONArray(ix);
 										int pindex = param.getInt(0);
+										if (pindex==P.VOLUME) {
+											continue;
+										}
 										float val = (float)param.getDouble(1);
 										P.set(pindex, val);
 									} catch (JSONException e) {
@@ -190,6 +193,9 @@ public class PresetHandler {
 									try {
 										JSONObject param = params.getJSONObject(ix);
 										int pindex = param.getInt(K.PATCH_PARAM_INDEX.key());
+										if (pindex==P.VOLUME) {
+											continue;
+										}
 										float val = (float) param.getDouble(K.PATCH_PARAM_VAL.key());
 										P.set(pindex, val);
 									} catch (JSONException e) {
@@ -242,7 +248,7 @@ public class PresetHandler {
 		
 		// write file
 		try {
-			FileUtils.write(userDataFile(), userData.toString(2), "utf-8");
+			FileUtils.write(userDataFile(), userData.toString(), "utf-8");
 			SynthPi.uiMessage("Deleted patch: "+removed.getString(K.PATCH_NAME.key()));
 			log.info("Saved user data");
 			return true;
@@ -498,25 +504,27 @@ public class PresetHandler {
 		log.info("Saving current patch ...");
 		JSONObject current = createJSONFromCurrentPatch(P.LAST_LOADED_PATCH_NAME, P.LAST_LOADED_PATCH_CATEGORY);
 		try {
-			FileUtils.write(userRecentFile(), current.toString(2), "utf-8");
+			FileUtils.write(userRecentFile(), current.toString(), "utf-8");
 		} catch (JSONException | IOException e) {
 			log.warn("Error writing current patch to {}: {}", userRecentFile(), e);
 		}
 	}
 	
-	public static void loadRecentPatch() {
+	public static void loadRecentPatch() {  // TODO remove copy&paste
 		try {
 			JSONObject patch = new JSONObject(FileUtils.readFileToString(userRecentFile(), "utf-8"));
-			JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
-			P.setToDefaults();
-			for (int ix=0;ix<params.length();++ix) {
-				try {
-					JSONObject param = params.getJSONObject(ix);
-					int pindex = param.getInt(K.PATCH_PARAM_INDEX.key());
-					float val = (float) param.getDouble(K.PATCH_PARAM_VAL.key());
-					P.set(pindex, val);
-				} catch (JSONException e) {
-					log.debug("Error reading param at pos "+ix, e);
+			P.setToDefaults(false);
+			JSONArray paramsShort = patch.optJSONArray(K.PATCH_PARAMS_LIST_SHORT.key());
+			if (paramsShort!=null) {
+				for (int ix=0;ix<paramsShort.length();++ix) {
+					try {
+						JSONArray param = paramsShort.getJSONArray(ix);
+						int pindex = param.getInt(0);
+						float val = (float)param.getDouble(1);
+						P.set(pindex, val);
+					} catch (JSONException e) {
+						log.debug("Error reading param at pos "+ix, e);
+					}
 				}
 			}
 			P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
@@ -590,7 +598,7 @@ public class PresetHandler {
 				patch.put(K.PATCH_PARAMS_LIST.key(), paramsOut);
 				out.put(patch);
 			}
-			FileUtils.write(new File(filepath+"~"), out.toString(2), "utf-8");
+			FileUtils.write(new File(filepath+"~"), out.toString(), "utf-8");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -14,7 +14,7 @@ public class Randomizer {
 	private static Random RANDOM = new Random();
 	
 	public static void randomize() {
-		P.setToDefaults();
+		P.setToDefaults(true);
 		
 		
 		// oscillators
