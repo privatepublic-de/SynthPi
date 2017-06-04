@@ -91,9 +91,14 @@ public class BlepOscillator implements IControlProcessor, IPitchBendReceiver{
 		phase = 0;
 	}
 	
+	private static final float CENT = (float)Math.pow(Math.pow(2f, 1), 1/12f)-1;
+	
 	protected void setTargetFrequency(float frequency) {
-		final float detunecents = P.osc2DetuneCents;
-		if (isSecond && detunecents!=0) {
+		if (isSecond && !P.IS[P.OSC2_KEYTRACKING]) {
+			targetFrequency = 2*CENT+P.VALX[P.OSC2_TUNING]*12000f;
+			targetFrequency = targetFrequency + targetFrequency*P.VALC[P.OSC2_TUNING_FINE]*CENT;
+		}
+		else if (isSecond && P.osc2DetuneCents!=0) {
 			targetFrequency =  P.osc2DetuneFactor*frequency;
 		}
 		else {

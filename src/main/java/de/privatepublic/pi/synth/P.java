@@ -201,9 +201,9 @@ public class P {
 	public static final int OSC2_TUNING_FINE = 46;
 	public static final int MOD_PW1_AMOUNT = 47;
 	public static final int MOD_VEL_ATTACK_AMOUNT = 48;
-	public static final int MOD_VEL_RELEASE_AMOUNT = 49;
+//	public static final int OSC2_KEYTRACKING = 49;
 	public static final int FILTER1_ON = 50;
-//	public static final int FILTER_PARALLEL = 51;
+	public static final int OSC2_KEYTRACKING = 51;
 	public static final int MOD_ENV2_PW2_AMOUNT = 52;
 	public static final int MOD_ENV2_A = 53;
 	public static final int MOD_ENV2_D = 54;
@@ -334,6 +334,7 @@ public class P {
 		OSC_PATH[OSC2_TUNING_FINE] = "/osc/2/tuning/fine";
 		OSC_PATH[OSC2_SYNC] = "/osc/2/sync";
 		OSC_PATH[OSC2_AM] = "/osc/2/am";
+		OSC_PATH[OSC2_KEYTRACKING] = "/osc/2/keytrack";
 		OSC_PATH[OSC_GLIDE_RATE] = "/osc/gliderate";
 		OSC_PATH[OSC_MONO] = "/osc/mono";
 		OSC_PATH[OSC_SUB_LOW] = "/osc/sub/low";
@@ -356,7 +357,6 @@ public class P {
 		OSC_PATH[MOD_VEL_VOL_AMOUNT] = "/mod/vel/depth/vol";
 		OSC_PATH[MOD_VEL_FILTER_AMOUNT] = "/mod/vel/depth/filter";
 		OSC_PATH[MOD_VEL_ATTACK_AMOUNT] = "/mod/vel/depth/attack";
-		OSC_PATH[MOD_VEL_RELEASE_AMOUNT] = "/mod/vel/depth/release";
 		
 		OSC_PATH[MOD_ENV1_A] = "/mod/env/1/1";
 		OSC_PATH[MOD_ENV1_D] = "/mod/env/1/2";
@@ -446,6 +446,7 @@ public class P {
 		setDirectly(OSC2_WAVE, 1f);
 		setDirectly(OSC2_TUNING_FINE, 0.66667f);
 		setDirectly(OSC2_TUNING, .5f);
+		setDirectly(OSC2_KEYTRACKING, 1);
 		setDirectly(FILTER1_TRACK_KEYBOARD, .5f);
 		setDirectly(FILTER1_ON, 0);		
 		
@@ -597,6 +598,7 @@ public class P {
 		OSC2_TUNING_FINE,
 		OSC2_SYNC,
 		OSC2_AM,
+		OSC2_KEYTRACKING,
 		
 		OSC_GLIDE_RATE,
 		OSC_MONO,
@@ -668,7 +670,6 @@ public class P {
 		MOD_ENV2_LFORATE_AMOUNT,
 		
 		MOD_VEL_ATTACK_AMOUNT,
-		MOD_VEL_RELEASE_AMOUNT,
 		MOD_VEL_FILTER_AMOUNT,
 		MOD_VEL_VOL_AMOUNT,
 		

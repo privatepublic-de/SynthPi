@@ -200,6 +200,10 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		String labelMsg = createLabelMessage(paramIndex);
 		String labelAndValueMsg = createValueAndLabelMessage(paramIndex);
 		SynthPi.uiLCDMessage(paramIndex);
+		if (paramIndex==P.OSC2_KEYTRACKING) {
+			labelAndValueMsg += createValueAndLabelMessage(P.OSC2_TUNING);
+			labelMsg += createValueAndLabelMessage(P.OSC2_TUNING);
+		}
 		MidiHandler.INSTANCE.updateMIDIDevices(paramIndex);
 		synchronized (SynthSocket.ACTIVE_SESSIONS) {
 			for (Session aSession:SynthSocket.ACTIVE_SESSIONS) {

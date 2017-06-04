@@ -254,7 +254,7 @@ public class MidiHandler {
 					else {
 						int pIndex = INDEX_OF_MIDI_CC[data1];
 						P.setFromMIDI(pIndex, data2);
-						if (pIndex==P.OSC2_TUNING || pIndex==P.OSC2_TUNING_FINE) {
+						if (pIndex==P.OSC2_TUNING || pIndex==P.OSC2_TUNING_FINE || pIndex==P.OSC2_KEYTRACKING) {
 							sendPitchBendNotification();
 						}
 						if (data1==CC_SUSTAIN) {

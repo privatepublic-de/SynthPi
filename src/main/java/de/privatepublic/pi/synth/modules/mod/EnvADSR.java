@@ -88,7 +88,7 @@ public class EnvADSR extends Envelope {
 	
 	public void noteOff(float velocity) {
 		if (state==State.ATTACK || state==State.DECAY || state==State.DECAY_LOOP || state==State.HOLD) {
-			releaseCoeff = initStep(value, ZERO_THRESHOLD, threshold(MAX_TIME_MILLIS*conf.release()*P.VALMIXHIGH[P.MOD_VEL_RELEASE_AMOUNT]-(velocity)*MAX_TIME_MILLIS*P.VALX[P.MOD_VEL_RELEASE_AMOUNT]));
+			releaseCoeff = initStep(value, ZERO_THRESHOLD, threshold(MAX_TIME_MILLIS*conf.release()));
 			state = State.RELEASE;
 		}
 	}

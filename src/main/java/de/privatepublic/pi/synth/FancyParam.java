@@ -45,6 +45,7 @@ public class FancyParam {
 		NAME[P.OSC2_TUNING_FINE]         = "OSC2 Fine";
 		NAME[P.OSC2_SYNC]                = "OSC2 Sync";
 		NAME[P.OSC2_AM]                  = "OSC2 Ringmod";
+		NAME[P.OSC2_KEYTRACKING]         = "OSC2 Keytrack";
 		NAME[P.OSC_GLIDE_RATE]           = "Glide Rate";
 		NAME[P.OSC_MONO]                 = "Monophonic";
 		NAME[P.OSC_SUB_SQUARE]           = "OSCSub Wave";
@@ -85,7 +86,6 @@ public class FancyParam {
 		NAME[P.MOD_VEL_VOL_AMOUNT]       = "VELO > Volume";
 		NAME[P.MOD_VEL_FILTER_AMOUNT]    = "VELO > Filter";
 		NAME[P.MOD_VEL_ATTACK_AMOUNT]       = "VELO > Attack";
-		NAME[P.MOD_VEL_RELEASE_AMOUNT]    = "VELO > Release";
 		// filters
 		NAME[P.FILTER1_TYPE]             = "Filter Type"; 
 		NAME[P.FILTER1_FREQ]             = "Filter Cut-off";
@@ -121,7 +121,12 @@ public class FancyParam {
 			result = P.Waveform.selectedWaveform(value).name();
 			break;
 		case P.OSC2_TUNING:
-			result = Math.round(P.VALC[P.OSC2_TUNING]*24)+" st";
+			if (P.IS[P.OSC2_KEYTRACKING]) {
+				result = Math.round(P.VALC[P.OSC2_TUNING]*24)+" st";
+			}
+			else {
+				result = FORMAT_FLOAT.format((P.VALX[P.OSC2_TUNING]*12000f));
+			}
 			break;
 		case P.MOD_RATE:
 			calculatedVal = LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE));
@@ -167,6 +172,7 @@ public class FancyParam {
 		case P.MOD_LFO_RESET:
 		case P.OSC_SUB_LOW:
 		case P.OSC2_AM:
+		case P.OSC2_KEYTRACKING:
 			result = value>0?"ON":"OFF";
 			break;
 		case P.OSC_SUB_SQUARE:
@@ -183,7 +189,7 @@ public class FancyParam {
 				result = FORMAT_FLOAT.format(((value-.5)*2)*100);	
 			}
 			else {
-				result = FORMAT_FLOAT.format(value*100);				
+				result = FORMAT_FLOAT.format(value*100);			
 			}
 			break;
 		}
