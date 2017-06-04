@@ -96,8 +96,8 @@ public class TapeDelay extends DelayBase {
 		public void controlTick() {
 			feedbackLevel = P.VAL[P.DELAY_FEEDBACK];
 			float freq = (FREQ_LOW+P.VALX[pRate]*FREQ_RANGE)*lfo.lfoAmount(modSign*P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
-			filter.setCutoff(freq);
-			filter2.setCutoff(freq);
+			filter.setCutoff(freq/2);
+			filter2.setCutoff(freq/8);
 			phaseIncrement = freq*INC_FACTOR;
 			valIncrementFactor = phaseIncrement/INC_ORIGINAL*.25f;
 		}
