@@ -299,7 +299,7 @@ public class MidiHandler {
 				}
 				else if (command==ShortMessage.PROGRAM_CHANGE) {
 					log.debug("Program change to {}", data1);
-					PresetHandler.loadPatchFromProgramNumber(data1);
+					programNumber = PresetHandler.loadPatchFromProgramNumber(data1);
 					ControlMessageDispatcher.INSTANCE.updateAllParams();
 				}
 			}
