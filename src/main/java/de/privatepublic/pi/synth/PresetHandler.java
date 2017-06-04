@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -22,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.comm.ControlMessageDispatcher;
 import de.privatepublic.pi.synth.comm.MidiHandler;
+import de.privatepublic.pi.synth.comm.lcd.LCD;
 
 
 public class PresetHandler {
@@ -209,7 +212,7 @@ public class PresetHandler {
 							sendPatchInitNotification();
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);
-							SynthPi.uiLCDMessage(cat.getShortName()+" "+P.LAST_LOADED_PATCH_NAME, "PATCH");
+							SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, cat+" ["+pid.toUpperCase()+"]");
 							return true;
 						}
 					}
@@ -578,35 +581,31 @@ public class PresetHandler {
 		}
 	}
 	
+	private static final Timer autoSaveTimer;
+	private static long autoSaveLastParamUpdateMillis = Long.MAX_VALUE;
+	private static boolean autoSaveDirty = false;
 	
-	public static void main(String[] args) {
-		String filepath = "./src/main/resources/factory-patches.json";
-		try {
-			String data = IOUtils.toString(new FileInputStream(filepath));
-			JSONArray array = new JSONArray(data);
-			JSONArray out = new JSONArray();
-			for (int i=0;i<array.length();i++) {
-				JSONObject patch = array.getJSONObject(i);
-				JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
-				JSONArray paramsOut = new JSONArray();
-				for (int j=0;j<params.length();++j) {
-					JSONObject param = params.getJSONObject(j);
-					param.remove("description");
-					param.remove("oscmsg");
-					paramsOut.put(param);
-				}
-				patch.put(K.PATCH_PARAMS_LIST.key(), paramsOut);
-				out.put(patch);
+	private static final TimerTask autoSaveTask = new TimerTask() {
+		@Override
+		public void run() {
+			if (System.currentTimeMillis()-autoSaveLastParamUpdateMillis>5000 && autoSaveDirty) {
+				saveCurrentPatch();
+				autoSaveDirty = false;
+				LCD.markDirtyPatch(false);
 			}
-			FileUtils.write(new File(filepath+"~"), out.toString(), "utf-8");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+	};
+	
+	static {
+		// setup autosave timer
+		autoSaveTimer = new Timer();
+		autoSaveTimer.scheduleAtFixedRate(autoSaveTask, 10000, 5000);
 	}
 	
+	public static void triggerAutoSave() {
+		autoSaveLastParamUpdateMillis = System.currentTimeMillis();
+		autoSaveDirty = true;
+		LCD.markDirtyPatch(true);
+	}
 	
 }

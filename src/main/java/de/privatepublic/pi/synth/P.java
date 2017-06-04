@@ -251,7 +251,9 @@ public class P {
 		OSC_NOISE_LEVEL,
 		BASS_BOOSTER_LEVEL,
 		DELAY_WET,
-		DELAY_FEEDBACK
+		DELAY_FEEDBACK,
+		DELAY_RATE,
+		DELAY_RATE_RIGHT
 	};
 	public static final int SET_INTERPOLATED_SIZE = SET_INTERPOLATED.length;
 	
@@ -490,6 +492,9 @@ public class P {
 	public static void set(int index, float val) {
 		if (index==CHORUS_LFO_RATE || index==CHORUS_LFO_TYPE) {
 			return; // ugly, but these are immutable and only set by defaults
+		}
+		if (index!=P.MOD_WHEEL) {
+			PresetHandler.triggerAutoSave();
 		}
 		TARGET_VAL[index] = val;
 		if (!isSetInterpolated(index)) {
