@@ -42,6 +42,12 @@ public class LCD {
 		}
 	}
 	
+	public static void markDirtyPatch(boolean dirty) {
+		if (isActive()) {
+			instance.updateDirty(dirty);
+		}
+	}
+	
 	private static boolean isActive() {
 		return instance!=null && instance.active;
 	}
@@ -53,6 +59,7 @@ public class LCD {
 	private ParamUpdate param = new ParamUpdate();
 	private KeypressUpdate keypress = new KeypressUpdate();
 	private MessageUpdate message = new MessageUpdate();
+	private DirtyUpdate dirtyupdate = new DirtyUpdate();
 	
 	private LCD(String portName) {
 		serialPort = new SerialPort(portName);
@@ -65,6 +72,7 @@ public class LCD {
 			send(Cmd.CLR);
 			send(Cmd.SCROLL_OFF);
 			send(Cmd.CONTRAST, 200);
+			send(Cmd.CURSOR_UNDERLINE_OFF, 200);
     		outputThread.start();
     		log.debug("Started LCD update thread");
 		} catch (SerialPortException e) {
@@ -75,6 +83,11 @@ public class LCD {
 	private void updateParam(int paramindex) {
 		param.update(paramindex);
 		outputThread.addMessage(param);
+	}
+	
+	private void updateDirty(boolean dirty) {
+		dirtyupdate.update(dirty);
+		outputThread.addMessage(dirtyupdate);
 	}
 	
 	private void updateKeypress(int keyspressed) {
@@ -200,6 +213,7 @@ public class LCD {
 			try {
 				LCD.send(instance.serialPort, Cmd.BRIGHTNESS, 0x20);
 				LCD.send(instance.serialPort, Cmd.CLR);
+				LCD.send(instance.serialPort, Cmd.CURSOR_UNDERLINE_OFF);
 				Thread.sleep(40);
 				instance.serialPort.writeString(" Bye-bye!                 ");
 				Thread.sleep(40);
@@ -222,7 +236,9 @@ public class LCD {
 		SCROLL_OFF(0x52), 
 		SELECT_BANK(0xC0), 
 		CREATE_CHAR_IN_BANK(0xC1),
-		WRITE_SPLASH_SCREEN(0x40);
+		WRITE_SPLASH_SCREEN(0x40),
+		CURSOR_UNDERLINE_ON(0x4a),
+		CURSOR_UNDERLINE_OFF(0x4b);
 		
 		private int b;
 		Cmd(int b) {
