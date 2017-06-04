@@ -88,7 +88,7 @@ public class BlepOscillator implements IControlProcessor, IPitchBendReceiver{
 			glideStepSize = 0;
 		}
 		setTargetFrequency(frequency);
-//		phase = 0;
+		phase = 0;
 	}
 	
 	protected void setTargetFrequency(float frequency) {
