@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.LFO;
+import de.privatepublic.pi.synth.modules.osc.BlepOscillator;
 
 public class FancyParam {
 
@@ -125,7 +126,15 @@ public class FancyParam {
 				result = Math.round(P.VALC[P.OSC2_TUNING]*24)+" st";
 			}
 			else {
-				result = FORMAT_FLOAT.format((P.VALX[P.OSC2_TUNING]*12000f));
+				result = FORMAT_FLOAT.format(BlepOscillator.freqForRingMod())+" \u00a0\u00a0\u00a0\u00a0\u00a0Hz\u00a0\u00a0\u00a0\u00a0\u00a0";
+			}
+			break;
+		case P.OSC2_TUNING_FINE:
+			if (P.IS[P.OSC2_KEYTRACKING]) {
+				result = FORMAT_FLOAT.format(((value-.5)*2)*100);
+			}
+			else {
+				result = FORMAT_FLOAT.format(BlepOscillator.freqForRingMod())+" \u00a0\u00a0\u00a0\u00a0\u00a0Hz\u00a0\u00a0\u00a0\u00a0\u00a0";
 			}
 			break;
 		case P.MOD_RATE:
@@ -206,16 +215,16 @@ public class FancyParam {
 				break;
 			}
 		}
-		if (order<16) {
+		if (order<17) {
 			return Color.YELLOW;
 		}
-		if (order<22) {
+		if (order<23) {
 			return COLOR_ORANGE;
 		}
-		if (order<31) {
+		if (order<32) {
 			return Color.CYAN;
 		}
-		if (order<46) {
+		if (order<47) {
 			return Color.MAGENTA;
 		}
 		return Color.GRAY;

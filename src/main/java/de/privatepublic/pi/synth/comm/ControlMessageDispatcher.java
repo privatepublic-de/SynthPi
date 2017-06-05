@@ -203,6 +203,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		if (paramIndex==P.OSC2_KEYTRACKING) {
 			labelAndValueMsg += createValueAndLabelMessage(P.OSC2_TUNING);
 			labelMsg += createValueAndLabelMessage(P.OSC2_TUNING);
+			labelMsg += createValueAndLabelMessage(P.OSC2_TUNING_FINE);
 		}
 		MidiHandler.INSTANCE.updateMIDIDevices(paramIndex);
 		synchronized (SynthSocket.ACTIVE_SESSIONS) {
@@ -257,6 +258,14 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				msgLabel.append('/');
 				msgLabel.append(FancyParam.valueOf(paramIndex));
 				msgLabel.append("=1\n");
+			}
+			if (!P.IS[P.OSC2_KEYTRACKING] && (paramIndex==P.OSC2_TUNING || paramIndex==P.OSC2_TUNING_FINE)) {
+				int otherIndex = paramIndex==P.OSC2_TUNING?P.OSC2_TUNING_FINE:P.OSC2_TUNING;
+				msgLabel.append("/label");
+				msgLabel.append(P.OSC_PATH[otherIndex]);
+				msgLabel.append('=');
+				msgLabel.append(FancyParam.valueOf(otherIndex));
+				msgLabel.append('\n');
 			}
 			return msgLabel.toString();
 		}
