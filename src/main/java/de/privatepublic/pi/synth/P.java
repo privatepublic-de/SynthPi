@@ -224,7 +224,7 @@ public class P {
 	public static final int MOD_ENV1_PW2_AMOUNT = 69;
 	public static final int MOD_ENV1_LOOP = 70;
 	public static final int DELAY_WET = 71;
-//	public static final int OSC_MODE = 72;
+	public static final int MOD_OSC2_VOL_AMOUNT = 72;
 //	public static final int MOD_AHD_DELAY_TIME_AMOUNT = 73;
 	public static final int MIDI_VELOCITY_CURVE = 74;
 //	public static final int REVERB_ONE_KNOB = 75;
@@ -296,6 +296,7 @@ public class P {
 			P.MOD_PW2_AMOUNT,
 			P.MOD_PITCH_AMOUNT,
 			P.MOD_PITCH2_AMOUNT,
+			P.MOD_OSC2_VOL_AMOUNT,
 			P.MOD_DELAY_TIME_AMOUNT,
 			P.MOD_VEL_FILTER_AMOUNT,
 			P.MOD_PRESS_FILTER_AMOUNT,
@@ -353,6 +354,7 @@ public class P {
 		OSC_PATH[MOD_VOL_AMOUNT] = "/mod/1/depth/vol";
 		OSC_PATH[MOD_DELAY_TIME_AMOUNT] = "/mod/1/depth/delaytime";
 		OSC_PATH[MOD_LFO_DELAY] = "/mod/1/delay";
+		OSC_PATH[MOD_OSC2_VOL_AMOUNT] = "/mod/1/depth/osc2vol";
 		
 		OSC_PATH[MOD_VEL_VOL_AMOUNT] = "/mod/vel/depth/vol";
 		OSC_PATH[MOD_VEL_FILTER_AMOUNT] = "/mod/vel/depth/filter";
@@ -457,7 +459,7 @@ public class P {
 		setDirectly(MOD_DELAY_TIME_AMOUNT, .5f);
 		setDirectly(MOD_PITCH_AMOUNT, .8335f);
 		setDirectly(MOD_PITCH2_AMOUNT, .5f);
-
+		setDirectly(MOD_OSC2_VOL_AMOUNT, .5f);
 		
 		setDirectly(MOD_ENV1_S, 1);
 		setDirectly(MOD_ENV1_PITCH2_AMOUNT, .5f);

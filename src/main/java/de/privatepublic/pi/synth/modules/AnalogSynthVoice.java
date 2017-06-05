@@ -113,11 +113,14 @@ public class AnalogSynthVoice {
 		gainWet = P.VALMIXLOW[P.OVERDRIVE];
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final float osc1Vol = P.VALX[P.OSC1_VOLUME];
-		final float osc2Vol = Math.max(P.VALX[P.OSC2_VOLUME]+env2.outValue*P.VALXC[P.MOD_ENV2_OSC2_VOL_AMOUNT], 0);
+		final float osc2Vol = Math.max(
+				P.VALX[P.OSC2_VOLUME]
+				+env2.outValue*P.VALXC[P.MOD_ENV2_OSC2_VOL_AMOUNT]
+				+lfo.lfoAmountAdd(P.VALXC[P.MOD_OSC2_VOL_AMOUNT])
+						, 0);
 		final float oscSubVol = P.VALX[P.OSC_SUB_VOLUME];
 		final float noiseLevel = Math.max(P.VALX[P.OSC_NOISE_LEVEL] + env2.outValue*P.VALXC[P.MOD_ENV2_NOISE_AMOUNT], 0);
-		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
-		final float volume = velocityFactor*env1.outValue*(1+lfo.lfoAmountAdd(modVol));
+		final float volume = velocityFactor*env1.outValue*(1+lfo.lfoAmountAdd(P.VAL[P.MOD_VOL_AMOUNT]));
 		final float volumeIncrement = (volume-outVolume)/P.CONTROL_BUFFER_SIZE;
 		for (int i=0;i<P.CONTROL_BUFFER_SIZE;i++) {
 			final int pos = i+startPos;
