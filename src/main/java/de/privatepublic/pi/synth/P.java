@@ -578,9 +578,11 @@ public class P {
 	}
 	
 	public static void setFromMIDI(int index, int val) {
-		float v = val==64?.5f:val/127f;
-		set(index, v);
-		VAL_RAW_MIDI[index] = (int)val;
+		if (index!=UNUSED) {
+			float v = val==64?.5f:val/127f;
+			set(index, v);
+			VAL_RAW_MIDI[index] = (int)val;
+		}
 	}
 	
 	public static void resetPerformanceControllers() {
