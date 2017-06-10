@@ -126,7 +126,7 @@ public class FancyParam {
 				result = Math.round(P.VALC[P.OSC2_TUNING]*24)+" st";
 			}
 			else {
-				result = FORMAT_FLOAT.format(BlepOscillator.freqForRingMod())+" \u00a0\u00a0\u00a0\u00a0\u00a0Hz\u00a0\u00a0\u00a0\u00a0\u00a0";
+				result = FORMAT_FLOAT.format(BlepOscillator.freqForRingMod())+" Hz";
 			}
 			break;
 		case P.OSC2_TUNING_FINE:
@@ -134,7 +134,7 @@ public class FancyParam {
 				result = FORMAT_FLOAT.format(((value-.5)*2)*100);
 			}
 			else {
-				result = FORMAT_FLOAT.format(BlepOscillator.freqForRingMod())+" \u00a0\u00a0\u00a0\u00a0\u00a0Hz\u00a0\u00a0\u00a0\u00a0\u00a0";
+				result = FORMAT_FLOAT.format(BlepOscillator.freqForRingMod())+" Hz";
 			}
 			break;
 		case P.MOD_RATE:
