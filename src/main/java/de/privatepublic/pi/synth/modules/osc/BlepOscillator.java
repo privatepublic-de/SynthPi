@@ -76,19 +76,19 @@ public class BlepOscillator implements IControlProcessor, IPitchBendReceiver{
 	public void trigger(final float frequency, final float velocity) {
 		this.frequency = frequency;
 		if (P.IS[P.OSC_GLIDE_RATE]) {
-			if (isSecond) {
-				effectiveFrequency = P.osc2DetuneFactor*AnalogSynth.lastTriggeredFrequency;				
-			}
-			else {
-				effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
-			}
+//			if (isSecond) {
+//				effectiveFrequency = P.osc2DetuneFactor*AnalogSynth.lastTriggeredFrequency;				
+//			}
+//			else {
+//				effectiveFrequency = AnalogSynth.lastTriggeredFrequency;
+//			}
 			glideStepSize = Math.abs((AnalogSynth.lastTriggeredFrequency-frequency)/(P.SAMPLE_RATE_HZ/P.CONTROL_BUFFER_SIZE*P.VALX[P.OSC_GLIDE_RATE]));
 		}
 		else {
 			glideStepSize = 0;
 		}
 		setTargetFrequency(frequency);
-		phase = 0;
+//		phase = 0;
 	}
 	
 	public static final float CENT_FACTOR = (float)Math.pow(Math.pow(2f, 1), 1/12f)-1;
