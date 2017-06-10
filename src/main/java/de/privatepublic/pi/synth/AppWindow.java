@@ -1,11 +1,15 @@
 package de.privatepublic.pi.synth;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
@@ -23,17 +27,14 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.BevelBorder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.awt.Color;
-
-import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
 
 public class AppWindow {
 
@@ -94,12 +95,21 @@ public class AppWindow {
 		lblDspLoad.setLabelFor(progressBarLoad);
 		lblDspLoad.setFont(new Font("Dialog", Font.PLAIN, 12));
 		
-		lblLCDLabel = new JLabel("<html>1234567890123456<br>1234567890123456</html>");
+		lblLCDLabel = new JLabel("<html>SynthPi<br>UP AND RUNNING</html>");
 		lblLCDLabel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 		lblLCDLabel.setForeground(Color.GREEN);
 		lblLCDLabel.setOpaque(true);
 		lblLCDLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLCDLabel.setFont(new Font("Monospaced", lblLCDLabel.getFont().getStyle(), 17));
+		try {
+			Font font = Font.createFont(Font.TRUETYPE_FONT, getClass().getResource("/VT323-Regular.ttf").openStream());   
+			GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			genv.registerFont(font);
+			font = font.deriveFont(19f);
+			lblLCDLabel.setFont(font);
+		} catch (Exception e) {
+			lblLCDLabel.setFont(new Font("Monospaced", lblLCDLabel.getFont().getStyle(), 17));
+		}		
 		lblLCDLabel.setBackground(Color.decode("#484848"));
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
