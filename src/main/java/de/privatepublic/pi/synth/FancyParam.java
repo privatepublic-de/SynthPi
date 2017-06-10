@@ -80,13 +80,14 @@ public class FancyParam {
 		NAME[P.MOD_ENV2_FILTER_AMOUNT]   = "ENV2 > Filter";
 		NAME[P.MOD_ENV2_LFORATE_AMOUNT]  = "ENV2 > LFO Rate";
 		NAME[P.MOD_VOL_AMOUNT]           = "LFO > Volume";
-        //                                  ---------------
+        //                                  ----------------
 		NAME[P.MOD_PRESS_PITCH_AMOUNT]   = "PRESS > Pitch";
 		NAME[P.MOD_PRESS_PITCH2_AMOUNT]  = "PRESS > Pitch2";
 		NAME[P.MOD_PRESS_FILTER_AMOUNT]  = "PRESS > Filter";
+		NAME[P.MOD_PRESS_LFO_AMOUNT]     = "PRESS > LFO Amnt";
 		NAME[P.MOD_VEL_VOL_AMOUNT]       = "VELO > Volume";
 		NAME[P.MOD_VEL_FILTER_AMOUNT]    = "VELO > Filter";
-		NAME[P.MOD_VEL_ATTACK_AMOUNT]       = "VELO > Attack";
+		NAME[P.MOD_VEL_ATTACK_AMOUNT]    = "VELO > Attack";
 		// filters
 		NAME[P.FILTER1_TYPE]             = "Filter Type"; 
 		NAME[P.FILTER1_FREQ]             = "Filter Cut-off";

@@ -235,7 +235,7 @@ public class P {
 	public static final int DELAY_RATE = 80;
 	public static final int DELAY_FEEDBACK = 81;
 	public static final int FILTER1_OVERLOAD = 82;
-//	public static final int FILTER2_OVERLOAD = 83;
+	public static final int MOD_PRESS_LFO_AMOUNT = 83;
 	
 	public static final int[] SET_INTERPOLATED = new int[] {
 		FILTER1_FREQ,
@@ -387,6 +387,7 @@ public class P {
 		OSC_PATH[MOD_PRESS_FILTER_AMOUNT] = "/mod/press/depth/filter";
 		OSC_PATH[MOD_PRESS_PITCH_AMOUNT] = "/mod/press/depth/pitch";
 		OSC_PATH[MOD_PRESS_PITCH2_AMOUNT] = "/mod/press/depth/pitch2";
+		OSC_PATH[MOD_PRESS_LFO_AMOUNT] = "/mod/press/depth/lfoamount";
 		
 		OSC_PATH[MOD_WHEEL] = "/play/mod/wheel";
 		
@@ -520,6 +521,7 @@ public class P {
 			}
 		}
 		CHANNEL_PRESSURE = (CHANNEL_PRESSURE+CHANNEL_PRESSURE_TARGET)/2f;
+		MOD_AMOUNT_COMBINED = Math.min(VAL[MOD_WHEEL]+VAL[MOD_AMOUNT_BASE]+VAL[MOD_PRESS_LFO_AMOUNT]*CHANNEL_PRESSURE, 1f);
 	}
 	
 	
@@ -571,9 +573,9 @@ public class P {
 		case OSC2_WAVE:
 			VAL_OSC2_WAVEFORM = Waveform.selectedWaveform(val);
 			break;
-		case MOD_WHEEL:
-		case MOD_AMOUNT_BASE:
-			MOD_AMOUNT_COMBINED = Math.max(VAL[MOD_WHEEL], VAL[MOD_AMOUNT_BASE]);
+//		case MOD_WHEEL:
+//		case MOD_AMOUNT_BASE:
+//			MOD_AMOUNT_COMBINED = Math.max(VAL[MOD_WHEEL], VAL[MOD_AMOUNT_BASE]);
 		}
 	}
 	
@@ -679,7 +681,8 @@ public class P {
 		
 		MOD_PRESS_PITCH_AMOUNT,
 		MOD_PRESS_PITCH2_AMOUNT,
-		MOD_PRESS_FILTER_AMOUNT
+		MOD_PRESS_FILTER_AMOUNT,
+		MOD_PRESS_LFO_AMOUNT
 	};
 	
 	
