@@ -3,15 +3,18 @@ package de.privatepublic.pi.synth.modules.mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.privatepublic.pi.synth.IPatchInitReceiver;
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.PresetHandler;
 
-public class EnvADSR extends Envelope {
+public class EnvADSR extends Envelope implements IPatchInitReceiver {
 
 	public static enum State { REST, ATTACK, DECAY, DECAY_LOOP, HOLD, RELEASE }
 	public State state = State.REST;
 
 	public EnvADSR(EnvelopeParamConfig conf) {
 		this.conf = conf;
+		PresetHandler.registerReceiver(this);
 	}
 
 	private final EnvelopeParamConfig conf;
@@ -162,6 +165,14 @@ public class EnvADSR extends Envelope {
 	@Override
 	public void controlTick() {
 		nextValue();
+	}
+
+
+	@Override
+	public void initPatch() {
+		state = State.REST;
+		value = 0;
+		outValue = 0;
 	}
 	
 }
