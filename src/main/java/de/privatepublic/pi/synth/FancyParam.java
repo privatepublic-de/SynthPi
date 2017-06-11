@@ -63,6 +63,7 @@ public class FancyParam {
 		NAME[P.MOD_PITCH_AMOUNT]         = "LFO > Pitch";
 		NAME[P.MOD_PITCH2_AMOUNT]        = "LFO > Pitch2";
 		NAME[P.MOD_DELAY_TIME_AMOUNT]    = "LFO > Delay";
+		NAME[P.MOD_OSC2_VOL_AMOUNT]      = "LFO > OSC2 Vol";
 		NAME[P.MOD_PW1_AMOUNT]           = "LFO > PW1";
 		NAME[P.MOD_PW2_AMOUNT]           = "LFO > PW2";
         //                                  ---------------
