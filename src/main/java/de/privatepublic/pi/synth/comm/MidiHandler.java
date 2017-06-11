@@ -104,7 +104,7 @@ public class MidiHandler {
 											// log.debug("Added updateReceiver for {}", infos[i]);
 										}
 									} catch(Exception e) {
-										log.warn(e.getMessage());
+										// log.warn(e.getMessage());
 									}
 									try {
 										Transmitter trans = device.getTransmitter();
