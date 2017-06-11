@@ -60,6 +60,7 @@ public class LCD {
 	private KeypressUpdate keypress = new KeypressUpdate();
 	private MessageUpdate message = new MessageUpdate();
 	private DirtyUpdate dirtyupdate = new DirtyUpdate();
+	private SleepUpdate sleepupdate = new SleepUpdate();
 	
 	private LCD(String portName) {
 		serialPort = new SerialPort(portName);
@@ -133,12 +134,14 @@ public class LCD {
 								public void run() {
 									try {
 										send(Cmd.BRIGHTNESS, 0x02);
+										// 
+										addMessage(sleepupdate);
 										isDimmed = true;
 									} catch (SerialPortException e) {
 									}
 								}
 							}, 60000);
-							if (isDimmed) {
+							if (isDimmed && msg!=sleepupdate) {
 								send(Cmd.BRIGHTNESS, 0x80);
 								Thread.sleep(20);
 								isDimmed = false;

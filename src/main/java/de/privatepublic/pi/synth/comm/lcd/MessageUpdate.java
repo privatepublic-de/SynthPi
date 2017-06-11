@@ -7,9 +7,9 @@ import de.privatepublic.pi.synth.comm.lcd.LCD.Cmd;
 
 public class MessageUpdate extends DisplayUpdate {
 
-	private String line1;
-	private String line2;
-	private Color color;
+	protected String line1;
+	protected String line2;
+	protected Color color;
 	
 	public void update(String line1, String line2, Color color) {
 		this.line1 = line1;
