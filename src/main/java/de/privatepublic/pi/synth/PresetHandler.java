@@ -29,7 +29,7 @@ public class PresetHandler {
 	private static final Logger log = LoggerFactory.getLogger(PresetHandler.class);
 	
 	public static enum PatchCategory {
-		POLY("PL"), PAD("PD"), LEAD("LD"), BASS("BS"), KEYS("KY"), FX("FX"), PERC("PC"), MISC("MC");
+		POLY("PL"), PAD("PD"), KEYS("KY"), LEAD("LD"), BASS("BS"), FX("FX"), PERC("PC"), MISC("MC");
 		
 		private String shortName;
 		private PatchCategory(String shortName) {
@@ -369,7 +369,6 @@ public class PresetHandler {
 		try {
 			String data = IOUtils.toString(in, "utf-8");
 			result = new JSONArray(data);
-			// TODO sort here!
 			List<JSONObject> list = new ArrayList<JSONObject>();
 			for (int i=0;i<result.length();i++) {
 				list.add(result.getJSONObject(i));
@@ -377,8 +376,8 @@ public class PresetHandler {
 			Collections.sort(list, new Comparator<JSONObject>() {
 				@Override
 				public int compare(JSONObject a, JSONObject b) {
-					String aCat = a.getString(K.PATCH_CATEGORY.key());
-					String bCat = b.getString(K.PATCH_CATEGORY.key());
+					PatchCategory aCat = PatchCategory.find(a.getString(K.PATCH_CATEGORY.key()));
+					PatchCategory bCat = PatchCategory.find(b.getString(K.PATCH_CATEGORY.key()));
 					int catComp = aCat.compareTo(bCat);
 					if (catComp!=0)
 						return catComp;
