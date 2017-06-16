@@ -24,7 +24,7 @@ public class ParamUpdate extends DisplayUpdate {
 		String value = FancyParam.valueOf(renderIndex);
 		if (!P.IS[P.FILTER1_ON] && (renderIndex==P.FILTER1_FREQ || renderIndex==P.FILTER1_TYPE || renderIndex==P.FILTER1_OVERLOAD || renderIndex==P.FILTER1_RESONANCE || renderIndex==P.FILTER1_TRACK_KEYBOARD)) {
 			// show in value that filter is turned off
-			value = "off!".concat(value);
+			value = value.concat(" OFF");
 		}
 		int val = P.VAL_RAW_MIDI[renderIndex]-(P.IS_BIPOLAR[renderIndex]?64:0);
 		String line1 = formatLine(FancyParam.nameOf(renderIndex), 16, false);
