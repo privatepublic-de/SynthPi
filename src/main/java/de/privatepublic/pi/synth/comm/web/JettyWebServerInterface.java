@@ -137,12 +137,14 @@ public class JettyWebServerInterface {
 			"img/ic_settings_white_36dp.png",
 			"img/ic_shuffle_white_36dp.png",
 			"img/ic_midi.png",
+			"img/synthpi192x192.png",
 			"index.html",
 			"jquery-2.1.4.min.js",
 			"jquery.color-2.1.2.min.js",
 			"jquery.knob.min.js",
 			"styles.css",
-			"synthcontrol.js"
+			"synthcontrol.js",
+			"manifest.json"
 		};
 		
 		private String mimeType;

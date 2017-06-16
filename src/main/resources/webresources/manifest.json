@@ -1,0 +1,13 @@
+{
+  "short_name": "SynthPi MK2",
+  "name": "SynthPi MK2 Interface",
+  "icons": [
+    {
+      "src": "img/synthpi192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone"
+}
