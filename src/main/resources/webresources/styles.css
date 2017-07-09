@@ -69,6 +69,7 @@ th {
 @media only screen and (max-width: 768px) {
 	#main {
 		margin: 0 auto 0 auto;
+		padding-right: 36px;
 	}
 	#statuscontainer {
 		position: static;
@@ -90,6 +91,14 @@ th {
 	body.performancedata #keyboard {
 		display: none;
 	}
+	#modmatrix > .innergroup > label {
+	    display: block!important;
+	    padding: 10px 10px 10px 14px;
+	    text-align: left;
+	}
+	#modmatrix > .innergroup {
+        text-align: left;
+    }
 }
 
 
