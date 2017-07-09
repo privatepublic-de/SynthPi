@@ -126,6 +126,22 @@ public class SynthPi {
 		}
 	}
 	
+	
+	public static void uiLCDMessage(final String line1, String patchCategory, String patchId) {
+		final String line2 = StringUtils.overlay(StringUtils.rightPad(patchCategory, 15), patchId, 15-patchId.length(), 15);
+		LCD.message(line1, line2, Color.GREEN);
+		if (HEADLESS) {
+			return;
+		}
+		if (window!=null) {
+			EventQueue.invokeLater(new Runnable() {
+		        public void run() {
+		        	window.lcdMessage(line1, line2, Color.GREEN);
+		        }
+		    });
+		}
+	}
+	
 	public static void uiLCDMessage(final String line1, final String line2) {
 		LCD.message(line1, line2, Color.GREEN);
 		if (HEADLESS) {

@@ -209,7 +209,7 @@ public class PresetHandler {
 							sendPatchInitNotification();
 							log.debug("Loaded patch {}", P.LAST_LOADED_PATCH_NAME);
 							SynthPi.uiMessage("Loaded patch: "+P.LAST_LOADED_PATCH_NAME);
-							SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, cat+" ["+pid.toUpperCase()+"]");
+							SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, cat.name(), pid.toUpperCase());
 							return true;
 						}
 					}
