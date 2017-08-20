@@ -202,10 +202,10 @@ public class AppWindow {
 			String uri = "http://localhost:" + P.PORT_HTTP;
 			
 			if (P.CUSTOM_BROWSER_COMMAND!=null) {
-				log.info("Starting browser: {} {}", P.CUSTOM_BROWSER_COMMAND, uri);
-				SynthPi.uiMessage("Starting browser "+P.CUSTOM_BROWSER_COMMAND+" "+uri);
+				log.info("Starting browser: {} {}", P.CUSTOM_BROWSER_COMMAND);
+				SynthPi.uiMessage("Starting browser "+P.CUSTOM_BROWSER_COMMAND);
 				List<String> cmdParts = new ArrayList<String>();
-				Matcher m = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'").matcher(P.CUSTOM_BROWSER_COMMAND.concat(" ").concat(uri));
+				Matcher m = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'").matcher(P.CUSTOM_BROWSER_COMMAND);
 				while (m.find()) {
 				    if (m.group(1) != null) {
 				        cmdParts.add(m.group(1)); // "

@@ -113,6 +113,7 @@ th {
 
 #datalight {
 	display: inline-block;
+	visibility: hidden;
 	width: 8px;
 	height: 10px;
 	background: url(img/green-led.png) no-repeat center center;
@@ -174,6 +175,9 @@ th {
 #exit {
 	background-image: url(img/ic_close_white_18dp.png);
 }
+#shutdown {
+    background-image: url(img/ic_power.png);
+}
 .btnclose {
 	float: right;
 	cursor: pointer;
@@ -188,21 +192,21 @@ th {
 	border-color: #069!important;
 	background-color: #013;
 }
-.blue .inner { background-color: #0cf; }
+.blue .inner, .fastnav .blue { background-color: #0cf; }
 
 .yellow, .group.yellow, .yellow input, .window.yellow {
 	color: #ff0;
 	border-color: #770!important;
 	background-color: #202000;
 }
-.yellow .inner { background-color: #ff0; }
+.yellow .inner, .fastnav .yellow { background-color: #ff0; }
 
 .orange, .group.orange, .orange input, .window.orange, .orange .exclusive {
 	color: #f90;
 	border-color: #960!important;
 	background-color: #261A00;
 }
-.orange .inner { background-color: #f90; }
+.orange .inner, .fastnav .orange { background-color: #f90; }
 
 .brown, .group.brown, .brown input, .window.brown {
 	color: #7F4C00;
@@ -215,7 +219,7 @@ th {
 	border-color: #7F337F!important;
 	background-color: #261126;
 }
-.pink .inner { background-color: #E566E5; }
+.pink .inner, .fastnav .pink, .fastnav .selected { background-color: #E566E5; }
 
 .gray, .group.gray, .gray input {
 	color: #ccc;
@@ -504,6 +508,7 @@ h3 {
 	min-width: 46px;
 	display: inline-block;
 }
+
 .lfotypes .exclusiveunstyled {
 	padding-bottom: .5em;
 	maring-bottom: .5em;
@@ -652,7 +657,7 @@ form select {
 }
 .listcontent div {
 	display: inline-block;
-	min-width: 320px;
+	min-width: 200px;
 	margin: 2px 4px;
 }
 .listcontent div.headline {
@@ -662,7 +667,7 @@ form select {
 	display: block;
 }
 .listcontent div a.push {
-	width: 300px;
+	width: 230px;
 	text-align: left;
 	color: #eee;
 	border-color: #666;
@@ -897,3 +902,169 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 }
 
 
+.fcontainer {
+	display: inline-block;
+	vertical-align: middle;
+	border-color: inherit;
+	width: 46px;
+	margin: 0 4px;
+}
+.fcontainer .scale {
+	position: relative;
+	width: 44px;
+    height: 200px;
+    border: 1px solid;
+    border-color: inherit;
+    border-radius: 4px;
+    background: linear-gradient(rgba(255,255,255,.1), rgba(0,0,0,0));
+}
+
+.fcontainer .scale.nonzero {
+	background: linear-gradient(rgba(255,0,255,.4), rgba(0,0,0,0));
+}
+
+.fcontainer .scale .handle {
+	position: absolute;
+	width: 38px;
+	border-radius: 4px;
+	padding: 4px 0;
+	left: 3px;
+	top: 50%;
+	color: black;
+	font-size: 12px;
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+	cursor: grab;
+}
+
+.handle label {
+	cursor: -webkit-grab;
+    cursor: -moz-grab;
+    cursor: grab;
+}
+
+.fcontainer .scale .handle.dragging {
+	box-shadow: 0 0 20px #ff0;
+	cursor: -webkit-grabbing;
+	cursor: -moz-grabbing;
+	cursor: grabbing;
+}
+
+.handle.dragging label {
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
+    cursor: grabbing;
+}
+
+
+.fcontainer .scale .middle {
+    position: absolute;
+    width: 44px;
+    top: 50%;
+    border-top: 1px solid;
+    border-color: inherit;
+}
+
+label.forgroup {
+	display: block;
+	border-bottom: 1px solid;
+	border-color: inherit;
+}
+
+label.forgroup.empty {
+	border-bottom: none;
+	height: 1em;
+}
+
+.spaceleft {
+	margin-left: 24px;
+}
+
+.spacetop {
+    margin-top: 16px;
+}
+
+.pi800 .lfo .innergroup {
+	vertical-align: top;
+}
+
+.pi800 .exclusive-container {
+	margin: 4px 0;
+}
+
+.pi800 .exclusive.filtertype {
+    border-bottom: none;
+    padding: 0;
+}
+
+.pi800 .exclusiveunstyled .checkbox {
+	margin: .5em;
+}
+
+.pi800 .group {
+	margin-bottom: 60px;
+	margin-left: 10px;
+	min-height: 350px;
+}
+
+.pi800 #main {
+	background: #000;
+}
+
+.pi800 .lfotypes label {
+    min-width: 60px;
+}
+
+.pi800 #statuscontainer {
+	padding: 0 10px;
+}
+
+.pi800 #statuscontainer .inner {
+	padding: 0;
+}
+
+.pi800 #statuscontainer .right {
+	padding-top: 4px;
+}
+
+.pi800 .iconbutton {
+	width: 24px;
+	height: 24px;
+}
+
+.pi800 label.patchname {
+	width: 140px;
+	overflow: hidden;
+}
+
+.pi800 #filter1 {
+    min-width: 460px;    
+}
+
+.pi800 #filter1 .checkbox {
+	margin: 0 8px;
+}
+
+nav.fastnav span {
+	display: inline-block;
+	border-radius: 4px;
+	padding: 5px 8px;
+	min-width: 1.5em;
+	font-weight: bold;
+	background-color: #777;
+	color: #000;
+	margin: 0 6px;
+	cursor: pointer;
+}
+
+.moddest .fastnav {
+	margin: 16px 0;
+	font-size: .85em;
+}
+.moddest .fastnav:before {
+    content: "Source:";
+}
+
+.moddest {
+	min-width: 510px;
+}

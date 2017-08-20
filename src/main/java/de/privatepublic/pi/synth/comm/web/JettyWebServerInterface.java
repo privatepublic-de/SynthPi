@@ -121,6 +121,7 @@ public class JettyWebServerInterface {
 		
 		private static final String[] CACHE_FILENAMES = {
 			"img/favicon.png",
+			"img/fadergrid.png",
 			"img/green-led.png",
 			"img/bg_saw.png",
 			"img/bg_sin.png",
@@ -137,8 +138,10 @@ public class JettyWebServerInterface {
 			"img/ic_settings_white_36dp.png",
 			"img/ic_shuffle_white_36dp.png",
 			"img/ic_midi.png",
+			"img/ic_power.png",
 			"img/synthpi192x192.png",
 			"index.html",
+			"fader.html",
 			"jquery-2.1.4.min.js",
 			"jquery.color-2.1.2.min.js",
 			"jquery.knob.min.js",

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#333333">
+    <title>SynthPi MK2 // Fader Control Interface</title>
+    <link rel="icon" type="image/png" href="img/favicon.png" />
+    <link rel="icon" sizes="192x192" href="img/synthpi192x192.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="stylesheet" href="styles.css" type="text/css">
+    <script src="jquery-2.1.4.min.js"></script>
+    <script src="jquery.knob.min.js"></script>
+    <script src="jquery.color-2.1.2.min.js"></script>
+    <script src="synthcontrol.js"></script>
+</head>
+<body class="connecting pi800">
+    <div id="statuscontainer">
+        <div class="inner">
+            <nav class="fastnav">
+		        <span data-href="#oscillators" class="yellow">O</span>
+		        <span data-href="#filter1" class="orange">F</span><span data-href="#amplifier" class="blue">A</span>
+		        <span data-href="#modulators" class="pink">L</span>
+		        <span data-href="#envelopes" class="pink">E</span>
+		        <span data-href="#modlfo">M</span>
+		    </nav>
+        </div>
+        <div class="left">
+            <div id="patch">
+                <a href="#" class="push glossy" data-osc="/command/listpatches"><label class="patchname" data-osc="/patch/name">Patchname</label></a>
+                <a href="#" class="iconbutton" id="randomize" data-osc="/command/randomize" title="Randomize patch"></a>
+                <a href="#" class="iconbutton" id="savepatch" data-osc="/command/getsaveinfo" title="Save patch"></a>
+            </div>
+        </div>
+        <div class="right">
+            <span id="rc" class="connection connecting blink">Trying to connect ...</span>
+            <span id="cs" class="connection connected">
+                <a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
+                <a href="#" id="shutdown" class="iconbutton" data-osc="/command/shutdown" title="Shut down"></a>
+                <span id="datalight"></span> connected
+            </span>
+        </div>
+        
+    </div>
+    <div id="main">
+        <div id="oscillators" class="group yellow">
+            <h2>Oscillators</h2>
+                    <div class="innergroup spacetop">
+                        <label class="forgroup">OSC1</label><br/>
+                        <div class="innergroup">
+	                        <label>Wave</label><br />
+	                        <div class="exclusive" data-control-path="/osc/1/wave" style="display:inline-block">
+	                            <span class="checkbox small sin" title="" data-osc="/option/osc/1/wave/SINE" data-osc-send="/osc/1/wave,0"></span>
+	                            <br/>
+	                            <span class="checkbox small tri" title="" data-osc="/option/osc/1/wave/TRIANGLE" data-osc-send="/osc/1/wave,0.25"></span>
+	                            <br/>
+	                            <span class="checkbox small saw" title="" data-osc="/option/osc/1/wave/SAW" data-osc-send="/osc/1/wave,0.5"></span>
+	                            <br/>
+	                            <span class="checkbox small pul" title="" data-osc="/option/osc/1/wave/PULSE" data-osc-send="/osc/1/wave,1"></span>
+	                        </div>
+                        </div>
+                        <input type="text" value="0" class="fader small" title="PW" data-cursor="10" data-osc="/osc/1/pw" data-osc-label="/label/osc/1/pw"/>                
+                    </div>
+                    <div class="innergroup spaceleft spacetop">
+                        <label class="forgroup">OSC2</label><br/>
+                        <div class="innergroup">
+	                        <label>Wave</label><br />
+	                        <div class="exclusive" data-control-path="/osc/2/wave" style="display:inline-block">
+	                            <span class="checkbox small sin" title="" data-osc="/option/osc/2/wave/SINE" data-osc-send="/osc/2/wave,0"></span>
+	                            <br/>
+	                            <span class="checkbox small tri" title="" data-osc="/option/osc/2/wave/TRIANGLE" data-osc-send="/osc/2/wave,0.25"></span>
+	                            <br/>
+	                            <span class="checkbox small saw" title="" data-osc="/option/osc/2/wave/SAW" data-osc-send="/osc/2/wave,0.5"></span>
+	                            <br/>
+	                            <span class="checkbox small pul" title="" data-osc="/option/osc/2/wave/PULSE" data-osc-send="/osc/2/wave,1"></span>
+	                        </div>
+                        </div>
+                        <input type="text" value="0" class="fader small" title="PW" data-cursor="10" data-osc="/osc/2/pw" data-osc-label="/label/osc/2/pw"/>
+                        <div class="innergroup spaceleft">
+	                        <input type="text" value="0" class="fader small" title="Coarse" data-cursor="10" data-osc="/osc/2/tuning" data-osc-label="/label/osc/2/tuning" />
+	                        <input type="text" value="0" class="fader small" title="Fine" data-cursor="10" data-osc="/osc/2/tuning/fine" data-osc-label="/label/osc/2/tuning/fine" />
+                        </div>
+                    </div>
+                    <div class="innergroup spaceleft spacetop">
+                        <label class="forgroup empty"></label><br/>
+                        <div class="innergroup">
+                            <input type="text" value="0" class="fader small" title="Glide" data-osc="/osc/gliderate" />
+                        </div>
+                    </div>
+                    <div class="innergroup spaceleft spacetop">
+                        <label class="forgroup">Mix</label><br/>
+                        <div class="innergroup">
+				            <input type="text" value="0" class="fader medium" title="Osc 1" data-osc="/osc/1/vol" data-osc-label="/label/osc/1/vol"/>
+				            <input type="text" value="0" class="fader medium" title="Osc 2" data-osc="/osc/2/vol" data-osc-label="/label/osc/2/vol"/>
+				            <input type="text" value="0" class="fader small" title="Sub" data-osc="/osc/sub/vol" data-osc-label="/label/osc/sub/vol"/>
+				            <input type="text" value="0" class="fader small" title="Noise" data-osc="/osc/noiselevel" data-osc-label="/label/osc/noiselevel"/>                        
+                        </div>
+                    </div>
+                    
+                    <br />
+                    <div class="innergroup spacetop" style="text-align:left">
+                        <span class="checkbox small" title="Mono" data-osc="/osc/mono"></span>
+                        <span class="checkbox small" title="Sync" data-osc="/osc/2/sync"></span>
+                        <span class="checkbox small" title="Ringmod" data-osc="/osc/2/am"></span>
+                        <span class="checkbox small" title="O2 Keytrk" data-osc="/osc/2/keytrack"></span>
+                        <label class="spaceleft">Sub:</label>
+                        <div class="exclusive subwave" data-control-path="/osc/sub/square" style="display:inline-block">
+                            <span class="checkbox small tri" title="" data-osc="/option/osc/sub/square/TRIANGLE" data-osc-send="/osc/sub/square,0"></span>
+                            <span class="checkbox small pul" title="" data-osc="/option/osc/sub/square/SQUARE" data-osc-send="/osc/sub/square,1"></span>
+                        </div>
+                        <span class="checkbox small" title="2 Oct" data-osc="/osc/sub/low"></span>
+                    </div>
+        </div>
+        
+        <div id="filter1" class="group orange">
+            <h2>Filter <span class="checkbox smaller" title="on" data-osc="/filter/1/enable"></span></h2>
+            <div class="innergroup spacetop">
+                <label class="forgroup">Filter Type</label>
+	            <div class="exclusive filtertype" data-control-path="/filter/1/type">
+	                <span class="checkbox small" title="LP24" data-osc="/option/filter/1/type/LOWPASS24" data-osc-send="/filter/1/type,0"></span>
+	                <span class="checkbox small" title="LP" data-osc="/option/filter/1/type/LOWPASS" data-osc-send="/filter/1/type,0.2"></span>
+	                <span class="checkbox small" title="BP" data-osc="/option/filter/1/type/BANDPASS" data-osc-send="/filter/1/type,0.4"></span>
+	                <span class="checkbox small" title="HP" data-osc="/option/filter/1/type/HIGHPASS" data-osc-send="/filter/1/type,0.6"></span>
+	                <span class="checkbox small" title="Notch" data-osc="/option/filter/1/type/NOTCH" data-osc-send="/filter/1/type,0.8"></span>
+	                <span class="checkbox small" title="Acid" data-osc="/option/filter/1/type/ACID" data-osc-send="/filter/1/type,1"></span>
+	            </div>
+            </div>
+            <br/>
+            <div class="innergroup spacetop">
+                <input type="text" value="0" class="fader large" title="Cut-off" data-osc="/filter/1/freq" data-osc-label="/label/filter/1/freq" />
+                <input type="text" value="0" class="fader medium" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
+                <div class="innergroup spaceleft">               
+	                <input type="text" value="0" class="fader small" title="Drive" data-osc="/filter/1/overload" data-osc-label="/label/filter/1/overload" />
+	                <input type="text" value="0" class="fader small" title="Keytrk" data-osc="/filter/1/kbdtracking" />
+                </div>
+            </div>
+        </div>
+
+        <div id="amplifier" class="group blue">
+            <h2>Amplifier</h2>
+            <div class="innergroup">
+                <label class="forgroup empty"></label><br/>
+                <div class="innergroup">    
+		            <input type="text" value="0" class="fader small" title="Drive" data-osc="/fx/overdrive" data-osc-label="/label/fx/overdrive" />
+		            <input type="text" value="0" class="fader small" title="Bass" data-osc="/amp/bassboost" data-osc-label="/label/amp/bassboost"/>
+		        </div>
+            </div>
+            <div class="innergroup spaceleft">
+	            <label class="forgroup">Delay</label><br/>
+	                <div class="innergroup">
+			            <input type="text" value="0" class="fader small" title="Amount" data-osc="/fx/delay/wet" data-osc-label="/label/fx/delay/wet" />
+			            <input type="text" value="0" class="fader small" title="Feedb." data-osc="/fx/delay/feedback" data-osc-label="/label/fx/delay/feedback" />
+			            <input type="text" value="0" class="fader small" title="Rate L" data-osc="/fx/delay/rate" data-osc-label="/label/fx/delay/rate" />
+			            <input type="text" value="0" class="fader small" title="Rate R" data-osc="/fx/delay/rateright" data-osc-label="/label/fx/delay/rateright" />
+		            </div>
+            </div>
+            <div class="innergroup spaceleft">
+	            <label class="forgroup empty"></label><br/>
+	            <div class="innergroup">
+		            <input type="text" value="0" class="fader small" title="Chorus" data-osc="/fx/chorus/drywet" data-osc-label="/label/fx/chorus/drywet" />
+		            <input type="text" value="0" class="fader medium" title="Volume" data-osc="/amp/volume" data-osc-label="/label/amp/volume" />
+		        </div>
+            </div>
+            <br/>
+            <div class="exclusive" data-control-path="/fx/delay/type" style="display:inline-block">
+                <span class="checkbox small" title="Low-Fi" data-osc="/option/fx/delay/type/LOW-FI" data-osc-send="/fx/delay/type,0"></span>
+                <span class="checkbox small" title="Digital" data-osc="/option/fx/delay/type/DIGITAL" data-osc-send="/fx/delay/type,1"></span>
+            </div>
+        </div>
+            
+        <div id="modulators" class="group pink">
+            <h2>LFO</h2>
+            <div class="innergroup spacetop lfo">
+                <div class="innergroup spacetop">
+                    <label class="forgroup">Type</label><br/>
+                    <div class="exclusiveunstyled lfotypes" data-control-path="/mod/1/type">
+                        <span class="checkbox small" title="Sine" data-osc="/option/mod/1/type/SINE" data-osc-send="/mod/1/type,0"></span>
+                        <span class="checkbox small" title="Triangle" data-osc="/option/mod/1/type/TRIANGLE" data-osc-send="/mod/1/type,0.2"></span><br />
+                        <span class="checkbox small" title="Up" data-osc="/option/mod/1/type/RAMP UP" data-osc-send="/mod/1/type,0.4"></span>
+                        <span class="checkbox small" title="Down" data-osc="/option/mod/1/type/RAMP DOWN" data-osc-send="/mod/1/type,0.6"></span><br />
+                        <span class="checkbox small" title="Square" data-osc="/option/mod/1/type/SQUARE" data-osc-send="/mod/1/type,0.8"></span>
+                        <span class="checkbox small" title="S&amp;Hold" data-osc="/option/mod/1/type/SAMPLE+HOLD" data-osc-send="/mod/1/type,1"></span>
+                    </div>
+                    <span class="checkbox small" title="Key Reset" data-osc="/mod/1/reset"></span>
+                </div>
+                <div class="innergroup spacetop spaceleft">
+                    <label class="forgroup">Settings</label><br/>
+                    <input type="text" value="0" class="fader medium" title="Rate" data-osc="/mod/1/rate" data-osc-label="/label/mod/1/rate" />
+                    <input type="text" value="0" class="fader medium" title="Depth" data-osc="/mod/1/amount" data-osc-label="/label/mod/1/amount" />
+                    <input type="text" value="0" class="fader small" title="Delay" data-osc="/mod/1/delay" data-osc-label="/label/mod/1/delay" />
+                </div>
+            </div>
+         </div>
+         <div id="envelopes" class="group pink">
+            <h2>ENVELOPES</h2>
+            <div class="innergroup spacetop">
+                <label class="forgroup">ENV1</label><br />
+                <div class="innergroup">
+                    <input type="text" value="0" class="fader medium" title="A" data-osc="/mod/env/1/1" data-osc-label="/label/mod/env/1/1"/>
+                    <input type="text" value="0" class="fader medium" title="D" data-osc="/mod/env/1/2" data-osc-label="/label/mod/env/1/2" />
+                    <input type="text" value="0" class="fader medium" title="S" data-osc="/mod/env/1/3" data-osc-label="/label/mod/env/1/3" />
+                    <input type="text" value="0" class="fader medium" title="R" data-osc="/mod/env/1/4" data-osc-label="/label/mod/env/1/4" />
+                </div><br/>
+                <div class="innergroup spacetop">
+                    <span class="checkbox smaller" title="Loop" data-osc="/mod/env/1/loop"></span>
+                </div>
+            </div>
+            <div class="innergroup spaceleft spacetop">
+                <label class="forgroup">ENV2</label><br />
+                <div class="innergroup">
+                    <input type="text" value="0" class="fader medium" title="A" data-osc="/mod/env/2/1" data-osc-label="/label/mod/env/2/1" />
+                    <input type="text" value="0" class="fader medium" title="D" data-osc="/mod/env/2/2" data-osc-label="/label/mod/env/2/2" />
+                    <input type="text" value="0" class="fader medium" title="S" data-osc="/mod/env/2/3" data-osc-label="/label/mod/env/2/3" />
+                    <input type="text" value="0" class="fader medium" title="R" data-osc="/mod/env/2/4" data-osc-label="/label/mod/env/2/4" />
+                </div><br />
+                <div class="innergroup spacetop">
+                    <span class="checkbox smaller" title="Loop" data-osc="/mod/env/2/loop"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="modlfo" class="group gray highlightnonzero moddest">
+            <h2>MOD Destinations</h2>
+            <nav class="fastnav">
+                <span data-href="#modlfo" class="selected">LFO</span>
+                <span data-href="#modenv1">ENV1</span>
+                <span data-href="#modenv2">ENV2</span>
+                <span data-href="#modperf">PERF</span>
+            </nav>
+            <div class="innergroup">
+                <input type="text" value="0" class="fader small" title="Pitch" data-cursor="10" data-osc="/mod/1/depth/pitch" />
+                <input type="text" value="0" class="fader small" title="Pitch2" data-cursor="10" data-osc="/mod/1/depth/pitch/2" />
+                <input type="text" value="0" class="fader small" title="PW 1" data-cursor="10" data-osc="/mod/1/depth/wave/1" />
+                <input type="text" value="0" class="fader small" title="PW 2" data-cursor="10" data-osc="/mod/1/depth/wave/2" />
+                <input type="text" value="0" class="fader small" title="Filter" data-cursor="10" data-osc="/mod/1/depth/filter/1" />
+                <input type="text" value="0" class="fader small" title="Delay" data-cursor="10" data-osc="/mod/1/depth/delaytime" />
+                <input type="text" value="0" class="fader small" title="O2Vol" data-cursor="10" data-osc="/mod/1/depth/osc2vol" data-osc-label="/label/mod/1/depth/osc2vol"/>
+                <input type="text" value="0" class="fader small" title="Vol" data-osc="/mod/1/depth/vol" data-osc-label="/label/mod/1/depth/vol"/>
+            </div>
+        </div>
+        <br/>
+        <div id="modenv1" class="group gray highlightnonzero moddest">
+            <h2>MOD Destinations</h2>
+            <nav class="fastnav">
+                <span data-href="#modlfo">LFO</span>
+                <span data-href="#modenv1" class="selected">ENV1</span>
+                <span data-href="#modenv2">ENV2</span>
+                <span data-href="#modperf">PERF</span>
+            </nav>
+            <div class="innergroup">
+                <input type="text" value="0" class="fader small" title="Pitch2" data-cursor="10" data-osc="/mod/env/1/depth/pitch/2" />
+                <input type="text" value="0" class="fader small" title="PW 1" data-cursor="10" data-osc="/mod/env/1/depth/pw/1" />
+                <input type="text" value="0" class="fader small" title="PW 2" data-cursor="10" data-osc="/mod/env/1/depth/pw/2" />
+                <input type="text" value="0" class="fader small" title="Filter" data-cursor="10" data-osc="/mod/env/1/depth/filter" />
+            </div>
+        </div>
+        <br/>
+        <div id="modenv2" class="group gray highlightnonzero moddest">
+            <h2>MOD Destinations</h2>
+            <nav class="fastnav">
+                <span data-href="#modlfo">LFO</span>
+                <span data-href="#modenv1">ENV1</span>
+                <span data-href="#modenv2" class="selected">ENV2</span>
+                <span data-href="#modperf">PERF</span>
+            </nav>
+            <div class="innergroup">
+                <input type="text" value="0" class="fader small" title="Pitch" data-cursor="10" data-osc="/mod/env/2/depth/pitch" />
+                <input type="text" value="0" class="fader small" title="Pitch2" data-cursor="10" data-osc="/mod/env/2/depth/pitch/2" />
+                <input type="text" value="0" class="fader small" title="PW 1" data-cursor="10" data-osc="/mod/env/2/depth/pw/1" />
+                <input type="text" value="0" class="fader small" title="PW 2" data-cursor="10" data-osc="/mod/env/2/depth/pw/2" />
+                <input type="text" value="0" class="fader small" title="O2Vol" data-cursor="10" data-osc="/mod/env/2/depth/osc2vol" />
+                <input type="text" value="0" class="fader small" title="Noise" data-cursor="10" data-osc="/mod/env/2/depth/noise" />
+                <input type="text" value="0" class="fader small" title="Filter" data-cursor="10" data-osc="/mod/env/2/depth/filter" />
+                <input type="text" value="0" class="fader small" title="LFO-R" data-cursor="10" data-osc="/mod/env/2/depth/lforate" />
+            </div>
+        </div>
+        <div id="modperf" class="group gray highlightnonzero moddest" style="margin-bottom: 300px">
+            <h2>MOD Destinations</h2>
+            <nav class="fastnav">
+                <span data-href="#modlfo">LFO</span>
+                <span data-href="#modenv1">ENV1</span>
+                <span data-href="#modenv2">ENV2</span>
+                <span data-href="#modperf" class="selected">PERF</span>
+            </nav>
+            <div class="innergroup">
+                <label class="forgroup">VELOCITY</label><br/>
+                <div class="innergroup">
+	                <input type="text" value="0" class="fader small" title="Attack" data-osc="/mod/vel/depth/attack" />
+	                <input type="text" value="0" class="fader small" title="Filter" data-cursor="10" data-osc="/mod/vel/depth/filter" />
+	                <input type="text" value="0" class="fader small" title="Vol" data-osc="/mod/vel/depth/vol" />
+                </div>
+            </div>
+            <div class="innergroup spaceleft">
+                <label class="forgroup">AFTERTOUCH</label><br/>
+                <div class="innergroup">
+	                <input type="text" value="0" class="fader small" title="Pitch" data-cursor="10" data-osc="/mod/press/depth/pitch" />
+	                <input type="text" value="0" class="fader small" title="Pitch2" data-cursor="10" data-osc="/mod/press/depth/pitch2" />
+	                <input type="text" value="0" class="fader small" title="Filter" data-cursor="10" data-osc="/mod/press/depth/filter" />
+	                <input type="text" value="0" class="fader small" title="LFO-D" data-osc="/mod/press/depth/lfoamount" />
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="dimmer" style="display:none"></div>
+    <div id="patchlistwindow" class="window blue">
+        <h2 class="windowtitle"><span class="btnclose"></span>Load Patch</h2>
+        <div id="loadpatchlist" class="patchlist"><div class="listcontent"></div></div>
+    </div>
+    <div id="savepatchwindow" class="window orange">
+        <h2 class="windowtitle"><span class="btnclose"></span>Save Patch</h2>
+        <div class="saveform">
+            <div class="field">
+                <label for="savename">Name</label>
+                <input type="text" id="savename" placeholder="Enter a patch name" />
+            </div>
+            <div class="field">
+                <label for="pcategories">Type</label>
+                <select id="pcategories" size="1"></select>
+            </div>
+            <div class="field full">
+                <label>&nbsp;</label>
+                <a href="#" id="savebutton" class="push">Save As New Patch</a>
+                ... or select one of the existing patches to overwrite:
+            </div>
+            <br />
+            <div class="field full"> 
+                <div id="existingpatches" class="patchlist"><div class="listcontent"></div></div>   
+            </div>
+        </div>
+    </div>
+    <div id="settings" class="window pink">
+        <h2 class="windowtitle"><span class="btnclose"></span>Settings</h2>
+        <form>
+            <div class="field">
+                <label>MIDI Channel</label>
+                <select id="set_midichannel">
+                    <option value="0">all</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>Polyphony</label>
+                <select id="set_polyphonyvoices">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+                voices
+            </div>
+            <div class="field">
+                <label>Pitch bend range</label>
+                <select id="set_pitchbendrange">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                semitones (<input type="checkbox" id="set_pitchbendfix"> <label for="set_pitchbendfix">fix strange behavior</label>)
+            </div>
+            <div class="field">
+                <label>Audio Buffer Size</label>
+                <select id="set_buffersize">
+                    <option value="32">32</option>
+                    <option value="64">64</option>
+                    <option value="96">96</option>
+                    <option value="128">128</option>
+                    <option value="256">256</option>
+                    <option value="512">512</option>
+                </select>
+                bytes (needs restart)
+            </div>
+            <div class="field">
+                <input type="checkbox" id="set_limiter" />
+                <label for="set_limiter">Output limiter active</label>
+            </div>
+            <div class="field">
+                <input type="checkbox" id="set_liveperformance" />
+                <label for="set_liveperformance">Display Live Performance Data</label>
+            </div>
+            <p><a href="#" class="push" id="savesettings">&nbsp;Save&nbsp;</a></p>
+        </form>
+    </div>
+    <div id="credits">
+        <h2 data-ui="togglecredits">
+            <span class="btnclose"></span>
+            SynthPi Credits
+        </h2>
+        <p>
+            Open source virtual analogue, additive organ and Karplus-Strong synthesizer engine in Java
+            by Peter Witzel (since 2014).<br />The User Manual can be found here:<br />
+            <a href="http://www.privatepublic.de/blog/software/synthpi-synthesizer/" target="_blank">http://www.privatepublic.de/blog/software/synthpi-synthesizer/</a>
+            <br />The source code can be found on github:<br />
+            <a href="https://github.com/privatepublic-de" target="_blank">https://github.com/privatepublic-de</a> 
+        </p>
+        <p>
+            SynthPi uses and is grateful for the following open source components and resources:</p>
+        <p>
+            <a href="https://github.com/jaudiolibs/" target="_blank">JAudioLibs</a> (by Neil C. Smith) 
+            including Audio Ops Freeverb implementation
+        </p>
+        <p>
+            <a href="http://www.musicdsp.org" target="_blank">www.musicdsp.org</a> - lots of inspiration there
+        </p>
+        <p>
+            <a href="http://www.adventurekid.se/akrt/waveforms/" target="_blank">AKWF Waveforms</a> (by Kristoffer Ekstrand aka. Adventure Kid)
+            for strings, keyboards and voices waveform sets
+        </p>
+        <p>
+            <a href="https://jquery.com/" target="_blank">jQuery</a>, 
+            <a href="https://github.com/jquery/jquery-color/" target="_blank">jQuery-color</a> and<br />
+            <a href="https://github.com/aterrien/jQuery-Knob" target="_blank">jQuery-knob</a> (by Anthony Terrien) 
+        </p>
+        <p>
+            <a href="http://www.eclipse.org/jetty/" target="_blank">Jetty 9 web server and websockets</a>, 
+            some <a href="https://commons.apache.org/" target="_blank">Apache Commons</a> Java utils, 
+            <a href="http://logback.qos.ch/" target="_blank">Logback</a> logging framework, 
+            <a href="http://json.org/" target="_blank">json.org</a> Java JSON processing classes
+        </p>
+        <p>
+            <a href="https://github.com/google/material-design-icons" target="_blank">Google Material Design Icons</a>
+        </p>
+    </div>
+</body>
+</html>

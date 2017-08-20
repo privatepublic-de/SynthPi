@@ -1,5 +1,6 @@
 package de.privatepublic.pi.synth.comm;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 	
 	private static enum CommandMessage {
 		UPDATE_REQUEST("/command/updaterequest"),
+		SHUTDOWN("/command/shutdown"),
 		RANDOMIZE_PATCH("/command/randomize"),
 		INIT_PATCH("/command/initpatch"),
 		LIST_PATCHES("/command/listpatches"),
@@ -79,6 +81,16 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			switch (command) {
 			case UPDATE_REQUEST:
 				updateAllParams();
+				break;
+			case SHUTDOWN:
+				try {
+					SynthPi.uiMessage("Trying to shut down!");
+					log.info("Trying to shut down!");
+					Runtime.getRuntime().exec("sudo shutdown now");
+				} catch (IOException e) {
+					SynthPi.uiMessage("Shutdown failed!");
+					log.warn("Shutdown failed", e);
+				}
 				break;
 			case RANDOMIZE_PATCH:
 				Randomizer.randomize();

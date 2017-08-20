@@ -211,9 +211,10 @@ public class MidiHandler {
 						MidiHandler.INSTANCE.updateMIDIDevicesSelectedParam();
 					}
 					else if (data1==CC_PARAM_VALUE && param_selected>=0) {
-						P.setFromMIDI(param_selected, data2);
-						ControlMessageDispatcher.INSTANCE.update(param_selected);
-						ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
+						if (P.setFromMIDI(param_selected, data2)) {
+							ControlMessageDispatcher.INSTANCE.update(param_selected);
+							ControlMessageDispatcher.INSTANCE.updateSelectedParam(param_selected);
+						}
 					}
 					else if (data1==CC_PROGRAM_CHANGE) {
 						if (data2==0) {
