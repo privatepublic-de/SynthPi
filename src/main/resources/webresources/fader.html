@@ -114,24 +114,27 @@
         
         <div id="filter1" class="group orange">
             <h2>Filter <span class="checkbox smaller" title="on" data-osc="/filter/1/enable"></span></h2>
-            <div class="innergroup spacetop">
-                <label class="forgroup">Filter Type</label>
+            <div class="innergroup ">
+                <label class="forgroup">Filter Type</label><br />
 	            <div class="exclusive filtertype" data-control-path="/filter/1/type">
 	                <span class="checkbox small" title="LP24" data-osc="/option/filter/1/type/LOWPASS24" data-osc-send="/filter/1/type,0"></span>
 	                <span class="checkbox small" title="LP" data-osc="/option/filter/1/type/LOWPASS" data-osc-send="/filter/1/type,0.2"></span>
-	                <span class="checkbox small" title="BP" data-osc="/option/filter/1/type/BANDPASS" data-osc-send="/filter/1/type,0.4"></span>
+	                <span class="checkbox small" title="Acid" data-osc="/option/filter/1/type/ACID" data-osc-send="/filter/1/type,1"></span>
+	                <br />
 	                <span class="checkbox small" title="HP" data-osc="/option/filter/1/type/HIGHPASS" data-osc-send="/filter/1/type,0.6"></span>
 	                <span class="checkbox small" title="Notch" data-osc="/option/filter/1/type/NOTCH" data-osc-send="/filter/1/type,0.8"></span>
-	                <span class="checkbox small" title="Acid" data-osc="/option/filter/1/type/ACID" data-osc-send="/filter/1/type,1"></span>
+                    <span class="checkbox small" title="BP" data-osc="/option/filter/1/type/BANDPASS" data-osc-send="/filter/1/type,0.4"></span>	                
 	            </div>
             </div>
-            <br/>
-            <div class="innergroup spacetop">
-                <input type="text" value="0" class="fader large" title="Cut-off" data-osc="/filter/1/freq" data-osc-label="/label/filter/1/freq" />
-                <input type="text" value="0" class="fader medium" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
-                <div class="innergroup spaceleft">               
-	                <input type="text" value="0" class="fader small" title="Drive" data-osc="/filter/1/overload" data-osc-label="/label/filter/1/overload" />
-	                <input type="text" value="0" class="fader small" title="Keytrk" data-osc="/filter/1/kbdtracking" />
+            <div class="innergroup spacetop spaceleft">
+                <label class="forgroup empty"></label><br/>
+                <div class="innergroup">
+	                <input type="text" value="0" class="fader large" title="Cutoff" data-osc="/filter/1/freq" data-osc-label="/label/filter/1/freq" />
+	                <input type="text" value="0" class="fader medium" title="Res" data-osc="/filter/1/res" data-osc-label="/label/filter/1/res" />
+	                <div class="innergroup spaceleft">               
+		                <input type="text" value="0" class="fader small" title="Drive" data-osc="/filter/1/overload" data-osc-label="/label/filter/1/overload" />
+		                <input type="text" value="0" class="fader small" title="Keytrk" data-osc="/filter/1/kbdtracking" />
+	                </div>
                 </div>
             </div>
         </div>
@@ -140,7 +143,7 @@
             <h2>Amplifier</h2>
             <div class="innergroup">
                 <label class="forgroup empty"></label><br/>
-                <div class="innergroup">    
+                <div class="innergroup">  
 		            <input type="text" value="0" class="fader small" title="Drive" data-osc="/fx/overdrive" data-osc-label="/label/fx/overdrive" />
 		            <input type="text" value="0" class="fader small" title="Bass" data-osc="/amp/bassboost" data-osc-label="/label/amp/bassboost"/>
 		        </div>
@@ -158,7 +161,7 @@
 	            <label class="forgroup empty"></label><br/>
 	            <div class="innergroup">
 		            <input type="text" value="0" class="fader small" title="Chorus" data-osc="/fx/chorus/drywet" data-osc-label="/label/fx/chorus/drywet" />
-		            <input type="text" value="0" class="fader medium" title="Volume" data-osc="/amp/volume" data-osc-label="/label/amp/volume" />
+		            <input type="text" value="0" class="fader medium" title="Volume" data-osc="/amp/volume" data-osc-label="/label/amp/volume" data-control-path="/amp/volume" />
 		        </div>
             </div>
             <br/>
@@ -171,7 +174,7 @@
         <div id="modulators" class="group pink">
             <h2>LFO</h2>
             <div class="innergroup spacetop lfo">
-                <div class="innergroup spacetop">
+                <div class="innergroup spacetop" style="text-align:left">
                     <label class="forgroup">Type</label><br/>
                     <div class="exclusiveunstyled lfotypes" data-control-path="/mod/1/type">
                         <span class="checkbox small" title="Sine" data-osc="/option/mod/1/type/SINE" data-osc-send="/mod/1/type,0"></span>
@@ -181,7 +184,11 @@
                         <span class="checkbox small" title="Square" data-osc="/option/mod/1/type/SQUARE" data-osc-send="/mod/1/type,0.8"></span>
                         <span class="checkbox small" title="S&amp;Hold" data-osc="/option/mod/1/type/SAMPLE+HOLD" data-osc-send="/mod/1/type,1"></span>
                     </div>
-                    <span class="checkbox small" title="Key Reset" data-osc="/mod/1/reset"></span>
+                    <div class="innergroup spacetop">
+	                    <span class="checkbox smaller" title="Key Reset" data-osc="/mod/1/reset"></span>
+	                    <br />
+	                     <nav class="fastnav inline spacetop"><span data-href="#modlfo">Destinations</span></nav>
+                     </div>
                 </div>
                 <div class="innergroup spacetop spaceleft">
                     <label class="forgroup">Settings</label><br/>
@@ -202,7 +209,8 @@
                     <input type="text" value="0" class="fader medium" title="R" data-osc="/mod/env/1/4" data-osc-label="/label/mod/env/1/4" />
                 </div><br/>
                 <div class="innergroup spacetop">
-                    <span class="checkbox smaller" title="Loop" data-osc="/mod/env/1/loop"></span>
+                    <span class="checkbox small" title="Loop" data-osc="/mod/env/1/loop"></span>
+                    <nav class="fastnav inline"><span data-href="#modenv1">Destinations</span></nav>
                 </div>
             </div>
             <div class="innergroup spaceleft spacetop">
@@ -214,18 +222,20 @@
                     <input type="text" value="0" class="fader medium" title="R" data-osc="/mod/env/2/4" data-osc-label="/label/mod/env/2/4" />
                 </div><br />
                 <div class="innergroup spacetop">
-                    <span class="checkbox smaller" title="Loop" data-osc="/mod/env/2/loop"></span>
+                    <span class="checkbox small" title="Loop" data-osc="/mod/env/2/loop"></span>
+                    <nav class="fastnav inline"><span data-href="#modenv2">Destinations</span></nav>
                 </div>
             </div>
         </div>
         
         <div id="modlfo" class="group gray highlightnonzero moddest">
-            <h2>MOD Destinations</h2>
+            <h2>LFO Destinations</h2>
             <nav class="fastnav">
                 <span data-href="#modlfo" class="selected">LFO</span>
                 <span data-href="#modenv1">ENV1</span>
                 <span data-href="#modenv2">ENV2</span>
                 <span data-href="#modperf">PERF</span>
+                <span data-href="#modulators" class="selected">LFO PARAMS</span>
             </nav>
             <div class="innergroup">
                 <input type="text" value="0" class="fader small" title="Pitch" data-cursor="10" data-osc="/mod/1/depth/pitch" />
@@ -240,12 +250,13 @@
         </div>
         <br/>
         <div id="modenv1" class="group gray highlightnonzero moddest">
-            <h2>MOD Destinations</h2>
+            <h2>ENV 1 Destinations</h2>
             <nav class="fastnav">
                 <span data-href="#modlfo">LFO</span>
                 <span data-href="#modenv1" class="selected">ENV1</span>
                 <span data-href="#modenv2">ENV2</span>
                 <span data-href="#modperf">PERF</span>
+                <span data-href="#envelopes" class="selected">ENV PARAMS</span>
             </nav>
             <div class="innergroup">
                 <input type="text" value="0" class="fader small" title="Pitch2" data-cursor="10" data-osc="/mod/env/1/depth/pitch/2" />
@@ -256,12 +267,13 @@
         </div>
         <br/>
         <div id="modenv2" class="group gray highlightnonzero moddest">
-            <h2>MOD Destinations</h2>
+            <h2>ENV 2 Destinations</h2>
             <nav class="fastnav">
                 <span data-href="#modlfo">LFO</span>
                 <span data-href="#modenv1">ENV1</span>
                 <span data-href="#modenv2" class="selected">ENV2</span>
                 <span data-href="#modperf">PERF</span>
+                <span data-href="#envelopes" class="selected">ENV PARAMS</span>
             </nav>
             <div class="innergroup">
                 <input type="text" value="0" class="fader small" title="Pitch" data-cursor="10" data-osc="/mod/env/2/depth/pitch" />
@@ -275,7 +287,7 @@
             </div>
         </div>
         <div id="modperf" class="group gray highlightnonzero moddest" style="margin-bottom: 300px">
-            <h2>MOD Destinations</h2>
+            <h2>Performance MOD Destinations</h2>
             <nav class="fastnav">
                 <span data-href="#modlfo">LFO</span>
                 <span data-href="#modenv1">ENV1</span>

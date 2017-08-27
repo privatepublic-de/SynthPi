@@ -67,17 +67,17 @@ th {
 }
 
 @media only screen and (max-width: 768px) {
-	#main {
+	.knobs #main {
 		margin: 0 auto 0 auto;
 		padding-right: 36px;
 	}
-	#statuscontainer {
+	.knobs #statuscontainer {
 		position: static;
 		width: 100%;
 	}
-	#statuscontainer .right,
-	#statuscontainer .left,
-	#statuscontainer .inner {
+	.knobs #statuscontainer .right,
+	.knobs #statuscontainer .left,
+	.knobs #statuscontainer .inner {
 		float: none;
 		display: block;
 		padding: 8px 4px;
@@ -91,12 +91,12 @@ th {
 	body.performancedata #keyboard {
 		display: none;
 	}
-	#modmatrix > .innergroup > label {
+	.knobs #modmatrix > .innergroup > label {
 	    display: block!important;
 	    padding: 10px 10px 10px 14px;
 	    text-align: left;
 	}
-	#modmatrix > .innergroup {
+	.knobs #modmatrix > .innergroup {
         text-align: left;
     }
 }
@@ -766,6 +766,7 @@ canvas#limiterview {
 	margin-top: -25px;
 }
 
+
 .glossy {
 background: -moz-linear-gradient(top,  rgba(0,0,0,0.38) 0%, rgba(0,0,0,0) 29%, rgba(0,0,0,0.19) 48%, rgba(0,0,0,0.71) 100%); /* FF3.6+ */
 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.38)), color-stop(29%,rgba(0,0,0,0)), color-stop(48%,rgba(0,0,0,0.19)), color-stop(100%,rgba(0,0,0,0.71))); /* Chrome,Safari4+ */
@@ -903,6 +904,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61000000', e
 
 
 .fcontainer {
+	position: relative;
 	display: inline-block;
 	vertical-align: middle;
 	border-color: inherit;
@@ -984,6 +986,16 @@ label.forgroup.empty {
     margin-top: 16px;
 }
 
+.pi800 canvas#limiterview {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    left: auto;
+    margin-left: 0;
+    margin-top: 0;
+}
+
 .pi800 .lfo .innergroup {
 	vertical-align: top;
 }
@@ -1003,8 +1015,9 @@ label.forgroup.empty {
 
 .pi800 .group {
 	margin-bottom: 60px;
-	margin-left: 10px;
 	min-height: 350px;
+	width: 98%;
+	box-sizing: border-box;
 }
 
 .pi800 #main {
@@ -1043,6 +1056,10 @@ label.forgroup.empty {
 
 .pi800 #filter1 .checkbox {
 	margin: 0 8px;
+}
+
+nav.inline {
+	display: inline-block;
 }
 
 nav.fastnav span {
