@@ -83,14 +83,8 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				updateAllParams();
 				break;
 			case SHUTDOWN:
-				try {
-					SynthPi.uiMessage("Trying to shut down!");
-					log.info("Trying to shut down!");
-					Runtime.getRuntime().exec("sudo shutdown now");
-				} catch (IOException e) {
-					SynthPi.uiMessage("Shutdown failed!");
-					log.warn("Shutdown failed", e);
-				}
+				SynthPi.SHUTDOWN_ON_EXIT = true;
+				System.exit(0);
 				break;
 			case RANDOMIZE_PATCH:
 				Randomizer.randomize();

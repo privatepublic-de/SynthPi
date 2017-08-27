@@ -2,6 +2,7 @@ package de.privatepublic.pi.synth;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Timer;
@@ -95,10 +96,22 @@ public class SynthPi {
 		    	PresetHandler.saveCurrentPatch();
 		    	logger.info("Shutting down ...");
 		    	SynthPiAudioClient.shutdownAudio();
+		    	if (SHUTDOWN_ON_EXIT) {
+		    		try {
+						SynthPi.uiMessage("Trying to shut down system...");
+						logger.info("Trying to shut down!");
+						Runtime.getRuntime().exec("sudo shutdown now");
+					} catch (IOException e) {
+						SynthPi.uiMessage("System shutdown failed!");
+						logger.warn("Shutdown failed", e);
+					}
+		    	}
 		    }
 		 });
 		
 	}
+	
+	public static boolean SHUTDOWN_ON_EXIT = false;
 
 	private static List<String> queuedMessages = new Vector<String>();
 	
