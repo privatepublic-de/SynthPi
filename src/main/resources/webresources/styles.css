@@ -1085,3 +1085,50 @@ nav.fastnav span {
 .moddest {
 	min-width: 510px;
 }
+
+#screensaver {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-color: rgba(0,0,0,.95);
+	z-index: 100;
+	cursor: none;
+}
+#ssinner {
+	position: absolute;
+	bottom: 50%;
+	left: 0;
+	right: 0;
+	font-size: 50px;
+	font-weight: bold;
+	color: #202000;
+	font-style: italic;
+	text-align: center;
+	animation-duration: 20s;
+	animation-name: slide;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: ease;
+}
+
+
+@keyframes slide { 
+  from {
+    color: #202000;
+  }
+  
+  33% {
+    color: #261A00;
+  }
+
+  66% {
+    color: #013;
+  
+  }
+  to {
+    color: #261126;
+  }
+}

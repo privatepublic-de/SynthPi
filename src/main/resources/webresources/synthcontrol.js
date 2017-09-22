@@ -24,6 +24,7 @@ $(document).ready(function () {
 						clearTimeout(datalitetimer);
 					}
 					datalitetimer = setTimeout(function() {$("#datalight").css('visibility','hidden')}, 300);
+					screensaverOff();
 					this.dispatchMessage(event.data);
 				}.bind(this);
 				this.mySocket.onopen = function(event) {
@@ -787,6 +788,27 @@ $(document).ready(function () {
 		});
 	});
 	
+	// screen saver
+
+	var screensaverTimer = undefined;
+	var screensaverOn = false;
+	function screensaverOff() {
+		if (typeof screensaverTimer!=='undefined') {
+			clearTimeout(screensaverTimer);
+		}
+		if (screensaverOn) {
+			screensaverOn = false;
+			$('#screensaver').hide();
+		}
+		screensaverTimer = setTimeout(function() {
+			screensaverOn = true;
+			$('#screensaver').show();
+		}, 1000*60*10);
+	}
+	$('body, #screensaver').on('mousemove mousedown touchstart', screensaverOff);
+	screensaverOff();
+	
+	$('#loadpatch').focus();
 	
 	socket.createAndConnect();
 });
