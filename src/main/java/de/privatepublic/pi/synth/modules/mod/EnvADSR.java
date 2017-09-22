@@ -152,7 +152,7 @@ public class EnvADSR extends Envelope implements IPatchInitReceiver {
 			return P.VALX[indexD];
 		}
 		public float sustain() {
-			return P.VAL[indexS];
+			return P.VALX[indexS];
 		}
 		public float release() {
 			return P.VALX[indexR];
