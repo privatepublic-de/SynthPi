@@ -118,6 +118,15 @@ th {
 	height: 10px;
 	background: url(img/green-led.png) no-repeat center center;
 }
+
+.pi800 #datalight {
+	background: none;
+	width: 12px;
+	text-align: center;
+	height: auto;
+	vertical-align: middle;
+}
+
 .connection {
 	
 }
@@ -1029,7 +1038,7 @@ label.forgroup.empty {
 }
 
 .pi800 #statuscontainer {
-	padding: 0 10px;
+	padding: 0 2px 0 10px;
 }
 
 .pi800 #statuscontainer .inner {
@@ -1037,7 +1046,7 @@ label.forgroup.empty {
 }
 
 .pi800 #statuscontainer .right {
-	padding-top: 4px;
+	padding-top: 2px;
 }
 
 .pi800 .iconbutton {
@@ -1099,19 +1108,20 @@ nav.fastnav span {
 }
 #ssinner {
 	position: absolute;
-	bottom: 50%;
+	bottom: 30%;
 	left: 0;
 	right: 0;
 	font-size: 50px;
 	font-weight: bold;
-	color: #202000;
+	color: #222;
 	font-style: italic;
 	text-align: center;
+	/*
 	animation-duration: 20s;
 	animation-name: slide;
     animation-iteration-count: infinite;
     animation-direction: alternate;
-    animation-timing-function: ease;
+    animation-timing-function: ease; */
 }
 
 
