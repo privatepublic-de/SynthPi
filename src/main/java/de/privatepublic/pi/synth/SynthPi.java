@@ -92,6 +92,11 @@ public class SynthPi {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
+		    	try {
+		    		Runtime.getRuntime().exec("/home/pi/display_bright.sh");
+		    	} catch(IOException e) {
+		    		logger.warn("Turning up brightness failed.", e);
+		    	}
 		    	LCD.shutdown();
 		    	PresetHandler.saveCurrentPatch();
 		    	logger.info("Shutting down ...");

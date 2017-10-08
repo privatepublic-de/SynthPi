@@ -33,6 +33,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		SAVE_PATCH("/command/savepatch"),
 		LOAD_SETTINGS("/command/settings/load"),
 		SAVE_SETTINGS("/command/settings/save"),
+		SLEEP("/command/sleep"),
 		PARAMETER_MESSAGE("\\uNkNoWn");
 		
 		private String path;
@@ -122,6 +123,21 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				String settingsJSON = msg.substring(msg.indexOf('=')+1);
 				PresetHandler.updateAndSaveSettings(settingsJSON);
 				updateAllParams();
+				break;
+			case SLEEP:
+				log.info("Received sleep command {}", msg);
+				try {
+					String onoff = msg.substring(msg.indexOf('=')+1);
+					if ("1".equals(onoff)) {
+						Runtime.getRuntime().exec("/home/pi/display_dark.sh");
+					}
+					else {
+						Runtime.getRuntime().exec("/home/pi/display_bright.sh");
+					}
+				}
+				catch (IOException e) {
+					log.warn("Could not set display brightness", e);
+				}
 				break;
 			case PARAMETER_MESSAGE: // it's possibly a parameter message
 				if (parts.length==2) {

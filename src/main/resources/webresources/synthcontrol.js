@@ -799,10 +799,12 @@ $(document).ready(function () {
 		if (screensaverOn) {
 			screensaverOn = false;
 			$('#screensaver').hide();
+			socket.sendValueDirectly("/command/sleep", "999");
 		}
 		screensaverTimer = setTimeout(function() {
 			screensaverOn = true;
 			$('#screensaver').show();
+			socket.sendValueDirectly("/command/sleep", "1");
 		}, 1000*60*10);
 	}
 	$('body, #screensaver').on('mousemove mousedown touchstart', screensaverOff);
