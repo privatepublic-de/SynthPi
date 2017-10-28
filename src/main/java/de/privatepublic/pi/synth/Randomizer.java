@@ -186,14 +186,14 @@ public class Randomizer {
 	
 	private static String createFancyPatchName() {
 		int adj1 = RANDOM.nextInt(adjectives.length);
-		int adj2 = RANDOM.nextInt(adjectives.length);
-		while (adj2==adj1) {
-			adj2 = RANDOM.nextInt(adjectives.length);
-		}
-		return adjectives[adj1]+" "+adjectives[adj2]+" "+nouns[RANDOM.nextInt(nouns.length)];
+//		int adj2 = RANDOM.nextInt(adjectives.length);
+//		while (adj2==adj1) {
+//			adj2 = RANDOM.nextInt(adjectives.length);
+//		}
+		return adjectives[adj1]+/*" "+adjectives[adj2]+*/" "+nouns[RANDOM.nextInt(nouns.length)];
 	}
 	
 	private static final String[] adjectives = new String[] {"new", "random", "ugly", "nasty", "crazy", "weird", "scary", "funny", "bizarre", "strange", "odd", "peculiar", "freaky"};
-	private static final String[] nouns = new String[] {"sound", "noise", "tone"};
+	private static final String[] nouns = new String[] {"sound", "noise", "tone", "ring", "twang", "rattle"};
 	
 }
