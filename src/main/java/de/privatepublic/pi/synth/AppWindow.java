@@ -108,7 +108,7 @@ public class AppWindow {
 		} catch (Exception e) {
 			lblLCDLabel.setFont(new Font("Monospaced", lblLCDLabel.getFont().getStyle(), 17));
 		}		
-		lblLCDLabel.setBackground(Color.decode("#484848"));
+		lblLCDLabel.setBackground(Color.BLACK);
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)

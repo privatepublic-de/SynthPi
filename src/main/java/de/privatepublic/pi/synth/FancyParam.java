@@ -231,4 +231,6 @@ public class FancyParam {
 		}
 		return Color.GRAY;
 	}
+	
+	public static final Color COLOR_SYSTEM_MESSAGE = Color.WHITE;
 }
