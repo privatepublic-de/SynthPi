@@ -125,6 +125,7 @@ th {
 	text-align: center;
 	height: auto;
 	vertical-align: middle;
+	color: #fff;
 }
 
 .connection {
@@ -995,6 +996,10 @@ label.forgroup.empty {
     margin-top: 16px;
 }
 
+.pi800 * {
+	cursor: none!important;
+}
+
 .pi800 canvas#limiterview {
     position: fixed;
     right: 0;
@@ -1083,6 +1088,11 @@ nav.fastnav span {
 	cursor: pointer;
 }
 
+nav.fastnav.desti span {
+	font-weight: normal;
+	background-color: #666;
+}
+
 .moddest .fastnav {
 	margin: 16px 0;
 	font-size: .85em;
@@ -1102,13 +1112,16 @@ nav.fastnav span {
 	left: 0;
 	bottom: 0;
 	right: 0;
-	/* background-color: rgba(0,0,0,.95); */
+	background: url('img/sleep-bg.png') no-repeat center bottom;
 	z-index: 100;
 	cursor: none;
 }
+.sleep #screensaver {
+	display: block;
+}
 #ssinner {
 	position: absolute;
-	bottom: 50%;
+	bottom: 50px;
 	left: 0;
 	right: 0;
 	font-size: 40px;
@@ -1117,4 +1130,7 @@ nav.fastnav span {
 	text-shadow: 0 0 8px #000;
 	font-style: italic;
 	text-align: center;
+}
+.sleep #main {
+	opacity: .3;
 }

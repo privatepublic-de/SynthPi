@@ -1,6 +1,5 @@
 package de.privatepublic.pi.synth;
 
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +33,7 @@ public class SynthPi {
 
 	private static AppWindow window;
 	private static boolean HEADLESS = false;
+	private static boolean USE_SCREENSAVER = false;
 	
 	public static void main(String[] args) {
 
@@ -92,11 +92,7 @@ public class SynthPi {
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 		    public void run() {
-		    	try {
-		    		Runtime.getRuntime().exec("/home/pi/display_bright.sh");
-		    	} catch(IOException e) {
-		    		logger.warn("Turning up brightness failed.", e);
-		    	}
+		    	setScreensaver(false);
 		    	LCD.shutdown();
 		    	PresetHandler.saveCurrentPatch();
 		    	logger.info("Shutting down ...");
@@ -147,28 +143,28 @@ public class SynthPi {
 	
 	public static void uiLCDMessage(final String line1, String patchCategory, String patchId) {
 		final String line2 = StringUtils.overlay(StringUtils.rightPad(patchCategory, 15), patchId, 15-patchId.length(), 15);
-		LCD.message(line1, line2, Color.GREEN);
+		LCD.message(line1, line2, FancyParam.COLOR_SYSTEM_MESSAGE);
 		if (HEADLESS) {
 			return;
 		}
 		if (window!=null) {
 			EventQueue.invokeLater(new Runnable() {
 		        public void run() {
-		        	window.lcdMessage(line1, line2, Color.GREEN);
+		        	window.lcdMessage(line1, line2, FancyParam.COLOR_SYSTEM_MESSAGE);
 		        }
 		    });
 		}
 	}
 	
 	public static void uiLCDMessage(final String line1, final String line2) {
-		LCD.message(line1, line2, Color.GREEN);
+		LCD.message(line1, line2, FancyParam.COLOR_SYSTEM_MESSAGE);
 		if (HEADLESS) {
 			return;
 		}
 		if (window!=null) {
 			EventQueue.invokeLater(new Runnable() {
 		        public void run() {
-		        	window.lcdMessage(line1, line2, Color.GREEN);
+		        	window.lcdMessage(line1, line2, FancyParam.COLOR_SYSTEM_MESSAGE);
 		        }
 		    });
 		}
@@ -190,6 +186,23 @@ public class SynthPi {
 		    });
 		}
 	}
+	
+
+	public static void setScreensaver(boolean on) {
+		if (USE_SCREENSAVER) {
+			try {
+				if (on) {
+					Runtime.getRuntime().exec("/home/pi/display_dark.sh");
+				}
+				else {
+					Runtime.getRuntime().exec("/home/pi/display_bright.sh");
+				}
+			}
+			catch (IOException e) {
+				logger.warn("Could not set display brightness", e);
+			}
+		}
+	}
 
 	
 	
@@ -201,6 +214,7 @@ public class SynthPi {
 	final static String ARG_DISABLE_WEB_CACHE = "disablewebcache";
 	final static String ARG_DISABLE_BROWSER_START = "disablebrowserstart";
 	final static String ARG_HEADLESS = "headless";
+	final static String ARG_SCREENSAVER = "screensaver";
 	final static String ARG_USE_JACK_AUDIO_SERVER = "usejackaudioserver";
 	final static String ARG_AUDIO_BUFFER_SIZE = "audiobuffersize";
 	final static String ARG_OPEN_BROWSER_COMMAND = "openbrowsercmd";
@@ -217,6 +231,7 @@ public class SynthPi {
 		options.addOption(OptionBuilder.withDescription("(only for development)").create(ARG_DISABLE_WEB_CACHE));
 		options.addOption(OptionBuilder.withDescription("Don't start web browser on launch").create(ARG_DISABLE_BROWSER_START));
 		options.addOption(OptionBuilder.withDescription("Don't open user interface window").create(ARG_HEADLESS));
+		options.addOption(OptionBuilder.withDescription("Use screensaver scripts").create(ARG_SCREENSAVER));
 		options.addOption(OptionBuilder.withDescription("Use JACK audio server for playback. Fails if JACK isn't installed and started.").create(ARG_USE_JACK_AUDIO_SERVER));
 		options.addOption(OptionBuilder.withArgName("size").hasArg().withDescription("Playback audio buffer size. Smaller values for less latency, higher values for less drop-outs and crackles (default 64)").create(ARG_AUDIO_BUFFER_SIZE));
 		options.addOption(OptionBuilder.withArgName("cmd").hasArg().withDescription("Command line to open web browser.").create(ARG_OPEN_BROWSER_COMMAND));
@@ -231,6 +246,7 @@ public class SynthPi {
 			}
 			
 			HEADLESS = commandline.hasOption(ARG_HEADLESS);
+			USE_SCREENSAVER = commandline.hasOption(ARG_SCREENSAVER);
 			
 			if (commandline.hasOption(ARG_USE_JACK_AUDIO_SERVER)) {
 				P.AUDIO_SYSTEM_NAME = "JACK";

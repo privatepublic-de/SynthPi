@@ -139,6 +139,7 @@ public class JettyWebServerInterface {
 			"img/ic_shuffle_white_36dp.png",
 			"img/ic_midi.png",
 			"img/ic_power.png",
+			"img/sleep-bg.png",
 			"img/synthpi192x192.png",
 			"index.html",
 			"fader.html",

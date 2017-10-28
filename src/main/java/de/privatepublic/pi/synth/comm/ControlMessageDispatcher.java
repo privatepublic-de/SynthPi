@@ -1,6 +1,5 @@
 package de.privatepublic.pi.synth.comm;
 
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,18 +125,8 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				break;
 			case SLEEP:
 				log.info("Received sleep command {}", msg);
-				try {
-					String onoff = msg.substring(msg.indexOf('=')+1);
-					if ("1".equals(onoff)) {
-						Runtime.getRuntime().exec("/home/pi/display_dark.sh");
-					}
-					else {
-						Runtime.getRuntime().exec("/home/pi/display_bright.sh");
-					}
-				}
-				catch (IOException e) {
-					log.warn("Could not set display brightness", e);
-				}
+				String onoff = msg.substring(msg.indexOf('=')+1);
+				SynthPi.setScreensaver("1".equals(onoff));
 				break;
 			case PARAMETER_MESSAGE: // it's possibly a parameter message
 				if (parts.length==2) {

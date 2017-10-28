@@ -34,6 +34,7 @@ public class SynthSocket {
 		log.info("Connection to: {} {}", info, session.getRemoteAddress().getAddress());
 		ACTIVE_SESSIONS.add(this.session);
 		SynthPi.uiMessage("Browser connected (#"+ACTIVE_SESSIONS.size()+"): "+info);
+		SynthPi.setScreensaver(false);
 		scheduler.schedule(new Runnable() {
 			@Override
 			public void run() {
@@ -49,6 +50,7 @@ public class SynthSocket {
 		log.info("Connection closed: {} (status: {}, reason: {})", session.getRemoteAddress().getAddress(), statusCode, reason);
 		ACTIVE_SESSIONS.remove(this.session);			
 		SynthPi.uiMessage("Browser disconnected (active: "+ACTIVE_SESSIONS.size()+")");
+		SynthPi.setScreensaver(false);
 	}
 
 

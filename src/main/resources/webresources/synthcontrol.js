@@ -798,14 +798,14 @@ $(document).ready(function () {
 		}
 		if (screensaverOn) {
 			screensaverOn = false;
-			$('#screensaver').hide();
+			$(document.body).removeClass('sleep');
 			socket.sendValueDirectly("/command/sleep", "999");
 		}
 		screensaverTimer = setTimeout(function() {
 			screensaverOn = true;
-			$('#screensaver').show();
+			$(document.body).addClass('sleep');
 			socket.sendValueDirectly("/command/sleep", "1");
-		}, 1000*60*10);
+		}, 1000*60*10); 
 	}
 	$('body, #screensaver').on('mousemove mousedown touchstart', screensaverOff);
 	screensaverOff();
