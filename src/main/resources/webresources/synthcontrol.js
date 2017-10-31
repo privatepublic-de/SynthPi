@@ -231,37 +231,12 @@ $(document).ready(function () {
 			ev.preventDefault();
 		});
 	};
-	var sortOrdering = function(a,b) {
-		if (a.category<b.category)
-			return -1;
-		if (a.category>b.category)
-			return 1;
-		if (a.name<b.name)
-			return -1;
-		if (a.name>b.name)
-			return 1;
-		return 0;
-	};
 	var renderPatchList = function(lists) {
 		var addEntry = function(item, element) {
 			element.append("<div class='"+item.category+"'><a href='#' class='push' data-osc='/command/loadpatch/"+item.id+"'><span class='category'>"+item.category+"</span>"+item.name+"</a></div>");
 		}
 		var columnsOut = function(list, element) {
 			if (list && list.length>0) {
-				/*
-				list.sort(sortOrdering);
-				var rows = parseInt(list.length/2)+list.length%2;
-				for (var i=0;i<rows;i++) {
-					addEntry(list[i], element);
-					var j = i+rows;
-					if (j<list.length) {
-						addEntry(list[j], element);
-					}
-					else {
-						element.append("<div></div>");
-					}
-				}
-				*/
 				var lastCat = list[0].category;
 				for (var i=0;i<list.length;i++) {
 					if (list[i].category!=lastCat) {
@@ -301,7 +276,6 @@ $(document).ready(function () {
 		var existing = $("#existingpatches .listcontent");
 		existing.empty();
 		if (info.existingPatches) {
-			info.existingPatches.sort(sortOrdering);
 			$.each(info.existingPatches, function(ix, v) {
 				existing.append("<div class='"+v.category+"'><a href='#' class='push overwrite' data-overwrite-id='"+v.id+"' data-overwrite-name='"+v.name+"'><span class='category'>"+v.category+"</span>"+v.name+"</a><a href='#' class='iconbutton deletepatch' data-delete-id='"+v.id+"' data-delete-name='"+v.name+" title='Delete this patch'></a></div>");
 			});
