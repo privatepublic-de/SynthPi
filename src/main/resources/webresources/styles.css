@@ -618,6 +618,7 @@ h2.windowtitle {
 
 #patchlistwindow {
 }
+.window .push,
 .patchlist .push {
 	padding: 5px 10px;
 }
