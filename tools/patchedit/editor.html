@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynthPi Patch File Editor</title>
+    <link rel="stylesheet" type="text/css" href="editor.css">
+    <script src="editor.js"></script>
+</head>
+<body>
+    <section class="patchlist">
+        <div class="io">
+            <h2>Source <label class="error" for="source">&nbsp;</label></h2>
+            <textarea class="in" id="source" placeholder="Paste JSON here"></textarea>
+        </div>
+        <div class="data" data-ref="source"></div>
+    </section>
+    <section class="patchlist">
+        <div class="io">
+            <h2>Target <label class="error" for="target">&nbsp;</label></h2>
+            <textarea class="in" id="target" placeholder="Paste JSON here"></textarea><br/>
+        </div>
+        <div class="data" data-ref="target"></div>
+    </section>
+    <section class="patchlist">
+        <div class="io">
+            <h2>Result JSON</h2>
+            <textarea id="output" placeholder="Here you'll find the resulting patch JSON after editing your data..."></textarea>
+        </div>
+    </section>
+</body>
+</html>
