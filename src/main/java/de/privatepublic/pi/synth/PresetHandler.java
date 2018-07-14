@@ -90,7 +90,7 @@ public class PresetHandler {
 		P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.MISC;
 		sendPatchInitNotification();
 		SynthPi.uiMessage("Patch initialized to defaults");
-		SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "PATCH");
+		SynthPi.uiLCDMessage(P.LAST_LOADED_PATCH_NAME, "PATCH READY");
 	}
 	
 	private static JSONObject createJSONFromCurrentPatch(String name, PatchCategory category) {

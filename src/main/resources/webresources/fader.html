@@ -18,11 +18,12 @@
     <div id="statuscontainer">
         <div class="inner">
             <nav class="fastnav">
-		        <span data-href="#oscillators" class="yellow">O</span>
-		        <span data-href="#filter1" class="orange">F</span><span data-href="#amplifier" class="blue">A</span>
-		        <span data-href="#modulators" class="pink">L</span>
-		        <span data-href="#envelopes" class="pink">E</span>
-		        <span data-href="#modlfo">M</span>
+		        <span data-href="#oscillators" class="yellow">OSC</span>
+		        <span data-href="#filter1" class="orange">FLT</span>
+		        <span data-href="#amplifier" class="blue">AMP</span>
+		        <span data-href="#modulators" class="pink">LFO</span>
+		        <span data-href="#envelopes" class="pink">ENV</span>
+		        <span data-href="#modlfo">MOD</span>
 		    </nav>
         </div>
         <div class="left">
@@ -37,7 +38,7 @@
             <span id="cs" class="connection connected">
                 <a href="#" class="iconbutton" id="opensettings" data-osc="/command/settings/load" title="Settings"></a>
                 <a href="#" id="shutdown" class="iconbutton" data-osc="/command/shutdown" title="Shut down"></a>
-                &nbsp;connected <span id="datalight">&bull;</span>
+                &nbsp;online <span id="datalight">&bull;</span>
             </span>
         </div>
         
@@ -185,9 +186,7 @@
                         <span class="checkbox small" title="S&amp;Hold" data-osc="/option/mod/1/type/SAMPLE+HOLD" data-osc-send="/mod/1/type,1"></span>
                     </div>
                     <div class="innergroup spacetop">
-	                    <span class="checkbox smaller" title="Key Reset" data-osc="/mod/1/reset"></span>
-	                    <br />
-	                     <nav class="fastnav inline spacetop desti"><span data-href="#modlfo">Destinations</span></nav>
+	                    <span class="checkbox small" title="Key Reset" data-osc="/mod/1/reset"></span>                     
                      </div>
                 </div>
                 <div class="innergroup spacetop spaceleft">
@@ -195,6 +194,9 @@
                     <input type="text" value="0" class="fader medium" title="Rate" data-osc="/mod/1/rate" data-osc-label="/label/mod/1/rate" />
                     <input type="text" value="0" class="fader medium" title="Depth" data-osc="/mod/1/amount" data-osc-label="/label/mod/1/amount" />
                     <input type="text" value="0" class="fader small" title="Delay" data-osc="/mod/1/delay" data-osc-label="/label/mod/1/delay" />
+                </div>
+                <div class="innergroup spacetop spaceleft" style="vertical-align: bottom">
+                    <nav class="fastnav inline spacetop desti"><span data-href="#modlfo">TARGETS</span></nav>
                 </div>
             </div>
          </div>
@@ -210,7 +212,7 @@
                 </div><br/>
                 <div class="innergroup spacetop">
                     <span class="checkbox small" title="Loop" data-osc="/mod/env/1/loop"></span>
-                    <nav class="fastnav inline desti"><span data-href="#modenv1">Destinations</span></nav>
+                    <nav class="fastnav inline desti"><span data-href="#modenv1">TARGETS</span></nav>
                 </div>
             </div>
             <div class="innergroup spaceleft spacetop">
@@ -223,7 +225,7 @@
                 </div><br />
                 <div class="innergroup spacetop">
                     <span class="checkbox small" title="Loop" data-osc="/mod/env/2/loop"></span>
-                    <nav class="fastnav inline desti"><span data-href="#modenv2">Destinations</span></nav>
+                    <nav class="fastnav inline desti"><span data-href="#modenv2">TARGETS</span></nav>
                 </div>
             </div>
         </div>
@@ -235,7 +237,7 @@
                 <span data-href="#modenv1">ENV1</span>
                 <span data-href="#modenv2">ENV2</span>
                 <span data-href="#modperf">PERF</span>
-                <span data-href="#modulators" class="selected">LFO PARAMS</span>
+                <span data-href="#modulators" class="params">PARAMS</span>
             </nav>
             <div class="innergroup">
                 <input type="text" value="0" class="fader small" title="Pitch" data-cursor="10" data-osc="/mod/1/depth/pitch" />
@@ -256,7 +258,7 @@
                 <span data-href="#modenv1" class="selected">ENV1</span>
                 <span data-href="#modenv2">ENV2</span>
                 <span data-href="#modperf">PERF</span>
-                <span data-href="#envelopes" class="selected">ENV PARAMS</span>
+                <span data-href="#envelopes" class="params">PARAMS</span>
             </nav>
             <div class="innergroup">
                 <input type="text" value="0" class="fader small" title="Pitch2" data-cursor="10" data-osc="/mod/env/1/depth/pitch/2" />
@@ -273,7 +275,7 @@
                 <span data-href="#modenv1">ENV1</span>
                 <span data-href="#modenv2" class="selected">ENV2</span>
                 <span data-href="#modperf">PERF</span>
-                <span data-href="#envelopes" class="selected">ENV PARAMS</span>
+                <span data-href="#envelopes" class="params">PARAMS</span>
             </nav>
             <div class="innergroup">
                 <input type="text" value="0" class="fader small" title="Pitch" data-cursor="10" data-osc="/mod/env/2/depth/pitch" />
@@ -460,6 +462,6 @@
             <a href="https://github.com/google/material-design-icons" target="_blank">Google Material Design Icons</a>
         </p>
     </div>
-    <div id="screensaver"><div id="ssinner">... sleeping ...</div></div>
+    <div id="screensaver"><div id="ssinner">... <label data-osc="/patch/name">sleeping</label> ...</div></div>
 </body>
 </html>

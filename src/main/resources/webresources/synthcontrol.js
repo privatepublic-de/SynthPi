@@ -766,22 +766,22 @@ $(document).ready(function () {
 
 	var screensaverTimer = undefined;
 	var screensaverOn = false;
-	function screensaverOff() {
+	function screensaverOff(ev) {
 		if (typeof screensaverTimer!=='undefined') {
 			clearTimeout(screensaverTimer);
 		}
 		if (screensaverOn) {
 			screensaverOn = false;
-			$(document.body).removeClass('sleep');
+			setTimeout(function() { $(document.body).removeClass('sleep') },500);
 			socket.sendValueDirectly("/command/sleep", "999");
 		}
 		screensaverTimer = setTimeout(function() {
 			screensaverOn = true;
 			$(document.body).addClass('sleep');
 			socket.sendValueDirectly("/command/sleep", "1");
-		}, 1000*60*10); 
+		}, 1000*60*5); 
 	}
-	$('body, #screensaver').on('mousemove mousedown touchstart', screensaverOff);
+	$('body, #screensaver').on('touchend mouseup', screensaverOff);
 	screensaverOff();
 	
 	$('#loadpatch').focus();

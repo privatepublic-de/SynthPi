@@ -18,7 +18,7 @@ public class KeypressUpdate extends DisplayUpdate {
 		if (recentStatus!=renderStatus) {
 			LCD.send(serialPort, Cmd.MOVE_TO, 16, 2);
 			Thread.sleep(10);
-			serialPort.writeInt(renderStatus?'*':0x20); // 0xA5 = middle dot
+			serialPort.writeInt(renderStatus?0xA5:0x20); // 0xA5 = middle dot
 			Thread.sleep(10);
 			LCD.send(serialPort, Cmd.MOVE_TO, 16, 2);
 			Thread.sleep(10);
