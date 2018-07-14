@@ -1,4 +1,7 @@
 "use strict";
+
+var KEYMAP = { KeyZ: 0, KeyS: 1, KeyX: 2, KeyD: 3, KeyC: 4, KeyV: 5, KeyG: 6, KeyB: 7, KeyH: 8, KeyN: 9, KeyJ: 10, KeyM: 11, Comma: 12, KeyL: 13, Period: 14, Semicolon: 15, Slash: 16, Quote: 17, KeyQ: 12, Digit2: 13, KeyW: 14, Digit3: 15, KeyE: 16, KeyR: 17, Digit5: 18, KeyT: 19, Digit6: 20, KeyY: 21, Digit7: 22, KeyU: 23, KeyI: 24, Digit9: 25, KeyO: 26, Digit0: 27, KeyP: 28, BracketLeft: 29, Equal: 30, BracketRight: 31 };
+
 $(document).ready(function () {
 	var warnRandomize = true;
 	var dontreconnect = false;
@@ -205,13 +208,16 @@ $(document).ready(function () {
 	var socket = new socketHandler();
 	
 	var dimmer = {
+			visible: false,
 			show: function() {
 				$("#dimmer").fadeIn();
-				$(document.body).css('top', -(document.documentElement.scrollTop) + 'px').addClass("noscroll");	
+				$(document.body).css('top', -(document.documentElement.scrollTop) + 'px').addClass("noscroll");
+				dimmer.visible = true;
 			},
 			hide: function() {
 				$("#dimmer").fadeOut();
-				$(document.body).removeClass("noscroll");	
+				$(document.body).removeClass("noscroll");
+				dimmer.visible = false;
 			}
 	};
 
@@ -787,4 +793,35 @@ $(document).ready(function () {
 	$('#loadpatch').focus();
 	
 	socket.createAndConnect();
+	
+	// keyboard keyboard ;)
+	
+	function noteForKeyCode(keycode) {
+		if (dimmer.visible) return;
+		return KEYMAP[keycode];
+	}
+	
+	var kboctave = 3;
+	
+	document.body.addEventListener('keydown', function(e) {
+		var note = noteForKeyCode(e.code);
+		if (typeof note!='undefined' && !e.repeat) {
+			socket.sendValueDirectly('/play/note/'+(note+kboctave*12), 1);
+			console.log("Play note", note);
+			e.preventDefault();
+		}
+	});
+	document.body.addEventListener('keyup', function(e) {
+		if (!dimmer.visible) {
+			if (e.code=='ShiftLeft' && kboctave>1) kboctave--;
+			if (e.code=='ControlLeft' && kboctave<7) kboctave++;
+		}
+		var note = noteForKeyCode(e.code);
+		if (typeof note!='undefined') {
+			socket.sendValueDirectly('/play/note/'+(note+kboctave*12), 0);
+			console.log("Release note", note);
+			e.preventDefault();
+		}
+	})
+	
 });
