@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="styles.css" rel="stylesheet" />
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div class="row">
+      <div class="col cat3 area">
+        <div>OSCILLATORS</div>
+        <div class="row group-bottom">
+          <div class="select" data-list="Waves,Additive,Karplus"></div>
+          <div class="toggle">Mono</div>
+          <div class="toggle">Sync</div>
+        </div>
+        <div class="row">
+          <div class="rotary" data-label="OSC1 Wave"></div>
+          <div class="rotary" data-label="Noise"></div>
+          <div class="rotary" data-label="1 Mix 2" data-mix></div>
+          <div class="rotary" data-label="Gain"></div>
+        </div>
+        <div class="row group-top">
+          <div class="rotary" data-label="OSC2 Wave"></div>
+          <div class="rotary" data-label="Semitones" data-bipolar></div>
+          <div class="rotary" data-label="Fine Tune" data-bipolar></div>
+          <div class="rotary" data-label="Ringmod"></div>
+        </div>
+        <div class="row">
+          <div class="rotary" data-label="Glide"></div>
+        </div>
+      </div>
+      <div class="col cat1 area">
+        <div class="row fstart">
+          <div>FILTER 1</div>
+          <div class="toggle">On</div>
+        </div>
+        <div
+          class="select group-bottom"
+          data-list="LP24,LP12,BP,HP,Notch,Allp"
+        ></div>
+        <div class="row group-bottom">
+          <div class="rotary" data-label="Cutoff"></div>
+          <div class="rotary" data-label="Resonance"></div>
+          <div class="rotary" data-label="Drive"></div>
+        </div>
+        <div class="row">
+          <div class="col envarea fcenter">
+            <div class="row">
+              <div class="fader" data-label="A"></div>
+              <div class="fader" data-label="D"></div>
+              <div class="fader" data-label="S"></div>
+              <div class="fader" data-label="R"></div>
+            </div>
+            <div class="row">
+              <div class="toggle">Loop</div>
+              <div class="toggle">Velocity</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="rotary" data-label="Env Amount" data-bipolar></div>
+            <div class="rotary" data-label="Keytrack"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col cat1 area">
+        <div>Filter Routing</div>
+        <div class="select vertical" data-list="Serial,Parallel,Per OSC"></div>
+        <div class="rotary" data-label="1 Mix 2" data-mix></div>
+      </div>
+      <div class="col cat1 area">
+        <div class="row fstart">
+          <div>FILTER 2</div>
+          <div class="toggle">On</div>
+        </div>
+        <div
+          class="select group-bottom"
+          data-list="LP24,LP12,BP,HP,Notch,Allp"
+        ></div>
+        <div class="row group-bottom">
+          <div class="rotary" data-label="Cutoff"></div>
+          <div class="rotary" data-label="Resonance"></div>
+          <div class="rotary" data-label="Drive"></div>
+        </div>
+        <div class="row">
+          <div class="col envarea fcenter">
+            <div class="row">
+              <div class="fader" data-label="A"></div>
+              <div class="fader" data-label="D"></div>
+              <div class="fader" data-label="S"></div>
+              <div class="fader" data-label="R"></div>
+            </div>
+            <div class="row">
+              <div class="toggle">Loop</div>
+              <div class="toggle">Velocity</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="rotary" data-label="Env Amount" data-bipolar></div>
+            <div class="rotary" data-label="Keytrack"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col cat2 area">
+        <div>MOD ENVELOPE</div>
+        <div class="row">
+          <div class="col envarea fcenter group-right">
+            <div class="row">
+              <div class="fader" data-label="A"></div>
+              <div class="fader" data-label="D"></div>
+              <div class="fader" data-label="S"></div>
+              <div class="fader" data-label="R"></div>
+            </div>
+            <div class="row">
+              <div class="toggle">Loop</div>
+              <div class="toggle">Velocity</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="row">
+              <div class="rotary" data-label="Pitch" data-bipolar></div>
+              <div class="rotary" data-label="Pitch 2" data-bipolar></div>
+            </div>
+            <div class="row">
+              <div class="rotary" data-label="Wave" data-bipolar></div>
+              <div class="rotary" data-label="Noise" data-bipolar></div>
+            </div>
+            <div class="row">
+              <div class="rotary" data-label="Ringmod" data-bipolar></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col cat2 area">
+        <div class="row">
+          <div>LFO</div>
+          <div
+            class="select"
+            data-list="Sine,Triangle,Up,Down,Square,S&amp;H"
+          ></div>
+        </div>
+        <div class="row">
+          <div class="col group-right">
+            <div class="rotary" data-label="LFO Rate"></div>
+            <div class="rotary" data-label="Amount"></div>
+            <div class="toggle">Key Repeat</div>
+          </div>
+          <div class="col">
+            <div class="row">
+              <div class="rotary" data-label="Pitch" data-bipolar></div>
+              <div class="rotary" data-label="Pitch 2" data-bipolar></div>
+              <div class="rotary" data-label="Vol" data-bipolar></div>
+            </div>
+            <div class="row">
+              <div class="rotary" data-label="Wave 1" data-bipolar></div>
+              <div class="rotary" data-label="Wave 2" data-bipolar></div>
+            </div>
+            <div class="row">
+              <div class="rotary" data-label="Filter 1" data-bipolar></div>
+              <div class="rotary" data-label="Filter 2" data-bipolar></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col cat4 area">
+        <div>AMP</div>
+        <div class="row">
+          <div class="col envarea fcenter group-right">
+            <div class="row">
+              <div class="fader" data-label="A"></div>
+              <div class="fader" data-label="D"></div>
+              <div class="fader" data-label="S"></div>
+              <div class="fader" data-label="R"></div>
+            </div>
+            <div class="row">
+              <div class="toggle">Loop</div>
+              <div class="toggle">Velocity</div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="row">
+              <div class="rotary" data-label="Drive"></div>
+              <div class="rotary" data-label="Chorus"></div>
+              <div class="rotary" data-label="Spread"></div>
+            </div>
+            <div class="row group-top group-bottom">
+              <div class="rotary" data-label="Delay"></div>
+              <div class="rotary" data-label="Time"></div>
+              <div class="rotary" data-label="Feedback"></div>
+            </div>
+            <div class="row">
+              <div class="rotary" data-label="Reverb"></div>
+              <div class="rotary" data-label="Volume"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="keyboard" class="row cat0">
+      <div class="rotary" data-label="Pitch" data-bipolar=""></div>
+      <div class="rotary" data-label="Mod"></div>
+      <div class="keys">
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+      </div>
+      <div class="toggle">Pedal</div>
+    </div>
+  </body>
+</html>
