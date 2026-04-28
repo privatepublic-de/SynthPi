@@ -13,8 +13,10 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
-import de.privatepublic.pi.synth.modules.fx.Delay;
+import de.privatepublic.pi.synth.modules.fx.DelayBase;
+import de.privatepublic.pi.synth.modules.fx.DigitalDelay;
 import de.privatepublic.pi.synth.modules.fx.DistortionExp;
+import de.privatepublic.pi.synth.modules.fx.TapeDelay;
 import de.privatepublic.pi.synth.modules.fx.Freeverb;
 import de.privatepublic.pi.synth.modules.fx.IProcessor;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
@@ -37,7 +39,9 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final IProcessor distort = new DistortionExp();
 	private final IProcessor reverb = new Freeverb(P.SAMPLE_RATE_HZ, P.SAMPLE_BUFFER_SIZE);
 	private final IProcessor limiter = new Limiter(20, 500);
-	private final IProcessor delay = new Delay();
+	private final TapeDelay tapeDelay = new TapeDelay();
+	private final DigitalDelay digitalDelay = new DigitalDelay();
+	private DelayBase activeDelay = tapeDelay;
 	
 	public AnalogSynth() {
 		for (int i=0;i<P.POLYPHONY_MAX;++i) {
@@ -56,7 +60,16 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 		}
 		distort.process(nframes, outputs);
 		chorus.process(nframes, outputs);
-		delay.process(nframes, outputs);
+		// Select between tape and digital delay based on P.DELAY_TYPE.
+		// On a swap, clear the newly-selected delay's buffer so stale audio
+		// from a prior selection can't leak through. Both instances are
+		// preallocated so the switch itself never allocates.
+		final DelayBase wantDelay = P.IS[P.DELAY_TYPE] ? digitalDelay : tapeDelay;
+		if (activeDelay != wantDelay) {
+			wantDelay.initPatch();
+			activeDelay = wantDelay;
+		}
+		activeDelay.process(nframes, outputs);
 		reverb.process(nframes, outputs);
 		if (P.LIMITER_ENABLED) {
 			limiter.process(nframes, outputs);
