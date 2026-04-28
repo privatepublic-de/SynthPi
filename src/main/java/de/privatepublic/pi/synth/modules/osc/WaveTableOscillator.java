@@ -78,6 +78,166 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 		return val*vol;
 	}
 	
+	/**
+	 * Buffer-rate variant of {@link #processSample1st}. Runs its own per-sample loop
+	 * with every {@code P.*} read hoisted, so the call site in the voice loop becomes
+	 * a single monomorphic dispatch per audio buffer instead of one virtual call per
+	 * sample. Caller must pre-render {@code modEnvBuf[i] = modEnvelope.nextValue()} so
+	 * both oscillators see the same trajectory.
+	 */
+	public void processBuffer1st(final int nframes, final float vol, final boolean[] syncOnFrameBuffer, final float[] am_buffer, final float[] modEnvBuf, final float[] outBuf) {
+		// Hoist parameter reads — these don't change within an audio buffer.
+		final float pitchBend = P.PITCH_BEND_FACTOR;
+		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
+		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float wfBase = P.VAL[P.OSC1_WAVE];
+		final float wfDepth = P.VALXC[P.MOD_WAVE1_AMOUNT];
+		final float wfModEnvDepth = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
+		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final int wavesetindex = (int)(P.VAL[wavesetparamindex]*WaveTables.WAVE_SET_COUNT);
+		final float[][][] wavesetTable = WaveTables.WAVES[wavesetindex];
+		final int waveIndexMax = WaveTables.WAVE_INDEX_MAX;
+		final int tableLen = WaveTables.TABLE_LENGTH;
+		final float tableInc = WaveTables.TABLE_INCREMENT;
+		final int[] octIndexFor = WaveTables.OCT_INDEXES_FOR_FREQUENCY;
+
+		// Pull mutable instance state into locals so the JIT can keep them in registers.
+		float effFreq = effectiveFrequency;
+		float idx = tableIndex;
+		final float targetFreq = targetFrequency;
+		final float glide = glideStepSize;
+
+		for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			if (effFreq != targetFreq) {
+				if (effFreq < targetFreq) effFreq += glide;
+				else if (effFreq > targetFreq) effFreq -= glide;
+				if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
+			}
+			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float modEnvVal = modEnvBuf[sampleNo];
+			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth) * pitchBend;
+			final float waveform = wfBase + (lfoVal*modAmount*wfDepth) + modEnvVal*wfModEnvDepth;
+			final float waveformpos;
+			if (waveform > 1)      waveformpos = waveIndexMax;
+			else if (waveform < 0) waveformpos = 0;
+			else                   waveformpos = waveform * waveIndexMax;
+			final int waveformBase = (int)waveformpos;
+			final float waveformFract = waveformpos - waveformBase;
+			final int octindex = octIndexFor[(int)freq];
+			final int indexBase = (int)idx;
+			final float indexFrac = idx - indexBase;
+			final float[] wave1 = wavesetTable[waveformBase][octindex];
+			float val = wave1[indexBase];
+			val += ((wave1[indexBase+1] - val) * indexFrac);
+			if (waveformBase < waveIndexMax) {
+				final float[] wave2 = wavesetTable[waveformBase+1][octindex];
+				float val2 = wave2[indexBase];
+				val2 += ((wave2[indexBase+1] - val2) * indexFrac);
+				val = val*(1-waveformFract) + val2*waveformFract;
+			}
+			am_buffer[sampleNo] = val;
+			idx += tableInc * freq;
+			if (idx >= tableLen) {
+				idx -= tableLen;
+				syncOnFrameBuffer[sampleNo] = true;
+			}
+			else {
+				syncOnFrameBuffer[sampleNo] = false;
+			}
+			outBuf[sampleNo] = val * vol;
+		}
+
+		effectiveFrequency = effFreq;
+		tableIndex = idx;
+	}
+
+	/**
+	 * Buffer-rate variant of {@link #processSample2nd}. See {@link #processBuffer1st}.
+	 * Reads {@code am_buffer} and {@code syncOnFrameBuffer} that were filled by the
+	 * companion OSC1 call earlier in the same audio buffer.
+	 */
+	public void processBuffer2nd(final int nframes, final float vol, final boolean[] syncOnFrameBuffer, final float[] am_buffer, final float[] modEnvBuf, final float[] outBuf) {
+		final float pitchBend = P.PITCH_BEND_FACTOR;
+		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
+		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float pitch2Depth = P.VALXC[P.MOD_PITCH2_AMOUNT];
+		final float pitch2ModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT];
+		final float wfBase = P.VAL[P.OSC2_WAVE];
+		final float wfDepth = P.VALXC[P.MOD_WAVE2_AMOUNT];
+		final float wfModEnvDepth = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
+		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float ampModAmount = P.VALC[P.MOD_ENV1_AM_AMOUNT];
+		final float osc2AmBase = P.VAL[P.OSC2_AM];
+		final boolean osc2AmIs = P.IS[P.OSC2_AM];
+		final boolean osc2SyncIs = P.IS[P.OSC2_SYNC];
+		final int wavesetindex = (int)(P.VAL[wavesetparamindex]*WaveTables.WAVE_SET_COUNT);
+		final float[][][] wavesetTable = WaveTables.WAVES[wavesetindex];
+		final int waveIndexMax = WaveTables.WAVE_INDEX_MAX;
+		final int tableLen = WaveTables.TABLE_LENGTH;
+		final float tableInc = WaveTables.TABLE_INCREMENT;
+		final int[] octIndexFor = WaveTables.OCT_INDEXES_FOR_FREQUENCY;
+
+		float effFreq = effectiveFrequency;
+		float idx = tableIndex;
+		boolean ampmodLocal = ampmod;
+		final float targetFreq = targetFrequency;
+		final float glide = glideStepSize;
+
+		for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			if (ampmodLocal && !osc2AmIs) {
+				effFreq = targetFreq;
+			}
+			final float modEnvVal = modEnvBuf[sampleNo];
+			final float ampamount = FastCalc.ensureRange(osc2AmBase + modEnvVal*ampModAmount, 0, 1);
+			ampmodLocal = ampamount > 0 || ampModAmount != 0;
+			if (ampmodLocal) {
+				effFreq = targetFreq * (ampamount * 4);
+			}
+			else {
+				if (effFreq != targetFreq) {
+					if (effFreq < targetFreq) effFreq += glide;
+					else if (effFreq > targetFreq) effFreq -= glide;
+					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
+				}
+				if (osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
+					idx = 0;
+				}
+			}
+			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth;
+			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1 + modEnvVal*pitch2ModEnvDepth;
+			final float freq = effFreq * pitchLfo * pitchBend * pitchAsymm;
+			final float waveform = wfBase + (lfoVal*modAmount*wfDepth) + modEnvVal*wfModEnvDepth;
+			final float waveformpos;
+			if (waveform > 1)      waveformpos = waveIndexMax;
+			else if (waveform < 0) waveformpos = 0;
+			else                   waveformpos = waveform * waveIndexMax;
+			final int waveformBase = (int)waveformpos;
+			final float waveformFract = waveformpos - waveformBase;
+			final int octindex = octIndexFor[(int)freq];
+			final int indexBase = (int)idx;
+			final float indexFrac = idx - indexBase;
+			final float[] wave1 = wavesetTable[waveformBase][octindex];
+			float val = wave1[indexBase];
+			val += ((wave1[indexBase+1] - val) * indexFrac);
+			if (waveformBase < waveIndexMax) {
+				final float[] wave2 = wavesetTable[waveformBase+1][octindex];
+				float val2 = wave2[indexBase];
+				val2 += ((wave2[indexBase+1] - val2) * indexFrac);
+				val = val*(1-waveformFract) + val2*waveformFract;
+			}
+			idx += tableInc * freq;
+			if (idx >= tableLen) {
+				idx -= tableLen;
+			}
+			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*vol : val*vol;
+		}
+
+		effectiveFrequency = effFreq;
+		tableIndex = idx;
+		ampmod = ampmodLocal;
+	}
+
 	@Override
 	public float processSample2nd(final int sampleNo, final float vol, final boolean[] syncOnFrameBuffer, final float[] am_buffer, final EnvADSR modEnvelope) {
 		// second osc

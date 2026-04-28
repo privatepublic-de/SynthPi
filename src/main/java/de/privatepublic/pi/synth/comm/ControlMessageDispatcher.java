@@ -1,5 +1,6 @@
 package de.privatepublic.pi.synth.comm;
 
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,6 +23,17 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 	
 	private static final Logger log = LoggerFactory.getLogger(ControlMessageDispatcher.class);
 	public static ControlMessageDispatcher INSTANCE = new ControlMessageDispatcher();
+
+	private static final HashMap<String, Integer> PATH_INDEX = buildPathIndex();
+	private static HashMap<String, Integer> buildPathIndex() {
+		HashMap<String, Integer> map = new HashMap<String, Integer>(P.PARAM_STORE_SIZE * 2);
+		for (int i = 0; i < P.PARAM_STORE_SIZE; i++) {
+			if (P.OSC_PATH[i] != null) {
+				map.put(P.OSC_PATH[i], i);
+			}
+		}
+		return map;
+	}
 	
 	private static enum CommandMessage {
 		UPDATE_REQUEST("/command/updaterequest"),
@@ -157,17 +169,14 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				break;
 			case PARAMETER_MESSAGE: // it's possibly a parameter message
 				if (parts.length==2) {
-					float value = Float.valueOf(parts[1]);
-					String incomingpath = parts[0];
-					for (int i=0;i<P.PARAM_STORE_SIZE;i++) {
-						if (incomingpath.equals(P.OSC_PATH[i])) {
-							P.set(i, value);
-							if (i==P.OSC2_TUNING || i==P.OSC2_TUNING_FINE) {
-								MidiHandler.sendPitchBendNotification();
-							}
-							update(session, i);
-							break;
+					Integer pi = PATH_INDEX.get(parts[0]);
+					if (pi != null) {
+						int i = pi;
+						P.set(i, Float.valueOf(parts[1]));
+						if (i==P.OSC2_TUNING || i==P.OSC2_TUNING_FINE) {
+							MidiHandler.sendPitchBendNotification();
 						}
+						update(session, i);
 					}
 				}
 				break;

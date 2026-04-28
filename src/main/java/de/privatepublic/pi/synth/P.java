@@ -325,6 +325,10 @@ public class P {
 		DELAY_FEEDBACK
 	};
 	public static final int SET_INTERPOLATED_SIZE = SET_INTERPOLATED.length;
+	private static final boolean[] IS_INTERPOLATED = new boolean[PARAM_STORE_SIZE];
+	static {
+		for (int p : SET_INTERPOLATED) IS_INTERPOLATED[p] = true;
+	}
 	
 	public static final EnvelopeParamConfig ENV_CONF_AMP = new EnvelopeParamConfig(AMP_ENV_A, AMP_ENV_D, AMP_ENV_S, AMP_ENV_R, AMP_ENV_VELOCITY_SENS, AMP_ENV_LOOP);
 	public static final EnvelopeParamConfig ENV_CONF_FILTER1 = new EnvelopeParamConfig(FILTER1_ENV_A, FILTER1_ENV_D, FILTER1_ENV_S, FILTER1_ENV_R, FILTER1_ENV_VELOCITY_SENS, FILTER1_ENV_LOOP);
@@ -546,12 +550,7 @@ public class P {
 	
 	
 	private static boolean isSetInterpolated(int index) {
-		for (int i=0;i<SET_INTERPOLATED.length;i++) {
-			if (SET_INTERPOLATED[i]==index) {
-				return true;
-			}
-		}
-		return false;
+		return IS_INTERPOLATED[index];
 	}
 	
 	protected static void setDirectly(int index, float val) {

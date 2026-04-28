@@ -165,12 +165,128 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 		}
 	}
 
+	/**
+	 * Buffer-rate variant of {@link #processSample1st}. Caller pre-renders
+	 * {@code modEnvBuf}.
+	 */
+	public void processBuffer1st(final int nframes, final float volume, final boolean[] syncOnFrameBuffer, final float[] am_buffer, final float[] modEnvBuf, final float[] outBuf) {
+		final float pitchBend = P.PITCH_BEND_FACTOR;
+		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
+		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float wfDepth = P.VALXC[P.MOD_WAVE1_AMOUNT];
+		final float wfModEnvDepth = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
+		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float wfBase = P.VAL[P.OSC1_WAVE];
+		final int harmonicsN = HARMONICS_COUNT_EFFECTIVE;
+		final Sine[] s = sines;
+
+		float effFreq = effectiveFrequency;
+		final float targetFreq = targetFrequency;
+		final float glide = glideStepSize;
+
+		for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			if (effFreq != targetFreq) {
+				if (effFreq < targetFreq) effFreq += glide;
+				else if (effFreq > targetFreq) effFreq -= glide;
+				if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
+			}
+			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float modEnvVal = modEnvBuf[sampleNo];
+			frequencyStepSize = effFreq * ((1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth) * pitchBend;
+			final float waveformMod = lfoVal*modAmount*wfDepth + modEnvVal*wfModEnvDepth;
+			// Hoist VOLUME_MAP index/fract once per sample — same for all 15 harmonics.
+			final float vIndex = FastCalc.ensureRange(wfBase + waveformMod, 0f, 1f) * VOLUMES_COUNT;
+			final int volBase = (int)vIndex;
+			final float volFract = vIndex - volBase;
+			float acc = 0;
+			for (int i=0; i<harmonicsN; i++) {
+				acc += s[i].valueOfPrecomputed(volBase, volFract, false);
+			}
+			outValue = acc;
+			am_buffer[sampleNo] = acc;
+			syncOnFrameBuffer[sampleNo] = s[5].cycleStart;
+			outBuf[sampleNo] = acc * volume;
+		}
+
+		effectiveFrequency = effFreq;
+	}
+
+	/**
+	 * Buffer-rate variant of {@link #processSample2nd}. See {@link #processBuffer1st}.
+	 */
+	public void processBuffer2nd(final int nframes, final float volume, final boolean[] syncOnFrameBuffer, final float[] am_buffer, final float[] modEnvBuf, final float[] outBuf) {
+		if (P.LOW_BUDGET_ADDITIVE) {
+			// Match per-sample behavior: returns the (untouched) instance outValue × volume each sample.
+			final float v = outValue * volume;
+			for (int i=0; i<nframes; i++) outBuf[i] = v;
+			return;
+		}
+		final float pitchBend = P.PITCH_BEND_FACTOR;
+		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
+		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float pitch2Depth = P.VALXC[P.MOD_PITCH2_AMOUNT];
+		final float pitch2ModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT];
+		final float wfDepth = P.VALXC[P.MOD_WAVE2_AMOUNT];
+		final float wfModEnvDepth = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
+		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float ampModAmt = P.VALC[P.MOD_ENV1_AM_AMOUNT];
+		final float osc2AmBase = P.VAL[P.OSC2_AM];
+		final boolean osc2AmIs = P.IS[P.OSC2_AM];
+		final boolean osc2SyncIs = P.IS[P.OSC2_SYNC];
+		final float wfBase = P.VAL[P.OSC2_WAVE];
+		final int harmonicsN = HARMONICS_COUNT_EFFECTIVE;
+		final Sine[] s = sines;
+
+		float effFreq = effectiveFrequency;
+		boolean ampmodLocal = ampmod;
+		final float targetFreq = targetFrequency;
+		final float glide = glideStepSize;
+
+		for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			if (ampmodLocal && !osc2AmIs) {
+				effFreq = targetFreq;
+			}
+			final float modEnvVal = modEnvBuf[sampleNo];
+			final float ampamt = FastCalc.ensureRange(osc2AmBase + modEnvVal*ampModAmt, 0, 1);
+			ampmodLocal = ampamt > 0 || ampModAmt != 0;
+			if (ampmodLocal) {
+				effFreq = targetFreq * (ampamt * 4);
+			}
+			else {
+				if (effFreq != targetFreq) {
+					if (effFreq < targetFreq) effFreq += glide;
+					else if (effFreq > targetFreq) effFreq -= glide;
+					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
+				}
+			}
+			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth;
+			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1 + modEnvVal*pitch2ModEnvDepth;
+			frequencyStepSize = effFreq * pitchLfo * pitchBend * pitchAsymm;
+			final boolean sync = osc2SyncIs && syncOnFrameBuffer[sampleNo];
+			final float waveformMod = lfoVal*modAmount*wfDepth + modEnvVal*wfModEnvDepth;
+			// Hoist VOLUME_MAP index/fract once per sample — same for all 15 harmonics.
+			final float vIndex = FastCalc.ensureRange(wfBase + waveformMod, 0f, 1f) * VOLUMES_COUNT;
+			final int volBase = (int)vIndex;
+			final float volFract = vIndex - volBase;
+			float acc = 0;
+			for (int i=0; i<harmonicsN; i++) {
+				acc += s[i].valueOfPrecomputed(volBase, volFract, sync);
+			}
+			outValue = acc;
+			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*acc*volume : acc*volume;
+		}
+
+		effectiveFrequency = effFreq;
+		ampmod = ampmodLocal;
+	}
+
 	@Override
 	public void onPitchBend() {
 		setTargetFrequency(frequency);
 	}
-	
-	
+
+
 	private class Sine {
 		private final float factor;
 		private float lphase = 0;
@@ -182,21 +298,36 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 			this.harmIndex = harmIndex;
 		}
 		
-		private float volIndex, volFract, vol, indexFrac, outValue;
-		private int volBase, indexBase;
-		
 		public final float value(final int waveformparaindex, final float waveformmod, final boolean sync) {
-			volIndex = FastCalc.ensureRange((P.VAL[waveformparaindex]+waveformmod), 0f, 1f)*VOLUMES_COUNT;
-			volBase = (int)volIndex;
-			volFract = volIndex-volBase;
-			vol = VOLUME_MAP[volBase][harmIndex];
+			return valueOf(P.VAL[waveformparaindex], waveformmod, sync);
+		}
+
+		/**
+		 * Same as {@link #value(int, float, boolean)} but takes the waveform parameter
+		 * value directly. The buffer-rate caller hoists {@code P.VAL[OSC*_WAVE]} once
+		 * per sample instead of re-reading it for every harmonic.
+		 */
+		public final float valueOf(final float waveformval, final float waveformmod, final boolean sync) {
+			final float vIndex = FastCalc.ensureRange((waveformval+waveformmod), 0f, 1f)*VOLUMES_COUNT;
+			final int vBase = (int)vIndex;
+			return valueOfPrecomputed(vBase, vIndex - vBase, sync);
+		}
+
+		/**
+		 * Per-harmonic kernel with {@code volBase}/{@code volFract} already computed
+		 * by the caller. Used by the buffer-rate path so the
+		 * {@code FastCalc.ensureRange + multiply + cast + subtract} chain runs once
+		 * per sample instead of once per harmonic (×{@code HARMONICS_COUNT_EFFECTIVE}).
+		 */
+		public final float valueOfPrecomputed(final int volBase, final float volFract, final boolean sync) {
+			float vol = VOLUME_MAP[volBase][harmIndex];
 			vol += ((VOLUME_MAP[volBase+1][harmIndex]-vol)*volFract);
 			if (sync) {
 				lphase = 0;
 			}
-			indexBase = (int)lphase;
-			indexFrac = lphase-indexBase;
-			outValue = SINE_TABLE[indexBase];
+			final int indexBase = (int)lphase;
+			final float indexFrac = lphase-indexBase;
+			float outValue = SINE_TABLE[indexBase];
 			outValue += ((SINE_TABLE[indexBase+1]-outValue)*indexFrac);
 			lphase = lphase+frequencyStepSize*factor;
 			cycleStart = false;

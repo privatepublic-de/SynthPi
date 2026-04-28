@@ -154,6 +154,122 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 		}
 	}
 	
+	/**
+	 * Buffer-rate variant of {@link #processSample1st}. Caller pre-renders {@code modEnvBuf}.
+	 */
+	public void processBuffer1st(final int nframes, final float volume, final boolean[] syncOnFrameBuffer, final float[] am_buffer, final float[] modEnvBuf, final float[] outBuf) {
+		final float pitchBend = P.PITCH_BEND_FACTOR;
+		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
+		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float osc2WaveVal = P.VAL[P.OSC2_WAVE];
+		final int blen = bufferLen;
+		final float sampleRate = P.SAMPLE_RATE_HZ;
+		final float[] dly = delayBuffer;
+
+		float effFreq = effectiveFrequency;
+		int idx = index;
+		final float targetFreq = targetFrequency;
+		final float glide = glideStepSize;
+
+		for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			currentSampleNo = sampleNo;
+			if (effFreq != targetFreq) {
+				if (effFreq < targetFreq) effFreq += glide;
+				else if (effFreq > targetFreq) effFreq -= glide;
+				if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
+			}
+			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float modEnvVal = modEnvBuf[sampleNo];
+			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth) * pitchBend;
+			final int playBufferLen = Math.min((int)(sampleRate / Math.max(freq, 1)), blen);
+			if (playBufferLen > 1) {
+				int prefIndex = idx - 1;
+				if (prefIndex < 0) prefIndex = playBufferLen - 1;
+				final float val = dly[idx]*(1-osc2WaveVal) + dly[prefIndex]*osc2WaveVal;
+				dly[idx] = val;
+				syncOnFrameBuffer[sampleNo] = idx == 0;
+				idx = ++idx < playBufferLen ? idx : 0;
+				am_buffer[sampleNo] = val;
+				outBuf[sampleNo] = val * volume;
+			}
+			else {
+				am_buffer[sampleNo] = 0;
+				syncOnFrameBuffer[sampleNo] = false;
+				outBuf[sampleNo] = 0;
+			}
+		}
+
+		effectiveFrequency = effFreq;
+		index = idx;
+	}
+
+	/**
+	 * Buffer-rate variant of {@link #processSample2nd}. See {@link #processBuffer1st}.
+	 */
+	public void processBuffer2nd(final int nframes, final float volume, final boolean[] syncOnFrameBuffer, final float[] am_buffer, final float[] modEnvBuf, final float[] outBuf) {
+		final float pitchBend = P.PITCH_BEND_FACTOR;
+		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
+		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float pitch2Depth = P.VALXC[P.MOD_PITCH2_AMOUNT];
+		final float pitch2ModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT];
+		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float osc2WaveVal = P.VAL[P.OSC2_WAVE];
+		final boolean osc2AmIs = P.IS[P.OSC2_AM];
+		final boolean osc2SyncIs = P.IS[P.OSC2_SYNC];
+		final float osc2AmBase = P.VAL[P.OSC2_AM];
+		final int blen = bufferLen;
+		final float sampleRate = P.SAMPLE_RATE_HZ;
+		final float[] dly = delayBuffer;
+
+		float effFreq = effectiveFrequency;
+		int idx = index;
+		boolean ampmodLocal = ampmod;
+		final float targetFreq = targetFrequency;
+		final float glide = glideStepSize;
+
+		for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			if (ampmodLocal && !osc2AmIs) {
+				effFreq = targetFreq;
+			}
+			ampmodLocal = osc2AmIs;
+			if (ampmodLocal) {
+				effFreq = targetFreq * (osc2AmBase * 4);
+			}
+			else {
+				if (effFreq != targetFreq) {
+					if (effFreq < targetFreq) effFreq += glide;
+					else if (effFreq > targetFreq) effFreq -= glide;
+					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
+				}
+				if (osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
+					idx = 0;
+				}
+			}
+			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float modEnvVal = modEnvBuf[sampleNo];
+			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth;
+			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1 + modEnvVal*pitch2ModEnvDepth;
+			final float freq = effFreq * pitchLfo * pitchBend * pitchAsymm;
+			final int playBufferLen = Math.min((int)(sampleRate / Math.max(freq, 1)), blen);
+			if (playBufferLen > 1) {
+				int prefIndex = idx - 1;
+				if (prefIndex < 0) prefIndex = playBufferLen - 1;
+				final float val = dly[idx]*(1-osc2WaveVal) + dly[prefIndex]*osc2WaveVal;
+				dly[idx] = val;
+				idx = ++idx < playBufferLen ? idx : 0;
+				outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*volume : val*volume;
+			}
+			else {
+				outBuf[sampleNo] = 0;
+			}
+		}
+
+		effectiveFrequency = effFreq;
+		index = idx;
+		ampmod = ampmodLocal;
+	}
+
 	// sadly the above copy & paste coding approach is much more performant!
 	
 //	@Override

@@ -15,15 +15,21 @@ import de.privatepublic.pi.synth.modules.osc.WaveTableOscillator;
 
 public class AnalogSynthVoice {
 
+	/**
+	 * Toggles the buffer-rate oscillator path for VIRTUAL_ANALOG mode.
+	 * Flip this and observe {@code SynthPiAudioClient.LOAD} to A/B the win.
+	 */
+	public static boolean USE_BUFFER_PATH = true;
+
 	private final EnvADSR envelope;
 	private final EnvADSR modEnvelope;
-	
-	private final IOscillator osc1_va = new WaveTableOscillator(IOscillator.PRIMARY_OSC);
-	private final IOscillator osc2_va = new WaveTableOscillator(IOscillator.SECONDARY_OSC);
-	private final IOscillator osc1_add = new AdditiveOscillator(IOscillator.PRIMARY_OSC);
-	private final IOscillator osc2_add = new AdditiveOscillator(IOscillator.SECONDARY_OSC);
-	private final IOscillator osc1_pluck = new ExciterOscillator(IOscillator.PRIMARY_OSC);
-	private final IOscillator osc2_pluck = new ExciterOscillator(IOscillator.SECONDARY_OSC);
+
+	private final WaveTableOscillator osc1_va = new WaveTableOscillator(IOscillator.PRIMARY_OSC);
+	private final WaveTableOscillator osc2_va = new WaveTableOscillator(IOscillator.SECONDARY_OSC);
+	private final AdditiveOscillator osc1_add = new AdditiveOscillator(IOscillator.PRIMARY_OSC);
+	private final AdditiveOscillator osc2_add = new AdditiveOscillator(IOscillator.SECONDARY_OSC);
+	private final ExciterOscillator osc1_pluck = new ExciterOscillator(IOscillator.PRIMARY_OSC);
+	private final ExciterOscillator osc2_pluck = new ExciterOscillator(IOscillator.SECONDARY_OSC);
 	
 	private final MultiModeFilter filter1 = new MultiModeFilter(
 			P.FILTER1_FREQ, 
@@ -50,6 +56,12 @@ public class AnalogSynthVoice {
 	
 	private final float[] am_buffer = new float[P.SAMPLE_BUFFER_SIZE];
 	private final boolean[] syncBuffer = new boolean[P.SAMPLE_BUFFER_SIZE];
+	private final float[] modEnvBuf = new float[P.SAMPLE_BUFFER_SIZE];
+	private final float[] osc1OutBuf = new float[P.SAMPLE_BUFFER_SIZE];
+	private final float[] osc2OutBuf = new float[P.SAMPLE_BUFFER_SIZE];
+	private final float[] osc1MixBuf = new float[P.SAMPLE_BUFFER_SIZE];
+	private final float[] osc2MixBuf = new float[P.SAMPLE_BUFFER_SIZE];
+	private final float[] envBuf = new float[P.SAMPLE_BUFFER_SIZE];
 	
 	private static final float NOISE_SCALE = (2.0f / 0xffffffff) / 4294967296.0f;
 	private int noiseX1 = (int) 0x67452301;
@@ -66,6 +78,18 @@ public class AnalogSynthVoice {
 			outL[sampleNo] += (in1 + in2*width)*env;
 			outR[sampleNo] += (in1*width + in2)*env;
 		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float a = in1[sampleNo];
+				final float b = in2[sampleNo];
+				filter1.processSample(a, sampleNo);
+				filter2.processSample(b, sampleNo);
+				final float env = envBuf[sampleNo];
+				outL[sampleNo] += (a + b*width)*env;
+				outR[sampleNo] += (a*width + b)*env;
+			}
+		}
 	};
 	
 	private RouteFilters filtersSerial1On2Off = new RouteFilters(filter1, filter2) {
@@ -74,8 +98,19 @@ public class AnalogSynthVoice {
 			filter2.processSample(in2, sampleNo);
 			final float val = filter1.processSample(in1+in2, sampleNo);
 			// serial is mono only
-			outL[sampleNo] += val*env; 
+			outL[sampleNo] += val*env;
 			outR[sampleNo] += val*env;
+		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float b = in2[sampleNo];
+				filter2.processSample(b, sampleNo);
+				final float val = filter1.processSample(in1[sampleNo]+b, sampleNo);
+				final float scaled = val*envBuf[sampleNo];
+				outL[sampleNo] += scaled;
+				outR[sampleNo] += scaled;
+			}
 		}
 	};
 	
@@ -84,8 +119,17 @@ public class AnalogSynthVoice {
 		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
 			// serial is mono only
 			final float val = filter2.processSample(filter1.processSample(in1+in2, sampleNo), sampleNo);
-			outL[sampleNo] += val*env; 
+			outL[sampleNo] += val*env;
 			outR[sampleNo] += val*env;
+		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float val = filter2.processSample(filter1.processSample(in1[sampleNo]+in2[sampleNo], sampleNo), sampleNo);
+				final float scaled = val*envBuf[sampleNo];
+				outL[sampleNo] += scaled;
+				outR[sampleNo] += scaled;
+			}
 		}
 	};
 	
@@ -95,8 +139,19 @@ public class AnalogSynthVoice {
 			filter1.processSample(in1, sampleNo);
 			final float val = filter2.processSample(in1+in2, sampleNo);
 			// serial is mono only
-			outL[sampleNo] += val*env; 
+			outL[sampleNo] += val*env;
 			outR[sampleNo] += val*env;
+		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float a = in1[sampleNo];
+				filter1.processSample(a, sampleNo);
+				final float val = filter2.processSample(a+in2[sampleNo], sampleNo);
+				final float scaled = val*envBuf[sampleNo];
+				outL[sampleNo] += scaled;
+				outR[sampleNo] += scaled;
+			}
 		}
 	};
 	
@@ -109,6 +164,19 @@ public class AnalogSynthVoice {
 			outL[sampleNo] += (filtered1 + in2*width)*env;
 			outR[sampleNo] += (filtered1*width + in2)*env;
 		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float a = in1[sampleNo];
+				final float b = in2[sampleNo];
+				filter2.processSample(b, sampleNo);
+				final float filtered1 = filter1.processSample(a+b, sampleNo) * mixHigh;
+				final float env = envBuf[sampleNo];
+				outL[sampleNo] += (filtered1 + b*width)*env;
+				outR[sampleNo] += (filtered1*width + b)*env;
+			}
+		}
 	};
 	
 	private RouteFilters filtersParallel1On2On = new RouteFilters(filter1, filter2) {
@@ -119,6 +187,19 @@ public class AnalogSynthVoice {
 			final float filtered2 = filter2.processSample(val, sampleNo)*P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
 			outL[sampleNo] += (filtered1 + filtered2*width)*env;
 			outR[sampleNo] += (filtered1*width + filtered2)*env;
+		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
+			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float val = in1[sampleNo] + in2[sampleNo];
+				final float filtered1 = filter1.processSample(val, sampleNo) * mixHigh;
+				final float filtered2 = filter2.processSample(val, sampleNo) * mixLow;
+				final float env = envBuf[sampleNo];
+				outL[sampleNo] += (filtered1 + filtered2*width)*env;
+				outR[sampleNo] += (filtered1*width + filtered2)*env;
+			}
 		}
 	};
 	
@@ -131,6 +212,19 @@ public class AnalogSynthVoice {
 			outL[sampleNo] += (in1 + filtered2*width)*env;
 			outR[sampleNo] += (in1*width + filtered2)*env;
 		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float a = in1[sampleNo];
+				final float b = in2[sampleNo];
+				filter1.processSample(a, sampleNo);
+				final float filtered2 = filter2.processSample(a+b, sampleNo) * mixLow;
+				final float env = envBuf[sampleNo];
+				outL[sampleNo] += (a + filtered2*width)*env;
+				outR[sampleNo] += (a*width + filtered2)*env;
+			}
+		}
 	};
 	
 	private RouteFilters filtersPerOsc1On2Off = new RouteFilters(filter1, filter2) {
@@ -140,6 +234,19 @@ public class AnalogSynthVoice {
 			final float filtered1 = filter1.processSample(in1, sampleNo)*P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
 			outL[sampleNo] += (filtered1 + in2*width)*env;
 			outR[sampleNo] += (filtered1*width + in2)*env;
+		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float a = in1[sampleNo];
+				final float b = in2[sampleNo];
+				filter2.processSample(b, sampleNo);
+				final float filtered1 = filter1.processSample(a, sampleNo) * mixHigh;
+				final float env = envBuf[sampleNo];
+				outL[sampleNo] += (filtered1 + b*width)*env;
+				outR[sampleNo] += (filtered1*width + b)*env;
+			}
 		}
 	};
 	
@@ -151,6 +258,18 @@ public class AnalogSynthVoice {
 			outL[sampleNo] += (filtered1 + filtered2*width)*env;
 			outR[sampleNo] += (filtered1*width + filtered2)*env;
 		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
+			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float filtered1 = filter1.processSample(in1[sampleNo], sampleNo) * mixHigh;
+				final float filtered2 = filter2.processSample(in2[sampleNo], sampleNo) * mixLow;
+				final float env = envBuf[sampleNo];
+				outL[sampleNo] += (filtered1 + filtered2*width)*env;
+				outR[sampleNo] += (filtered1*width + filtered2)*env;
+			}
+		}
 	};
 	
 	private RouteFilters filtersPerOsc1Off2On = new RouteFilters(filter1, filter2) {
@@ -160,6 +279,18 @@ public class AnalogSynthVoice {
 			final float filtered2 = filter2.processSample(in2, sampleNo)*P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
 			outL[sampleNo] += (in1 + filtered2*width)*env;
 			outR[sampleNo] += (in1*width + filtered2)*env;
+		}
+		@Override
+		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
+			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+				final float a = in1[sampleNo];
+				filter1.processSample(a, sampleNo);
+				final float filtered2 = filter2.processSample(in2[sampleNo], sampleNo) * mixLow;
+				final float env = envBuf[sampleNo];
+				outL[sampleNo] += (a + filtered2*width)*env;
+				outR[sampleNo] += (a*width + filtered2)*env;
+			}
 		}
 	};
 	
@@ -372,15 +503,52 @@ public class AnalogSynthVoice {
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
 		filter1.updateFreqResponse();
 		filter2.updateFreqResponse();
-		for (int i=0;i<nframes;i++) {
-			modEnvelope.nextValue();
-			noiseX2 += noiseX1;
-			noiseX1 ^= noiseX2;
-			noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
-			osc1_val = osc1.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
-			osc2_val = osc2.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
-			filterRoute.process(osc1_val, osc2_val, envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol)), width, i, outL, outR);
-			am_buffer[i] = 0;
+
+		if (USE_BUFFER_PATH) {
+			// Pre-render mod envelope so both oscillators see identical trajectory.
+			for (int i=0; i<nframes; i++) {
+				modEnvBuf[i] = modEnvelope.nextValue();
+			}
+			// Mode-specific dispatch: one buffer call per oscillator, statically typed.
+			switch (P.VAL_OSCILLATOR_MODE) {
+			case ADDITIVE:
+				osc1_add.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
+				osc2_add.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
+				break;
+			case EXITER:
+				osc1_pluck.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
+				osc2_pluck.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
+				break;
+			case VIRTUAL_ANALOG:
+			default:
+				osc1_va.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
+				osc2_va.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
+				break;
+			}
+			// Pre-mix noise into oscillator buffers and pre-render envelope*LFO into envBuf,
+			// so the filter route runs as a single buffer-rate dispatch instead of per sample.
+			for (int i=0; i<nframes; i++) {
+				noiseX2 += noiseX1;
+				noiseX1 ^= noiseX2;
+				noise_val = (noiseLevel + modEnvBuf[i]*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
+				osc1MixBuf[i] = osc1OutBuf[i] + noise_val;
+				osc2MixBuf[i] = osc2OutBuf[i] + noise_val;
+				envBuf[i] = envelope.nextValue() * (1 + LFO.lfoAmountAdd(i, modVol));
+			}
+			filterRoute.processBuffer(nframes, osc1MixBuf, osc2MixBuf, envBuf, width, outL, outR);
+			// am_buffer is fully overwritten by OSC1 each buffer, no per-sample reset needed.
+		}
+		else {
+			for (int i=0;i<nframes;i++) {
+				modEnvelope.nextValue();
+				noiseX2 += noiseX1;
+				noiseX1 ^= noiseX2;
+				noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
+				osc1_val = osc1.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
+				osc2_val = osc2.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
+				filterRoute.process(osc1_val, osc2_val, envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol)), width, i, outL, outR);
+				am_buffer[i] = 0;
+			}
 		}
 	}
 	
@@ -398,7 +566,15 @@ public class AnalogSynthVoice {
 		
 //		public abstract float process(float in1, float in2, int sampleNo);
 		public abstract void process(float in1, float in2, float env, float width, int sampleNo, float[] outL, float[] outR);
-		
+
+		/**
+		 * Buffer-rate variant of {@link #process}. Reads pre-mixed oscillator+noise
+		 * inputs and a pre-rendered envelope buffer. Each subclass runs its own tight
+		 * monomorphic loop, so the call site in the voice's mix loop becomes one
+		 * vcall per buffer instead of one per sample.
+		 */
+		public abstract void processBuffer(int nframes, float[] in1, float[] in2, float[] envBuf, float width, float[] outL, float[] outR);
+
 	}
 
 	@SuppressWarnings("unused")

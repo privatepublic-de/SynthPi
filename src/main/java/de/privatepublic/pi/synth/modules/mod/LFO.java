@@ -86,41 +86,74 @@ public class LFO {
 	private float[] currentWave = TABLES[0];
 	private final int paraIndexLfoType;
 	private final int paraIndexLfoRate;
+	/**
+	 * Pre-rendered LFO values for the current audio buffer. Populated by
+	 * {@link #renderBuffer(int)} at the start of each {@link de.privatepublic.pi.synth.modules.AnalogSynth#process}
+	 * and read via {@link #bufferedValueAt(int)}. Lazy-grows on size changes; only
+	 * the audio thread reads/writes it.
+	 */
+	private float[] bufferValues = new float[0];
 
 	public static final LFO GLOBAL = new LFO();
-	
+
+	/**
+	 * Renders {@code nframes} of LFO output into {@link #bufferValues} using the
+	 * current state. Call once at the start of an audio buffer; voices then read
+	 * via {@link #bufferedValueAt(int)} instead of recomputing per call.
+	 */
+	public void renderBuffer(final int nframes) {
+		float[] buf = bufferValues;
+		if (buf.length < nframes) {
+			buf = new float[nframes];
+			bufferValues = buf;
+		}
+		final float[] wave = currentWave;
+		final float baseOffset = indexOffset;
+		final float inc = tableIndexIncrement;
+		final int waveLen = WAVE_LENGHT;
+		for (int i=0; i<nframes; i++) {
+			int idx = (int)(baseOffset + inc*i);
+			if (idx >= waveLen) idx -= waveLen;
+			buf[i] = wave[idx];
+		}
+	}
+
+	public final float bufferedValueAt(final int index) {
+		return bufferValues[index];
+	}
+
 	// 0 - 2
 	// filter
 	public static float lfoAmount(final int sampleIndex, final float depth) {
-		return (1-GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth);
+		return (1-GLOBAL.bufferedValueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth);
 	}
-	
+
 	// 0 - 2 + env
 	// oscillators pitch modulation
 	public static float lfoAmount(final int sampleIndex, final float depth, final EnvADSR modEnv, final float modEnvDepth) {
 		// caution! copy & paste
-		return (1-GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
+		return (1-GLOBAL.bufferedValueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
 	}
-	
+
 	// -1 - 1 + env
 	// oscillators wave form modulation
 	public static float lfoAmountAdd(final int sampleIndex, final float depth, final EnvADSR modEnv, final float modEnvDepth) {
 		// caution! copy & paste
-		return (GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
+		return (GLOBAL.bufferedValueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth)+modEnv.outValue*modEnvDepth;
 	}
-	
+
 	// -1 - 1
 	// voice volume modulation
 	public static float lfoAmountAdd(final int sampleIndex, final float depth) {
 		// caution! copy & paste
-		return (GLOBAL.valueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth);
+		return (GLOBAL.bufferedValueAt(sampleIndex)*P.MOD_AMOUNT_COMBINED*depth);
 	}
-	
+
 	// 0 - 2 + env
 	// oscillators pitch2 modulation
 	public static float lfoAmountAsymm(final int sampleIndex, final float depth, final EnvADSR modEnv, final float modEnvDepth) {
 		// caution! copy & paste
-		return (((GLOBAL.valueAt(sampleIndex)+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
+		return (((GLOBAL.bufferedValueAt(sampleIndex)+1)*P.MOD_AMOUNT_COMBINED*.5f*depth)+1)+modEnv.outValue*modEnvDepth;
 	}
 	
 	public LFO() {

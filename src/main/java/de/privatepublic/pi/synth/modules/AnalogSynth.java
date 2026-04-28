@@ -48,6 +48,9 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	
 	@Override
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
+		// Pre-render LFO into a buffer so voices and static helpers can read it
+		// via array load instead of recomputing (int)(offset + inc*i) per call.
+		LFO.GLOBAL.renderBuffer(nframes);
 		for (int i=0; i<P.POLYPHONY; i++) {
 			voices[i].process(outputs, nframes);
 		}
