@@ -408,26 +408,30 @@ class FaderController {
 
   _renderValue(percent) {
     this.ctx.clearRect(0, 0, FaderController.width, FaderController.height);
+
     this.ctx.beginPath();
-    this.ctx.lineWidth = 1;
-    this.ctx.moveTo(0, FaderController.effectiveHeight);
-    this.ctx.lineTo(0, 0);
+    this.ctx.lineWidth = 2;
     this.ctx.strokeStyle = this.colorDark;
+    this.ctx.moveTo(1, FaderController.effectiveHeight);
+    this.ctx.lineTo(1, 0);
     this.ctx.stroke();
-    this.ctx.lineWidth = 1;
+    this.ctx.beginPath();
+    this.ctx.lineWidth = 2;
     this.ctx.moveTo(
-      0,
+      1,
       FaderController.effectiveHeight -
         percent * FaderController.effectiveHeight
     );
     this.ctx.lineTo(
-      FaderController.width,
+      FaderController.width / 2 + 6,
       FaderController.effectiveHeight -
         percent * FaderController.effectiveHeight
     );
+    this.ctx.strokeStyle = this.color;
+
     this.ctx.stroke();
     this.ctx.beginPath();
-    this.ctx.lineWidth = 20;
+    this.ctx.lineWidth = 12;
     this.ctx.moveTo(FaderController.width / 2, FaderController.effectiveHeight);
     this.ctx.lineTo(
       FaderController.width / 2,

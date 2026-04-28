@@ -21,8 +21,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -62,17 +62,17 @@
 		<dependency>
 			<groupId>org.jaudiolibs</groupId>
 			<artifactId>audioservers-api</artifactId>
-			<version>1.1.1</version>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jaudiolibs</groupId>
 			<artifactId>audioservers-jack</artifactId>
-			<version>1.1.1</version>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jaudiolibs</groupId>
 			<artifactId>audioservers-javasound</artifactId>
-			<version>1.1.1</version>
+			<version>1.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -126,17 +126,17 @@
 			<dependency>
 				<groupId>org.jaudiolibs</groupId>
 				<artifactId>audioservers-api</artifactId>
-				<version>1.1.1</version>
+				<version>1.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jaudiolibs</groupId>
 				<artifactId>audioservers-jack</artifactId>
-				<version>1.1.1</version>
+				<version>1.2.0</version>
 			</dependency>
 			<dependency>
 				<groupId>org.jaudiolibs</groupId>
 				<artifactId>audioservers-javasound</artifactId>
-				<version>1.1.1</version>
+				<version>1.2.0</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
