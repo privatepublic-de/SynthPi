@@ -1,3 +1,6 @@
 target/
 docs/
 *.launch
+.classpath
+.project
+.settings/

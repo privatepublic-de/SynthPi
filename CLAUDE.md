@@ -85,7 +85,3 @@ A second UI mockup lives under `webresources/controls/` (referenced in the lates
 ### Persistence
 
 [PresetHandler](src/main/java/de/privatepublic/pi/synth/PresetHandler.java) reads/writes JSON via `org.json` (note: an old version, 20140107). Patch IDs use prefix `f<n>` for factory entries and `u<n>` for user entries. Patch list sorting is by category then name. The class also has a `main(...)` method used as a one-off migration tool to strip legacy `description`/`oscmsg` fields from `factory-patches.json`.
-
-### IDE / Eclipse files
-
-The repo includes Eclipse project metadata (`.project`, `.classpath`, `.settings/`). Modifications to these files are common and usually reflect Eclipse workspace state rather than build-meaningful changes; treat them as low-signal.
