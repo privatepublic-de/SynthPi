@@ -15,4 +15,4 @@ SynthPi uses and is grateful for the following open source components and resour
 * Java JSON processing classes: [http://json.org](json.org) 
 * Google Material Design Icons: [https://github.com/google/material-design-icons](https://github.com/google/material-design-icons)
 
-To build SynthPi with Eclipse/Maven you'll need to install the [JAudioLibs](https://github.com/jaudiolibs) projects "audioservers" and "jnajack".
+Build with `mvn package`. All dependencies (including JAudioLibs `audioservers` and `jnajack`) resolve from Maven Central — no manual installation step required.
