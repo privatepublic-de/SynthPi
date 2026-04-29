@@ -13,8 +13,10 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.comm.IMidiNoteReceiver;
 import de.privatepublic.pi.synth.comm.MidiHandler;
 import de.privatepublic.pi.synth.modules.fx.Chorus;
-import de.privatepublic.pi.synth.modules.fx.Delay;
+import de.privatepublic.pi.synth.modules.fx.DelayBase;
+import de.privatepublic.pi.synth.modules.fx.DigitalDelay;
 import de.privatepublic.pi.synth.modules.fx.DistortionExp;
+import de.privatepublic.pi.synth.modules.fx.TapeDelay;
 import de.privatepublic.pi.synth.modules.fx.Freeverb;
 import de.privatepublic.pi.synth.modules.fx.IProcessor;
 import de.privatepublic.pi.synth.modules.fx.Limiter;
@@ -37,7 +39,9 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final IProcessor distort = new DistortionExp();
 	private final IProcessor reverb = new Freeverb(P.SAMPLE_RATE_HZ, P.SAMPLE_BUFFER_SIZE);
 	private final IProcessor limiter = new Limiter(20, 500);
-	private final IProcessor delay = new Delay();
+	private final TapeDelay tapeDelay = new TapeDelay();
+	private final DigitalDelay digitalDelay = new DigitalDelay();
+	private DelayBase activeDelay = tapeDelay;
 	
 	public AnalogSynth() {
 		for (int i=0;i<P.POLYPHONY_MAX;++i) {
@@ -48,15 +52,37 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	
 	@Override
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
-		// Pre-render LFO into a buffer so voices and static helpers can read it
-		// via array load instead of recomputing (int)(offset + inc*i) per call.
-		LFO.GLOBAL.renderBuffer(nframes);
-		for (int i=0; i<P.POLYPHONY; i++) {
-			voices[i].process(outputs, nframes);
+		// Control-rate chunking: slice the audio buffer into fixed CONTROL_BUFFER_SIZE
+		// chunks. For each chunk, render LFO.GLOBAL for the chunk's worth of samples,
+		// run all voices on that chunk, then advance LFO state. This puts every voice's
+		// per-chunk hoisted reads (in their processBuffer1st/2nd) at control rate
+		// (~3 kHz at default settings) — a finer modulation grain than the previous
+		// per-buffer rate (~375 Hz) — without changing the FX chain, which still runs
+		// once per audio buffer on the assembled stereo output.
+		final int chunkLen = P.CONTROL_BUFFER_SIZE;
+		for (int chunkStart = 0; chunkStart < nframes; chunkStart += chunkLen) {
+			// Clamp the last chunk if nframes isn't a multiple of CONTROL_BUFFER_SIZE
+			// (defaults are: 128 / 16 = 8 even chunks). Without this, a user-set
+			// -audiobuffersize that isn't a multiple of 16 would write past nframes.
+			final int thisChunkLen = Math.min(chunkLen, nframes - chunkStart);
+			LFO.GLOBAL.renderBuffer(thisChunkLen);
+			for (int v = 0; v < P.POLYPHONY; v++) {
+				voices[v].process(outputs, chunkStart, thisChunkLen);
+			}
+			LFO.GLOBAL.nextBufferSlice(thisChunkLen);
 		}
 		distort.process(nframes, outputs);
 		chorus.process(nframes, outputs);
-		delay.process(nframes, outputs);
+		// Select between tape and digital delay based on P.DELAY_TYPE.
+		// On a swap, clear the newly-selected delay's buffer so stale audio
+		// from a prior selection can't leak through. Both instances are
+		// preallocated so the switch itself never allocates.
+		final DelayBase wantDelay = P.IS[P.DELAY_TYPE] ? digitalDelay : tapeDelay;
+		if (activeDelay != wantDelay) {
+			wantDelay.initPatch();
+			activeDelay = wantDelay;
+		}
+		activeDelay.process(nframes, outputs);
 		reverb.process(nframes, outputs);
 		if (P.LIMITER_ENABLED) {
 			limiter.process(nframes, outputs);
@@ -70,7 +96,6 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			// clear while copying
 			outputL[i] = outputR[i] = 0;
 		}
-		LFO.GLOBAL.nextBufferSlice(nframes);
 	}
 
 	

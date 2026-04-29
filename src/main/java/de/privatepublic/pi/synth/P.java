@@ -19,7 +19,8 @@ public class P {
 	private static final Logger log = LoggerFactory.getLogger(P.class);
 	
 	public static enum OscillatorMode {
-		VIRTUAL_ANALOG,
+		BLEP,
+		WAVETABLE,
 		ADDITIVE,
 		EXITER
 	}
@@ -68,10 +69,20 @@ public class P {
 	public static float MILLIS_PER_SAMPLE_FRAME = 1000f/SAMPLE_RATE_HZ;
 	public static float FINAL_GAIN_FACTOR = .8f;
 	public static int SAMPLE_BUFFER_SIZE = 128;
+	/** Number of samples per control-rate tick. Must divide {@link #SAMPLE_BUFFER_SIZE} evenly. */
+	public static final int CONTROL_BUFFER_SIZE = 16;
+	public static float CONTROL_RATE_HZ = SAMPLE_RATE_HZ / CONTROL_BUFFER_SIZE;
+	public static float MILLIS_PER_CONTROL_FRAME = 1000f / CONTROL_RATE_HZ;
 	public static float BEND_RANGE_CENTS = 200f;
 	public static final int POLYPHONY_MAX  = 8;
 	public static int POLYPHONY = POLYPHONY_MAX;
-	public static boolean HTTP_SEND_PERFORMACE_DATA = false;
+	// The new vanilla-JS UI relies on /play/note/N=1|0 echoes and
+	// /play/mod/pitchbend pushes to drive the on-screen piano highlight
+	// and the pitch wheel display. Default true so external MIDI input
+	// produces visible UI feedback out of the box; old Pi setups can
+	// override via the settings dialog if the extra websocket traffic
+	// matters.
+	public static boolean HTTP_SEND_PERFORMACE_DATA = true;
 	public static boolean LIMITER_ENABLED = false;
 	public static boolean LOW_BUDGET_ADDITIVE = false;
 
@@ -88,7 +99,7 @@ public class P {
 	public static PatchCategory LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
 	
 	/** Number of available parameters */
-	public static final int PARAM_STORE_SIZE = 84;
+	public static final int PARAM_STORE_SIZE = 114;
 	
 	/** float value of parameter (0 - 1) */
 	public static final float[] VAL = new float[PARAM_STORE_SIZE];
@@ -135,12 +146,16 @@ public class P {
 	public static float PITCH_BEND_FACTOR = 1;
 	/** Combined lfo modulation amount: max(MOD_WHEEL, MOD_AMOUNT_BASE) */
 	public static float MOD_AMOUNT_COMBINED = 0;
+	/** MIDI channel pressure (aftertouch) value, smoothed. */
+	public static float CHANNEL_PRESSURE = 0;
+	/** Raw target for channel pressure; smoothed into {@link #CHANNEL_PRESSURE} by {@link #interpolate()}. */
+	public static float CHANNEL_PRESSURE_TARGET = 0;
 	
 	public static final String[] OSC_PATH = new String[PARAM_STORE_SIZE];
 	
 	public static FilterType[] VAL_FILTER_TYPE_FOR = new FilterType[] {FilterType.LOWPASS, FilterType.ALLPASS};
 	public static FilterRouting VAL_FILTER_ROUTING = FilterRouting.SERIAL;
-	public static OscillatorMode VAL_OSCILLATOR_MODE = OscillatorMode.VIRTUAL_ANALOG;
+	public static OscillatorMode VAL_OSCILLATOR_MODE = OscillatorMode.WAVETABLE;
 	
 	public static int MIDI_CHANNEL = 1 -1; // CAUTION 0-based
 	public static int PORT_HTTP = 31415;
@@ -306,7 +321,77 @@ public class P {
 	
 	public static final int FILTER1_OVERLOAD = 82;
 	public static final int FILTER2_OVERLOAD = 83;
-	
+
+	// Indices 84+ added for the control-rate / BlepOscillator / dual-delay migration.
+	// All default to 0; existing patches load with these zero defaults transparently.
+
+	/** Delay implementation switch: 0 = tape, >0 = digital */
+	public static final int DELAY_TYPE = 84;
+	/** Right-channel delay rate (stereo delay). Decoupled from {@link #DELAY_RATE}. */
+	public static final int DELAY_RATE_RIGHT = 85;
+	/** LFO modulation depth on delay time (use centered) */
+	public static final int MOD_DELAY_TIME_AMOUNT = 86;
+
+	/** Mod envelope 2 attack time */
+	public static final int MOD_ENV2_A = 87;
+	/** Mod envelope 2 decay time */
+	public static final int MOD_ENV2_D = 88;
+	/** Mod envelope 2 sustain level */
+	public static final int MOD_ENV2_S = 89;
+	/** Mod envelope 2 release time */
+	public static final int MOD_ENV2_R = 90;
+	/** Mod envelope 2 loop mode */
+	public static final int MOD_ENV2_LOOP = 91;
+	/** Mod envelope 2 osc1 pitch modulation depth (use centered) */
+	public static final int MOD_ENV2_PITCH_AMOUNT = 92;
+	/** Mod envelope 2 osc2 pitch modulation depth (use centered) */
+	public static final int MOD_ENV2_PITCH2_AMOUNT = 93;
+	/** Mod envelope 2 osc1 pulse-width modulation depth (use centered) */
+	public static final int MOD_ENV2_PW1_AMOUNT = 94;
+	/** Mod envelope 2 osc2 pulse-width modulation depth (use centered) */
+	public static final int MOD_ENV2_PW2_AMOUNT = 95;
+	/** Mod envelope 2 filter cutoff modulation depth (use centered) */
+	public static final int MOD_ENV2_FILTER_AMOUNT = 96;
+	/** Mod envelope 2 LFO rate modulation depth (use centered) */
+	public static final int MOD_ENV2_LFORATE_AMOUNT = 97;
+	/** Mod envelope 2 osc2 volume modulation depth (use centered) */
+	public static final int MOD_ENV2_OSC2_VOL_AMOUNT = 98;
+	/** Mod envelope 2 noise level modulation depth (use centered) */
+	public static final int MOD_ENV2_NOISE_AMOUNT = 99;
+
+	/** Mod envelope 1 osc1 pulse-width modulation depth (use centered) */
+	public static final int MOD_ENV1_PW1_AMOUNT = 100;
+	/** Mod envelope 1 osc2 pulse-width modulation depth (use centered) */
+	public static final int MOD_ENV1_PW2_AMOUNT = 101;
+
+	/** BlepOscillator OSC1 pulse width (0..1) */
+	public static final int OSC1_PULSE_WIDTH = 102;
+	/** BlepOscillator OSC2 pulse width (0..1) */
+	public static final int OSC2_PULSE_WIDTH = 103;
+	/** BlepOscillator sub-oscillator volume (0..1) */
+	public static final int OSC_SUB_VOLUME = 104;
+	/** BlepOscillator sub-oscillator octave: false = -1 oct, true = -2 oct */
+	public static final int OSC_SUB_LOW = 105;
+	/** BlepOscillator sub-oscillator wave: false = triangle, true = square */
+	public static final int OSC_SUB_SQUARE = 106;
+
+	/** LFO osc1 pulse-width modulation amount (use centered) */
+	public static final int MOD_PW1_AMOUNT = 107;
+	/** LFO osc2 pulse-width modulation amount (use centered) */
+	public static final int MOD_PW2_AMOUNT = 108;
+
+	/** Channel pressure -> osc1 pitch modulation amount (use centered) */
+	public static final int MOD_PRESS_PITCH_AMOUNT = 109;
+	/** Channel pressure -> osc2 pitch modulation amount (use centered) */
+	public static final int MOD_PRESS_PITCH2_AMOUNT = 110;
+	/** Channel pressure -> filter cutoff modulation amount (use centered) */
+	public static final int MOD_PRESS_FILTER_AMOUNT = 111;
+	/** Channel pressure -> LFO depth (additive to MOD_AMOUNT_COMBINED) */
+	public static final int MOD_PRESS_LFO_AMOUNT = 112;
+
+	/** OSC2 keyboard tracking: 0 = OSC2 fixed-frequency (ring-mod use), >0 = follows pitch */
+	public static final int OSC2_KEYTRACKING = 113;
+
 	public static final int[] SET_INTERPOLATED = new int[] {
 		FILTER1_FREQ,
 		FILTER2_FREQ,
@@ -322,7 +407,11 @@ public class P {
 		OSC_NOISE_LEVEL,
 		OSC_GAIN,
 		DELAY_WET,
-		DELAY_FEEDBACK
+		DELAY_FEEDBACK,
+		DELAY_RATE_RIGHT,
+		OSC_SUB_VOLUME,
+		OSC1_PULSE_WIDTH,
+		OSC2_PULSE_WIDTH
 	};
 	public static final int SET_INTERPOLATED_SIZE = SET_INTERPOLATED.length;
 	private static final boolean[] IS_INTERPOLATED = new boolean[PARAM_STORE_SIZE];
@@ -334,6 +423,7 @@ public class P {
 	public static final EnvelopeParamConfig ENV_CONF_FILTER1 = new EnvelopeParamConfig(FILTER1_ENV_A, FILTER1_ENV_D, FILTER1_ENV_S, FILTER1_ENV_R, FILTER1_ENV_VELOCITY_SENS, FILTER1_ENV_LOOP);
 	public static final EnvelopeParamConfig ENV_CONF_FILTER2 = new EnvelopeParamConfig(FILTER2_ENV_A, FILTER2_ENV_D, FILTER2_ENV_S, FILTER2_ENV_R, FILTER2_ENV_VELOCITY_SENS, FILTER2_ENV_LOOP);
 	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV = new EnvelopeParamConfig(MOD_ENV1_A, MOD_ENV1_D, MOD_ENV1_S, MOD_ENV1_R, UNUSED, MOD_ENV1_LOOP);
+	public static final EnvelopeParamConfig ENV_CONF_MOD_ENV2 = new EnvelopeParamConfig(MOD_ENV2_A, MOD_ENV2_D, MOD_ENV2_S, MOD_ENV2_R, UNUSED, MOD_ENV2_LOOP);
 	public static final String VERSION_STRING = "0.9";
 	
 	public static Freeverb reverbObject = null; // TODO more generic with interface and receiver handler!?
@@ -444,7 +534,45 @@ public class P {
 		
 		OSC_PATH[FILTER_PARALLEL] = "/filter/parallel";
 		OSC_PATH[FILTER_PARALLEL_MIX] = "/filter/parallelmix";
-		
+
+		// new params for control-rate / BlepOscillator / dual-delay migration
+		OSC_PATH[DELAY_TYPE] = "/fx/delay/type";
+		OSC_PATH[DELAY_RATE_RIGHT] = "/fx/delay/rateright";
+		OSC_PATH[MOD_DELAY_TIME_AMOUNT] = "/mod/1/depth/delaytime";
+
+		OSC_PATH[MOD_ENV2_A] = "/mod/env/2/1";
+		OSC_PATH[MOD_ENV2_D] = "/mod/env/2/2";
+		OSC_PATH[MOD_ENV2_S] = "/mod/env/2/3";
+		OSC_PATH[MOD_ENV2_R] = "/mod/env/2/4";
+		OSC_PATH[MOD_ENV2_LOOP] = "/mod/env/2/loop";
+		OSC_PATH[MOD_ENV2_PITCH_AMOUNT] = "/mod/env/2/depth/pitch";
+		OSC_PATH[MOD_ENV2_PITCH2_AMOUNT] = "/mod/env/2/depth/pitch/2";
+		OSC_PATH[MOD_ENV2_PW1_AMOUNT] = "/mod/env/2/depth/pw/1";
+		OSC_PATH[MOD_ENV2_PW2_AMOUNT] = "/mod/env/2/depth/pw/2";
+		OSC_PATH[MOD_ENV2_FILTER_AMOUNT] = "/mod/env/2/depth/filter";
+		OSC_PATH[MOD_ENV2_LFORATE_AMOUNT] = "/mod/env/2/depth/lforate";
+		OSC_PATH[MOD_ENV2_OSC2_VOL_AMOUNT] = "/mod/env/2/depth/osc2vol";
+		OSC_PATH[MOD_ENV2_NOISE_AMOUNT] = "/mod/env/2/depth/noise";
+
+		OSC_PATH[MOD_ENV1_PW1_AMOUNT] = "/mod/env/depth/pw/1";
+		OSC_PATH[MOD_ENV1_PW2_AMOUNT] = "/mod/env/depth/pw/2";
+
+		OSC_PATH[OSC1_PULSE_WIDTH] = "/osc/1/pw";
+		OSC_PATH[OSC2_PULSE_WIDTH] = "/osc/2/pw";
+		OSC_PATH[OSC_SUB_VOLUME] = "/osc/sub/volume";
+		OSC_PATH[OSC_SUB_LOW] = "/osc/sub/low";
+		OSC_PATH[OSC_SUB_SQUARE] = "/osc/sub/square";
+
+		OSC_PATH[MOD_PW1_AMOUNT] = "/mod/1/depth/pw/1";
+		OSC_PATH[MOD_PW2_AMOUNT] = "/mod/1/depth/pw/2";
+
+		OSC_PATH[MOD_PRESS_PITCH_AMOUNT] = "/mod/press/depth/pitch";
+		OSC_PATH[MOD_PRESS_PITCH2_AMOUNT] = "/mod/press/depth/pitch/2";
+		OSC_PATH[MOD_PRESS_FILTER_AMOUNT] = "/mod/press/depth/filter";
+		OSC_PATH[MOD_PRESS_LFO_AMOUNT] = "/mod/press/depth/lfo";
+
+		OSC_PATH[OSC2_KEYTRACKING] = "/osc/2/keytrack";
+
 		// defaults!
 		setToDefaults();
 		
@@ -514,7 +642,32 @@ public class P {
 		setDirectly(MOD_ENV1_NOISE_AMOUNT, .5f);
 		setDirectly(MOD_ENV1_AM_AMOUNT, .5f);
 		setDirectly(DELAY_RATE, .66f);
+		setDirectly(DELAY_RATE_RIGHT, .66f);
 		setDirectly(MIDI_VELOCITY_CURVE, 0.0f);
+
+		// new defaults: centered mod depths at 0.5 (= 0 effective), PW at 0.5 (= square),
+		// env2 has sustain=1 so it doesn't gate signal when introduced later, sub osc off.
+		setDirectly(OSC1_PULSE_WIDTH, .5f);
+		setDirectly(OSC2_PULSE_WIDTH, .5f);
+		setDirectly(OSC_SUB_VOLUME, 0);
+		setDirectly(OSC2_KEYTRACKING, 1f);
+		setDirectly(MOD_ENV2_S, 1f);
+		setDirectly(MOD_ENV2_PITCH_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_PITCH2_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_PW1_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_PW2_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_FILTER_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_LFORATE_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_OSC2_VOL_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_NOISE_AMOUNT, .5f);
+		setDirectly(MOD_ENV1_PW1_AMOUNT, .5f);
+		setDirectly(MOD_ENV1_PW2_AMOUNT, .5f);
+		setDirectly(MOD_PW1_AMOUNT, .5f);
+		setDirectly(MOD_PW2_AMOUNT, .5f);
+		setDirectly(MOD_PRESS_PITCH_AMOUNT, .5f);
+		setDirectly(MOD_PRESS_PITCH2_AMOUNT, .5f);
+		setDirectly(MOD_PRESS_FILTER_AMOUNT, .5f);
+		setDirectly(MOD_DELAY_TIME_AMOUNT, .5f);
 		P.VAL[P.PITCH_BEND] = 0;
 		P.VAL_RAW_MIDI[P.PITCH_BEND] = 8192;
 		P.VAL[P.CHORUS_LFO_RATE] = 1/12f;
@@ -525,6 +678,14 @@ public class P {
 	public static void set(int index, float val) {
 		if (index==CHORUS_LFO_RATE || index==CHORUS_LFO_TYPE) {
 			return; // ugly, but these are immutable and only set by defaults
+		}
+		// Wave-set index is computed as (int)(val * WAVE_SET_COUNT) at every
+		// audio buffer; val == 1.0 would multiply to WAVE_SET_COUNT and walk
+		// off the end of the WAVES array. The MIDI path already caps inputs
+		// at 126/127; mirror that here so the websocket UI's 0..1 rotaries
+		// can't push the engine into an OOB read.
+		if (index==OSC1_WAVE_SET || index==OSC2_WAVE_SET) {
+			val = Math.min(val, 126f/127f);
 		}
 		TARGET_VAL[index] = val;
 		if (!isSetInterpolated(index)) {
@@ -545,6 +706,11 @@ public class P {
 				setDirectly(pi, (y1*(1-stepfactor)+y2*stepfactor), false);
 			}
 		}
+		// Smooth CHANNEL_PRESSURE toward its target. One-pole low-pass (per audio
+		// buffer ~= 375 Hz at default settings) to take the edge off MIDI 7-bit
+		// staircase. Only matters once Phase 5 wires CHANNEL_PRESSURE into the
+		// modulation matrix; until then it's an inert state update.
+		CHANNEL_PRESSURE += (CHANNEL_PRESSURE_TARGET - CHANNEL_PRESSURE) * 0.25f;
 	}
 	
 	

@@ -93,6 +93,19 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			} else if (msg.startsWith("/play/sustain")) {
 				MidiHandler.INSTANCE.sendSustainPedal(msg.charAt(msg.length()-1)=='1');
 				return;
+			} else if (msg.startsWith("/play/mod/pitchbend=")) {
+				// PITCH_BEND has no OSC_PATH (its value derives from the
+				// PITCH_BEND_FACTOR computation), so the standard parameter
+				// dispatch can't handle it. Treat the UI's 0..1 rotary value
+				// as a bipolar bend ((v - 0.5) * 2 → -1..+1) and run the same
+				// math the MIDI pitch-bend handler uses.
+				final float v01 = Float.valueOf(msg.substring("/play/mod/pitchbend=".length()));
+				final float bipolar = (v01 - 0.5f) * 2f;
+				P.VAL[P.PITCH_BEND] = (float)(Math.signum(bipolar) * (bipolar * bipolar));
+				P.VAL_RAW_MIDI[P.PITCH_BEND] = Math.round(v01 * 16383f);
+				P.PITCH_BEND_FACTOR = (float) Math.pow(2d, (P.BEND_RANGE_CENTS * P.VAL[P.PITCH_BEND]) / P.OCTAVE_CENTS);
+				MidiHandler.sendPitchBendNotification();
+				return;
 			}
 			
 			CommandMessage command = CommandMessage.find(msg);
@@ -313,7 +326,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				// send waveform values	
 				int oscNumber = (paramIndex==P.OSC1_WAVE || paramIndex==P.OSC1_WAVE_SET)?1:2;
 				int[] values;
-				if (P.VAL_OSCILLATOR_MODE==P.OscillatorMode.VIRTUAL_ANALOG) {
+				if (P.VAL_OSCILLATOR_MODE==P.OscillatorMode.WAVETABLE) {
 					values = (oscNumber==1)?WaveTables.waveValues(50, P.VAL[P.OSC1_WAVE_SET], P.VAL[P.OSC1_WAVE]):WaveTables.waveValues(50, P.VAL[P.OSC2_WAVE_SET],  P.VAL[P.OSC2_WAVE]);
 				}
 				else {
