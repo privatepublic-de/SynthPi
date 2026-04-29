@@ -181,6 +181,71 @@ body.connecting .row { opacity: 0.3; pointer-events: none; }
 }
 .save-form #savebutton:hover { background: var(--tint-3); }
 
+.settings-content { padding-top: 4px; }
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13px;
+}
+.settings-form label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings-form label.settings-checkbox { gap: 6px; }
+.settings-form select,
+.settings-form input[type="text"] {
+  background: var(--color-dim);
+  border: 1px solid var(--color-dark);
+  color: #ddd;
+  padding: 4px 8px;
+  border-radius: var(--border-radius);
+  font: inherit;
+}
+.settings-form small { color: var(--color-darkened); margin-left: 6px; }
+.settings-form .settings-save {
+  margin-top: 8px;
+  align-self: flex-start;
+  background: var(--tint-4);
+  border: none;
+  color: #000;
+  padding: 5px 14px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: bold;
+  font: inherit;
+}
+.settings-form .settings-save:hover { background: var(--tint-3); }
+
+/* MIDI learn — body class flips while learn mode is active. */
+body.learnmode {
+  cursor: crosshair;
+}
+body.learnmode #status {
+  background-color: var(--tint-1);
+  color: #000;
+}
+body.learnmode #patch-name { color: #000; }
+body.learnmode [data-osc]:hover {
+  outline: 2px solid var(--tint-1);
+  outline-offset: 2px;
+}
+#status button.active {
+  background: var(--tint-1);
+  color: #000;
+  border-color: var(--tint-1);
+}
+.paramselected {
+  outline: 3px solid var(--tint-4) !important;
+  outline-offset: 2px;
+  animation: paramflash 0.4s ease-in-out 4 alternate;
+}
+@keyframes paramflash {
+  from { outline-color: var(--tint-4); }
+  to { outline-color: var(--tint-3); }
+}
+
 /* Mode-conditional subpanels: hidden unless the parent mode matches.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]
    when the engine reports those modes via /osc/mode and /fx/delay/type.

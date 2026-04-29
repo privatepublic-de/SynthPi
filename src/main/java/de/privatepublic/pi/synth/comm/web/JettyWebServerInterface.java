@@ -151,7 +151,9 @@ public class JettyWebServerInterface {
 			"app.js",
 			"controls.js",
 			"socket.js",
-			"patches.js"
+			"patches.js",
+			"settings.js",
+			"learn.js"
 		};
 		
 		private String mimeType;
