@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -41,8 +42,19 @@ public class JettyWebServerInterface {
 		try {
 			Server server = new Server(P.PORT_HTTP);
 
-			WebSocketUpgradeHandler wsHandler = WebSocketUpgradeHandler.from(server, container ->
-				container.addMapping(SOCKET_PATH, (req, resp, cb) -> new SynthSocket()));
+			WebSocketUpgradeHandler wsHandler = WebSocketUpgradeHandler.from(server, container -> {
+				// Jetty 12's default WebSocket idle timeout closes the
+				// connection while the UI sits there with no user input —
+				// the client then reconnects, the body briefly flashes
+				// its "connecting" overlay, and we get repeated 1001
+				// (Going Away — Idle Timeout) close codes in the server
+				// log. The synth UI is meant to be open as long as the
+				// browser tab is open; idle timeout adds nothing here.
+				// One hour is long enough that real disconnects (laptop
+				// sleep, network drop) still get cleaned up eventually.
+				container.setIdleTimeout(Duration.ofHours(1));
+				container.addMapping(SOCKET_PATH, (req, resp, cb) -> new SynthSocket());
+			});
 			wsHandler.setHandler(new WebResourceHandler());
 			server.setHandler(wsHandler);
 
