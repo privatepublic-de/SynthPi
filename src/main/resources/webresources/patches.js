@@ -6,10 +6,10 @@
 // animations — keeps the JS small and the visual transition adequate.
 
 import { socket } from "./socket.js";
+import * as modal from "./modal.js";
 
 class Patches {
 	constructor() {
-		this.dimmer = document.getElementById("dimmer");
 		this.loadWindow = document.getElementById("patchlistwindow");
 		this.saveWindow = document.getElementById("savepatchwindow");
 		this.patchNameDisplay = document.getElementById("patch-name");
@@ -19,13 +19,6 @@ class Patches {
 
 		this._wireToolbar();
 		this._wireServerListeners();
-
-		// Click outside any open modal closes everything.
-		this.dimmer.addEventListener("click", () => this.closeAll());
-		// Modal close buttons.
-		document.querySelectorAll(".modal-close").forEach((btn) => {
-			btn.addEventListener("click", () => this.closeAll());
-		});
 	}
 
 	_wireToolbar() {
@@ -77,14 +70,7 @@ class Patches {
 	}
 
 	closeAll() {
-		this.dimmer.classList.remove("shown");
-		this.loadWindow.classList.remove("shown");
-		this.saveWindow.classList.remove("shown");
-	}
-
-	_openModal(modal) {
-		this.dimmer.classList.add("shown");
-		modal.classList.add("shown");
+		modal.closeAll();
 	}
 
 	_renderPatchList(data) {
@@ -107,7 +93,7 @@ class Patches {
 		initWrap.appendChild(initLink);
 		list.appendChild(initWrap);
 		this._appendPatchEntries(list, data.factory, /*loadAndClose=*/true);
-		this._openModal(this.loadWindow);
+		modal.open(this.loadWindow);
 	}
 
 	_renderSaveInfo(info) {
@@ -165,7 +151,7 @@ class Patches {
 			this._submitSave(undefined, undefined);
 		};
 
-		this._openModal(this.saveWindow);
+		modal.open(this.saveWindow);
 		nameInput.focus();
 		nameInput.select();
 	}

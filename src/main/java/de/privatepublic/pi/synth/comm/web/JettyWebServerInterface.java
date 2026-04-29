@@ -151,6 +151,7 @@ public class JettyWebServerInterface {
 			"app.js",
 			"controls.js",
 			"socket.js",
+			"modal.js",
 			"patches.js",
 			"settings.js",
 			"learn.js"

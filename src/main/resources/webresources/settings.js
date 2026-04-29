@@ -9,11 +9,11 @@
 // silently flipped off.
 
 import { socket } from "./socket.js";
+import * as modal from "./modal.js";
 
 class Settings {
 	constructor() {
-		this.modal = document.getElementById("settingswindow");
-		this.dimmer = document.getElementById("dimmer");
+		this.modalEl = document.getElementById("settingswindow");
 		this._lastSettings = null;
 
 		const btn = document.getElementById("btn-settings");
@@ -43,7 +43,7 @@ class Settings {
 		const bufferOptions = [32, 64, 96, 128, 256, 512].map((n) =>
 			`<option value="${n}" ${s.audiobuffersize === n ? "selected" : ""}>${n} samples</option>`).join("");
 
-		const content = this.modal.querySelector(".settings-content");
+		const content = this.modalEl.querySelector(".settings-content");
 		content.innerHTML = `
 			<div class="settings-form">
 				<label>MIDI channel <select name="midichannel">${channelOptions}</select></label>
@@ -57,12 +57,11 @@ class Settings {
 		`;
 		content.querySelector(".settings-save").addEventListener("click", () => this._save());
 
-		this.dimmer.classList.add("shown");
-		this.modal.classList.add("shown");
+		modal.open(this.modalEl);
 	}
 
 	_save() {
-		const form = this.modal.querySelector(".settings-form");
+		const form = this.modalEl.querySelector(".settings-form");
 		const get = (name) => form.querySelector(`[name="${name}"]`);
 		// Preserve any fields the form doesn't touch (e.g. transferperformancedata)
 		// so saving the modal doesn't silently change unseen settings.
@@ -76,12 +75,7 @@ class Settings {
 			limiterenabled: get("limiterenabled").checked,
 		};
 		socket.send("/command/settings/save", JSON.stringify(data));
-		this._close();
-	}
-
-	_close() {
-		this.dimmer.classList.remove("shown");
-		this.modal.classList.remove("shown");
+		modal.closeAll();
 	}
 }
 
