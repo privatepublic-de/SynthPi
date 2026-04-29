@@ -499,8 +499,9 @@ public class PresetHandler {
 		
 		try {
 			JSONObject patch = new JSONObject(FileUtils.readFileToString(userRecentFile(), "utf-8"));
-			
+
 			JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
+			final int patchVersion = patch.optInt("version", 1);
 			P.setToDefaults();
 			for (int ix=0;ix<params.length();++ix) {
 				try {
@@ -511,6 +512,16 @@ public class PresetHandler {
 				} catch (JSONException e) {
 					log.debug("Error reading param at pos "+ix, e);
 				}
+			}
+			// Same migration chain as loadPatchWithId — a recent.json written
+			// by an older build (pre-v3 enum reorder) needs OSC_MODE shifted
+			// to the current enum slots, otherwise restoring on startup lands
+			// on the wrong oscillator mode.
+			if (patchVersion < 2) {
+				P.set(P.OSC_MODE, migrateOscModeFromV1(P.VAL[P.OSC_MODE]));
+			}
+			if (patchVersion < 3) {
+				P.set(P.OSC_MODE, migrateOscModeFromV2(P.VAL[P.OSC_MODE]));
 			}
 			P.LAST_LOADED_PATCH_NAME = patch.getString(K.PATCH_NAME.key());
 			P.LAST_LOADED_PATCH_CATEGORY = PatchCategory.find(patch.getString(K.PATCH_CATEGORY.key()));

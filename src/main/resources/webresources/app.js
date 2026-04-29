@@ -49,9 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
  * subpanels arrive in later phases.
  */
 function wireConditionalSubpanels() {
-	// /osc/mode is a 4-value selector — 0=VA, 1=Additive, 2=Exciter, 3=BLEP.
-	// Toggle a body attribute that CSS uses to show the BLEP subpanel only
-	// in BLEP mode.
+	// /osc/mode is a 4-value selector — 0=BLEP, 1=WAVETABLE, 2=ADDITIVE,
+	// 3=EXITER (matches OSC_MODE_NAMES + the v3 engine enum). Toggle a body
+	// attribute that CSS uses to show the BLEP subpanel only in BLEP mode.
 	socket.onParam("/osc/mode", (v) => {
 		const mode = Math.round(v * 3);
 		document.body.dataset.oscMode = OSC_MODE_NAMES[mode] || "blep";

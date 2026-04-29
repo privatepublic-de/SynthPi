@@ -76,7 +76,13 @@ public class P {
 	public static float BEND_RANGE_CENTS = 200f;
 	public static final int POLYPHONY_MAX  = 8;
 	public static int POLYPHONY = POLYPHONY_MAX;
-	public static boolean HTTP_SEND_PERFORMACE_DATA = false;
+	// The new vanilla-JS UI relies on /play/note/N=1|0 echoes and
+	// /play/mod/pitchbend pushes to drive the on-screen piano highlight
+	// and the pitch wheel display. Default true so external MIDI input
+	// produces visible UI feedback out of the box; old Pi setups can
+	// override via the settings dialog if the extra websocket traffic
+	// matters.
+	public static boolean HTTP_SEND_PERFORMACE_DATA = true;
 	public static boolean LIMITER_ENABLED = false;
 	public static boolean LOW_BUDGET_ADDITIVE = false;
 

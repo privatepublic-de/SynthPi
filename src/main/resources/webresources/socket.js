@@ -10,7 +10,7 @@ class Socket {
 		this.connected = false;
 		this.outbox = [];
 		this.paramSubs = new Map();    // path -> array of callbacks
-		this.commandSubs = new Map();  // prefix -> single callback
+		this.commandSubs = new Map();  // path -> single callback (exact match)
 	}
 
 	connect() {
@@ -74,13 +74,20 @@ class Socket {
 	}
 
 	/**
-	 * Subscribe to inbound messages whose path starts with {@code prefix}.
-	 * Used for command-style responses like /patchlist=…, /saveinfo=…,
-	 * /paramselected=…, /label/…, /play/note/…, /waveform/…
-	 * The callback receives (path, valueString).
+	 * Subscribe to inbound non-numeric messages by exact path. Used for
+	 * command-style responses like /patchlist, /saveinfo, /paramselected,
+	 * /label/<param-path>, /waveform/oscN, /pagepatch, /patch/name. The
+	 * callback receives (path, valueString).
+	 *
+	 * Note: this is exact-match only. Earlier the dispatcher did a
+	 * startsWith / first-match-wins prefix search, which silently routed
+	 * /label/osc/1/waveset into the /label/osc/1/wave subscriber (and
+	 * the equivalent /mod/1/depth/pitch/2 vs /mod/1/depth/pitch in the
+	 * matrix). Every existing subscriber wants exact match, so the
+	 * "prefix" semantics was over-engineered and broken.
 	 */
-	onCommand(prefix, cb) {
-		this.commandSubs.set(prefix, cb);
+	onCommand(path, cb) {
+		this.commandSubs.set(path, cb);
 	}
 
 	_dispatch(text) {
@@ -94,18 +101,14 @@ class Socket {
 			const path = msg.slice(0, eq);
 			const value = msg.slice(eq + 1);
 
-			// Command-style prefixes win over exact-path parameter subscribers,
-			// because /label/<path> shouldn't fall through to the bare-path
-			// rotary subscriber.
-			let handled = false;
-			for (const [prefix, cb] of this.commandSubs) {
-				if (path.startsWith(prefix)) {
-					cb(path, value);
-					handled = true;
-					break;
-				}
+			// Command-style exact-path subscribers win over numeric-parameter
+			// subscribers, so e.g. /label/osc/1/wave doesn't fall through
+			// to the /osc/1/wave rotary's parseFloat path.
+			const cmdCb = this.commandSubs.get(path);
+			if (cmdCb) {
+				cmdCb(path, value);
+				continue;
 			}
-			if (handled) continue;
 
 			const subs = this.paramSubs.get(path);
 			if (subs) {

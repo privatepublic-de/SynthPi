@@ -31,6 +31,11 @@ class PotDragHandler {
 		}, { passive: false });
 		window.addEventListener("touchend", () => this._onStop());
 		window.addEventListener("touchcancel", () => this._onStop());
+		// Browser focus loss (Alt-Tab, OS modal) eats the mouseup that would
+		// normally clear isDragging. Without this catch the originating
+		// rotary's _userActive flag stays true, server pushes get silently
+		// dropped, and push-return wheels never snap back.
+		window.addEventListener("blur", () => this._onStop());
 	}
 
 	_valueForCoordinates(x, y) {
@@ -343,10 +348,41 @@ export class Select {
 	}
 }
 
+/** Shared single-active-fader drag tracker — mirrors PotDragHandler. The
+ *  active fader is set on press and cleared on any release event, including
+ *  window blur, so dragging off the element / out of the window doesn't
+ *  leave the fader stuck in dragging state. */
+class FaderDragHandler {
+	constructor() {
+		this.active = null;
+		window.addEventListener("mousemove", (e) => {
+			if (this.active) this.active._dragTo(e.pageY);
+		});
+		window.addEventListener("mouseup", () => this._stop());
+		window.addEventListener("touchmove", (e) => {
+			if (this.active) {
+				e.preventDefault();
+				this.active._dragTo(e.touches[0].pageY);
+			}
+		}, { passive: false });
+		window.addEventListener("touchend", () => this._stop());
+		window.addEventListener("touchcancel", () => this._stop());
+		window.addEventListener("blur", () => this._stop());
+	}
+	start(fader) { this.active = fader; }
+	_stop() {
+		if (this.active) {
+			this.active._userActive = false;
+			this.active = null;
+		}
+	}
+}
+
 export class Fader {
 	static width = 35;
 	static height = 155;
 	static effectiveHeight = 140;
+	static dragHandler = new FaderDragHandler();
 
 	constructor(element) {
 		this.element = element;
@@ -369,49 +405,24 @@ export class Fader {
 		this._userActive = false;
 		this._setValue(0);
 
-		// Map a Y-coordinate from the canvas's top-left to a 0..1 value.
-		// Touch events give pageY; we have to subtract the canvas's page
-		// offset to get the equivalent of a mouse offsetY.
-		const canvasTop = () => {
-			const rect = this.canvas.getBoundingClientRect();
-			return rect.top + window.scrollY;
-		};
-		const valueFromY = (pageY) => U.capInRange(
-			(Fader.effectiveHeight - (pageY - canvasTop())) / Fader.effectiveHeight, 0, 1
-		);
-
 		element.addEventListener("wheel", (e) => {
 			e.preventDefault();
 			this._userSetValue(U.capInRange(this.value + Math.sign(e.deltaY) / 150, 0, 1));
 		});
+		// Press starts a drag. mousemove + mouseup live on the window via
+		// FaderDragHandler so dragging off the element doesn't release.
 		element.addEventListener("mousedown", (e) => {
-			this._userActive = true;
 			e.preventDefault();
-			this._userSetValue(valueFromY(e.pageY));
+			this._userActive = true;
+			Fader.dragHandler.start(this);
+			this._dragTo(e.pageY);
 		});
-		element.addEventListener("mousemove", (e) => {
-			if (this._userActive && e.target !== this.label) {
-				this._userSetValue(valueFromY(e.pageY));
-			}
-		});
-		const stopDrag = () => { this._userActive = false; };
-		element.addEventListener("mouseup", stopDrag);
-		element.addEventListener("mouseleave", stopDrag);
-		// Touch support — preventDefault on touchstart to suppress scroll +
-		// click synthesis.
 		element.addEventListener("touchstart", (e) => {
 			e.preventDefault();
 			this._userActive = true;
-			this._userSetValue(valueFromY(e.touches[0].pageY));
+			Fader.dragHandler.start(this);
+			this._dragTo(e.touches[0].pageY);
 		}, { passive: false });
-		element.addEventListener("touchmove", (e) => {
-			if (this._userActive) {
-				e.preventDefault();
-				this._userSetValue(valueFromY(e.touches[0].pageY));
-			}
-		}, { passive: false });
-		element.addEventListener("touchend", stopDrag);
-		element.addEventListener("touchcancel", stopDrag);
 
 		if (this.path) {
 			socket.onParam(this.path, (v) => {
@@ -428,6 +439,15 @@ export class Fader {
 	_userSetValue(v) {
 		this._setValue(v);
 		if (this.path) socket.send(this.path, v);
+	}
+
+	/** Translate a window-coordinate pageY into a 0..1 fader value and apply. */
+	_dragTo(pageY) {
+		const rect = this.canvas.getBoundingClientRect();
+		const localY = pageY - (rect.top + window.scrollY);
+		this._userSetValue(U.capInRange(
+			(Fader.effectiveHeight - localY) / Fader.effectiveHeight, 0, 1
+		));
 	}
 
 	_setValue(v) {
