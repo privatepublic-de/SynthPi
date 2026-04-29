@@ -36,6 +36,20 @@ class Socket {
 		const msg = `${path}=${value}`;
 		if (this.connected) this.ws.send(msg);
 		else this.outbox.push(msg);
+		// Locally fan out to onParam listeners as if the server had echoed
+		// the value back. The server only echoes the label to the
+		// originating session (to avoid knob-fight on rotaries), so any
+		// state-derived UI — mode-conditional subpanels, body attributes —
+		// would otherwise stay stale until the next reload. Listeners that
+		// also drive the originating control are idempotent (_setValue
+		// against an already-current value is a no-op).
+		const subs = this.paramSubs.get(path);
+		if (subs) {
+			const num = parseFloat(value);
+			if (!Number.isNaN(num)) {
+				for (let j = 0; j < subs.length; j++) subs[j](num);
+			}
+		}
 	}
 
 	/**
