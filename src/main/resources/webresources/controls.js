@@ -308,6 +308,11 @@ export class Select {
 	constructor(element) {
 		this.element = element;
 		this.path = element.dataset.osc || null;
+		// "Floor-stepped" mapping: engine reads the param as
+		// `(int)(val * N)` (e.g. WaveTables waveset). Round-trip via
+		// `(idx + 0.5) / N` on send and `floor(v * N)` on receive so every
+		// option maps to a unique bucket and idx=N-1 doesn't overflow.
+		this.stepFloor = element.dataset.stepFloor !== undefined;
 		const options = element.dataset.list.split(",");
 		this.optionCount = options.length;
 		options.forEach((opt, i) => {
@@ -325,9 +330,9 @@ export class Select {
 		this._setSelected(0);
 		if (this.path) {
 			socket.onParam(this.path, (v) => {
-				// Server values are 0..1; map to discrete index using the same
-				// rounding rule the engine uses (Math.round(val*(N-1))).
-				const idx = Math.round(v * (this.optionCount - 1));
+				const idx = this.stepFloor
+					? Math.min(Math.floor(v * this.optionCount), this.optionCount - 1)
+					: Math.round(v * (this.optionCount - 1));
 				this._setSelected(idx);
 			});
 		}
@@ -336,7 +341,10 @@ export class Select {
 	_userSetValue(idx) {
 		this._setSelected(idx);
 		if (this.path) {
-			socket.send(this.path, idx / (this.optionCount - 1));
+			const v = this.stepFloor
+				? (idx + 0.5) / this.optionCount
+				: idx / (this.optionCount - 1);
+			socket.send(this.path, v);
 		}
 	}
 

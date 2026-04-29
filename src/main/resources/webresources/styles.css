@@ -305,8 +305,22 @@ body.learnmode [data-osc]:hover {
    switches between modes — only the rendering and pointer events go away.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]
    when the engine reports those modes via /osc/mode and /fx/delay/type. */
-body .blep-only { visibility: hidden; }
-body[data-osc-mode="blep"] .blep-only { visibility: visible; }
+/* Engine-specific subpanels in the OSC section: hidden by default and
+   shown only when body[data-osc-mode] matches the panel's data-engine.
+   Uses display:none (not visibility:hidden) so the surrounding rows close
+   the gap when nothing matches — Add/Exc modes have no panel at all. */
+.osc-engine-panel { display: none; padding-top: 10px; border-top: 1px solid var(--color-dark); }
+body[data-osc-mode="blep"] .osc-engine-panel[data-engine="va"] { display: block; }
+body[data-osc-mode="wt"]   .osc-engine-panel[data-engine="wt"] { display: block; }
+
+/* OSC1 / OSC2 wave: a continuous rotary in WT/Add/Exc, a 4-option Select
+   in VA (BLEP buckets — see index.html). Slot keeps width stable so the
+   tuning knobs to the right don't slide when the user switches engines. */
+.osc-wave-slot { min-width: 80px; display: flex; align-items: center; justify-content: center; }
+.osc-wave-slot .osc-wave-select { display: none; }
+body[data-osc-mode="blep"] .osc-wave-slot .rotary { display: none; }
+body[data-osc-mode="blep"] .osc-wave-slot .osc-wave-select { display: flex; }
+
 body .delay-digital-only { visibility: hidden; }
 body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
 
@@ -437,7 +451,7 @@ body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
 .select {
   display: flex;
   user-select: none;
-  color: var(--color-dark);
+  color: var(--color-darkened);
   .option {
     margin: 0 5px;
     border-radius: var(--border-radius);

@@ -12,7 +12,7 @@ import { initSettings } from "./settings.js";
 import { initLearn } from "./learn.js";
 import { initMatrix } from "./matrix.js";
 import { initKeyboard } from "./keyboard.js";
-import { initWaveform } from "./waveform.js";
+import { initWaveform, clearWaveform } from "./waveform.js";
 
 // Mode index → CSS body attribute value. Order matches the engine enum:
 // BLEP = 0 (the polyBLEP "VA" oscillator), WAVETABLE = 1, ADDITIVE = 2,
@@ -51,10 +51,22 @@ document.addEventListener("DOMContentLoaded", () => {
 function wireConditionalSubpanels() {
 	// /osc/mode is a 4-value selector — 0=BLEP, 1=WAVETABLE, 2=ADDITIVE,
 	// 3=EXITER (matches OSC_MODE_NAMES + the v3 engine enum). Toggle a body
-	// attribute that CSS uses to show the BLEP subpanel only in BLEP mode.
+	// attribute that CSS uses to show the BLEP / WT subpanels, and swap the
+	// per-mode label on any element carrying data-label-<mode> (the OSC1/2
+	// wave knobs read differently in each engine — e.g. Exciter uses them
+	// as Excitation / Damping, not Wave / Wave).
 	socket.onParam("/osc/mode", (v) => {
 		const mode = Math.round(v * 3);
-		document.body.dataset.oscMode = OSC_MODE_NAMES[mode] || "blep";
+		const key = OSC_MODE_NAMES[mode] || "blep";
+		document.body.dataset.oscMode = key;
+		const dataKey = "label" + key.charAt(0).toUpperCase() + key.slice(1);
+		document.querySelectorAll(`[data-${"label-" + key}]`).forEach((el) => {
+			const labelEl = el.querySelector("label");
+			if (labelEl) labelEl.textContent = el.dataset[dataKey];
+		});
+		// VA + Exciter don't push /waveform/oscN — drop the previous mode's
+		// backdrop so it doesn't sit stale behind the wave knobs.
+		if (key === "blep" || key === "exc") clearWaveform();
 	});
 
 	// /fx/delay/type — 0=tape, >0=digital. Right-channel rate knob is only

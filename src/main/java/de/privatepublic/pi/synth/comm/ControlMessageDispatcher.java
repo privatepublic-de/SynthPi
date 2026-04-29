@@ -323,7 +323,14 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 					msgLabel.append(createLabelMessage(P.OSC2_WAVE));
 				}
 			}
-			else if ((P.VAL_OSCILLATOR_MODE!=P.OscillatorMode.EXITER) && ( paramIndex==P.OSC1_WAVE || paramIndex==P.OSC2_WAVE || paramIndex==P.OSC1_WAVE_SET || paramIndex==P.OSC2_WAVE_SET)) {
+			else if ((P.VAL_OSCILLATOR_MODE==P.OscillatorMode.WAVETABLE || P.VAL_OSCILLATOR_MODE==P.OscillatorMode.ADDITIVE)
+					&& ( paramIndex==P.OSC1_WAVE || paramIndex==P.OSC2_WAVE || paramIndex==P.OSC1_WAVE_SET || paramIndex==P.OSC2_WAVE_SET)) {
+				// Only WAVETABLE and ADDITIVE engines have a meaningful wave
+				// shape to preview behind the OSC1/OSC2 wave knobs. VA's BLEP
+				// morphs through fixed primitives, and Exciter's wave knobs
+				// are excitation / damping rather than a spectrum. The client
+				// clears the backdrop on mode change to VA / Exciter so stale
+				// pushes from the previous mode don't linger.
 				// send waveform values	
 				int oscNumber = (paramIndex==P.OSC1_WAVE || paramIndex==P.OSC1_WAVE_SET)?1:2;
 				int[] values;

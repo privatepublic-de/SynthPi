@@ -196,13 +196,17 @@ public class FancyParam {
 			result = P.VAL_OSCILLATOR_MODE.toString();
 			break;
 		case P.OSC2_AM:
-			result = "x"+FORMAT_FLOAT2.format((P.VAL[P.OSC2_AM]*4));
+			result = FORMAT_FLOAT.format(P.VAL[P.OSC2_AM]*100);
 			break;
 		case P.FILTER1_TYPE:
 		case P.FILTER2_TYPE:
 			result = P.selectedFilterType(value).name();
 			break;
 		case P.OSC2_TUNING_FINE:
+			// Fine tune reads as cents (±100) — give it a unit so the value
+			// isn't ambiguous next to the unitless modulation amounts below.
+			result = FORMAT_INT.format(Math.round(((value-.5)*2)*100))+" ¢";
+			break;
 		case P.FILTER1_ENV_DEPTH:
 		case P.FILTER2_ENV_DEPTH:
 		case P.MOD_ENV1_NOISE_AMOUNT:

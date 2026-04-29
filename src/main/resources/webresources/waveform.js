@@ -17,6 +17,16 @@ export function initWaveform() {
 	socket.onCommand("/waveform/osc2", (path, value) => render("/osc/2/wave", value));
 }
 
+/** Drop the wave-knob backdrop. Called on mode change to VA / Exciter where
+ *  the engine no longer pushes /waveform/oscN, so a stale image from the
+ *  previous mode would otherwise linger. */
+export function clearWaveform() {
+	for (const path of ["/osc/1/wave", "/osc/2/wave"]) {
+		const el = document.querySelector(`[data-osc="${path}"]`);
+		if (el) el.style.backgroundImage = "";
+	}
+}
+
 function render(targetPath, csv) {
 	const target = document.querySelector(`[data-osc="${targetPath}"]`);
 	if (!target || !csv) return;

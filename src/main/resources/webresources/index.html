@@ -32,33 +32,66 @@
           <div class="toggle" data-osc="/osc/mono" data-label="Mono">Mono</div>
           <div class="toggle" data-osc="/osc/2/sync" data-label="Sync">Sync</div>
         </div>
+        <!-- Stable shape across all engines: OSC1 + OSC2 wave knobs, then
+             OSC2 tuning + ringmod. Mode-specific extras (PW/Sub for VA, Bank
+             pickers for Wavetable) live in the engine panels below; nothing
+             here jumps when the user switches engines. The wave-knob labels
+             swap per engine via app.js (data-label-*). -->
         <div class="row">
-          <div class="rotary" data-osc="/osc/1/wave" data-label="OSC1 Wave"></div>
-          <div class="rotary" data-osc="/osc/1/waveset" data-label="Set 1"></div>
-          <div class="rotary" data-osc="/osc/noiselevel" data-label="Noise"></div>
-          <div class="rotary" data-osc="/osc/mix" data-label="1 Mix 2" data-mix></div>
-          <div class="rotary" data-osc="/osc/gain" data-label="Gain"></div>
-        </div>
-        <div class="row group-top">
-          <div class="rotary" data-osc="/osc/2/wave" data-label="OSC2 Wave"></div>
-          <div class="rotary" data-osc="/osc/2/waveset" data-label="Set 2"></div>
+          <!-- VA's BLEP engine actually buckets OSC*_WAVE into four discrete
+               regions (sine / triangle / saw / pulse — see BlepOscillator's
+               generateSample). Showing it as a continuous knob in VA mode
+               misrepresents the engine; CSS swaps to the 4-option Select
+               below in VA mode while keeping the rotary for WT/Add/Exc. Both
+               widgets share the same /osc/N/wave path; socket.send fans out
+               locally so the inactive widget's state stays in sync. -->
+          <div class="osc-wave-slot">
+            <div class="rotary" data-osc="/osc/1/wave" data-label="OSC1 Wave"
+                 data-label-blep="OSC1 Wave" data-label-wt="OSC1 Wave"
+                 data-label-add="OSC1 Timbre" data-label-exc="Excitation"></div>
+            <div class="select vertical osc-wave-select" data-osc="/osc/1/wave"
+                 data-list="Sine,Triangle,Saw,Pulse" data-step-floor></div>
+          </div>
+          <div class="osc-wave-slot">
+            <div class="rotary" data-osc="/osc/2/wave" data-label="OSC2 Wave"
+                 data-label-blep="OSC2 Wave" data-label-wt="OSC2 Wave"
+                 data-label-add="OSC2 Timbre" data-label-exc="Damping"></div>
+            <div class="select vertical osc-wave-select" data-osc="/osc/2/wave"
+                 data-list="Sine,Triangle,Saw,Pulse" data-step-floor></div>
+          </div>
           <div class="rotary" data-osc="/osc/2/tuning" data-label="Semitones" data-bipolar></div>
           <div class="rotary" data-osc="/osc/2/tuning/fine" data-label="Fine Tune" data-bipolar></div>
           <div class="rotary" data-osc="/osc/2/am" data-label="Ringmod"></div>
         </div>
-        <div class="row">
-          <div class="rotary" data-osc="/osc/gliderate" data-label="Glide"></div>
-        </div>
-        <!-- BLEP-only subpanel: only visible when osc mode = BLEP -->
-        <div class="row group-top blep-only">
-          <div class="rotary" data-osc="/osc/1/pw" data-label="OSC1 Width"></div>
-          <div class="rotary" data-osc="/osc/2/pw" data-label="OSC2 Width"></div>
-          <div class="rotary" data-osc="/osc/sub/volume" data-label="Sub Vol"></div>
-          <div class="col">
-            <div class="toggle" data-osc="/osc/sub/low" data-label="Sub -2 oct">−2 Oct</div>
-            <div class="toggle" data-osc="/osc/sub/square" data-label="Sub Sq">Square</div>
-            <div class="toggle" data-osc="/osc/2/keytrack" data-label="OSC2 Keytrack">OSC2 Track</div>
+        <!-- Engine-specific config (display:none when engine doesn't match —
+             see styles.css). Add/Exc have no per-engine controls so neither
+             panel shows; the common row sits directly under the OSC row. -->
+        <div class="osc-engine-panel" data-engine="va">
+          <div class="row">
+            <div class="rotary" data-osc="/osc/1/pw" data-label="OSC1 Width"></div>
+            <div class="rotary" data-osc="/osc/2/pw" data-label="OSC2 Width"></div>
+            <div class="rotary" data-osc="/osc/sub/volume" data-label="Sub Vol"></div>
+            <div class="col">
+              <div class="toggle" data-osc="/osc/sub/low" data-label="Sub -2 oct">−2 Oct</div>
+              <div class="toggle" data-osc="/osc/sub/square" data-label="Sub Sq">Square</div>
+              <div class="toggle" data-osc="/osc/2/keytrack" data-label="OSC2 Keytrack">OSC2 Track</div>
+            </div>
           </div>
+        </div>
+        <div class="osc-engine-panel" data-engine="wt">
+          <div class="row">
+            <div class="select vertical" data-osc="/osc/1/waveset"
+                 data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
+            <div class="select vertical" data-osc="/osc/2/waveset"
+                 data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
+          </div>
+        </div>
+        <!-- Common controls — apply across all engines -->
+        <div class="row group-top">
+          <div class="rotary" data-osc="/osc/noiselevel" data-label="Noise"></div>
+          <div class="rotary" data-osc="/osc/mix" data-label="1 Mix 2" data-mix></div>
+          <div class="rotary" data-osc="/osc/gliderate" data-label="Glide"></div>
+          <div class="rotary" data-osc="/osc/gain" data-label="Gain"></div>
         </div>
       </div>
 
