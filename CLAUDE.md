@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-SynthPi is a polyphonic software synthesizer written in Java 8. It runs as a standalone JVM process that opens an audio device, listens for MIDI, and serves a browser-based control surface over an embedded Jetty + WebSocket server. The engine supports three oscillator modes — virtual analog wavetables, additive, and Karplus-Strong ("exciter").
+SynthPi is a polyphonic software synthesizer written in Java. It runs as a standalone JVM process that opens an audio device, listens for MIDI, and serves a browser-based control surface over an embedded Jetty + WebSocket server. The engine supports three oscillator modes — virtual analog wavetables, additive, and Karplus-Strong ("exciter").
 
 ## Build and run
 
-This is a Maven project targeting Java 1.8.
+This is a Maven project targeting Java 21.
 
 ```sh
 mvn package          # produces target/SynthPi-1.0.0-SNAPSHOT-boxed.jar (fat jar via boxed-assembly.xml)
@@ -17,7 +17,7 @@ java -jar target/SynthPi-1.0.0-SNAPSHOT-boxed.jar [options]
 
 There are **no tests** — `mvn test` is a no-op.
 
-Per the README, the JAudioLibs dependencies (`jnajack`, `audioservers-*` v1.2.0) are not on Maven Central; they must be installed into the local Maven repo from https://github.com/jaudiolibs (build and `mvn install` the `audioservers` and `jnajack` projects) before `mvn package` will resolve.
+All dependencies resolve from Maven Central — no manual installation step.
 
 Useful CLI options (parsed in [SynthPi.java](src/main/java/de/privatepublic/pi/synth/SynthPi.java) — commons-cli):
 

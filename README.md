@@ -9,7 +9,7 @@ SynthPi uses and is grateful for the following open source components and resour
 * Lots of inspiration there: [http://www.musicdsp.org](http://www.musicdsp.org)
 * AKWF Waveforms (by Kristoffer Ekstrand aka. Adventure Kid) for strings, keyboards and vocal waveform sets: [http://www.adventurekid.se/akrt/waveforms](http://www.adventurekid.se/akrt/waveforms) 
 * [jQuery](https://jquery.com), [jQuery-color](https://github.com/jquery/jquery-color), [jQuery-knob by Anthony Terrien](https://github.com/aterrien/jQuery-Knob) 
-* Jetty 9 web server and websockets: [http://www.eclipse.org/jetty](http://www.eclipse.org/jetty)
+* Jetty web server and websockets: [http://www.eclipse.org/jetty](http://www.eclipse.org/jetty)
 * some Apache Commons Java utils: [https://commons.apache.org](https://commons.apache.org)
 * Logback logging framework: [http://logback.qos.ch](http://logback.qos.ch) 
 * Java JSON processing classes: [http://json.org](json.org) 
