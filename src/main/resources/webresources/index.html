@@ -244,9 +244,11 @@
         </div>
       </div>
 
-      <!-- AMP — envelope, voicing toggles, output level -->
+      <!-- AMP ENVELOPE — ADSR faders + voicing toggles. The master volume
+           knob lives down on the keyboard row alongside the play controls,
+           where the user reaches more naturally for it during performance. -->
       <div class="col cat4 area">
-        <div>AMP</div>
+        <div>AMP ENVELOPE</div>
         <div class="col envarea fcenter">
           <div class="row">
             <div class="fader" data-osc="/amp/env/1" data-label="A"></div>
@@ -258,9 +260,6 @@
             <div class="toggle" data-osc="/amp/env/loop" data-label="Loop">Loop</div>
             <div class="toggle" data-osc="/amp/velocity" data-label="Velocity">Velocity</div>
           </div>
-        </div>
-        <div class="row group-top">
-          <div class="rotary" data-osc="/amp/volume" data-label="Volume"></div>
         </div>
       </div>
 
@@ -308,6 +307,10 @@
         <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
       </div>
       <div class="toggle" data-osc="/play/sustain">Pedal</div>
+      <!-- Master volume lives in the play row alongside the pedal so it's
+           in reach during performance. cat4 keeps the teal output-stage
+           colour from its old AMP/FX home. -->
+      <div class="rotary cat4" data-osc="/amp/volume" data-label="Volume"></div>
     </div>
 
     <!-- Modal overlay + dialogs (patches.js opens / closes them). -->
