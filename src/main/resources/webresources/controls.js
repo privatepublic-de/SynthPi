@@ -122,7 +122,7 @@ export class Rotary {
 		});
 		element.addEventListener("wheel", (e) => {
 			e.preventDefault();
-			const v = U.capInRange(this.value + Math.sign(-e.deltaY) / 150, 0, 1);
+			const v = U.capInRange(this.value + Math.sign(e.deltaY) / 150, 0, 1);
 			this._userSetValue(v);
 		});
 		// Double-click resets to 0 (matches old jQuery UI behaviour).
@@ -333,7 +333,7 @@ export class Fader {
 
 		element.addEventListener("wheel", (e) => {
 			e.preventDefault();
-			this._userSetValue(U.capInRange(this.value + Math.sign(-e.deltaY) / 150, 0, 1));
+			this._userSetValue(U.capInRange(this.value + Math.sign(e.deltaY) / 150, 0, 1));
 		});
 		let isDragging = false;
 		element.addEventListener("mousedown", (e) => {
