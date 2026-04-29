@@ -730,19 +730,25 @@ $(document).ready(function () {
 	// existing websocket; the server (ControlMessageDispatcher#/play/note/)
 	// already handles those messages from the on-screen click keyboard.
 	//
-	// Two rows of keys give two octaves (rows overlap at noteOffset 12):
-	//   bottom: Z S X D C V G B H N J M , L .       (starts at noteOffset 0)
-	//   top:    Q 2 W 3 E R 5 T 6 Y 7 U I 9 O       (starts at noteOffset 12)
-	// Held notes are tracked by KeyboardEvent.code so the keyup releases the
-	// same MIDI number even if the octave was shifted mid-hold (otherwise
-	// you get stuck notes). ShiftLeft / ControlLeft cycle octave down/up on
-	// release.
+	// Mapping uses KeyboardEvent.code (layout-independent — refers to the
+	// physical US-QWERTY position), so a German-layout user pressing the key
+	// labeled "Y" gets KeyZ, etc.
+	//
+	// Two rows of keys give two octaves (rows overlap at noteOffset 12).
+	// IntlBackslash (the "<" key on a German 105-key board, left of Y) sits
+	// one semitone below Z so it's reachable. Held notes are tracked by
+	// KeyboardEvent.code so a kbOctave change mid-hold doesn't strand a note
+	// at a different MIDI number. ShiftLeft / ShiftRight nudge the octave
+	// down / up on release.
 	var KEYMAP = {
+		IntlBackslash: -1,
 		KeyZ: 0, KeyS: 1, KeyX: 2, KeyD: 3, KeyC: 4, KeyV: 5, KeyG: 6, KeyB: 7,
-		KeyH: 8, KeyN: 9, KeyJ: 10, KeyM: 11, Comma: 12, KeyL: 13, Period: 14,
+		KeyH: 8, KeyN: 9, KeyJ: 10, KeyM: 11,
+		Comma: 12, KeyL: 13, Period: 14, Semicolon: 15, Slash: 16, Quote: 17,
 		KeyQ: 12, Digit2: 13, KeyW: 14, Digit3: 15, KeyE: 16, KeyR: 17,
 		Digit5: 18, KeyT: 19, Digit6: 20, KeyY: 21, Digit7: 22, KeyU: 23,
-		KeyI: 24, Digit9: 25, KeyO: 26
+		KeyI: 24, Digit9: 25, KeyO: 26, Digit0: 27, KeyP: 28,
+		BracketLeft: 29, Equal: 30, BracketRight: 31
 	};
 	var heldKeyboardNotes = {};
 	var kbOctave = 4; // bottom-row Z = MIDI 48 (C3) when octave shift = 0
@@ -768,17 +774,21 @@ $(document).ready(function () {
 		if (typeof offset === "undefined") return;
 		if (heldKeyboardNotes.hasOwnProperty(e.code)) return; // safety belt
 		var note = offset + 12 * kbOctave;
+		// Clamp to the valid MIDI range — relevant when low kbOctave combines
+		// with the negative IntlBackslash offset.
+		if (note < 0 || note > 127) return;
 		heldKeyboardNotes[e.code] = note;
 		socket.sendValueDirectly("/play/note/" + note, 1);
 		e.preventDefault();
 	});
 
 	document.body.addEventListener("keyup", function(e) {
-		// Octave shift on key release. Bounded so the resulting MIDI note
-		// stays in 0..127 even with the highest mapped offset (28).
+		// Octave shift on key release. ShiftLeft = down, ShiftRight = up,
+		// bounded so resulting MIDI for the highest mapped offset (31) stays
+		// in 0..127.
 		if (keyboardCaptureEnabled()) {
 			if (e.code === "ShiftLeft" && kbOctave > 0) kbOctave--;
-			else if (e.code === "ControlLeft" && kbOctave < 8) kbOctave++;
+			else if (e.code === "ShiftRight" && kbOctave < 8) kbOctave++;
 		}
 		var note = heldKeyboardNotes[e.code];
 		if (typeof note === "undefined") return;
