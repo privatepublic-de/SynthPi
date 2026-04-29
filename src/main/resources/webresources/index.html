@@ -232,6 +232,22 @@
       </div>
     </div>
 
+    <!-- Bottom: pitch/mod wheels + 60-key on-screen piano (MIDI 36-95) +
+         sustain pedal toggle. keyboard.js wires note play, computer-
+         keyboard MIDI input, and the visual pressed state. -->
+    <div id="keyboard" class="row cat0">
+      <div class="rotary" data-osc="/play/mod/pitchbend" data-label="Pitch" data-bipolar data-push-return></div>
+      <div class="rotary" data-osc="/play/mod/wheel" data-label="Mod" data-push-return></div>
+      <div class="keys">
+        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
+        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
+        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
+        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
+        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
+      </div>
+      <div class="toggle" data-osc="/play/sustain">Pedal</div>
+    </div>
+
     <!-- Modal overlay + dialogs (patches.js opens / closes them). -->
     <div id="dimmer"></div>
     <div id="patchlistwindow" class="modal">

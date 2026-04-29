@@ -155,7 +155,9 @@ public class JettyWebServerInterface {
 			"patches.js",
 			"settings.js",
 			"learn.js",
-			"matrix.js"
+			"matrix.js",
+			"keyboard.js",
+			"waveform.js"
 		};
 		
 		private String mimeType;

@@ -20,8 +20,17 @@ class PotDragHandler {
 		this.cy = 0;
 		this.updateValueCallback = null;
 		this.finishedCallback = null;
-		window.addEventListener("mousemove", this._move.bind(this));
-		window.addEventListener("mouseup", this._stop.bind(this));
+		window.addEventListener("mousemove", (e) => this._onMove(e.pageX, e.pageY));
+		window.addEventListener("mouseup", () => this._onStop());
+		window.addEventListener("touchmove", (e) => {
+			if (this.isDragging) {
+				e.preventDefault();
+				const t = e.touches[0];
+				this._onMove(t.pageX, t.pageY);
+			}
+		}, { passive: false });
+		window.addEventListener("touchend", () => this._onStop());
+		window.addEventListener("touchcancel", () => this._onStop());
 	}
 
 	_valueForCoordinates(x, y) {
@@ -36,7 +45,7 @@ class PotDragHandler {
 		return ang / 270.0;
 	}
 
-	startDrag(pot, e, updateValueCallback, finishedCallback, width, height) {
+	startDrag(pot, x, y, updateValueCallback, finishedCallback, width, height) {
 		this.updateValueCallback = updateValueCallback;
 		this.finishedCallback = finishedCallback;
 		let el = pot;
@@ -52,16 +61,16 @@ class PotDragHandler {
 		this.cx += (width || Rotary.width) / 2;
 		this.cy += (height || Rotary.height) / 2;
 		this.isDragging = true;
-		this.updateValueCallback(this._valueForCoordinates(e.pageX, e.pageY));
+		this.updateValueCallback(this._valueForCoordinates(x, y));
 	}
 
-	_move(e) {
+	_onMove(x, y) {
 		if (this.isDragging) {
-			this.updateValueCallback(this._valueForCoordinates(e.pageX, e.pageY));
+			this.updateValueCallback(this._valueForCoordinates(x, y));
 		}
 	}
 
-	_stop() {
+	_onStop() {
 		if (this.isDragging) {
 			this.isDragging = false;
 			this.finishedCallback();
@@ -108,18 +117,38 @@ export class Rotary {
 		element.appendChild(this.canvas);
 		element.appendChild(this.valueElement);
 
+		// Push-return controls (pitch wheel / mod wheel): release snaps back
+		// to the resting position — 0.5 for bipolar (centered) or 0 otherwise.
+		this.pushReturn = element.dataset.pushReturn !== undefined;
+		// Once the server pushes a /label/<path> for this param, we trust
+		// it as the value display and stop overwriting with raw 0..127.
+		// Stays false until/unless a label arrives.
+		this._serverLabelReceived = false;
+
 		this.value = 0;
 		this._setValue(0);
 
-		element.addEventListener("mousedown", (e) => {
+		const startPress = (x, y) => {
 			this._userActive = true;
 			Rotary.dragHandler.startDrag(
-				element, e,
+				element, x, y,
 				(v) => this._userSetValue(v),
-				() => { this._userActive = false; },
+				() => {
+					this._userActive = false;
+					if (this.pushReturn) {
+						const center = this.isBipolar ? 0.5 : 0;
+						this._userSetValue(center);
+					}
+				},
 				this.width, this.height,
 			);
-		});
+		};
+		element.addEventListener("mousedown", (e) => startPress(e.pageX, e.pageY));
+		element.addEventListener("touchstart", (e) => {
+			e.preventDefault();
+			const t = e.touches[0];
+			startPress(t.pageX, t.pageY);
+		}, { passive: false });
 		element.addEventListener("wheel", (e) => {
 			e.preventDefault();
 			const v = U.capInRange(this.value + Math.sign(e.deltaY) / 150, 0, 1);
@@ -135,6 +164,14 @@ export class Rotary {
 				if (this._userActive) return;
 				this._setValue(v);
 			});
+			// Subscribe unconditionally — when the server has a label for this
+			// param (e.g. "440 Hz", "−3.4 dB"), it'll arrive and we'll switch
+			// the display over. Params without a label never push and the raw
+			// 0..127 keeps showing.
+			socket.onCommand(`/label${this.path}`, (path, value) => {
+				this._serverLabelReceived = true;
+				this.valueElement.textContent = value;
+			});
 		}
 	}
 
@@ -148,6 +185,10 @@ export class Rotary {
 	_setValue(percent) {
 		this.value = percent;
 		this._renderValue(percent);
+		// Once the server has pushed a /label/<path>, leave the display to it.
+		// The next /label push will refresh after the engine processes the
+		// new value (typically within one audio buffer).
+		if (this._serverLabelReceived) return;
 		let displayValue;
 		if (this.isMix) {
 			const intPercent = Math.round(100 * percent);
@@ -310,6 +351,7 @@ export class Fader {
 	constructor(element) {
 		this.element = element;
 		this.path = element.dataset.osc || null;
+		this._serverLabelReceived = false;
 		this.color = getComputedStyle(element).getPropertyValue("--color");
 		this.colorDark = getComputedStyle(element).getPropertyValue("--color-dark");
 		this.canvas = document.createElement("canvas");
@@ -327,37 +369,58 @@ export class Fader {
 		this._userActive = false;
 		this._setValue(0);
 
-		const computeValueFromOffset = (offsetY) => U.capInRange(
-			(Fader.effectiveHeight - offsetY) / Fader.effectiveHeight, 0, 1
+		// Map a Y-coordinate from the canvas's top-left to a 0..1 value.
+		// Touch events give pageY; we have to subtract the canvas's page
+		// offset to get the equivalent of a mouse offsetY.
+		const canvasTop = () => {
+			const rect = this.canvas.getBoundingClientRect();
+			return rect.top + window.scrollY;
+		};
+		const valueFromY = (pageY) => U.capInRange(
+			(Fader.effectiveHeight - (pageY - canvasTop())) / Fader.effectiveHeight, 0, 1
 		);
 
 		element.addEventListener("wheel", (e) => {
 			e.preventDefault();
 			this._userSetValue(U.capInRange(this.value + Math.sign(e.deltaY) / 150, 0, 1));
 		});
-		let isDragging = false;
 		element.addEventListener("mousedown", (e) => {
-			isDragging = true;
 			this._userActive = true;
 			e.preventDefault();
-			this._userSetValue(computeValueFromOffset(e.offsetY));
+			this._userSetValue(valueFromY(e.pageY));
 		});
 		element.addEventListener("mousemove", (e) => {
-			if (isDragging && e.target !== this.label) {
-				this._userSetValue(computeValueFromOffset(e.offsetY));
+			if (this._userActive && e.target !== this.label) {
+				this._userSetValue(valueFromY(e.pageY));
 			}
 		});
-		const stopDrag = () => {
-			isDragging = false;
-			this._userActive = false;
-		};
+		const stopDrag = () => { this._userActive = false; };
 		element.addEventListener("mouseup", stopDrag);
 		element.addEventListener("mouseleave", stopDrag);
+		// Touch support — preventDefault on touchstart to suppress scroll +
+		// click synthesis.
+		element.addEventListener("touchstart", (e) => {
+			e.preventDefault();
+			this._userActive = true;
+			this._userSetValue(valueFromY(e.touches[0].pageY));
+		}, { passive: false });
+		element.addEventListener("touchmove", (e) => {
+			if (this._userActive) {
+				e.preventDefault();
+				this._userSetValue(valueFromY(e.touches[0].pageY));
+			}
+		}, { passive: false });
+		element.addEventListener("touchend", stopDrag);
+		element.addEventListener("touchcancel", stopDrag);
 
 		if (this.path) {
 			socket.onParam(this.path, (v) => {
 				if (this._userActive) return;
 				this._setValue(v);
+			});
+			socket.onCommand(`/label${this.path}`, (path, value) => {
+				this._serverLabelReceived = true;
+				this.valueElement.textContent = value;
 			});
 		}
 	}
@@ -370,6 +433,7 @@ export class Fader {
 	_setValue(v) {
 		this.value = v;
 		this._renderValue(v);
+		if (this._serverLabelReceived) return;
 		this.valueElement.innerHTML = Math.round(127 * v);
 	}
 
