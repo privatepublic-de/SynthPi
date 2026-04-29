@@ -1,19 +1,20 @@
 package de.privatepublic.pi.synth;
 
 import java.awt.EventQueue;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.help.HelpFormatter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,11 +112,10 @@ public class SynthPi {
 		}
 	}
 	
-	@SuppressWarnings("static-access") // prevent warnings because of implementation of commons-cli
 	private static void parseCommandLine(String[] args) {
-		
+
 		// create the command line parser
-		CommandLineParser parser = new BasicParser();
+		CommandLineParser parser = new DefaultParser();
 
 		// create the Options
 		final String ARG_HELP = "help";
@@ -131,23 +131,26 @@ public class SynthPi {
 		final String ARG_OPEN_BROWSER_COMMAND = "openbrowsercmd";
 		final String ARG_LOW_BUDGET_ADDITIVE = "lowbudgetadditive";
 		Options options = new Options();
-		options.addOption(OptionBuilder.withArgName(ARG_HELP).withDescription("Print this help message and exit").create(ARG_HELP));
-		options.addOption(OptionBuilder.withArgName("channel").hasArg().withDescription("MIDI channel number (1-16, default 1)").create(ARG_MIDI_CHANNEL));
-		options.addOption(OptionBuilder.withArgName("port").hasArg().withDescription("Port number for the included web server (1024-65535, default "+P.PORT_HTTP+")").create(ARG_PORT_HTTP));
-		options.addOption(OptionBuilder.withArgName("file").hasArg().withDescription("MIDI file to play in loop. Good for testing.").create(ARG_MIDI_FILENAME));
-		options.addOption(OptionBuilder.withArgName("0/1").hasArg().withDescription("Set specific MIDI pitch bend mode. Try this if strange pitch bending effects occur; e.g. on Mac OS systems use 0.").create(ARG_PITCH_BEND_MODE));
-		options.addOption(OptionBuilder.withDescription("(only for development)").create(ARG_DISABLE_WEB_CACHE));
-		options.addOption(OptionBuilder.withDescription("Don't start web browser on launch").create(ARG_DISABLE_BROWSER_START));
-		options.addOption(OptionBuilder.withDescription("Don't open user interface window").create(ARG_HEADLESS));
-		options.addOption(OptionBuilder.withDescription("Use JACK audio server for playback. Fails if JACK isn't installed and started.").create(ARG_USE_JACK_AUDIO_SERVER));
-		options.addOption(OptionBuilder.withDescription("Low budget additive (more description please).").create(ARG_LOW_BUDGET_ADDITIVE));
-		options.addOption(OptionBuilder.withArgName("size").hasArg().withDescription("Playback audio buffer size. Smaller values for less latency, higher values for less drop-outs and crackles (default 64)").create(ARG_AUDIO_BUFFER_SIZE));
-		options.addOption(OptionBuilder.withArgName("cmd").hasArg().withDescription("Command line to open web browser.").create(ARG_OPEN_BROWSER_COMMAND));		
+		options.addOption(Option.builder(ARG_HELP).desc("Print this help message and exit").get());
+		options.addOption(Option.builder(ARG_MIDI_CHANNEL).argName("channel").hasArg().desc("MIDI channel number (1-16, default 1)").get());
+		options.addOption(Option.builder(ARG_PORT_HTTP).argName("port").hasArg().desc("Port number for the included web server (1024-65535, default "+P.PORT_HTTP+")").get());
+		options.addOption(Option.builder(ARG_MIDI_FILENAME).argName("file").hasArg().desc("MIDI file to play in loop. Good for testing.").get());
+		options.addOption(Option.builder(ARG_PITCH_BEND_MODE).argName("0/1").hasArg().desc("Set specific MIDI pitch bend mode. Try this if strange pitch bending effects occur; e.g. on Mac OS systems use 0.").get());
+		options.addOption(Option.builder(ARG_DISABLE_WEB_CACHE).desc("(only for development)").get());
+		options.addOption(Option.builder(ARG_DISABLE_BROWSER_START).desc("Don't start web browser on launch").get());
+		options.addOption(Option.builder(ARG_HEADLESS).desc("Don't open user interface window").get());
+		options.addOption(Option.builder(ARG_USE_JACK_AUDIO_SERVER).desc("Use JACK audio server for playback. Fails if JACK isn't installed and started.").get());
+		options.addOption(Option.builder(ARG_LOW_BUDGET_ADDITIVE).desc("Low budget additive (more description please).").get());
+		options.addOption(Option.builder(ARG_AUDIO_BUFFER_SIZE).argName("size").hasArg().desc("Playback audio buffer size. Smaller values for less latency, higher values for less drop-outs and crackles (default 64)").get());
+		options.addOption(Option.builder(ARG_OPEN_BROWSER_COMMAND).argName("cmd").hasArg().desc("Command line to open web browser.").get());
 		try {
 			CommandLine commandline = parser.parse(options, args);
 			if (commandline.hasOption(ARG_HELP)) {
-				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp( "java -jar SynthPi.jar", options);
+				try {
+					HelpFormatter.builder().get().printHelp("java -jar SynthPi.jar", "", options, "", false);
+				} catch (IOException e) {
+					logger.error("Error printing help", e);
+				}
 				System.exit(0);
 			}
 			
