@@ -41,10 +41,12 @@ body.connecting .row { opacity: 0.3; pointer-events: none; }
 
 /* Mode-conditional subpanels: hidden unless the parent mode matches.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]
-   when the engine reports those modes via /osc/mode and /fx/delay/type. */
-.blep-only { display: none; }
+   when the engine reports those modes via /osc/mode and /fx/delay/type.
+   The body-prefixed selector raises specificity above .row { display: flex; }
+   so the default-hidden state applies to subpanels that are also flex rows. */
+body .blep-only { display: none; }
 body[data-osc-mode="blep"] .blep-only { display: flex; }
-.delay-digital-only { display: none; }
+body .delay-digital-only { display: none; }
 body[data-delay-type="digital"] .delay-digital-only { display: block; }
 
 .row {
