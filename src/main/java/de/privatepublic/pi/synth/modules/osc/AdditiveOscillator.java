@@ -14,12 +14,28 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 
 	@SuppressWarnings("unused")
 	private static final Logger log = LoggerFactory.getLogger(AdditiveOscillator.class);
-	
-	private static final float[] SINE_TABLE = new float[(int)P.SAMPLE_RATE_HZ+1];
-	static {
-		for (int i=0;i<SINE_TABLE.length;i++) {
-			SINE_TABLE[i] = (float) Math.sin(Math.PI*2*(i/(float)SINE_TABLE.length));
-		}
+
+	// Polynomial sine: replaces a 48001-entry SINE_TABLE with a degree-9 Taylor
+	// approximation of sin(x) on [-π/2, π/2] reached via quadrant-fold of the
+	// phase fraction. Worst-case error ~3.6e-6 — well below the 16-bit audio
+	// LSB (1.5e-5) and inaudible at output. Removes ~192 KB of L2 traffic per
+	// active note and makes the inner harmonic loop a candidate for auto-/
+	// explicit SIMD (no gather).
+	private static final float TWO_PI = (float)(Math.PI * 2);
+	private static final float INV_SR = 1f / P.SAMPLE_RATE_HZ;
+	private static final float C1 = 1f / 6f;
+	private static final float C2 = 1f / 120f;
+	private static final float C3 = 1f / 5040f;
+	private static final float C4 = 1f / 362880f;
+
+	private static float polySin(float phaseSamples) {
+		float q = phaseSamples * INV_SR;          // phase fraction, q in [0, 1)
+		if (q >= 0.5f) q -= 1f;                   // reduce to [-0.5, 0.5)
+		if (q > 0.25f) q = 0.5f - q;              // fold to [-0.25, 0.25]
+		else if (q < -0.25f) q = -0.5f - q;
+		final float x = TWO_PI * q;               // x in [-π/2, π/2]
+		final float x2 = x * x;
+		return x * (1f - x2 * (C1 - x2 * (C2 - x2 * (C3 - x2 * C4))));
 	}
 	/*
 
@@ -325,10 +341,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 			if (sync) {
 				lphase = 0;
 			}
-			final int indexBase = (int)lphase;
-			final float indexFrac = lphase-indexBase;
-			float outValue = SINE_TABLE[indexBase];
-			outValue += ((SINE_TABLE[indexBase+1]-outValue)*indexFrac);
+			final float outValue = polySin(lphase);
 			lphase = lphase+frequencyStepSize*factor;
 			cycleStart = false;
 			while (lphase>=P.SAMPLE_RATE_HZ) {
