@@ -21,7 +21,8 @@ public class P {
 	public static enum OscillatorMode {
 		VIRTUAL_ANALOG,
 		ADDITIVE,
-		EXITER
+		EXITER,
+		BLEP
 	}
 	
 	/** Filter types */

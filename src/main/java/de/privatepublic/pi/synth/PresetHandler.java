@@ -63,11 +63,26 @@ public class PresetHandler {
 		SynthPi.uiMessage("Patch initialized to defaults");
 	}
 	
+	/**
+	 * Patch format version. Bumped when the parameter layout or interpretation
+	 * changes in a way that needs migration on load.
+	 *
+	 * <ul>
+	 *   <li>1 (implicit, no field) — original 3-mode oscillator selector
+	 *       ({@code OSC_MODE} mapping 0/0.5/1.0 → VA/ADD/EXC).</li>
+	 *   <li>2 — 4-mode selector with BLEP added; {@code OSC_MODE} 0/0.333/0.667/1.0
+	 *       → VA/ADD/EXC/BLEP. Loads from version 1 are remapped through
+	 *       {@link #migrateOscModeFromV1}.</li>
+	 * </ul>
+	 */
+	private static final int CURRENT_PATCH_VERSION = 2;
+
 	private static JSONObject createJSONFromCurrentPatch(String name, PatchCategory category) {
 		JSONObject preset = new JSONObject();
 		preset.put(K.PATCH_NAME.key(), name);
 		preset.put(K.PATCH_CATEGORY.key(), category);
 		preset.put(K.PATCH_DATE.key(), System.currentTimeMillis());
+		preset.put("version", CURRENT_PATCH_VERSION);
 		JSONArray params = new JSONArray();
 		for (int i=0; i<P.PARAM_STORE_SIZE;i++) {
 			if (P.OSC_PATH[i]!=null) { // only performance parameters
@@ -79,6 +94,17 @@ public class PresetHandler {
 		}
 		preset.put(K.PATCH_PARAMS_LIST.key(), params);
 		return preset;
+	}
+
+	/**
+	 * Remap a v1 OSC_MODE value (3-value selector, 0/0.5/1.0) into the v2
+	 * 4-value space (0/0.333/0.667/1.0). VA stays 0, ADD goes 0.5 → 1/3,
+	 * EXC goes 1.0 → 2/3. BLEP is unreachable from v1 patches by design,
+	 * so old EXC patches remain EXC instead of accidentally landing on BLEP.
+	 */
+	private static float migrateOscModeFromV1(final float oldVal) {
+		final int oldOrdinal = Math.round(oldVal * 2);  // 0=VA, 1=ADD, 2=EXC
+		return oldOrdinal / 3f;
 	}
 	
 //	private static JSONObject createJSONFromCurrentPatch(String name) {
@@ -123,6 +149,7 @@ public class PresetHandler {
 						JSONObject patch = list.getJSONObject(i);
 						if (patch.getString(K.UI_PATCH_ID.key()).equals(pid)) {
 							JSONArray params = patch.getJSONArray(K.PATCH_PARAMS_LIST.key());
+							final int patchVersion = patch.optInt("version", 1);
 							P.setToDefaults();
 							for (int ix=0;ix<params.length();++ix) {
 								try {
@@ -133,6 +160,12 @@ public class PresetHandler {
 								} catch (JSONException e) {
 									log.debug("Error reading param at pos "+ix, e);
 								}
+							}
+							// Apply migrations after all params are loaded, so we operate on the
+							// final assembled state. v1 patches have a 3-value OSC_MODE; remap
+							// to the 4-value space so EXC stays EXC instead of becoming BLEP.
+							if (patchVersion < 2) {
+								P.set(P.OSC_MODE, migrateOscModeFromV1(P.VAL[P.OSC_MODE]));
 							}
 //							if (params.length()<P.DELAY_RATE+1) { // TODO fix old patch files!
 //								// saved before delay params were introduced

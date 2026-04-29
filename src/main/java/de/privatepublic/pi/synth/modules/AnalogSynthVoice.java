@@ -9,6 +9,7 @@ import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR.State;
 import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.modules.osc.AdditiveOscillator;
+import de.privatepublic.pi.synth.modules.osc.BlepOscillator;
 import de.privatepublic.pi.synth.modules.osc.ExciterOscillator;
 import de.privatepublic.pi.synth.modules.osc.IOscillator;
 import de.privatepublic.pi.synth.modules.osc.WaveTableOscillator;
@@ -47,6 +48,10 @@ public class AnalogSynthVoice {
 	private final AdditiveOscillator osc2_add = new AdditiveOscillator(IOscillator.SECONDARY_OSC);
 	private final ExciterOscillator osc1_pluck = new ExciterOscillator(IOscillator.PRIMARY_OSC);
 	private final ExciterOscillator osc2_pluck = new ExciterOscillator(IOscillator.SECONDARY_OSC);
+	// BlepOscillator instances need access to per-voice env2 + lfo (declared above
+	// in source order so they're already initialized when these run).
+	private final BlepOscillator osc1_blep = new BlepOscillator(IOscillator.PRIMARY_OSC, env2, lfo);
+	private final BlepOscillator osc2_blep = new BlepOscillator(IOscillator.SECONDARY_OSC, env2, lfo);
 	
 	private final MultiModeFilter filter1 = new MultiModeFilter(
 			P.FILTER1_FREQ, 
@@ -361,6 +366,10 @@ public class AnalogSynthVoice {
 				osc1=osc1_pluck;
 				osc2=osc2_pluck;
 				break;
+			case BLEP:
+				osc1=osc1_blep;
+				osc2=osc2_blep;
+				break;
 			case VIRTUAL_ANALOG:
 			default:
 				osc1=osc1_va;
@@ -391,6 +400,10 @@ public class AnalogSynthVoice {
 						osc1=osc1_pluck;
 						osc2=osc2_pluck;
 						break;
+					case BLEP:
+						osc1=osc1_blep;
+						osc2=osc2_blep;
+						break;
 					case VIRTUAL_ANALOG:
 					default:
 						osc1=osc1_va;
@@ -409,7 +422,7 @@ public class AnalogSynthVoice {
 			});
 		}
 	}
-	
+
 	public void triggerFreq(final int midiNote, final float frequency, final float velocity, final long timestamp) {
 		lastMidiNote = midiNote;
 		lastTriggered = timestamp;
@@ -423,6 +436,10 @@ public class AnalogSynthVoice {
 		case EXITER:
 			osc1=osc1_pluck;
 			osc2=osc2_pluck;
+			break;
+		case BLEP:
+			osc1=osc1_blep;
+			osc2=osc2_blep;
 			break;
 		case VIRTUAL_ANALOG:
 		default:
@@ -459,6 +476,10 @@ public class AnalogSynthVoice {
 		case EXITER:
 			osc1=osc1_pluck;
 			osc2=osc2_pluck;
+			break;
+		case BLEP:
+			osc1=osc1_blep;
+			osc2=osc2_blep;
 			break;
 		case VIRTUAL_ANALOG:
 		default:
@@ -545,6 +566,10 @@ public class AnalogSynthVoice {
 			case EXITER:
 				osc1_pluck.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
 				osc2_pluck.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
+				break;
+			case BLEP:
+				osc1_blep.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
+				osc2_blep.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
 				break;
 			case VIRTUAL_ANALOG:
 			default:
