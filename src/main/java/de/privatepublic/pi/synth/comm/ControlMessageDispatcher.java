@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import javax.sound.midi.ShortMessage;
 
+import org.eclipse.jetty.websocket.api.Callback;
 import org.eclipse.jetty.websocket.api.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +123,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				updateAllParams();
 				break;
 			case LIST_PATCHES:
-				session.getRemote().sendStringByFuture("/patchlist="+PresetHandler.listPatchFiles(false));
+				session.sendText("/patchlist="+PresetHandler.listPatchFiles(false), Callback.NOOP);
 				break;
 			case LOAD_PATCH:
 				Matcher matcher = Pattern.compile("\\/([^\\/]+?)=").matcher(msg);
@@ -133,13 +134,13 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				}
 				break;
 			case SAVE_INFO:
-				session.getRemote().sendStringByFuture("/saveinfo="+PresetHandler.patchSaveInfo().toString());
+				session.sendText("/saveinfo="+PresetHandler.patchSaveInfo().toString(), Callback.NOOP);
 				break;
 			case SAVE_PATCH:
 				String val = msg.substring(msg.indexOf('=')+1);
 				if (PresetHandler.saveCurrentOrDeletePatch(val)) {
 					// on delete send saveinfo again to update ui list
-					session.getRemote().sendStringByFuture("/saveinfo="+PresetHandler.patchSaveInfo().toString());
+					session.sendText("/saveinfo="+PresetHandler.patchSaveInfo().toString(), Callback.NOOP);
 				}
 				break;
 			case OSC1_TOGGLE_WAVESET:
@@ -173,7 +174,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				MidiHandler.INSTANCE.stopLearnMode();
 				break;
 			case LOAD_SETTINGS:
-				session.getRemote().sendStringByFuture("/settings="+PresetHandler.settingsJSON());
+				session.sendText("/settings="+PresetHandler.settingsJSON(), Callback.NOOP);
 				break;
 			case SAVE_SETTINGS:
 				String settingsJSON = msg.substring(msg.indexOf('=')+1);
@@ -229,10 +230,10 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			for (Session aSession:SynthSocket.ACTIVE_SESSIONS) {
 				if (!aSession.isOpen()) continue;
 				if (session!=null && aSession==session) {
-					aSession.getRemote().sendStringByFuture(completeMessage);
+					aSession.sendText(completeMessage, Callback.NOOP);
 				}
 				else {
-					aSession.getRemote().sendStringByFuture(completeMessage);
+					aSession.sendText(completeMessage, Callback.NOOP);
 				}
 			}
 		}
@@ -261,10 +262,10 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 			for (Session aSession:SynthSocket.ACTIVE_SESSIONS) {
 				if (!aSession.isOpen()) continue;
 				if (aSession==session) {
-					aSession.getRemote().sendStringByFuture(labelMsg);
+					aSession.sendText(labelMsg, Callback.NOOP);
 				}
 				else {
-					aSession.getRemote().sendStringByFuture(labelAndValueMsg);
+					aSession.sendText(labelAndValueMsg, Callback.NOOP);
 				}
 			}
 		}
@@ -274,7 +275,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 		synchronized (SynthSocket.ACTIVE_SESSIONS) {
 			for (Session aSession:SynthSocket.ACTIVE_SESSIONS) {
 				if (!aSession.isOpen()) continue;
-				aSession.getRemote().sendStringByFuture(msg);
+				aSession.sendText(msg, Callback.NOOP);
 			}
 		}
 	}
