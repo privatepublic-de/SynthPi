@@ -3,11 +3,12 @@ package de.privatepublic.pi.synth.modules.fx;
 import de.privatepublic.pi.synth.P;
 
 /**
- * Tape-style delay: master's original {@link Delay} algorithm preserved
- * verbatim. Cross-channel feedback (left feeds right, right feeds left)
- * produces a ping-pong character; per-buffer rate ramping smooths
- * delay-time changes; linear interpolation between adjacent samples
- * gives a soft, slightly-rolled-off feel.
+ * Tape-style delay: master's original {@link Delay} algorithm with
+ * cross-channel feedback (left feeds right, right feeds left) producing
+ * a ping-pong character, plus a slow per-sample exponential rate
+ * approach that gives audible varispeed pitch-shift when the delay-time
+ * knob moves — the "tape stretching" sound. Linear interpolation
+ * between adjacent samples smooths the moving read head.
  */
 public class TapeDelay extends DelayBase {
 
@@ -16,6 +17,12 @@ public class TapeDelay extends DelayBase {
 	private final float[] delayLineL = new float[delayLineSize+1];
 	private final float[] delayLineR = new float[delayLineSize+1];
 	private int writeIndex = 0;
+
+	// Per-sample one-pole coefficient on the rate. Half-time is
+	// ln(0.5)/ln(1-coeff) samples; with 0.00005 at 48 kHz that's
+	// ~290 ms, so a knob jerk yields a ~600 ms audible glissando
+	// before settling — close to vintage tape character.
+	private static final float RATE_APPROACH_COEFF = 0.00005f;
 
 	private float lastrate = 0;
 
@@ -31,9 +38,8 @@ public class TapeDelay extends DelayBase {
 
 	@Override
 	public void process(final int bufferLen, final float[][] buffers) {
-		float feedback = P.VAL[P.DELAY_FEEDBACK];
-		float delayRate = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
-		float delta = (delayRate - lastrate) / bufferLen;
+		final float feedback = P.VAL[P.DELAY_FEEDBACK];
+		final float targetRate = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
 		final float wet = P.VAL[P.DELAY_WET];
 		final float wetInv = 1-wet;
 		final float[] bufL = buffers[0];
@@ -68,8 +74,11 @@ public class TapeDelay extends DelayBase {
 			out2 += (valR1*wet-out2)*indexFract;
 			bufL[i] = in1*wetInv+out1;
 			bufR[i] = in2*wetInv+out2;
-			lastrate += delta;
+			// Per-sample one-pole approach toward targetRate. The slow
+			// glide is what makes the moving read head produce audible
+			// pitch-shift; reaching the target instantly would just
+			// teleport the read position and click.
+			lastrate += (targetRate - lastrate) * RATE_APPROACH_COEFF;
 		}
-		lastrate = delayRate;
 	}
 }
