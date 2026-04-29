@@ -52,7 +52,7 @@
             <div class="select vertical osc-wave-select" data-osc="/osc/1/wave"
                  data-list="Sine,Triangle,Saw,Pulse" data-step-floor></div>
           </div>
-          <div class="osc-wave-slot">
+          <div class="osc-wave-slot group-left">
             <div class="rotary" data-osc="/osc/2/wave" data-label="OSC2 Wave"
                  data-label-blep="OSC2 Wave" data-label-wt="OSC2 Wave"
                  data-label-add="OSC2 Timbre" data-label-exc="Damping"></div>
@@ -61,7 +61,10 @@
           </div>
           <div class="rotary" data-osc="/osc/2/tuning" data-label="Semitones" data-bipolar></div>
           <div class="rotary" data-osc="/osc/2/tuning/fine" data-label="Fine Tune" data-bipolar></div>
-          <div class="rotary" data-osc="/osc/2/am" data-label="Ringmod"></div>
+          <!-- OSC2 keytracking is VA-only (only BlepOscillator reads it).
+               It sits in the OSC row in VA mode rather than the engine panel
+               so the OSC2 group reads as a single visual unit. -->
+          <div class="toggle va-only-inline" data-osc="/osc/2/keytrack" data-label="OSC2 Keytrack">OSC2 Track</div>
         </div>
         <!-- Engine-specific config (display:none when engine doesn't match —
              see styles.css). Add/Exc have no per-engine controls so neither
@@ -69,29 +72,52 @@
         <div class="osc-engine-panel" data-engine="va">
           <div class="row">
             <div class="rotary" data-osc="/osc/1/pw" data-label="OSC1 Width"></div>
-            <div class="rotary" data-osc="/osc/2/pw" data-label="OSC2 Width"></div>
-            <div class="rotary" data-osc="/osc/sub/volume" data-label="Sub Vol"></div>
+            <!-- group-left aligns vertically with the OSC1/OSC2 border in
+                 the OSC row above, so the visual partition extends through
+                 both rows. -->
+            <div class="rotary group-left" data-osc="/osc/2/pw" data-label="OSC2 Width"></div>
+            <!-- A second group-left starts the sub-osc column. The sub
+                 fundamental shares OSC1's pitch but is its own source, so
+                 it lives in its own column rather than under either OSC. -->
+            <div class="rotary group-left" data-osc="/osc/sub/volume" data-label="Sub Vol"></div>
             <div class="col">
               <div class="toggle" data-osc="/osc/sub/low" data-label="Sub -2 oct">−2 Oct</div>
               <div class="toggle" data-osc="/osc/sub/square" data-label="Sub Sq">Square</div>
-              <div class="toggle" data-osc="/osc/2/keytrack" data-label="OSC2 Keytrack">OSC2 Track</div>
             </div>
           </div>
         </div>
         <div class="osc-engine-panel" data-engine="wt">
-          <div class="row">
-            <div class="select vertical" data-osc="/osc/1/waveset"
+          <!-- Each bank picker is a labeled horizontal pill row. Per-OSC
+               context is explicit in the prefix instead of inferred from
+               column position; total panel height drops from ~95px (vertical
+               5-stack) to ~50px (two horizontal rows). The OSC1↔OSC2 column
+               border in the OSC row above doesn't extend through this layout
+               (no vertical column boundary inside a horizontal row), but the
+               labels remove any ambiguity about which picker is which. -->
+          <div class="row bank-row">
+            <span class="bank-label">OSC 1 Bank</span>
+            <div class="select" data-osc="/osc/1/waveset"
                  data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
-            <div class="select vertical" data-osc="/osc/2/waveset"
+          </div>
+          <div class="row bank-row">
+            <span class="bank-label">OSC 2 Bank</span>
+            <div class="select" data-osc="/osc/2/waveset"
                  data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
           </div>
         </div>
-        <!-- Common controls — apply across all engines -->
+        <!-- Common controls — apply across all engines. Ordered by signal
+             flow: extra sources & blending (Noise, Mix, Ringmod) first,
+             then voicing (Glide), then section output (Gain). Ringmod sits
+             here rather than in the OSC2 cluster because it's an OSC1→OSC2
+             cross-modulator analogous to Sync, not an OSC2-only param.
+             Gain is push-right + group-left so it reads as the section's
+             output stage, separated from the source/voicing controls. -->
         <div class="row group-top">
           <div class="rotary" data-osc="/osc/noiselevel" data-label="Noise"></div>
           <div class="rotary" data-osc="/osc/mix" data-label="1 Mix 2" data-mix></div>
+          <div class="rotary" data-osc="/osc/2/am" data-label="Ringmod"></div>
           <div class="rotary" data-osc="/osc/gliderate" data-label="Glide"></div>
-          <div class="rotary" data-osc="/osc/gain" data-label="Gain"></div>
+          <div class="rotary group-left push-right" data-osc="/osc/gain" data-label="Gain"></div>
         </div>
       </div>
 

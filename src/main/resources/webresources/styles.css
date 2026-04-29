@@ -321,6 +321,20 @@ body[data-osc-mode="wt"]   .osc-engine-panel[data-engine="wt"] { display: block;
 body[data-osc-mode="blep"] .osc-wave-slot .rotary { display: none; }
 body[data-osc-mode="blep"] .osc-wave-slot .osc-wave-select { display: flex; }
 
+/* VA-only inline element living in the OSC row (e.g. OSC2 Track). Hidden
+   by default, shown when the engine is VA. align-self: center keeps the
+   toggle from being stretched to fill the row's height (the tall wave
+   selects in VA mode would otherwise pull it to ~95px). */
+.va-only-inline { display: none; align-self: center; }
+body[data-osc-mode="blep"] .va-only-inline { display: block; }
+
+/* WT bank picker rows: horizontal labeled pill row per OSC. The label
+   acts as a per-OSC eyebrow so users don't have to infer context from
+   column position. min-width on the label keeps both pickers' option
+   pills left-aligned regardless of label length. */
+.bank-row { gap: 12px; align-items: center; padding: 4px 0; }
+.bank-label { color: var(--color-darkened); min-width: 80px; font-size: 12px; }
+
 body .delay-digital-only { visibility: hidden; }
 body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
 
@@ -425,6 +439,20 @@ body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
     text-shadow: 0 0 1px #000;
   }
 }
+
+/* When .group-left is applied directly to a rotary, its 10px padding-left
+   shifts the absolutely-positioned label / value (anchored to the padding
+   box) ~5px right of the canvas center. Compensate by shifting their left
+   edge by the same amount so they re-center on the canvas. */
+.rotary.group-left > label,
+.rotary.group-left > .value {
+  left: 10px;
+}
+
+/* Pushes a flex item to the right edge of its row, absorbing all free
+   space into its left margin. Used on the Gain rotary so it visually
+   separates from the source / voicing controls in the common row. */
+.push-right { margin-left: auto; }
 
 .fader {
   font-size: 12px;
