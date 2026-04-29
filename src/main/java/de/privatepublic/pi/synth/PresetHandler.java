@@ -70,12 +70,18 @@ public class PresetHandler {
 	 * <ul>
 	 *   <li>1 (implicit, no field) — original 3-mode oscillator selector
 	 *       ({@code OSC_MODE} mapping 0/0.5/1.0 → VA/ADD/EXC).</li>
-	 *   <li>2 — 4-mode selector with BLEP added; {@code OSC_MODE} 0/0.333/0.667/1.0
-	 *       → VA/ADD/EXC/BLEP. Loads from version 1 are remapped through
-	 *       {@link #migrateOscModeFromV1}.</li>
+	 *   <li>2 — 4-mode selector with BLEP added at the end:
+	 *       {@code OSC_MODE} 0/0.333/0.667/1.0 → VA/ADD/EXC/BLEP. Loads from
+	 *       version 1 are remapped through {@link #migrateOscModeFromV1}.</li>
+	 *   <li>3 — enum reordered + renamed for the rewritten UI:
+	 *       {@code OSC_MODE} 0/0.333/0.667/1.0 → BLEP/WAVETABLE/ADDITIVE/EXITER.
+	 *       Loads from version 2 are remapped through
+	 *       {@link #migrateOscModeFromV2} so a v2 wavetable patch still loads
+	 *       as wavetable, etc. v1 patches go through both migrations in order.
+	 *       </li>
 	 * </ul>
 	 */
-	private static final int CURRENT_PATCH_VERSION = 2;
+	private static final int CURRENT_PATCH_VERSION = 3;
 
 	private static JSONObject createJSONFromCurrentPatch(String name, PatchCategory category) {
 		JSONObject preset = new JSONObject();
@@ -105,6 +111,19 @@ public class PresetHandler {
 	private static float migrateOscModeFromV1(final float oldVal) {
 		final int oldOrdinal = Math.round(oldVal * 2);  // 0=VA, 1=ADD, 2=EXC
 		return oldOrdinal / 3f;
+	}
+
+	/**
+	 * Remap a v2 OSC_MODE value (4-value selector, ordinals 0=VA, 1=ADD,
+	 * 2=EXC, 3=BLEP) into the v3 ordinal space (0=BLEP, 1=WAVETABLE,
+	 * 2=ADDITIVE, 3=EXITER). The transformation is a single rotation:
+	 * (oldOrdinal + 1) % 4 — BLEP wraps from slot 3 back to slot 0,
+	 * everything else shifts up one slot.
+	 */
+	private static float migrateOscModeFromV2(final float oldVal) {
+		final int oldOrdinal = Math.round(oldVal * 3);
+		final int newOrdinal = (oldOrdinal + 1) % 4;
+		return newOrdinal / 3f;
 	}
 	
 //	private static JSONObject createJSONFromCurrentPatch(String name) {
@@ -162,10 +181,15 @@ public class PresetHandler {
 								}
 							}
 							// Apply migrations after all params are loaded, so we operate on the
-							// final assembled state. v1 patches have a 3-value OSC_MODE; remap
-							// to the 4-value space so EXC stays EXC instead of becoming BLEP.
+							// final assembled state. v1 → v2 expanded OSC_MODE from 3 modes
+							// to 4 (BLEP appended). v2 → v3 reordered to put BLEP first
+							// and renamed VIRTUAL_ANALOG → WAVETABLE. v1 patches walk
+							// both steps in order.
 							if (patchVersion < 2) {
 								P.set(P.OSC_MODE, migrateOscModeFromV1(P.VAL[P.OSC_MODE]));
+							}
+							if (patchVersion < 3) {
+								P.set(P.OSC_MODE, migrateOscModeFromV2(P.VAL[P.OSC_MODE]));
 							}
 //							if (params.length()<P.DELAY_RATE+1) { // TODO fix old patch files!
 //								// saved before delay params were introduced

@@ -14,7 +14,11 @@ import { initMatrix } from "./matrix.js";
 import { initKeyboard } from "./keyboard.js";
 import { initWaveform } from "./waveform.js";
 
-const OSC_MODE_NAMES = ["va", "add", "exc", "blep"];
+// Mode index → CSS body attribute value. Order matches the engine enum:
+// BLEP = 0 (the polyBLEP "VA" oscillator), WAVETABLE = 1, ADDITIVE = 2,
+// EXITER = 3. The "blep" string here is what triggers the BLEP subpanel
+// reveal via body[data-osc-mode="blep"] .blep-only.
+const OSC_MODE_NAMES = ["blep", "wt", "add", "exc"];
 
 document.addEventListener("DOMContentLoaded", () => {
 	// Connect first so onParam handlers below are registered before the
@@ -50,7 +54,7 @@ function wireConditionalSubpanels() {
 	// in BLEP mode.
 	socket.onParam("/osc/mode", (v) => {
 		const mode = Math.round(v * 3);
-		document.body.dataset.oscMode = OSC_MODE_NAMES[mode] || "va";
+		document.body.dataset.oscMode = OSC_MODE_NAMES[mode] || "blep";
 	});
 
 	// /fx/delay/type — 0=tape, >0=digital. Right-channel rate knob is only

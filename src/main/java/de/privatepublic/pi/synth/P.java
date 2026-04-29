@@ -19,10 +19,10 @@ public class P {
 	private static final Logger log = LoggerFactory.getLogger(P.class);
 	
 	public static enum OscillatorMode {
-		VIRTUAL_ANALOG,
+		BLEP,
+		WAVETABLE,
 		ADDITIVE,
-		EXITER,
-		BLEP
+		EXITER
 	}
 	
 	/** Filter types */
@@ -149,7 +149,7 @@ public class P {
 	
 	public static FilterType[] VAL_FILTER_TYPE_FOR = new FilterType[] {FilterType.LOWPASS, FilterType.ALLPASS};
 	public static FilterRouting VAL_FILTER_ROUTING = FilterRouting.SERIAL;
-	public static OscillatorMode VAL_OSCILLATOR_MODE = OscillatorMode.VIRTUAL_ANALOG;
+	public static OscillatorMode VAL_OSCILLATOR_MODE = OscillatorMode.WAVETABLE;
 	
 	public static int MIDI_CHANNEL = 1 -1; // CAUTION 0-based
 	public static int PORT_HTTP = 31415;

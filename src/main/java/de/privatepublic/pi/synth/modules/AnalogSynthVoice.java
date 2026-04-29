@@ -17,7 +17,7 @@ import de.privatepublic.pi.synth.modules.osc.WaveTableOscillator;
 public class AnalogSynthVoice {
 
 	/**
-	 * Toggles the buffer-rate oscillator path for VIRTUAL_ANALOG mode.
+	 * Toggles the buffer-rate oscillator path for WAVETABLE mode.
 	 * Flip this and observe {@code SynthPiAudioClient.LOAD} to A/B the win.
 	 */
 	public static boolean USE_BUFFER_PATH = true;
@@ -370,7 +370,7 @@ public class AnalogSynthVoice {
 				osc1=osc1_blep;
 				osc2=osc2_blep;
 				break;
-			case VIRTUAL_ANALOG:
+			case WAVETABLE:
 			default:
 				osc1=osc1_va;
 				osc2=osc2_va;
@@ -404,7 +404,7 @@ public class AnalogSynthVoice {
 						osc1=osc1_blep;
 						osc2=osc2_blep;
 						break;
-					case VIRTUAL_ANALOG:
+					case WAVETABLE:
 					default:
 						osc1=osc1_va;
 						osc2=osc2_va;
@@ -441,7 +441,7 @@ public class AnalogSynthVoice {
 			osc1=osc1_blep;
 			osc2=osc2_blep;
 			break;
-		case VIRTUAL_ANALOG:
+		case WAVETABLE:
 		default:
 			osc1=osc1_va;
 			osc2=osc2_va;
@@ -481,7 +481,7 @@ public class AnalogSynthVoice {
 			osc1=osc1_blep;
 			osc2=osc2_blep;
 			break;
-		case VIRTUAL_ANALOG:
+		case WAVETABLE:
 		default:
 			osc1=osc1_va;
 			osc2=osc2_va;
@@ -571,7 +571,7 @@ public class AnalogSynthVoice {
 				osc1_blep.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
 				osc2_blep.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
 				break;
-			case VIRTUAL_ANALOG:
+			case WAVETABLE:
 			default:
 				osc1_va.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
 				osc2_va.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);

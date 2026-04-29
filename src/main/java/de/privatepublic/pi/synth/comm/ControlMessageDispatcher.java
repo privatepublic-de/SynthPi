@@ -313,7 +313,7 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				// send waveform values	
 				int oscNumber = (paramIndex==P.OSC1_WAVE || paramIndex==P.OSC1_WAVE_SET)?1:2;
 				int[] values;
-				if (P.VAL_OSCILLATOR_MODE==P.OscillatorMode.VIRTUAL_ANALOG) {
+				if (P.VAL_OSCILLATOR_MODE==P.OscillatorMode.WAVETABLE) {
 					values = (oscNumber==1)?WaveTables.waveValues(50, P.VAL[P.OSC1_WAVE_SET], P.VAL[P.OSC1_WAVE]):WaveTables.waveValues(50, P.VAL[P.OSC2_WAVE_SET],  P.VAL[P.OSC2_WAVE]);
 				}
 				else {
