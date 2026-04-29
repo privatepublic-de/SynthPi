@@ -577,7 +577,7 @@ public class PresetHandler {
 	public static void main(String[] args) {
 		String filepath = "./src/main/resources/factory-patches.json";
 		try {
-			String data = IOUtils.toString(new FileInputStream(filepath));
+			String data = IOUtils.toString(new FileInputStream(filepath), java.nio.charset.StandardCharsets.UTF_8);
 			JSONArray array = new JSONArray(data);
 			JSONArray out = new JSONArray();
 			for (int i=0;i<array.length();i++) {

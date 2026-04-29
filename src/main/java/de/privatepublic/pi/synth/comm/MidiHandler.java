@@ -1,7 +1,7 @@
 package de.privatepublic.pi.synth.comm;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -457,7 +457,7 @@ public class MidiHandler {
 					}
 				}
 			}
-		} catch (IOException e) {
+		} catch (UncheckedIOException e) {
 			log.error("Error loading midi parameter mapping - using basic default!");
 		}
 		
