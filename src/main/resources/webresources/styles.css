@@ -28,7 +28,23 @@ body {
   padding: 6px 12px;
   font-size: 12px;
   color: var(--color-darkened);
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
+#status .status-spacer { flex: 1; }
+#patch-name { font-weight: bold; color: #ddd; }
+#status button {
+  background: transparent;
+  border: 1px solid var(--color-dark);
+  color: #ddd;
+  padding: 3px 10px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+}
+#status button:hover { background: var(--color-dark); }
 body.connecting #status .connstate::before {
   content: "connecting… ";
   color: var(--tint-1);
@@ -38,6 +54,132 @@ body.connected #status .connstate::before {
   color: var(--tint-4);
 }
 body.connecting .row { opacity: 0.3; pointer-events: none; }
+
+/* Modal dialogs: dimmer overlay covers the rest of the page; one of the
+   .modal panels appears centered. patches.js toggles the .shown class. */
+#dimmer {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: none;
+  z-index: 100;
+}
+#dimmer.shown { display: block; }
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--color-body);
+  border: 2px solid var(--color-dark);
+  border-radius: var(--border-radius);
+  padding: 16px 20px;
+  display: none;
+  z-index: 101;
+  max-height: 85vh;
+  min-width: 480px;
+  max-width: 90vw;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+.modal.shown { display: block; }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 1px solid var(--color-dark);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #ddd;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--tint-1); }
+.modal-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--color-dark); }
+.modal .headline {
+  color: var(--color-darkened);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 12px 0 6px;
+}
+.modal .headline:first-child { margin-top: 0; }
+
+.patch-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 1px 0;
+}
+.patch-entry {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background-color: var(--color-dim);
+  color: #ddd;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-size: 13px;
+}
+.patch-entry:hover { background-color: var(--color-dark); }
+.patch-entry .category {
+  font-size: 10px;
+  color: var(--color-darkened);
+  min-width: 64px;
+  text-transform: uppercase;
+}
+.patch-entry.init {
+  text-align: center;
+  font-style: italic;
+  color: var(--tint-3);
+}
+.patch-delete {
+  padding: 4px 10px;
+  background-color: var(--color-dim);
+  color: var(--color-darkened);
+  text-decoration: none;
+  border-radius: var(--border-radius);
+}
+.patch-delete:hover { background-color: var(--tint-1); color: #fff; }
+.patch-sep { height: 6px; }
+
+.save-form {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.save-form label { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+.save-form input,
+.save-form select {
+  background: var(--color-dim);
+  border: 1px solid var(--color-dark);
+  color: #ddd;
+  padding: 4px 8px;
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 13px;
+}
+.save-form input { min-width: 200px; }
+.save-form #savebutton {
+  background: var(--tint-4);
+  border: none;
+  color: #000;
+  padding: 5px 14px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: bold;
+}
+.save-form #savebutton:hover { background: var(--tint-3); }
 
 /* Mode-conditional subpanels: hidden unless the parent mode matches.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]

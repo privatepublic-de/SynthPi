@@ -150,7 +150,8 @@ public class JettyWebServerInterface {
 			// commit it's introduced or the server returns 404 in production.
 			"app.js",
 			"controls.js",
-			"socket.js"
+			"socket.js",
+			"patches.js"
 		};
 		
 		private String mimeType;

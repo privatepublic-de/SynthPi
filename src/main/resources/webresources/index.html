@@ -9,7 +9,15 @@
     <script type="module" src="app.js"></script>
   </head>
   <body class="connecting">
-    <div id="status"><span class="connstate"></span></div>
+    <div id="status">
+      <span class="connstate"></span>
+      <span id="patch-name">INITIAL</span>
+      <span class="status-spacer"></span>
+      <button id="btn-load">Load</button>
+      <button id="btn-save">Save</button>
+      <button id="btn-init">Init</button>
+      <button id="btn-random">Random</button>
+    </div>
 
     <!-- Row 1: Oscillators | Filter 1 | Filter Routing | Filter 2 -->
     <div class="row">
@@ -242,6 +250,31 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal overlay + dialogs (patches.js opens / closes them). -->
+    <div id="dimmer"></div>
+    <div id="patchlistwindow" class="modal">
+      <div class="modal-header">
+        <span>Load Patch</span>
+        <button class="modal-close" type="button">×</button>
+      </div>
+      <div class="listcontent"></div>
+    </div>
+    <div id="savepatchwindow" class="modal">
+      <div class="modal-header">
+        <span>Save Patch</span>
+        <button class="modal-close" type="button">×</button>
+      </div>
+      <div class="save-form">
+        <label>Name <input type="text" id="savename" /></label>
+        <label>Category <select id="savecategory"></select></label>
+        <button id="savebutton" type="button">Save as new</button>
+      </div>
+      <div class="modal-section">
+        <div class="headline">Or overwrite an existing patch</div>
+        <div class="existing-patches"></div>
       </div>
     </div>
   </body>

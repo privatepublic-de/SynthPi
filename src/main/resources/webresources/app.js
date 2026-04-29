@@ -7,6 +7,7 @@
 
 import { socket } from "./socket.js";
 import { Rotary, Fader, Toggle, Select } from "./controls.js";
+import { initPatches } from "./patches.js";
 
 const OSC_MODE_NAMES = ["va", "add", "exc", "blep"];
 const OSC_MODE_LABELS = ["VA", "ADD", "EXC", "BLEP"];
@@ -21,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	document.querySelectorAll(".toggle").forEach((el) => new Toggle(el));
 	document.querySelectorAll(".select").forEach((el) => new Select(el));
 
+	initPatches();
 	wireConditionalSubpanels();
 });
 
