@@ -498,6 +498,22 @@ body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
   }
 }
 
+/* 2-column grid variant — used by the LFO type picker so the section
+   doesn't have to be ~340px wide just to fit the title row. Column-major
+   flow: items 1..3 fill the left column top-to-bottom, items 4..6 the
+   right column. Equal column widths so the option highlights line up. */
+.select.grid-2 {
+  display: grid;
+  grid-template-rows: repeat(3, auto);
+  grid-template-columns: 1fr 1fr;
+  grid-auto-flow: column;
+  gap: 2px 4px;
+  .option {
+    margin: 0;
+    text-align: left;
+  }
+}
+
 .toggle {
   user-select: none;
   cursor: pointer;
