@@ -23,6 +23,23 @@ public class AnalogSynthVoice {
 
 	private final EnvADSR envelope;
 	private final EnvADSR modEnvelope;
+	/**
+	 * Per-voice second mod envelope, parallel to {@link #modEnvelope}. Triggers
+	 * with the amp envelope; advances per sample inside the chunk loop. Read by
+	 * the BlepOscillator (Phase 5) via env2.outValue and the new MOD_ENV2_*
+	 * mod-target depths in P. Existing oscillators don't read env2 — adding it
+	 * here is inert behavior-wise; it's just kept up to date so it's ready when
+	 * Blep mode lands.
+	 */
+	private final EnvADSR env2 = new EnvADSR(P.ENV_CONF_MOD_ENV2);
+	/**
+	 * Per-voice LFO instance. Runs in parallel with {@link LFO#GLOBAL} (which
+	 * existing oscillators continue to read from in Phase 4). State evolves
+	 * independently — each voice can have a distinct LFO phase, which the
+	 * BlepOscillator (Phase 5) takes advantage of for richer per-voice
+	 * modulation. Until then, this field is updated but not consumed.
+	 */
+	private final LFO lfo = new LFO();
 
 	private final WaveTableOscillator osc1_va = new WaveTableOscillator(IOscillator.PRIMARY_OSC);
 	private final WaveTableOscillator osc2_va = new WaveTableOscillator(IOscillator.SECONDARY_OSC);
@@ -356,6 +373,7 @@ public class AnalogSynthVoice {
 			filter2.trigger(frequency, velocity);
 			envelope.noteOn(velocity);
 			modEnvelope.noteOn(1);
+			env2.noteOn(1);
 			AnalogSynth.lastTriggeredFrequency = frequency;
 		}
 		else {
@@ -385,6 +403,7 @@ public class AnalogSynthVoice {
 					filter2.trigger(frequency, velocity);
 					envelope.noteOn(velocity);
 					modEnvelope.noteOn(1);
+					env2.noteOn(1);
 					AnalogSynth.lastTriggeredFrequency = frequency;
 				}
 			});
@@ -419,6 +438,7 @@ public class AnalogSynthVoice {
 	public void noteOff() {
 		envelope.noteOff();
 		modEnvelope.noteOff();
+		env2.noteOff();
 		filter1.noteOff();
 		filter2.noteOff();
 	}
@@ -503,11 +523,18 @@ public class AnalogSynthVoice {
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
 		filter1.updateFreqResponse();
 		filter2.updateFreqResponse();
+		// Per-voice LFO render for this chunk. Existing oscillators read from
+		// LFO.GLOBAL; only BlepOscillator (Phase 5) reads this per-voice LFO.
+		// Until then, the calls are state-evolving but functionally invisible.
+		lfo.renderBuffer(nframes);
 
 		if (USE_BUFFER_PATH) {
 			// Pre-render mod envelope so both oscillators see identical trajectory.
+			// env2 advances in lockstep but its outValue is unused until Phase 5
+			// wires it into BlepOscillator's modulation matrix.
 			for (int i=0; i<nframes; i++) {
 				modEnvBuf[i] = modEnvelope.nextValue();
+				env2.nextValue();
 			}
 			// Mode-specific dispatch: one buffer call per oscillator, statically typed.
 			switch (P.VAL_OSCILLATOR_MODE) {
@@ -541,6 +568,7 @@ public class AnalogSynthVoice {
 		else {
 			for (int i=0;i<nframes;i++) {
 				modEnvelope.nextValue();
+				env2.nextValue();
 				noiseX2 += noiseX1;
 				noiseX1 ^= noiseX2;
 				noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
@@ -550,6 +578,7 @@ public class AnalogSynthVoice {
 				am_buffer[i] = 0;
 			}
 		}
+		lfo.nextBufferSlice(nframes);
 	}
 	
 	

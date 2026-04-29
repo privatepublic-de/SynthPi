@@ -232,6 +232,14 @@ public class MidiHandler {
 					PresetHandler.loadPatchFromProgramNumber(data1);
 					ControlMessageDispatcher.INSTANCE.updateAllParams();
 				}
+				else if (command==ShortMessage.CHANNEL_PRESSURE) {
+					// Aftertouch (channel pressure) — data1 carries the 0..127 value.
+					// Update target only; P.interpolate() smooths CHANNEL_PRESSURE
+					// toward CHANNEL_PRESSURE_TARGET each audio buffer. Phase 4 wires
+					// the input; Phase 5 (BlepOscillator) consumes it via
+					// MOD_PRESS_PITCH/PITCH2/FILTER/LFO depths.
+					P.CHANNEL_PRESSURE_TARGET = data1 / 127f;
+				}
 			}
 
 		}

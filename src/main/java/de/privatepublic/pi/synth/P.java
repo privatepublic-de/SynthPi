@@ -691,6 +691,11 @@ public class P {
 				setDirectly(pi, (y1*(1-stepfactor)+y2*stepfactor), false);
 			}
 		}
+		// Smooth CHANNEL_PRESSURE toward its target. One-pole low-pass (per audio
+		// buffer ~= 375 Hz at default settings) to take the edge off MIDI 7-bit
+		// staircase. Only matters once Phase 5 wires CHANNEL_PRESSURE into the
+		// modulation matrix; until then it's an inert state update.
+		CHANNEL_PRESSURE += (CHANNEL_PRESSURE_TARGET - CHANNEL_PRESSURE) * 0.25f;
 	}
 	
 	
