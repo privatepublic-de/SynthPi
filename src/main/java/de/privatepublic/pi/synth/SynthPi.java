@@ -216,7 +216,7 @@ public class SynthPi {
 	private static Integer getOptionInt(CommandLine commandline, String optionKey, int min, int max) {
 		if (commandline.hasOption(optionKey)) {
 			try {
-				Integer result = new Integer(commandline.getOptionValue(optionKey));
+				Integer result = Integer.valueOf(commandline.getOptionValue(optionKey));
 				if (result<min || result>max) {
 					logger.debug("Argument value -{} out of range ({}-{})", optionKey, min, max);	
 				}
