@@ -52,11 +52,24 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	
 	@Override
 	public void process(final List<FloatBuffer> outbuffers, final int nframes) {
-		// Pre-render LFO into a buffer so voices and static helpers can read it
-		// via array load instead of recomputing (int)(offset + inc*i) per call.
-		LFO.GLOBAL.renderBuffer(nframes);
-		for (int i=0; i<P.POLYPHONY; i++) {
-			voices[i].process(outputs, nframes);
+		// Control-rate chunking: slice the audio buffer into fixed CONTROL_BUFFER_SIZE
+		// chunks. For each chunk, render LFO.GLOBAL for the chunk's worth of samples,
+		// run all voices on that chunk, then advance LFO state. This puts every voice's
+		// per-chunk hoisted reads (in their processBuffer1st/2nd) at control rate
+		// (~3 kHz at default settings) — a finer modulation grain than the previous
+		// per-buffer rate (~375 Hz) — without changing the FX chain, which still runs
+		// once per audio buffer on the assembled stereo output.
+		final int chunkLen = P.CONTROL_BUFFER_SIZE;
+		for (int chunkStart = 0; chunkStart < nframes; chunkStart += chunkLen) {
+			// Clamp the last chunk if nframes isn't a multiple of CONTROL_BUFFER_SIZE
+			// (defaults are: 128 / 16 = 8 even chunks). Without this, a user-set
+			// -audiobuffersize that isn't a multiple of 16 would write past nframes.
+			final int thisChunkLen = Math.min(chunkLen, nframes - chunkStart);
+			LFO.GLOBAL.renderBuffer(thisChunkLen);
+			for (int v = 0; v < P.POLYPHONY; v++) {
+				voices[v].process(outputs, chunkStart, thisChunkLen);
+			}
+			LFO.GLOBAL.nextBufferSlice(thisChunkLen);
 		}
 		distort.process(nframes, outputs);
 		chorus.process(nframes, outputs);
@@ -83,7 +96,6 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 			// clear while copying
 			outputL[i] = outputR[i] = 0;
 		}
-		LFO.GLOBAL.nextBufferSlice(nframes);
 	}
 
 	

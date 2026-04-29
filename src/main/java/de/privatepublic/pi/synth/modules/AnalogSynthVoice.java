@@ -72,224 +72,224 @@ public class AnalogSynthVoice {
 	
 	private RouteFilters filtersAllOff = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
 			filter2.processSample(in2, sampleNo);
-			outL[sampleNo] += (in1 + in2*width)*env;
-			outR[sampleNo] += (in1*width + in2)*env;
+			outL[startPos+sampleNo] += (in1 + in2*width)*env;
+			outR[startPos+sampleNo] += (in1*width + in2)*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float a = in1[sampleNo];
 				final float b = in2[sampleNo];
 				filter1.processSample(a, sampleNo);
 				filter2.processSample(b, sampleNo);
 				final float env = envBuf[sampleNo];
-				outL[sampleNo] += (a + b*width)*env;
-				outR[sampleNo] += (a*width + b)*env;
+				outL[startPos+sampleNo] += (a + b*width)*env;
+				outR[startPos+sampleNo] += (a*width + b)*env;
 			}
 		}
 	};
 	
 	private RouteFilters filtersSerial1On2Off = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			filter2.processSample(in2, sampleNo);
 			final float val = filter1.processSample(in1+in2, sampleNo);
 			// serial is mono only
-			outL[sampleNo] += val*env;
-			outR[sampleNo] += val*env;
+			outL[startPos+sampleNo] += val*env;
+			outR[startPos+sampleNo] += val*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float b = in2[sampleNo];
 				filter2.processSample(b, sampleNo);
 				final float val = filter1.processSample(in1[sampleNo]+b, sampleNo);
 				final float scaled = val*envBuf[sampleNo];
-				outL[sampleNo] += scaled;
-				outR[sampleNo] += scaled;
+				outL[startPos+sampleNo] += scaled;
+				outR[startPos+sampleNo] += scaled;
 			}
 		}
 	};
 	
 	private RouteFilters filtersSerial1On2On = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			// serial is mono only
 			final float val = filter2.processSample(filter1.processSample(in1+in2, sampleNo), sampleNo);
-			outL[sampleNo] += val*env;
-			outR[sampleNo] += val*env;
+			outL[startPos+sampleNo] += val*env;
+			outR[startPos+sampleNo] += val*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float val = filter2.processSample(filter1.processSample(in1[sampleNo]+in2[sampleNo], sampleNo), sampleNo);
 				final float scaled = val*envBuf[sampleNo];
-				outL[sampleNo] += scaled;
-				outR[sampleNo] += scaled;
+				outL[startPos+sampleNo] += scaled;
+				outR[startPos+sampleNo] += scaled;
 			}
 		}
 	};
 	
 	private RouteFilters filtersSerial1Off2On = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
 			final float val = filter2.processSample(in1+in2, sampleNo);
 			// serial is mono only
-			outL[sampleNo] += val*env;
-			outR[sampleNo] += val*env;
+			outL[startPos+sampleNo] += val*env;
+			outR[startPos+sampleNo] += val*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float a = in1[sampleNo];
 				filter1.processSample(a, sampleNo);
 				final float val = filter2.processSample(a+in2[sampleNo], sampleNo);
 				final float scaled = val*envBuf[sampleNo];
-				outL[sampleNo] += scaled;
-				outR[sampleNo] += scaled;
+				outL[startPos+sampleNo] += scaled;
+				outR[startPos+sampleNo] += scaled;
 			}
 		}
 	};
 	
 	private RouteFilters filtersParallel1On2Off = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			filter2.processSample(in2, sampleNo);
 			final float val = in1+in2;
 			final float filtered1 = filter1.processSample(val, sampleNo)*P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
-			outL[sampleNo] += (filtered1 + in2*width)*env;
-			outR[sampleNo] += (filtered1*width + in2)*env;
+			outL[startPos+sampleNo] += (filtered1 + in2*width)*env;
+			outR[startPos+sampleNo] += (filtered1*width + in2)*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
 			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float a = in1[sampleNo];
 				final float b = in2[sampleNo];
 				filter2.processSample(b, sampleNo);
 				final float filtered1 = filter1.processSample(a+b, sampleNo) * mixHigh;
 				final float env = envBuf[sampleNo];
-				outL[sampleNo] += (filtered1 + b*width)*env;
-				outR[sampleNo] += (filtered1*width + b)*env;
+				outL[startPos+sampleNo] += (filtered1 + b*width)*env;
+				outR[startPos+sampleNo] += (filtered1*width + b)*env;
 			}
 		}
 	};
 	
 	private RouteFilters filtersParallel1On2On = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			final float val = in1+in2;
 			final float filtered1 = filter1.processSample(val, sampleNo)*P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
 			final float filtered2 = filter2.processSample(val, sampleNo)*P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			outL[sampleNo] += (filtered1 + filtered2*width)*env;
-			outR[sampleNo] += (filtered1*width + filtered2)*env;
+			outL[startPos+sampleNo] += (filtered1 + filtered2*width)*env;
+			outR[startPos+sampleNo] += (filtered1*width + filtered2)*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
 			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
 			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float val = in1[sampleNo] + in2[sampleNo];
 				final float filtered1 = filter1.processSample(val, sampleNo) * mixHigh;
 				final float filtered2 = filter2.processSample(val, sampleNo) * mixLow;
 				final float env = envBuf[sampleNo];
-				outL[sampleNo] += (filtered1 + filtered2*width)*env;
-				outR[sampleNo] += (filtered1*width + filtered2)*env;
+				outL[startPos+sampleNo] += (filtered1 + filtered2*width)*env;
+				outR[startPos+sampleNo] += (filtered1*width + filtered2)*env;
 			}
 		}
 	};
 	
 	private RouteFilters filtersParallel1Off2On = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
 			final float val = in1+in2;
 			final float filtered2 = filter2.processSample(val, sampleNo)*P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			outL[sampleNo] += (in1 + filtered2*width)*env;
-			outR[sampleNo] += (in1*width + filtered2)*env;
+			outL[startPos+sampleNo] += (in1 + filtered2*width)*env;
+			outR[startPos+sampleNo] += (in1*width + filtered2)*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
 			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float a = in1[sampleNo];
 				final float b = in2[sampleNo];
 				filter1.processSample(a, sampleNo);
 				final float filtered2 = filter2.processSample(a+b, sampleNo) * mixLow;
 				final float env = envBuf[sampleNo];
-				outL[sampleNo] += (a + filtered2*width)*env;
-				outR[sampleNo] += (a*width + filtered2)*env;
+				outL[startPos+sampleNo] += (a + filtered2*width)*env;
+				outR[startPos+sampleNo] += (a*width + filtered2)*env;
 			}
 		}
 	};
 	
 	private RouteFilters filtersPerOsc1On2Off = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			filter2.processSample(in2, sampleNo);
 			final float filtered1 = filter1.processSample(in1, sampleNo)*P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
-			outL[sampleNo] += (filtered1 + in2*width)*env;
-			outR[sampleNo] += (filtered1*width + in2)*env;
+			outL[startPos+sampleNo] += (filtered1 + in2*width)*env;
+			outR[startPos+sampleNo] += (filtered1*width + in2)*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
 			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float a = in1[sampleNo];
 				final float b = in2[sampleNo];
 				filter2.processSample(b, sampleNo);
 				final float filtered1 = filter1.processSample(a, sampleNo) * mixHigh;
 				final float env = envBuf[sampleNo];
-				outL[sampleNo] += (filtered1 + b*width)*env;
-				outR[sampleNo] += (filtered1*width + b)*env;
+				outL[startPos+sampleNo] += (filtered1 + b*width)*env;
+				outR[startPos+sampleNo] += (filtered1*width + b)*env;
 			}
 		}
 	};
 	
 	private RouteFilters filtersPerOsc1On2On = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			final float filtered1 = filter1.processSample(in1, sampleNo)*P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
 			final float filtered2 = filter2.processSample(in2, sampleNo)*P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			outL[sampleNo] += (filtered1 + filtered2*width)*env;
-			outR[sampleNo] += (filtered1*width + filtered2)*env;
+			outL[startPos+sampleNo] += (filtered1 + filtered2*width)*env;
+			outR[startPos+sampleNo] += (filtered1*width + filtered2)*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
 			final float mixHigh = P.VALMIXHIGH[P.FILTER_PARALLEL_MIX];
 			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float filtered1 = filter1.processSample(in1[sampleNo], sampleNo) * mixHigh;
 				final float filtered2 = filter2.processSample(in2[sampleNo], sampleNo) * mixLow;
 				final float env = envBuf[sampleNo];
-				outL[sampleNo] += (filtered1 + filtered2*width)*env;
-				outR[sampleNo] += (filtered1*width + filtered2)*env;
+				outL[startPos+sampleNo] += (filtered1 + filtered2*width)*env;
+				outR[startPos+sampleNo] += (filtered1*width + filtered2)*env;
 			}
 		}
 	};
 	
 	private RouteFilters filtersPerOsc1Off2On = new RouteFilters(filter1, filter2) {
 		@Override
-		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final float[] outL, final float[] outR) {
+		public void process(final float in1, final float in2, final float env, final float width, final int sampleNo, final int startPos, final float[] outL, final float[] outR) {
 			filter1.processSample(in1, sampleNo);
 			final float filtered2 = filter2.processSample(in2, sampleNo)*P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			outL[sampleNo] += (in1 + filtered2*width)*env;
-			outR[sampleNo] += (in1*width + filtered2)*env;
+			outL[startPos+sampleNo] += (in1 + filtered2*width)*env;
+			outR[startPos+sampleNo] += (in1*width + filtered2)*env;
 		}
 		@Override
-		public void processBuffer(final int nframes, final float[] in1, final float[] in2, final float[] envBuf, final float width, final float[] outL, final float[] outR) {
+		public void processBuffer(final int chunkLen, final float[] in1, final float[] in2, final float[] envBuf, final float width, final int startPos, final float[] outL, final float[] outR) {
 			final float mixLow = P.VALMIXLOW[P.FILTER_PARALLEL_MIX];
-			for (int sampleNo=0; sampleNo<nframes; sampleNo++) {
+			for (int sampleNo=0; sampleNo<chunkLen; sampleNo++) {
 				final float a = in1[sampleNo];
 				filter1.processSample(a, sampleNo);
 				final float filtered2 = filter2.processSample(in2[sampleNo], sampleNo) * mixLow;
 				final float env = envBuf[sampleNo];
-				outL[sampleNo] += (a + filtered2*width)*env;
-				outR[sampleNo] += (a*width + filtered2)*env;
+				outL[startPos+sampleNo] += (a + filtered2*width)*env;
+				outR[startPos+sampleNo] += (a*width + filtered2)*env;
 			}
 		}
 	};
@@ -426,7 +426,7 @@ public class AnalogSynthVoice {
 	private float noiseLevel = 0;
 	private float noiseModAmount = 0;
 	
-	public void process(final float[][] outbuffers, final int nframes) {
+	public void process(final float[][] outbuffers, final int startPos, final int nframes) {
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final boolean filter2on = P.IS[P.FILTER2_ON];
 		final IOscillator osc1;
@@ -535,7 +535,7 @@ public class AnalogSynthVoice {
 				osc2MixBuf[i] = osc2OutBuf[i] + noise_val;
 				envBuf[i] = envelope.nextValue() * (1 + LFO.lfoAmountAdd(i, modVol));
 			}
-			filterRoute.processBuffer(nframes, osc1MixBuf, osc2MixBuf, envBuf, width, outL, outR);
+			filterRoute.processBuffer(nframes, osc1MixBuf, osc2MixBuf, envBuf, width, startPos, outL, outR);
 			// am_buffer is fully overwritten by OSC1 each buffer, no per-sample reset needed.
 		}
 		else {
@@ -546,34 +546,38 @@ public class AnalogSynthVoice {
 				noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
 				osc1_val = osc1.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
 				osc2_val = osc2.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
-				filterRoute.process(osc1_val, osc2_val, envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol)), width, i, outL, outR);
+				filterRoute.process(osc1_val, osc2_val, envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol)), width, i, startPos, outL, outR);
 				am_buffer[i] = 0;
 			}
 		}
 	}
 	
 	
-	@SuppressWarnings("unused")	
+	@SuppressWarnings("unused")
 	private static abstract class RouteFilters {
-		
+
 		private MultiModeFilter filter1;
 		private MultiModeFilter filter2;
-		
+
 		public RouteFilters(MultiModeFilter filter1, MultiModeFilter filter2) {
 			this.filter1 = filter1;
 			this.filter2 = filter2;
-		}		
-		
-//		public abstract float process(float in1, float in2, int sampleNo);
-		public abstract void process(float in1, float in2, float env, float width, int sampleNo, float[] outL, float[] outR);
+		}
+
+		/**
+		 * Per-sample variant. {@code sampleNo} is the index within the current chunk
+		 * (0..chunkLen-1); {@code startPos} is the chunk's offset into the full audio
+		 * buffer, so writes to {@code outL/outR} use {@code startPos+sampleNo}.
+		 */
+		public abstract void process(float in1, float in2, float env, float width, int sampleNo, int startPos, float[] outL, float[] outR);
 
 		/**
 		 * Buffer-rate variant of {@link #process}. Reads pre-mixed oscillator+noise
-		 * inputs and a pre-rendered envelope buffer. Each subclass runs its own tight
-		 * monomorphic loop, so the call site in the voice's mix loop becomes one
-		 * vcall per buffer instead of one per sample.
+		 * inputs and a pre-rendered envelope buffer (all indexed 0..chunkLen-1, since
+		 * those are per-voice working buffers). Output buffers are full-size; indexing
+		 * uses {@code startPos+sampleNo}.
 		 */
-		public abstract void processBuffer(int nframes, float[] in1, float[] in2, float[] envBuf, float width, float[] outL, float[] outR);
+		public abstract void processBuffer(int chunkLen, float[] in1, float[] in2, float[] envBuf, float width, int startPos, float[] outL, float[] outR);
 
 	}
 
