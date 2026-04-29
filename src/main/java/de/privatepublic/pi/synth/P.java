@@ -679,6 +679,14 @@ public class P {
 		if (index==CHORUS_LFO_RATE || index==CHORUS_LFO_TYPE) {
 			return; // ugly, but these are immutable and only set by defaults
 		}
+		// Wave-set index is computed as (int)(val * WAVE_SET_COUNT) at every
+		// audio buffer; val == 1.0 would multiply to WAVE_SET_COUNT and walk
+		// off the end of the WAVES array. The MIDI path already caps inputs
+		// at 126/127; mirror that here so the websocket UI's 0..1 rotaries
+		// can't push the engine into an OOB read.
+		if (index==OSC1_WAVE_SET || index==OSC2_WAVE_SET) {
+			val = Math.min(val, 126f/127f);
+		}
 		TARGET_VAL[index] = val;
 		if (!isSetInterpolated(index)) {
 			setDirectly(index, val);
