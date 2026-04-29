@@ -15,7 +15,6 @@ import { initKeyboard } from "./keyboard.js";
 import { initWaveform } from "./waveform.js";
 
 const OSC_MODE_NAMES = ["va", "add", "exc", "blep"];
-const OSC_MODE_LABELS = ["VA", "ADD", "EXC", "BLEP"];
 
 document.addEventListener("DOMContentLoaded", () => {
 	// Connect first so onParam handlers below are registered before the
@@ -52,8 +51,6 @@ function wireConditionalSubpanels() {
 	socket.onParam("/osc/mode", (v) => {
 		const mode = Math.round(v * 3);
 		document.body.dataset.oscMode = OSC_MODE_NAMES[mode] || "va";
-		const label = document.getElementById("osc-mode-label");
-		if (label) label.textContent = OSC_MODE_LABELS[mode] || "VA";
 	});
 
 	// /fx/delay/type — 0=tape, >0=digital. Right-channel rate knob is only
