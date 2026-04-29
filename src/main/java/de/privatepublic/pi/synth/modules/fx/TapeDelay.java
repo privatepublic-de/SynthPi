@@ -51,7 +51,7 @@ public class TapeDelay extends DelayBase {
 			readindex = (writeIndex - lastrate);
 			if (readindex<0) {	readindex += delayLineSize; }
 			indexBase = (int)readindex;
-			indexFract = indexBase-indexBase;
+			indexFract = readindex-indexBase;
 			valL0 = delayLineL[indexBase];
 			valL1 = delayLineL[indexBase+1];
 			valR0 = delayLineR[indexBase];
