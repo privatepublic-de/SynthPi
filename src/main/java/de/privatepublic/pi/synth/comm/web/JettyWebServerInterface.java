@@ -142,11 +142,15 @@ public class JettyWebServerInterface {
 			"img/ic_shuffle_black_18dp.png",
 			"img/ic_shuffle_white_18dp.png",
 			"index.html",
-			"jquery-2.1.4.min.js",
-			"jquery.color-2.1.2.min.js",
-			"jquery.knob.min.js",
 			"styles.css",
-			"synthcontrol.js"
+			// Vanilla-JS UI modules (replacing the jQuery UI). Phase 1 ships
+			// app.js / controls.js / socket.js; later phases add more modules
+			// (panels.js, patches.js, settings.js, learn.js, matrix.js, etc.)
+			// — each new file must be appended to this array in the same
+			// commit it's introduced or the server returns 404 in production.
+			"app.js",
+			"controls.js",
+			"socket.js"
 		};
 		
 		private String mimeType;
@@ -164,12 +168,15 @@ public class JettyWebServerInterface {
 			if (in!=null) {
 				data = IOUtils.toByteArray(in);
 				mimeType = URLConnection.guessContentTypeFromName(filename);
-				if (mimeType==null) {
+				if (mimeType==null || (filename.endsWith(".js") && !mimeType.contains("javascript"))) {
 					if (filename.endsWith(".css")) {
 						mimeType = "text/css";
 					}
 					else if (filename.endsWith(".js")) {
-						mimeType = "application/x-javascript";
+						// ES modules require "text/javascript" or "application/javascript".
+						// Some JVMs return "application/x-javascript" which Chrome/Safari
+						// refuse to load as a module — force the spec-compliant string.
+						mimeType = "application/javascript";
 					}
 					else {
 						mimeType = "application/octet-stream";
