@@ -55,8 +55,8 @@ public class MultiModeFilter {
 		filterEnv.noteOff();
 	}
 
-	private float frq, K, Q, QtimesK, a, b, A0, A1, A2, B1, A3, A5, stage1, input;
-	private float frqOffset, state0, state1, state2, state3, gain;
+	private float frq, Q, G, Gm1, G4, moogK;
+	private float frqOffset, state0, state1, state2, state3;
 	private float f1, damp;
 //	private float y_l0, y_l1, y_b0, y_b1, y_h1; 
 //	private float f1 = 0;
@@ -80,29 +80,12 @@ public class MultiModeFilter {
 				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
 		if (type==FilterType.LOWPASS24) {
-		
-			Q = 1-P.VAL[p_resonance];
-			gain = (float) Math.sqrt(Q);
-	
-			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
-			QtimesK = Q * K;
-			a = 0.76536686473f * QtimesK;
-			b = 1.84775906502f * QtimesK;
-			K = K*K;
-	
-			A0 = (K+a+1);
-			A1 = 2*(1-K);
-			A2 =(a-K-1);
-	//		final float B0 = K;
-			B1 = 2*K;
-	//		final float B2 = B0;
-	
-			A3 = (K+b+1);
-	//		final float A4 = 2*(1-K);
-			A5 = (b-K-1);
-	//		final float B3 = K;
-	//		final float B4 = 2*B3;
-	//		final float B5 = B3; 
+			float correctedFrq = Math.min(frq * 2.3f, P.SAMPLE_RATE_HZ * 0.45f);
+			float g = (float) Math.tan(Math.PI * correctedFrq / P.SAMPLE_RATE_HZ);
+			G = g / (1f + g);
+			Gm1 = 1f - G;
+			G4 = G * G * G * G;
+			moogK = P.VAL[p_resonance] * 3.99f;
 		}
 		else {
 			Q = P.VAL[p_resonance];
@@ -131,40 +114,18 @@ public class MultiModeFilter {
 //				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
 		if (type==FilterType.LOWPASS24) {
-//			Q = 1-P.VAL[p_resonance];
-//			gain = (float) Math.sqrt(Q);
-//
-//			K = (float) Math.tan(Math.PI*frq/P.SAMPLE_RATE_HZ);
-//			QtimesK = Q * K;
-//			a = 0.76536686473f * QtimesK;
-//			b = 1.84775906502f * QtimesK;
-//			K = K*K;
-//
-//			A0 = (K+a+1);
-//			A1 = 2*(1-K);
-//			A2 =(a-K-1);
-////			final float B0 = K;
-//			B1 = 2*K;
-////			final float B2 = B0;
-//
-//			A3 = (K+b+1);
-////			final float A4 = 2*(1-K);
-//			A5 = (b-K-1);
-////			final float B3 = K;
-////			final float B4 = 2*B3;
-////			final float B5 = B3; 
-
-			input = inValue*gain;
-
-			stage1 = K*input + state0;
-			state0 = B1*input + A1/A0*stage1 + state1;
-			state1 = K*input + A2/A0*stage1;
-
-			input = K*stage1 + state2; // gain??
-			state2 = B1*stage1 + A1/A3*input + state3;
-			state3 = K*stage1 + A5/A3*input;
-			return input;
-
+			// ZDF: solve feedback loop algebraically to avoid one-sample delay instability at high fc
+			// y3 = G^4*u + (1-G)*(G^3*s0 + G^2*s1 + G*s2 + s3), substitute into u = input - k*y3
+			float G2 = G * G;
+			float S = G2*G*state0 + G2*state1 + G*state2 + state3;
+			float u = (inValue - moogK * Gm1 * S) / (1f + moogK * G4);
+			float sq = u * u;
+			u = u * (27f + sq) / (27f + 9f * sq);  // tanh approximation
+			float y0 = G * (u  - state0) + state0;  state0 = 2f*y0 - state0;
+			float y1 = G * (y0 - state1) + state1;  state1 = 2f*y1 - state1;
+			float y2 = G * (y1 - state2) + state2;  state2 = 2f*y2 - state2;
+			float y3 = G * (y2 - state3) + state3;  state3 = 2f*y3 - state3;
+			return y3;
 		}
 		else {
 //			Q = P.VAL[p_resonance];
