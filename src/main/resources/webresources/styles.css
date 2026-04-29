@@ -300,15 +300,15 @@ body.learnmode [data-osc]:hover {
 .modmatrix-table tbody td:empty { background-color: transparent; }
 .modmatrix-table tbody td .rotary { margin: 0 auto; }
 
-/* Mode-conditional subpanels: hidden unless the parent mode matches.
+/* Mode-conditional subpanels: visibility:hidden so the controls keep their
+   layout footprint and the surrounding panel doesn't reflow when the user
+   switches between modes — only the rendering and pointer events go away.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]
-   when the engine reports those modes via /osc/mode and /fx/delay/type.
-   The body-prefixed selector raises specificity above .row { display: flex; }
-   so the default-hidden state applies to subpanels that are also flex rows. */
-body .blep-only { display: none; }
-body[data-osc-mode="blep"] .blep-only { display: flex; }
-body .delay-digital-only { display: none; }
-body[data-delay-type="digital"] .delay-digital-only { display: block; }
+   when the engine reports those modes via /osc/mode and /fx/delay/type. */
+body .blep-only { visibility: hidden; }
+body[data-osc-mode="blep"] .blep-only { visibility: visible; }
+body .delay-digital-only { visibility: hidden; }
+body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
 
 .row {
   display: flex;
