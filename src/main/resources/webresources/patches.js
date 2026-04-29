@@ -50,14 +50,16 @@ class Patches {
 	}
 
 	_wireServerListeners() {
-		socket.onCommand("/patchlist=", (path, value) => {
+		// Prefix strings here must NOT include the trailing "=" — socket.js
+		// splits on "=" first, so subscribers see the path without it.
+		socket.onCommand("/patchlist", (path, value) => {
 			try {
 				this._renderPatchList(JSON.parse(value));
 			} catch (e) {
 				console.error("malformed /patchlist payload", e);
 			}
 		});
-		socket.onCommand("/saveinfo=", (path, value) => {
+		socket.onCommand("/saveinfo", (path, value) => {
 			try {
 				this._renderSaveInfo(JSON.parse(value));
 			} catch (e) {
@@ -65,13 +67,13 @@ class Patches {
 			}
 		});
 		// /patch/name carries a string, not a number — handle as command.
-		socket.onCommand("/patch/name=", (path, value) => {
+		socket.onCommand("/patch/name", (path, value) => {
 			if (this.patchNameDisplay) this.patchNameDisplay.textContent = value;
 		});
 		// Server emits /pagepatch=… after a load/init/randomize completes; close
 		// any open modal so the new sound is immediately audible without an
 		// extra dismiss.
-		socket.onCommand("/pagepatch=", () => this.closeAll());
+		socket.onCommand("/pagepatch", () => this.closeAll());
 	}
 
 	closeAll() {
