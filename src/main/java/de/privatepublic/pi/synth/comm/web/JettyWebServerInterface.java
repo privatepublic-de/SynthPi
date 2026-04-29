@@ -154,7 +154,8 @@ public class JettyWebServerInterface {
 			"modal.js",
 			"patches.js",
 			"settings.js",
-			"learn.js"
+			"learn.js",
+			"matrix.js"
 		};
 		
 		private String mimeType;

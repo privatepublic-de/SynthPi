@@ -36,7 +36,7 @@ class PotDragHandler {
 		return ang / 270.0;
 	}
 
-	startDrag(pot, e, updateValueCallback, finishedCallback) {
+	startDrag(pot, e, updateValueCallback, finishedCallback, width, height) {
 		this.updateValueCallback = updateValueCallback;
 		this.finishedCallback = finishedCallback;
 		let el = pot;
@@ -47,8 +47,10 @@ class PotDragHandler {
 			this.cy += el.offsetTop;
 			el = el.offsetParent;
 		} while (el);
-		this.cx += Rotary.width / 2;
-		this.cy += Rotary.height / 2;
+		// Caller passes per-Rotary dimensions so tiny knobs in the matrix get
+		// their own center math, not the static default.
+		this.cx += (width || Rotary.width) / 2;
+		this.cy += (height || Rotary.height) / 2;
 		this.isDragging = true;
 		this.updateValueCallback(this._valueForCoordinates(e.pageX, e.pageY));
 	}
@@ -84,11 +86,19 @@ export class Rotary {
 		// still arrive while the user is mid-drag.)
 		this._userActive = false;
 
+		// "tiny" variant for the modulation matrix — about half size, with
+		// proportionally thinner outer ring and value arc.
+		const tiny = element.dataset.size === "tiny";
+		this.width = tiny ? 36 : Rotary.width;
+		this.height = tiny ? 36 : Rotary.height;
+		this.widthOuter = tiny ? 1 : 2;
+		this.widthArc = tiny ? 5 : 12;
+
 		this.color = getComputedStyle(element).getPropertyValue("--color");
 		this.colorDark = getComputedStyle(element).getPropertyValue("--color-dark");
 		this.canvas = document.createElement("canvas");
-		this.canvas.width = Rotary.width;
-		this.canvas.height = Rotary.height;
+		this.canvas.width = this.width;
+		this.canvas.height = this.height;
 		this.ctx = this.canvas.getContext("2d");
 		this.label = document.createElement("label");
 		this.label.appendChild(document.createTextNode(element.dataset.label || ""));
@@ -106,7 +116,8 @@ export class Rotary {
 			Rotary.dragHandler.startDrag(
 				element, e,
 				(v) => this._userSetValue(v),
-				() => { this._userActive = false; }
+				() => { this._userActive = false; },
+				this.width, this.height,
 			);
 		});
 		element.addEventListener("wheel", (e) => {
@@ -151,18 +162,18 @@ export class Rotary {
 
 	_renderValue(valuePercent) {
 		const angleSpan = 240;
-		const widthOuter = 2;
-		const widthArc = 12;
-		const radiusOuter = Rotary.width / 2 - widthOuter / 2;
-		const radiusIndicator = Rotary.width / 2;
-		const radiusArc = Rotary.width / 2 - widthOuter * 2.5 - widthArc / 2;
+		const widthOuter = this.widthOuter;
+		const widthArc = this.widthArc;
+		const radiusOuter = this.width / 2 - widthOuter / 2;
+		const radiusIndicator = this.width / 2;
+		const radiusArc = this.width / 2 - widthOuter * 2.5 - widthArc / 2;
 		const angleStart = (-angleSpan / 2 - 90) * U.radFactor;
 		const angleCenter = -90 * U.radFactor;
 		const angleEnd = (-angleSpan / 2 - 90 + angleSpan) * U.radFactor;
 		const angleValue = (-angleSpan / 2 - 90 + angleSpan * valuePercent) * U.radFactor;
 
-		this.ctx.clearRect(0, 0, Rotary.width, Rotary.height);
-		this.ctx.translate(Rotary.width / 2, Rotary.height / 2);
+		this.ctx.clearRect(0, 0, this.width, this.height);
+		this.ctx.translate(this.width / 2, this.height / 2);
 
 		this.ctx.lineWidth = widthOuter;
 		if (this.isMix) {

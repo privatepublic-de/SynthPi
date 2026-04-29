@@ -246,6 +246,60 @@ body.learnmode [data-osc]:hover {
   to { outline-color: var(--tint-3); }
 }
 
+/* Tiny rotary variant for the modulation matrix (~half size). */
+.rotary[data-size="tiny"] {
+  width: 36px;
+  height: 36px;
+  font-size: 9px;
+}
+.rotary[data-size="tiny"] label { display: none; }
+.rotary[data-size="tiny"] .value {
+  font-size: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Modulation matrix grid. Row labels left-aligned; column headers
+   rotated -90° so the long target names ("Pitch 2", "OSC2 Vol",
+   "Delay Time") fit in narrow columns without wrapping. */
+#modmatrix { padding: 8px 12px; }
+.modmatrix-table {
+  border-collapse: collapse;
+  margin: 6px 0;
+}
+.modmatrix-table th,
+.modmatrix-table td {
+  border: 1px solid var(--color-dim);
+  padding: 0;
+}
+.modmatrix-table thead th {
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--color-darkened);
+  height: 70px;
+  vertical-align: bottom;
+  padding: 4px 2px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);  /* read top-to-bottom */
+  white-space: nowrap;
+}
+.modmatrix-row-label {
+  text-align: right;
+  padding: 0 8px !important;
+  font-size: 12px;
+  color: var(--color);
+  white-space: nowrap;
+}
+.modmatrix-table tbody td {
+  width: 42px;
+  height: 42px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: var(--color-body);
+}
+.modmatrix-table tbody td:empty { background-color: transparent; }
+.modmatrix-table tbody td .rotary { margin: 0 auto; }
+
 /* Mode-conditional subpanels: hidden unless the parent mode matches.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]
    when the engine reports those modes via /osc/mode and /fx/delay/type.

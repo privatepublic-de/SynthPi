@@ -137,33 +137,18 @@
     <!-- Row 2: Mod Env 1 | Mod Env 2 | LFO | Amp/FX -->
     <div class="row">
 
-      <!-- Mod Envelope 1 -->
+      <!-- Mod Envelope 1 (depth knobs moved to the modulation matrix) -->
       <div class="col cat2 area">
         <div>MOD ENVELOPE 1</div>
-        <div class="row">
-          <div class="col envarea fcenter group-right">
-            <div class="row">
-              <div class="fader" data-osc="/mod/env/1" data-label="A"></div>
-              <div class="fader" data-osc="/mod/env/2" data-label="D"></div>
-              <div class="fader" data-osc="/mod/env/3" data-label="S"></div>
-              <div class="fader" data-osc="/mod/env/4" data-label="R"></div>
-            </div>
-            <div class="row">
-              <div class="toggle" data-osc="/mod/env/loop" data-label="Loop">Loop</div>
-            </div>
+        <div class="col envarea fcenter">
+          <div class="row">
+            <div class="fader" data-osc="/mod/env/1" data-label="A"></div>
+            <div class="fader" data-osc="/mod/env/2" data-label="D"></div>
+            <div class="fader" data-osc="/mod/env/3" data-label="S"></div>
+            <div class="fader" data-osc="/mod/env/4" data-label="R"></div>
           </div>
-          <div class="col">
-            <div class="row">
-              <div class="rotary" data-osc="/mod/env/depth/pitch" data-label="Pitch" data-bipolar></div>
-              <div class="rotary" data-osc="/mod/env/depth/pitch/2" data-label="Pitch 2" data-bipolar></div>
-            </div>
-            <div class="row">
-              <div class="rotary" data-osc="/mod/env/depth/wave" data-label="Wave" data-bipolar></div>
-              <div class="rotary" data-osc="/mod/env/depth/noise" data-label="Noise" data-bipolar></div>
-            </div>
-            <div class="row">
-              <div class="rotary" data-osc="/mod/env/depth/am" data-label="Ringmod" data-bipolar></div>
-            </div>
+          <div class="row">
+            <div class="toggle" data-osc="/mod/env/loop" data-label="Loop">Loop</div>
           </div>
         </div>
       </div>
@@ -184,33 +169,18 @@
         </div>
       </div>
 
-      <!-- LFO -->
+      <!-- LFO (depth knobs moved to the modulation matrix) -->
       <div class="col cat2 area">
         <div class="row">
           <div>LFO</div>
           <div class="select" data-osc="/mod/1/type" data-list="Sine,Triangle,Up,Down,Square,S&amp;H"></div>
         </div>
         <div class="row">
-          <div class="col group-right">
-            <div class="rotary" data-osc="/mod/1/rate" data-label="LFO Rate"></div>
-            <div class="rotary" data-osc="/mod/1/amount" data-label="Amount"></div>
-            <div class="toggle" data-osc="/mod/1/reset" data-label="Key Trigger">Key Trigger</div>
-          </div>
-          <div class="col">
-            <div class="row">
-              <div class="rotary" data-osc="/mod/1/depth/pitch" data-label="Pitch" data-bipolar></div>
-              <div class="rotary" data-osc="/mod/1/depth/pitch/2" data-label="Pitch 2" data-bipolar></div>
-              <div class="rotary" data-osc="/mod/1/depth/vol" data-label="Vol" data-bipolar></div>
-            </div>
-            <div class="row">
-              <div class="rotary" data-osc="/mod/1/depth/wave/1" data-label="Wave 1" data-bipolar></div>
-              <div class="rotary" data-osc="/mod/1/depth/wave/2" data-label="Wave 2" data-bipolar></div>
-            </div>
-            <div class="row">
-              <div class="rotary" data-osc="/mod/1/depth/filter/1" data-label="Filter 1" data-bipolar></div>
-              <div class="rotary" data-osc="/mod/1/depth/filter/2" data-label="Filter 2" data-bipolar></div>
-            </div>
-          </div>
+          <div class="rotary" data-osc="/mod/1/rate" data-label="Rate"></div>
+          <div class="rotary" data-osc="/mod/1/amount" data-label="Amount"></div>
+        </div>
+        <div class="row">
+          <div class="toggle" data-osc="/mod/1/reset" data-label="Key Trigger">Key Trigger</div>
         </div>
       </div>
 
@@ -252,6 +222,13 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Row 3: Modulation Matrix. matrix.js builds the table at startup. -->
+    <div class="row">
+      <div id="modmatrix" class="cat2 area">
+        <div>MODULATION MATRIX</div>
       </div>
     </div>
 

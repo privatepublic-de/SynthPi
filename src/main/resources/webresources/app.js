@@ -10,6 +10,7 @@ import { Rotary, Fader, Toggle, Select } from "./controls.js";
 import { initPatches } from "./patches.js";
 import { initSettings } from "./settings.js";
 import { initLearn } from "./learn.js";
+import { initMatrix } from "./matrix.js";
 
 const OSC_MODE_NAMES = ["va", "add", "exc", "blep"];
 const OSC_MODE_LABELS = ["VA", "ADD", "EXC", "BLEP"];
@@ -27,6 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	initPatches();
 	initSettings();
 	initLearn();
+	// Matrix builds its own controls dynamically; runs after the static
+	// querySelectorAll loops above so the matrix's rotaries instantiate
+	// fresh (matrix.js calls `new Rotary(...)` directly).
+	initMatrix();
 	wireConditionalSubpanels();
 });
 
