@@ -32,6 +32,13 @@
           <div class="toggle" data-osc="/osc/mono" data-label="Mono">Mono</div>
           <div class="toggle" data-osc="/osc/2/sync" data-label="Sync">Sync</div>
         </div>
+        <div class="row group-bottom">
+          <div class="rotary" data-osc="/osc/noiselevel" data-label="Noise"></div>
+          <div class="rotary" data-osc="/osc/mix" data-label="1 Mix 2" data-mix style="padding: 0 6px;"></div>
+          <div class="rotary" data-osc="/osc/2/am" data-label="Ringmod"></div>
+          <div class="rotary" data-osc="/osc/gliderate" data-label="Glide"></div>
+          <div class="rotary group-left push-right" data-osc="/osc/gain" data-label="Gain"></div>
+        </div>
         <!-- Stable shape across all engines: OSC1 + OSC2 wave knobs, then
              OSC2 tuning + ringmod. Mode-specific extras (PW/Sub for VA, Bank
              pickers for Wavetable) live in the engine panels below; nothing
@@ -104,20 +111,6 @@
             <div class="select" data-osc="/osc/2/waveset"
                  data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
           </div>
-        </div>
-        <!-- Common controls — apply across all engines. Ordered by signal
-             flow: extra sources & blending (Noise, Mix, Ringmod) first,
-             then voicing (Glide), then section output (Gain). Ringmod sits
-             here rather than in the OSC2 cluster because it's an OSC1→OSC2
-             cross-modulator analogous to Sync, not an OSC2-only param.
-             Gain is push-right + group-left so it reads as the section's
-             output stage, separated from the source/voicing controls. -->
-        <div class="row group-top">
-          <div class="rotary" data-osc="/osc/noiselevel" data-label="Noise"></div>
-          <div class="rotary" data-osc="/osc/mix" data-label="1 Mix 2" data-mix></div>
-          <div class="rotary" data-osc="/osc/2/am" data-label="Ringmod"></div>
-          <div class="rotary" data-osc="/osc/gliderate" data-label="Glide"></div>
-          <div class="rotary group-left push-right" data-osc="/osc/gain" data-label="Gain"></div>
         </div>
       </div>
 
