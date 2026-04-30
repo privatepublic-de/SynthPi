@@ -134,4 +134,137 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<profiles>
+		<profile>
+			<id>macos-arm64</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>jpackage-macos-arm64</id>
+								<phase>verify</phase>
+								<goals><goal>exec</goal></goals>
+								<configuration>
+									<executable>bash</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument><![CDATA[
+set -e
+JDK_TAR="${project.build.directory}/jdk-aarch64.tar.gz"
+JDK_DIR="${project.build.directory}/jdk-aarch64"
+JDK_URL="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.6%2B7/OpenJDK21U-jdk_aarch64_mac_hotspot_21.0.6_7.tar.gz"
+
+mkdir -p "$JDK_DIR"
+if [ ! -f "$JDK_TAR" ]; then
+  echo "[jpackage] downloading Temurin 21 aarch64..."
+  curl -fsSL "$JDK_URL" -o "$JDK_TAR"
+fi
+if [ ! -f "$JDK_DIR/Contents/Home/bin/java" ]; then
+  echo "[jpackage] extracting aarch64 JDK..."
+  tar -xzf "$JDK_TAR" -C "$JDK_DIR" --strip-components=1
+fi
+
+STAGING="${project.build.directory}/jpackage-input-arm64"
+mkdir -p "$STAGING"
+cp "${project.build.directory}/SynthPi-${project.version}-boxed.jar" "$STAGING/"
+
+DEST="${project.basedir}/dist/arm64"
+mkdir -p "$DEST"
+rm -f "$DEST/SynthPi.dmg"
+
+APP_VERSION="${project.version}"
+APP_VERSION="${APP_VERSION%-SNAPSHOT}"
+
+echo "[jpackage] building SynthPi.dmg (arm64)..."
+"$JDK_DIR/Contents/Home/bin/jpackage" \
+  --type dmg \
+  --name SynthPi \
+  --input "$STAGING" \
+  --main-jar "SynthPi-${project.version}-boxed.jar" \
+  --runtime-image "$JDK_DIR/Contents/Home" \
+  --dest "$DEST" \
+  --app-version "$APP_VERSION" \
+  --java-options "-Xmx512m"
+echo "[jpackage] done: dist/arm64/SynthPi.dmg"
+										]]></argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>macos-x64</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.3.0</version>
+						<executions>
+							<execution>
+								<id>jpackage-macos-x64</id>
+								<phase>verify</phase>
+								<goals><goal>exec</goal></goals>
+								<configuration>
+									<executable>bash</executable>
+									<arguments>
+										<argument>-c</argument>
+										<argument><![CDATA[
+set -e
+JDK_TAR="${project.build.directory}/jdk-x64.tar.gz"
+JDK_DIR="${project.build.directory}/jdk-x64"
+JDK_URL="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.6%2B7/OpenJDK21U-jdk_x64_mac_hotspot_21.0.6_7.tar.gz"
+
+mkdir -p "$JDK_DIR"
+if [ ! -f "$JDK_TAR" ]; then
+  echo "[jpackage] downloading Temurin 21 x64..."
+  curl -fsSL "$JDK_URL" -o "$JDK_TAR"
+fi
+if [ ! -f "$JDK_DIR/Contents/Home/bin/java" ]; then
+  echo "[jpackage] extracting x64 JDK..."
+  tar -xzf "$JDK_TAR" -C "$JDK_DIR" --strip-components=1
+fi
+
+STAGING="${project.build.directory}/jpackage-input-x64"
+mkdir -p "$STAGING"
+cp "${project.build.directory}/SynthPi-${project.version}-boxed.jar" "$STAGING/"
+
+DEST="${project.basedir}/dist/x64"
+mkdir -p "$DEST"
+rm -f "$DEST/SynthPi.dmg"
+
+APP_VERSION="${project.version}"
+APP_VERSION="${APP_VERSION%-SNAPSHOT}"
+
+echo "[jpackage] building SynthPi.dmg (x64)..."
+arch -x86_64 "$JDK_DIR/Contents/Home/bin/jpackage" \
+  --type dmg \
+  --name SynthPi \
+  --input "$STAGING" \
+  --main-jar "SynthPi-${project.version}-boxed.jar" \
+  --runtime-image "$JDK_DIR/Contents/Home" \
+  --dest "$DEST" \
+  --app-version "$APP_VERSION" \
+  --java-options "-Xmx512m"
+echo "[jpackage] done: dist/x64/SynthPi.dmg"
+										]]></argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 </project>
