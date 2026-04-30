@@ -35,7 +35,7 @@ public class SynthPiAudioClient implements AudioClient {
 	
 	public static void start() throws Exception {
 		if ("JavaSound".equals(P.AUDIO_SYSTEM_NAME)) {
-			P.FINAL_GAIN_FACTOR = 0.2f; // JavaSound needs more head room
+			P.FINAL_GAIN_FACTOR = 1.1f; // JavaSound: limiter handles peaks, no scaledry boost needed
 		}
 		log.info("Configuring audio client with {}", P.AUDIO_SYSTEM_NAME);
 		AudioServerProvider provider = null;

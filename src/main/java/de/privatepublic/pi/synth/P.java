@@ -68,7 +68,7 @@ public class P {
 	public static String AUDIO_DEVICE_NAME = "";
 	public static float SAMPLE_RATE_HZ = 48000;
 	public static float MILLIS_PER_SAMPLE_FRAME = 1000f/SAMPLE_RATE_HZ;
-	public static float FINAL_GAIN_FACTOR = .8f;
+	public static float FINAL_GAIN_FACTOR = 1.6f;
 	public static int SAMPLE_BUFFER_SIZE = 128;
 	/** Number of samples per control-rate tick. Must divide {@link #SAMPLE_BUFFER_SIZE} evenly. */
 	public static final int CONTROL_BUFFER_SIZE = 16;
@@ -84,7 +84,7 @@ public class P {
 	// override via the settings dialog if the extra websocket traffic
 	// matters.
 	public static boolean HTTP_SEND_PERFORMACE_DATA = true;
-	public static boolean LIMITER_ENABLED = false;
+	public static boolean LIMITER_ENABLED = true;
 	public static boolean LOW_BUDGET_ADDITIVE = false;
 
 	public static final float ROOT_FREQUENCY = 440;	
