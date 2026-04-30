@@ -21,7 +21,7 @@ public class Limiter implements IProcessor {
 		outL = input[0];
 		outR = input[1];
 		for (int i=0;i<bufferLen;i++) {
-			val = outL[i] + outR[i];
+			val = Math.max(Math.abs(outL[i]), Math.abs(outR[i]));
 			if( val>envelope )
 	            envelope = attack * ( envelope - val ) + val;
 	        else

@@ -38,7 +38,7 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 	private final IProcessor chorus = new Chorus(25);
 	private final IProcessor distort = new DistortionExp();
 	private final IProcessor reverb = new Freeverb(P.SAMPLE_RATE_HZ, P.SAMPLE_BUFFER_SIZE);
-	private final IProcessor limiter = new Limiter(20, 500);
+	private final IProcessor limiter = new Limiter(2, 100);
 	private final TapeDelay tapeDelay = new TapeDelay();
 	private final DigitalDelay digitalDelay = new DigitalDelay();
 	private DelayBase activeDelay = tapeDelay;
