@@ -341,6 +341,7 @@ public class PresetHandler {
 				entry.put(K.PATCH_CATEGORY.key(), p.getString(K.PATCH_CATEGORY.key()));
 				entry.put(K.UI_PATCH_ID.key(), prefix+i);
 				if (complete) {
+					entry.put("version", p.optInt("version", 1));
 					entry.put(K.PATCH_PARAMS_LIST.key(), p.getJSONArray(K.PATCH_PARAMS_LIST.key()));
 				}
 				outlist.put(entry);
