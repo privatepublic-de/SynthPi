@@ -19,6 +19,7 @@ public class FancyParam {
 		NAME[P.DELAY_WET] = "Delay Mix";
 		NAME[P.DELAY_FEEDBACK] = "Delay Feedback";
 		NAME[P.DELAY_RATE] = "Delay Rate";
+		NAME[P.DELAY_RATE_RIGHT] = "Delay Rate R";
 		NAME[P.SPREAD] = "Stereo Spread";
 		NAME[P.AMP_ENV_A] = "Amp Env. Attack";
 		NAME[P.AMP_ENV_D] = "Amp Env. Decay";
@@ -231,7 +232,8 @@ public class FancyParam {
 			result = FORMAT_INT.format(v1*100)+"/"+FORMAT_INT.format(v2*100);
 			break;
 		case P.DELAY_RATE:
-			float freq = 2000.0f*(.001f+.999f*P.VALX[P.DELAY_RATE]);
+		case P.DELAY_RATE_RIGHT: {
+			float freq = 2000.0f*(.001f+.999f*P.VALX[paramindex]);
 			millis = Math.round(freq);
 			if (millis<10) {
 				result = FORMAT_FLOAT2.format(freq) +"ms";
@@ -248,6 +250,7 @@ public class FancyParam {
 				result = seconds +"s";
 			}
 			break;
+		}
 		default:
 			result = FORMAT_FLOAT.format(value*100);
 			break;

@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.util.FastCalc;
 
 
 public class LFO {
@@ -173,6 +174,11 @@ public class LFO {
 	public void nextBufferSlice(final int nframes) {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
 		tableIndexIncrement = (LOW_FREQ+(P.VALX[paraIndexLfoRate]*FREQ_RANGE));
+		if (paraIndexLfoRate == P.MOD_RATE) {
+			tableIndexIncrement = FastCalc.ensureRange(
+				tableIndexIncrement + P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_LFO_AMOUNT] * FREQ_RANGE,
+				LOW_FREQ, LOW_FREQ + FREQ_RANGE);
+		}
 		if (currentWave==TABLES[5]) {
 			tableIndexIncrement /= P.SAMPLE_RATE_HZ;
 		}

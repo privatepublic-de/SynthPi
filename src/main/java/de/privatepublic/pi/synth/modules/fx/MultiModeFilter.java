@@ -74,8 +74,9 @@ public class MultiModeFilter {
 					MIN_STABLE_FREQUENCY
 					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
 					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
+					+ (p_type == 0 ? MAX_STABLE_FREQUENCY * P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_FILTER_AMOUNT] : 0)
 					+ frqOffset
-				) 
+				)
 				* LFO.lfoAmount(0, P.VALXC[p_mod_amount]),
 				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 

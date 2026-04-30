@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -23,21 +23,44 @@
 
     <!-- Row 1: Oscillators | Filter 1 | Filter Routing | Filter 2 -->
     <div class="row">
-
       <!-- Oscillators -->
       <div class="col cat3 area">
         <div class="row group-bottom">
           <div>OSCILLATORS</div>
-          <div class="select" data-osc="/osc/mode" data-list="VA,Wavetable,Additive,Exciter"></div>
+          <div
+            class="select"
+            data-osc="/osc/mode"
+            data-list="VA,Wavetable,Additive,Exciter"
+          ></div>
           <div class="toggle" data-osc="/osc/mono" data-label="Mono">Mono</div>
-          <div class="toggle" data-osc="/osc/2/sync" data-label="Sync">Sync</div>
+          <div class="toggle" data-osc="/osc/2/sync" data-label="Sync">
+            Sync
+          </div>
         </div>
         <div class="row group-bottom">
-          <div class="rotary" data-osc="/osc/noiselevel" data-label="Noise"></div>
-          <div class="rotary" data-osc="/osc/mix" data-label="1 Mix 2" data-mix style="padding: 0 6px;"></div>
+          <div
+            class="rotary"
+            data-osc="/osc/noiselevel"
+            data-label="Noise"
+          ></div>
+          <div
+            class="rotary"
+            data-osc="/osc/mix"
+            data-label="1 Mix 2"
+            data-mix
+            style="padding: 0 6px"
+          ></div>
           <div class="rotary" data-osc="/osc/2/am" data-label="Ringmod"></div>
-          <div class="rotary" data-osc="/osc/gliderate" data-label="Glide"></div>
-          <div class="rotary group-left push-right" data-osc="/osc/gain" data-label="Gain"></div>
+          <div
+            class="rotary"
+            data-osc="/osc/gliderate"
+            data-label="Glide"
+          ></div>
+          <div
+            class="rotary group-left push-right"
+            data-osc="/osc/gain"
+            data-label="Gain"
+          ></div>
         </div>
         <!-- Stable shape across all engines: OSC1 + OSC2 wave knobs, then
              OSC2 tuning + ringmod. Mode-specific extras (PW/Sub for VA, Bank
@@ -53,43 +76,103 @@
                widgets share the same /osc/N/wave path; socket.send fans out
                locally so the inactive widget's state stays in sync. -->
           <div class="osc-wave-slot">
-            <div class="rotary" data-osc="/osc/1/wave" data-label="OSC1 Wave"
-                 data-label-blep="OSC1 Wave" data-label-wt="OSC1 Wave"
-                 data-label-add="OSC1 Timbre" data-label-exc="Excitation"></div>
-            <div class="select vertical osc-wave-select" data-osc="/osc/1/wave"
-                 data-list="Sine,Triangle,Saw,Pulse" data-step-floor></div>
+            <div
+              class="rotary"
+              data-osc="/osc/1/wave"
+              data-label="OSC1 Wave"
+              data-label-blep="OSC1 Wave"
+              data-label-wt="OSC1 Wave"
+              data-label-add="OSC1 Timbre"
+              data-label-exc="Excitation"
+            ></div>
+            <div
+              class="select vertical osc-wave-select"
+              data-osc="/osc/1/wave"
+              data-list="Sine,Triangle,Saw,Pulse"
+              data-step-floor
+            ></div>
           </div>
           <div class="osc-wave-slot group-left">
-            <div class="rotary" data-osc="/osc/2/wave" data-label="OSC2 Wave"
-                 data-label-blep="OSC2 Wave" data-label-wt="OSC2 Wave"
-                 data-label-add="OSC2 Timbre" data-label-exc="Damping"></div>
-            <div class="select vertical osc-wave-select" data-osc="/osc/2/wave"
-                 data-list="Sine,Triangle,Saw,Pulse" data-step-floor></div>
+            <div
+              class="rotary"
+              data-osc="/osc/2/wave"
+              data-label="OSC2 Wave"
+              data-label-blep="OSC2 Wave"
+              data-label-wt="OSC2 Wave"
+              data-label-add="OSC2 Timbre"
+              data-label-exc="Damping"
+            ></div>
+            <div
+              class="select vertical osc-wave-select"
+              data-osc="/osc/2/wave"
+              data-list="Sine,Triangle,Saw,Pulse"
+              data-step-floor
+            ></div>
           </div>
-          <div class="rotary" data-osc="/osc/2/tuning" data-label="Semitones" data-bipolar></div>
-          <div class="rotary" data-osc="/osc/2/tuning/fine" data-label="Fine Tune" data-bipolar></div>
+          <div
+            class="rotary"
+            data-osc="/osc/2/tuning"
+            data-label="Semitones"
+            data-bipolar
+          ></div>
+          <div
+            class="rotary"
+            data-osc="/osc/2/tuning/fine"
+            data-label="Fine Tune"
+            data-bipolar
+          ></div>
           <!-- OSC2 keytracking is VA-only (only BlepOscillator reads it).
                It sits in the OSC row in VA mode rather than the engine panel
                so the OSC2 group reads as a single visual unit. -->
-          <div class="toggle va-only-inline" data-osc="/osc/2/keytrack" data-label="OSC2 Keytrack">OSC2 Track</div>
+          <div
+            class="toggle va-only-inline"
+            data-osc="/osc/2/keytrack"
+            data-label="OSC2 Keytrack"
+          >
+            OSC2 Track
+          </div>
         </div>
         <!-- Engine-specific config (display:none when engine doesn't match —
              see styles.css). Add/Exc have no per-engine controls so neither
              panel shows; the common row sits directly under the OSC row. -->
         <div class="osc-engine-panel" data-engine="va">
           <div class="row">
-            <div class="rotary" data-osc="/osc/1/pw" data-label="OSC1 Width"></div>
+            <div
+              class="rotary"
+              data-osc="/osc/1/pw"
+              data-label="OSC1 Width"
+            ></div>
             <!-- group-left aligns vertically with the OSC1/OSC2 border in
                  the OSC row above, so the visual partition extends through
                  both rows. -->
-            <div class="rotary group-left" data-osc="/osc/2/pw" data-label="OSC2 Width"></div>
+            <div
+              class="rotary group-left"
+              data-osc="/osc/2/pw"
+              data-label="OSC2 Width"
+            ></div>
             <!-- A second group-left starts the sub-osc column. The sub
                  fundamental shares OSC1's pitch but is its own source, so
                  it lives in its own column rather than under either OSC. -->
-            <div class="rotary group-left" data-osc="/osc/sub/volume" data-label="Sub Vol"></div>
+            <div
+              class="rotary group-left"
+              data-osc="/osc/sub/volume"
+              data-label="Sub Vol"
+            ></div>
             <div class="col">
-              <div class="toggle" data-osc="/osc/sub/low" data-label="Sub -2 oct">−2 Oct</div>
-              <div class="toggle" data-osc="/osc/sub/square" data-label="Sub Sq">Square</div>
+              <div
+                class="toggle"
+                data-osc="/osc/sub/low"
+                data-label="Sub -2 oct"
+              >
+                −2 Oct
+              </div>
+              <div
+                class="toggle"
+                data-osc="/osc/sub/square"
+                data-label="Sub Sq"
+              >
+                Square
+              </div>
             </div>
           </div>
         </div>
@@ -103,13 +186,21 @@
                labels remove any ambiguity about which picker is which. -->
           <div class="row bank-row">
             <span class="bank-label">OSC 1 Bank</span>
-            <div class="select" data-osc="/osc/1/waveset"
-                 data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
+            <div
+              class="select"
+              data-osc="/osc/1/waveset"
+              data-list="Analog,Overtones,Strings,Keys,Voices"
+              data-step-floor
+            ></div>
           </div>
           <div class="row bank-row">
             <span class="bank-label">OSC 2 Bank</span>
-            <div class="select" data-osc="/osc/2/waveset"
-                 data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
+            <div
+              class="select"
+              data-osc="/osc/2/waveset"
+              data-list="Analog,Overtones,Strings,Keys,Voices"
+              data-step-floor
+            ></div>
           </div>
         </div>
       </div>
@@ -118,30 +209,85 @@
       <div class="col cat1 area">
         <div class="row fstart">
           <div>FILTER 1</div>
-          <div class="toggle" data-osc="/filter/1/enable" data-label="On">On</div>
+          <div class="toggle" data-osc="/filter/1/enable" data-label="On">
+            On
+          </div>
         </div>
-        <div class="select group-bottom" data-osc="/filter/1/type" data-list="LP24,LP12,BP,HP,Notch,Allp"></div>
+        <div
+          class="select group-bottom"
+          data-osc="/filter/1/type"
+          data-list="LP24,LP12,BP,HP,Notch,Allp"
+        ></div>
         <div class="row group-bottom">
-          <div class="rotary" data-osc="/filter/1/freq" data-label="Cutoff"></div>
-          <div class="rotary" data-osc="/filter/1/res" data-label="Resonance"></div>
-          <div class="rotary" data-osc="/filter/1/overload" data-label="Drive"></div>
+          <div
+            class="rotary"
+            data-osc="/filter/1/freq"
+            data-label="Cutoff"
+          ></div>
+          <div
+            class="rotary"
+            data-osc="/filter/1/res"
+            data-label="Resonance"
+          ></div>
+          <div
+            class="rotary"
+            data-osc="/filter/1/overload"
+            data-label="Drive"
+          ></div>
         </div>
         <div class="row">
           <div class="col envarea fcenter">
             <div class="row">
-              <div class="fader" data-osc="/filter/1/env/1" data-label="A"></div>
-              <div class="fader" data-osc="/filter/1/env/2" data-label="D"></div>
-              <div class="fader" data-osc="/filter/1/env/3" data-label="S"></div>
-              <div class="fader" data-osc="/filter/1/env/4" data-label="R"></div>
+              <div
+                class="fader"
+                data-osc="/filter/1/env/1"
+                data-label="A"
+              ></div>
+              <div
+                class="fader"
+                data-osc="/filter/1/env/2"
+                data-label="D"
+              ></div>
+              <div
+                class="fader"
+                data-osc="/filter/1/env/3"
+                data-label="S"
+              ></div>
+              <div
+                class="fader"
+                data-osc="/filter/1/env/4"
+                data-label="R"
+              ></div>
             </div>
             <div class="row">
-              <div class="toggle" data-osc="/filter/1/env/loop" data-label="Loop">Loop</div>
-              <div class="toggle" data-osc="/filter/1/velocity" data-label="Velocity">Velocity</div>
+              <div
+                class="toggle"
+                data-osc="/filter/1/env/loop"
+                data-label="Loop"
+              >
+                Loop
+              </div>
+              <div
+                class="toggle"
+                data-osc="/filter/1/velocity"
+                data-label="Velocity"
+              >
+                Velocity
+              </div>
             </div>
           </div>
           <div class="col">
-            <div class="rotary" data-osc="/filter/1/env/amount" data-label="Env Amount" data-bipolar></div>
-            <div class="rotary" data-osc="/filter/1/kbdtracking" data-label="Keytrack"></div>
+            <div
+              class="rotary"
+              data-osc="/filter/1/env/amount"
+              data-label="Env Amount"
+              data-bipolar
+            ></div>
+            <div
+              class="rotary"
+              data-osc="/filter/1/kbdtracking"
+              data-label="Keytrack"
+            ></div>
           </div>
         </div>
       </div>
@@ -149,38 +295,102 @@
       <!-- Filter Routing -->
       <div class="col cat1 area">
         <div>Filter Routing</div>
-        <div class="select vertical" data-osc="/filter/parallel" data-list="Serial,Parallel,Per OSC"></div>
-        <div class="rotary" data-osc="/filter/parallelmix" data-label="1 Mix 2" data-mix></div>
+        <div
+          class="select vertical"
+          data-osc="/filter/parallel"
+          data-list="Serial,Parallel,Per OSC"
+        ></div>
+        <div
+          class="rotary"
+          data-osc="/filter/parallelmix"
+          data-label="1 Mix 2"
+          data-mix
+        ></div>
       </div>
 
       <!-- Filter 2 -->
       <div class="col cat1 area">
         <div class="row fstart">
           <div>FILTER 2</div>
-          <div class="toggle" data-osc="/filter/2/enable" data-label="On">On</div>
+          <div class="toggle" data-osc="/filter/2/enable" data-label="On">
+            On
+          </div>
         </div>
-        <div class="select group-bottom" data-osc="/filter/2/type" data-list="LP24,LP12,BP,HP,Notch,Allp"></div>
+        <div
+          class="select group-bottom"
+          data-osc="/filter/2/type"
+          data-list="LP24,LP12,BP,HP,Notch,Allp"
+        ></div>
         <div class="row group-bottom">
-          <div class="rotary" data-osc="/filter/2/freq" data-label="Cutoff"></div>
-          <div class="rotary" data-osc="/filter/2/res" data-label="Resonance"></div>
-          <div class="rotary" data-osc="/filter/2/overload" data-label="Drive"></div>
+          <div
+            class="rotary"
+            data-osc="/filter/2/freq"
+            data-label="Cutoff"
+          ></div>
+          <div
+            class="rotary"
+            data-osc="/filter/2/res"
+            data-label="Resonance"
+          ></div>
+          <div
+            class="rotary"
+            data-osc="/filter/2/overload"
+            data-label="Drive"
+          ></div>
         </div>
         <div class="row">
           <div class="col envarea fcenter">
             <div class="row">
-              <div class="fader" data-osc="/filter/2/env/1" data-label="A"></div>
-              <div class="fader" data-osc="/filter/2/env/2" data-label="D"></div>
-              <div class="fader" data-osc="/filter/2/env/3" data-label="S"></div>
-              <div class="fader" data-osc="/filter/2/env/4" data-label="R"></div>
+              <div
+                class="fader"
+                data-osc="/filter/2/env/1"
+                data-label="A"
+              ></div>
+              <div
+                class="fader"
+                data-osc="/filter/2/env/2"
+                data-label="D"
+              ></div>
+              <div
+                class="fader"
+                data-osc="/filter/2/env/3"
+                data-label="S"
+              ></div>
+              <div
+                class="fader"
+                data-osc="/filter/2/env/4"
+                data-label="R"
+              ></div>
             </div>
             <div class="row">
-              <div class="toggle" data-osc="/filter/2/env/loop" data-label="Loop">Loop</div>
-              <div class="toggle" data-osc="/filter/2/velocity" data-label="Velocity">Velocity</div>
+              <div
+                class="toggle"
+                data-osc="/filter/2/env/loop"
+                data-label="Loop"
+              >
+                Loop
+              </div>
+              <div
+                class="toggle"
+                data-osc="/filter/2/velocity"
+                data-label="Velocity"
+              >
+                Velocity
+              </div>
             </div>
           </div>
           <div class="col">
-            <div class="rotary" data-osc="/filter/2/env/amount" data-label="Env Amount" data-bipolar></div>
-            <div class="rotary" data-osc="/filter/2/kbdtracking" data-label="Keytrack"></div>
+            <div
+              class="rotary"
+              data-osc="/filter/2/env/amount"
+              data-label="Env Amount"
+              data-bipolar
+            ></div>
+            <div
+              class="rotary"
+              data-osc="/filter/2/kbdtracking"
+              data-label="Keytrack"
+            ></div>
           </div>
         </div>
       </div>
@@ -188,7 +398,6 @@
 
     <!-- Row 2: Mod Env 1 | Mod Env 2 | LFO | Amp | Effects -->
     <div class="row">
-
       <!-- Mod Envelope 1 (depth knobs moved to the modulation matrix) -->
       <div class="col cat2 area">
         <div>MOD ENVELOPE 1</div>
@@ -200,7 +409,9 @@
             <div class="fader" data-osc="/mod/env/4" data-label="R"></div>
           </div>
           <div class="row">
-            <div class="toggle" data-osc="/mod/env/loop" data-label="Loop">Loop</div>
+            <div class="toggle" data-osc="/mod/env/loop" data-label="Loop">
+              Loop
+            </div>
           </div>
         </div>
       </div>
@@ -216,7 +427,9 @@
             <div class="fader" data-osc="/mod/env/2/4" data-label="R"></div>
           </div>
           <div class="row">
-            <div class="toggle" data-osc="/mod/env/2/loop" data-label="Loop">Loop</div>
+            <div class="toggle" data-osc="/mod/env/2/loop" data-label="Loop">
+              Loop
+            </div>
           </div>
         </div>
       </div>
@@ -227,13 +440,23 @@
            label and the section can be much narrower. -->
       <div class="col cat2 area">
         <div>LFO</div>
-        <div class="select grid-2" data-osc="/mod/1/type" data-list="Sine,Triangle,Up,Down,Square,S&amp;H"></div>
+        <div
+          class="select grid-2"
+          data-osc="/mod/1/type"
+          data-list="Sine,Triangle,Up,Down,Square,S&amp;H"
+        ></div>
         <div class="row">
           <div class="rotary" data-osc="/mod/1/rate" data-label="Rate"></div>
-          <div class="rotary" data-osc="/mod/1/amount" data-label="Amount"></div>
+          <div
+            class="rotary"
+            data-osc="/mod/1/amount"
+            data-label="Amount"
+          ></div>
         </div>
         <div class="row">
-          <div class="toggle" data-osc="/mod/1/reset" data-label="Key Trigger">Key Trigger</div>
+          <div class="toggle" data-osc="/mod/1/reset" data-label="Key Trigger">
+            Key Trigger
+          </div>
         </div>
       </div>
 
@@ -250,8 +473,12 @@
             <div class="fader" data-osc="/amp/env/4" data-label="R"></div>
           </div>
           <div class="row">
-            <div class="toggle" data-osc="/amp/env/loop" data-label="Loop">Loop</div>
-            <div class="toggle" data-osc="/amp/velocity" data-label="Velocity">Velocity</div>
+            <div class="toggle" data-osc="/amp/env/loop" data-label="Loop">
+              Loop
+            </div>
+            <div class="toggle" data-osc="/amp/velocity" data-label="Velocity">
+              Velocity
+            </div>
           </div>
         </div>
       </div>
@@ -263,17 +490,37 @@
         <div>EFFECTS</div>
         <div class="row">
           <div class="rotary" data-osc="/fx/overdrive" data-label="Drive"></div>
-          <div class="rotary" data-osc="/fx/chorus/drywet" data-label="Chorus"></div>
+          <div
+            class="rotary"
+            data-osc="/fx/chorus/drywet"
+            data-label="Chorus"
+          ></div>
           <div class="rotary" data-osc="/fx/spread" data-label="Spread"></div>
-          <div class="rotary" data-osc="/fx/reverb/oneknob" data-label="Reverb"></div>
+          <div
+            class="rotary"
+            data-osc="/fx/reverb/oneknob"
+            data-label="Reverb"
+          ></div>
         </div>
         <div class="row group-top">
           <div class="rotary" data-osc="/fx/delay/wet" data-label="Delay"></div>
           <div class="rotary" data-osc="/fx/delay/rate" data-label="Time"></div>
-          <div class="rotary delay-digital-only" data-osc="/fx/delay/rateright" data-label="Time R"></div>
-          <div class="rotary" data-osc="/fx/delay/feedback" data-label="Feedback"></div>
+          <div
+            class="rotary delay-digital-only"
+            data-osc="/fx/delay/rateright"
+            data-label="Time R"
+          ></div>
+          <div
+            class="rotary"
+            data-osc="/fx/delay/feedback"
+            data-label="Feedback"
+          ></div>
           <div class="col">
-            <div class="select vertical" data-osc="/fx/delay/type" data-list="Tape,Digital"></div>
+            <div
+              class="select vertical"
+              data-osc="/fx/delay/type"
+              data-list="Tape,Digital"
+            ></div>
           </div>
         </div>
       </div>
@@ -290,14 +537,76 @@
          sustain pedal toggle. keyboard.js wires note play, computer-
          keyboard MIDI input, and the visual pressed state. -->
     <div id="keyboard" class="row cat0">
-      <div class="rotary" data-osc="/play/mod/pitchbend" data-label="Pitch" data-bipolar data-push-return></div>
-      <div class="rotary" data-osc="/play/mod/wheel" data-label="Mod" data-push-return></div>
+      <div
+        class="rotary"
+        data-osc="/play/mod/pitchbend"
+        data-label="Pitch"
+        data-bipolar
+        data-push-return
+      ></div>
+      <div
+        class="rotary"
+        data-osc="/play/mod/wheel"
+        data-label="Mod"
+        data-push-return
+      ></div>
       <div class="keys">
-        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
-        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
-        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
-        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
-        <div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div><div class="wk"></div><div class="bk"></div><div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
+        <div class="wk"></div>
+        <div class="bk"></div>
+        <div class="wk"></div>
       </div>
       <div class="toggle" data-osc="/play/sustain">Pedal</div>
       <!-- Master volume lives in the play row alongside the pedal so it's
@@ -322,7 +631,10 @@
       </div>
       <div class="save-form">
         <label>Name <input type="text" id="savename" /></label>
-        <label>Category <select id="savecategory"></select></label>
+        <label
+          >Category
+          <select id="savecategory"></select
+        ></label>
         <button id="savebutton" type="button">Save as new</button>
       </div>
       <div class="modal-section">

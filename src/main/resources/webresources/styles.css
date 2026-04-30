@@ -22,7 +22,7 @@ body {
   font-family: sans-serif;
   background-color: var(--color-body);
   color: #ddd;
-  margin-bottom: 105px;
+  margin-bottom: 115px;
 }
 
 #status {
@@ -33,8 +33,13 @@ body {
   gap: 12px;
   align-items: center;
 }
-#status .status-spacer { flex: 1; }
-#patch-name { font-weight: bold; color: #ddd; }
+#status .status-spacer {
+  flex: 1;
+}
+#patch-name {
+  font-weight: bold;
+  color: #ddd;
+}
 #status button {
   background: transparent;
   border: 1px solid var(--color-dark);
@@ -45,7 +50,9 @@ body {
   font-size: 12px;
   font-family: inherit;
 }
-#status button:hover { background: var(--color-dark); }
+#status button:hover {
+  background: var(--color-dark);
+}
 body.connecting #status .connstate::before {
   content: "connecting… ";
   color: var(--tint-1);
@@ -54,12 +61,18 @@ body.connected #status .connstate::before {
   content: "connected ";
   color: var(--tint-4);
 }
-body.connecting .row { opacity: 0.3; pointer-events: none; }
+body.connecting .row {
+  opacity: 0.3;
+  pointer-events: none;
+}
 body.restarting.connecting #status .connstate::before {
   content: "restarting… ";
   color: var(--tint-1);
 }
-body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
+body.restarting.connecting .row {
+  opacity: 0.3;
+  pointer-events: none;
+}
 
 /* Modal dialogs: dimmer overlay covers the rest of the page; one of the
    .modal panels appears centered. patches.js toggles the .shown class. */
@@ -70,7 +83,9 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   display: none;
   z-index: 100;
 }
-#dimmer.shown { display: block; }
+#dimmer.shown {
+  display: block;
+}
 .modal {
   position: fixed;
   top: 50%;
@@ -88,7 +103,9 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
 }
-.modal.shown { display: block; }
+.modal.shown {
+  display: block;
+}
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -107,8 +124,14 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   padding: 0 8px;
   line-height: 1;
 }
-.modal-close:hover { color: var(--tint-1); }
-.modal-section { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--color-dark); }
+.modal-close:hover {
+  color: var(--tint-1);
+}
+.modal-section {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-dark);
+}
 .modal .headline {
   color: var(--color-darkened);
   font-size: 12px;
@@ -116,7 +139,9 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   letter-spacing: 0.5px;
   margin: 12px 0 6px;
 }
-.modal .headline:first-child { margin-top: 0; }
+.modal .headline:first-child {
+  margin-top: 0;
+}
 
 .patch-row {
   display: flex;
@@ -136,7 +161,9 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   border-radius: var(--border-radius);
   font-size: 13px;
 }
-.patch-entry:hover { background-color: var(--color-dark); }
+.patch-entry:hover {
+  background-color: var(--color-dark);
+}
 .patch-entry .category {
   font-size: 10px;
   color: var(--color-darkened);
@@ -155,8 +182,13 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   text-decoration: none;
   border-radius: var(--border-radius);
 }
-.patch-delete:hover { background-color: var(--tint-1); color: #fff; }
-.patch-sep { height: 6px; }
+.patch-delete:hover {
+  background-color: var(--tint-1);
+  color: #fff;
+}
+.patch-sep {
+  height: 6px;
+}
 
 .save-form {
   display: flex;
@@ -164,7 +196,12 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   align-items: center;
   margin-bottom: 8px;
 }
-.save-form label { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+.save-form label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+}
 .save-form input,
 .save-form select {
   background: var(--color-dim);
@@ -175,7 +212,9 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   font-family: inherit;
   font-size: 13px;
 }
-.save-form input { min-width: 200px; }
+.save-form input {
+  min-width: 200px;
+}
 .save-form #savebutton {
   background: var(--tint-4);
   border: none;
@@ -185,9 +224,13 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   cursor: pointer;
   font-weight: bold;
 }
-.save-form #savebutton:hover { background: var(--tint-3); }
+.save-form #savebutton:hover {
+  background: var(--tint-3);
+}
 
-.settings-content { padding-top: 4px; }
+.settings-content {
+  padding-top: 4px;
+}
 .settings-form {
   display: flex;
   flex-direction: column;
@@ -199,7 +242,9 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   align-items: center;
   gap: 8px;
 }
-.settings-form label.settings-checkbox { gap: 6px; }
+.settings-form label.settings-checkbox {
+  gap: 6px;
+}
 .settings-form select,
 .settings-form input[type="text"] {
   background: var(--color-dim);
@@ -209,7 +254,10 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   border-radius: var(--border-radius);
   font: inherit;
 }
-.settings-form small { color: var(--color-darkened); margin-left: 6px; }
+.settings-form small {
+  color: var(--color-darkened);
+  margin-left: 6px;
+}
 .settings-form .settings-save {
   margin-top: 8px;
   align-self: flex-start;
@@ -222,7 +270,9 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   font-weight: bold;
   font: inherit;
 }
-.settings-form .settings-save:hover { background: var(--tint-3); }
+.settings-form .settings-save:hover {
+  background: var(--tint-3);
+}
 
 .settings-section-label {
   font-size: 11px;
@@ -231,17 +281,31 @@ body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
   color: var(--color-darkened);
   margin-top: 4px;
 }
-.midi-port-list { display: flex; flex-direction: column; gap: 6px; }
-.midi-port-list-empty { font-size: 12px; color: var(--color-darkened); }
+.midi-port-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.midi-port-list-empty {
+  font-size: 12px;
+  color: var(--color-darkened);
+}
 .midi-port-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
 }
-.midi-port-row label.settings-checkbox { flex: 1; min-width: 0; }
-.midi-port-row.port-unavailable { opacity: 0.55; }
-.midi-port-row select { flex-shrink: 0; }
+.midi-port-row label.settings-checkbox {
+  flex: 1;
+  min-width: 0;
+}
+.midi-port-row.port-unavailable {
+  opacity: 0.55;
+}
+.midi-port-row select {
+  flex-shrink: 0;
+}
 
 /* MIDI learn — body class flips while learn mode is active. */
 body.learnmode {
@@ -251,7 +315,9 @@ body.learnmode #status {
   background-color: var(--tint-1);
   color: #000;
 }
-body.learnmode #patch-name { color: #000; }
+body.learnmode #patch-name {
+  color: #000;
+}
 body.learnmode [data-osc]:hover {
   outline: 2px solid var(--tint-1);
   outline-offset: 2px;
@@ -267,8 +333,12 @@ body.learnmode [data-osc]:hover {
   animation: paramflash 0.4s ease-in-out 4 alternate;
 }
 @keyframes paramflash {
-  from { outline-color: var(--tint-4); }
-  to { outline-color: var(--tint-3); }
+  from {
+    outline-color: var(--tint-4);
+  }
+  to {
+    outline-color: var(--tint-3);
+  }
 }
 
 /* Tiny rotary variant for the modulation matrix (~half size). */
@@ -277,7 +347,9 @@ body.learnmode [data-osc]:hover {
   height: 36px;
   font-size: 9px;
 }
-.rotary[data-size="tiny"] label { display: none; }
+.rotary[data-size="tiny"] label {
+  display: none;
+}
 .rotary[data-size="tiny"] .value {
   font-size: 9px;
   top: 50%;
@@ -309,7 +381,7 @@ body.learnmode [data-osc]:hover {
   vertical-align: bottom;
   padding: 4px 2px;
   writing-mode: vertical-rl;
-  transform: rotate(180deg);  /* read top-to-bottom */
+  transform: rotate(180deg); /* read top-to-bottom */
   white-space: nowrap;
 }
 .modmatrix-row-label {
@@ -326,8 +398,12 @@ body.learnmode [data-osc]:hover {
   vertical-align: middle;
   background-color: #1c1928;
 }
-.modmatrix-table tbody td:empty { background-color: transparent; }
-.modmatrix-table tbody td .rotary { margin: 0 auto; }
+.modmatrix-table tbody td:empty {
+  background-color: transparent;
+}
+.modmatrix-table tbody td .rotary {
+  margin: 0 auto;
+}
 
 /* Mode-conditional subpanels: visibility:hidden so the controls keep their
    layout footprint and the surrounding panel doesn't reflow when the user
@@ -338,34 +414,70 @@ body.learnmode [data-osc]:hover {
    shown only when body[data-osc-mode] matches the panel's data-engine.
    Uses display:none (not visibility:hidden) so the surrounding rows close
    the gap when nothing matches — Add/Exc modes have no panel at all. */
-.osc-engine-panel { display: none; padding-top: 10px; border-top: 1px solid var(--color-dark); }
-body[data-osc-mode="blep"] .osc-engine-panel[data-engine="va"] { display: block; }
-body[data-osc-mode="wt"]   .osc-engine-panel[data-engine="wt"] { display: block; }
+.osc-engine-panel {
+  display: none;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-dark);
+}
+body[data-osc-mode="blep"] .osc-engine-panel[data-engine="va"] {
+  display: block;
+}
+body[data-osc-mode="wt"] .osc-engine-panel[data-engine="wt"] {
+  display: block;
+}
 
 /* OSC1 / OSC2 wave: a continuous rotary in WT/Add/Exc, a 4-option Select
    in VA (BLEP buckets — see index.html). Slot keeps width stable so the
    tuning knobs to the right don't slide when the user switches engines. */
-.osc-wave-slot { min-width: 80px; display: flex; align-items: center; justify-content: center; }
-.osc-wave-slot .osc-wave-select { display: none; }
-body[data-osc-mode="blep"] .osc-wave-slot .rotary { display: none; }
-body[data-osc-mode="blep"] .osc-wave-slot .osc-wave-select { display: flex; }
+.osc-wave-slot {
+  min-width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.osc-wave-slot .osc-wave-select {
+  display: none;
+}
+body[data-osc-mode="blep"] .osc-wave-slot .rotary {
+  display: none;
+}
+body[data-osc-mode="blep"] .osc-wave-slot .osc-wave-select {
+  display: flex;
+}
 
 /* VA-only inline element living in the OSC row (e.g. OSC2 Track). Hidden
    by default, shown when the engine is VA. align-self: center keeps the
    toggle from being stretched to fill the row's height (the tall wave
    selects in VA mode would otherwise pull it to ~95px). */
-.va-only-inline { display: none; align-self: center; }
-body[data-osc-mode="blep"] .va-only-inline { display: block; }
+.va-only-inline {
+  display: none;
+  align-self: center;
+}
+body[data-osc-mode="blep"] .va-only-inline {
+  display: block;
+}
 
 /* WT bank picker rows: horizontal labeled pill row per OSC. The label
    acts as a per-OSC eyebrow so users don't have to infer context from
    column position. min-width on the label keeps both pickers' option
    pills left-aligned regardless of label length. */
-.bank-row { gap: 12px; align-items: center; padding: 4px 0; }
-.bank-label { color: var(--color-darkened); min-width: 80px; font-size: 12px; }
+.bank-row {
+  gap: 12px;
+  align-items: center;
+  padding: 4px 0;
+}
+.bank-label {
+  color: var(--color-darkened);
+  min-width: 80px;
+  font-size: 12px;
+}
 
-body .delay-digital-only { visibility: hidden; }
-body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
+body .delay-digital-only {
+  visibility: hidden;
+}
+body[data-delay-type="digital"] .delay-digital-only {
+  visibility: visible;
+}
 
 .row {
   display: flex;
@@ -481,7 +593,9 @@ body[data-delay-type="digital"] .delay-digital-only { visibility: visible; }
 /* Pushes a flex item to the right edge of its row, absorbing all free
    space into its left margin. Used on the Gain rotary so it visually
    separates from the source / voicing controls in the common row. */
-.push-right { margin-left: auto; }
+.push-right {
+  margin-left: auto;
+}
 
 .fader {
   font-size: 12px;
