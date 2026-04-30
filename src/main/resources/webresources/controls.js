@@ -130,8 +130,10 @@ export class Rotary {
 		// Stays false until/unless a label arrives.
 		this._serverLabelReceived = false;
 
-		this.value = 0;
-		this._setValue(0);
+		// Bipolar push-return controls (pitch wheel) rest at center, not bottom.
+		const initValue = this.pushReturn && this.isBipolar ? 0.5 : 0;
+		this.value = initValue;
+		this._setValue(initValue);
 
 		const startPress = (x, y) => {
 			this._userActive = true;
