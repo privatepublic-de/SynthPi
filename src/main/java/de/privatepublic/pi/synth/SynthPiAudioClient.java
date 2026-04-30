@@ -1,8 +1,15 @@
 package de.privatepublic.pi.synth;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.SourceDataLine;
 
 import org.jaudiolibs.audioservers.AudioClient;
 import org.jaudiolibs.audioservers.AudioConfiguration;
@@ -10,6 +17,7 @@ import org.jaudiolibs.audioservers.AudioServer;
 import org.jaudiolibs.audioservers.AudioServerProvider;
 import org.jaudiolibs.audioservers.ext.ClientID;
 import org.jaudiolibs.audioservers.ext.Connections;
+import org.jaudiolibs.audioservers.ext.Device;
 import org.jaudiolibs.audioservers.javasound.JSTimingMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,16 +52,33 @@ public class SynthPiAudioClient implements AudioClient {
 
 		client = new SynthPiAudioClient();
 
-		AudioConfiguration config = new AudioConfiguration((float)P.SAMPLE_RATE_HZ, 
+		// JSAudioServerProvider.findOutputDevice() searches the AudioConfiguration
+		// extensions for a Device instance. JSDevice is package-private, so we
+		// retrieve it via the provider's own findAll() rather than constructing one.
+		Device selectedDevice = null;
+		if ("JavaSound".equals(P.AUDIO_SYSTEM_NAME) && P.AUDIO_DEVICE_NAME != null && !P.AUDIO_DEVICE_NAME.isEmpty()) {
+			for (Device d : provider.findAll(Device.class)) {
+				if (P.AUDIO_DEVICE_NAME.equals(d.getName())) {
+					selectedDevice = d;
+					break;
+				}
+			}
+			if (selectedDevice == null) {
+				log.warn("Audio device '{}' not found, using default", P.AUDIO_DEVICE_NAME);
+			} else {
+				log.info("Using audio device: {}", selectedDevice.getName());
+			}
+		}
+
+		Object[] extensions = selectedDevice != null
+			? new Object[] { true, new ClientID("SynthPi"), selectedDevice, Connections.OUTPUT, JSTimingMode.Estimated }
+			: new Object[] { true, new ClientID("SynthPi"), Connections.OUTPUT, JSTimingMode.Estimated };
+
+		AudioConfiguration config = new AudioConfiguration((float)P.SAMPLE_RATE_HZ,
 			0, // input channels
 			2, // output channels
 			P.SAMPLE_BUFFER_SIZE, // buffer size
-			new Object[] {
-				true,
-				// extensions
-				new ClientID("SynthPi"), Connections.OUTPUT,
-				JSTimingMode.Estimated
-			}
+			extensions
 		);
 
 		server = provider.createServer(config, client);
@@ -70,6 +95,18 @@ public class SynthPiAudioClient implements AudioClient {
 		runner.setPriority(Thread.MAX_PRIORITY);
 		log.info("Starting audio ...");
 		runner.start();
+	}
+
+	public static List<String> getAvailableOutputDeviceNames() {
+		List<String> names = new ArrayList<>();
+		AudioFormat fmt = new AudioFormat(P.SAMPLE_RATE_HZ, 16, 2, true, false);
+		DataLine.Info lineInfo = new DataLine.Info(SourceDataLine.class, fmt);
+		for (Mixer.Info info : AudioSystem.getMixerInfo()) {
+			if (AudioSystem.getMixer(info).isLineSupported(lineInfo)) {
+				names.add(info.getName());
+			}
+		}
+		return names;
 	}
 
 	public static void shutdownAudio() {

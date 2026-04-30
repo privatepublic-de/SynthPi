@@ -18,7 +18,7 @@ class Socket {
 		this.ws = new WebSocket(url);
 		this.ws.addEventListener("open", () => {
 			this.connected = true;
-			document.body.classList.remove("connecting");
+			document.body.classList.remove("connecting", "restarting");
 			document.body.classList.add("connected");
 			while (this.outbox.length) this.ws.send(this.outbox.shift());
 		});

@@ -1,6 +1,6 @@
 // Settings modal: MIDI port selection, polyphony, pitch bend range + fix, audio
-// buffer size, output limiter. Triggered by the gear button in the status bar;
-// uses /command/settings/load + /settings response, saves via
+// buffer size, audio device, output limiter. Triggered by the gear button in the
+// status bar; uses /command/settings/load + /settings response, saves via
 // /command/settings/save with the full JSON object.
 //
 // The "transfer performance data" field still lives on the server but no longer
@@ -26,6 +26,11 @@ class Settings {
 			} catch (e) {
 				console.error("malformed /settings payload", e);
 			}
+		});
+
+		socket.onCommand("/restarting", (path, value) => {
+			modal.closeAll();
+			document.body.classList.add("restarting");
 		});
 	}
 
@@ -63,6 +68,13 @@ class Settings {
 		const bufferOptions = [32, 64, 96, 128, 256, 512].map((n) =>
 			`<option value="${n}" ${s.audiobuffersize === n ? "selected" : ""}>${n} samples</option>`).join("");
 
+		const devices = s.audiodevices || [];
+		const deviceOptions = [
+			`<option value="" ${!s.audiodevicename ? "selected" : ""}>System default</option>`,
+			...devices.map((d) =>
+				`<option value="${escHtml(d)}" ${s.audiodevicename === d ? "selected" : ""}>${escHtml(d)}</option>`),
+		].join("");
+
 		const content = this.modalEl.querySelector(".settings-content");
 		content.innerHTML = `
 			<div class="settings-form">
@@ -72,6 +84,7 @@ class Settings {
 				<label>Pitch bend range <select name="pitchbendrange">${bendOptions}</select></label>
 				<label class="settings-checkbox"><input type="checkbox" name="pitchbendfix" ${s.pitchbendfix ? "checked" : ""}> Fix strange pitch-bend behaviour (macOS)</label>
 				<label>Audio buffer size <select name="audiobuffersize">${bufferOptions}</select> <small>(needs restart)</small></label>
+				<label>Audio output device <select name="audiodevicename">${deviceOptions}</select> <small>(needs restart)</small></label>
 				<label class="settings-checkbox"><input type="checkbox" name="limiterenabled" ${s.limiterenabled ? "checked" : ""}> Output limiter active</label>
 				<button class="settings-save" type="button">Save settings</button>
 			</div>
@@ -94,6 +107,7 @@ class Settings {
 			};
 		});
 
+		const newDevice = get("audiodevicename").value;
 		const data = {
 			...this._lastSettings,
 			midiports,
@@ -101,6 +115,7 @@ class Settings {
 			pitchbendrange: parseInt(get("pitchbendrange").value),
 			pitchbendfix: get("pitchbendfix").checked,
 			audiobuffersize: parseInt(get("audiobuffersize").value),
+			audiodevicename: newDevice,
 			limiterenabled: get("limiterenabled").checked,
 		};
 		socket.send("/command/settings/save", JSON.stringify(data));

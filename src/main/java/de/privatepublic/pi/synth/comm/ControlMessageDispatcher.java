@@ -1,6 +1,7 @@
 package de.privatepublic.pi.synth.comm;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -178,8 +179,14 @@ public class ControlMessageDispatcher implements IMidiNoteReceiver, IPitchBendRe
 				break;
 			case SAVE_SETTINGS:
 				String settingsJSON = msg.substring(msg.indexOf('=')+1);
+				String prevDevice = P.AUDIO_DEVICE_NAME;
 				PresetHandler.updateAndSaveSettings(settingsJSON);
-				updateAllParams();
+				if (!Objects.equals(prevDevice, P.AUDIO_DEVICE_NAME)) {
+					sendToAll("/restarting=1\n");
+					SynthPi.scheduleRestart();
+				} else {
+					updateAllParams();
+				}
 				break;
 			case PARAMETER_MESSAGE: // it's possibly a parameter message
 				if (parts.length==2) {

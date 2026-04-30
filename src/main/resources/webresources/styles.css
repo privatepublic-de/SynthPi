@@ -55,6 +55,11 @@ body.connected #status .connstate::before {
   color: var(--tint-4);
 }
 body.connecting .row { opacity: 0.3; pointer-events: none; }
+body.restarting.connecting #status .connstate::before {
+  content: "restarting… ";
+  color: var(--tint-1);
+}
+body.restarting.connecting .row { opacity: 0.3; pointer-events: none; }
 
 /* Modal dialogs: dimmer overlay covers the rest of the page; one of the
    .modal panels appears centered. patches.js toggles the .shown class. */

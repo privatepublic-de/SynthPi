@@ -409,6 +409,12 @@ public class PresetHandler {
 		settings.put(K.PREF_AUDIO_BUFFER_SIZE.key(), P.SAMPLE_BUFFER_SIZE);
 		settings.put(K.PREF_TRANSFER_PERFORMANCE_DATA.key(), P.HTTP_SEND_PERFORMACE_DATA);
 		settings.put(K.PREF_LIMITER_ENABLED.key(), P.LIMITER_ENABLED);
+		settings.put(K.PREF_AUDIO_DEVICE_NAME.key(), P.AUDIO_DEVICE_NAME);
+		JSONArray devices = new JSONArray();
+		for (String name : SynthPiAudioClient.getAvailableOutputDeviceNames()) {
+			devices.put(name);
+		}
+		settings.put("audiodevices", devices);
 		JSONArray ports = new JSONArray();
 		for (MidiHandler.PortConfig cfg : MidiHandler.INSTANCE.getPortInfos()) {
 			JSONObject p = new JSONObject();
@@ -499,6 +505,9 @@ public class PresetHandler {
 		}
 		if (settings.has(K.PREF_AUDIO_BUFFER_SIZE.key())) {
 			P.SAMPLE_BUFFER_SIZE = settings.getInt(K.PREF_AUDIO_BUFFER_SIZE.key());
+		}
+		if (settings.has(K.PREF_AUDIO_DEVICE_NAME.key())) {
+			P.AUDIO_DEVICE_NAME = settings.getString(K.PREF_AUDIO_DEVICE_NAME.key());
 		}
 		if (settings.has(K.PREF_MIDI_CC_SELECT.key())) {
 			MidiHandler.CC_PARAM_SELECT = settings.getInt(K.PREF_MIDI_CC_SELECT.key());
@@ -591,7 +600,8 @@ public class PresetHandler {
 		PREF_MIDI_CC_SELECT("midi_cc_select"),
 		PREF_MIDI_CC_VALUE("midi_cc_value"),
 		PREF_MIDI_PORT_CONFIGS("midiports"),
-		
+		PREF_AUDIO_DEVICE_NAME("audiodevicename"),
+
 		UI_EXISTINGPATCHES("existingPatches"), 
 		UI_CATEGORIES("categories"), 
 		UI_SELECTED_CATEGORY("selectedcategory"), 

@@ -1,8 +1,13 @@
 package de.privatepublic.pi.synth;
 
 import java.awt.EventQueue;
+import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,8 +37,10 @@ public class SynthPi {
 
 	private static AppWindow window;
 	private static boolean HEADLESS = false;
-	
+	private static String[] MAIN_ARGS = new String[0];
+
 	public static void main(String[] args) {
+		MAIN_ARGS = args;
 
 		PresetHandler.loadSettings();
 		parseCommandLine(args); // command line arguments overwrite local user settings
@@ -112,6 +119,54 @@ public class SynthPi {
 		}
 	}
 	
+	public static void scheduleRestart() {
+		Thread t = new Thread(() -> {
+			try {
+				Thread.sleep(300); // let the /restarting message reach clients
+				List<String> command = buildRestartCommand();
+				logger.info("Restarting: {}", String.join(" ", command));
+				new ProcessBuilder(command).inheritIO().start();
+				Thread.sleep(100);
+			} catch (Exception e) {
+				logger.error("Restart failed", e);
+			}
+			System.exit(0);
+		}, "restart-thread");
+		t.setDaemon(true);
+		t.start();
+	}
+
+	private static List<String> buildRestartCommand() throws URISyntaxException {
+		String javaExe = ProcessHandle.current().info().command()
+			.orElse(new File(System.getProperty("java.home"), "bin/java").getAbsolutePath());
+
+		List<String> cmd = new ArrayList<>();
+		cmd.add(javaExe);
+		// preserve JVM flags but strip the JDWP debug agent — when launched from an
+		// IDE it has suspend=y which would cause the restarted process to hang waiting
+		// for a debugger connection that never comes
+		for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+			if (!arg.contains("jdwp") && !arg.contains("dt_socket") && !arg.contains("dt_shmem")) {
+				cmd.add(arg);
+			}
+		}
+		// detect fat-jar vs classpath launch
+		File src = new File(SynthPi.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+		if (src.isFile() && src.getName().endsWith(".jar")) {
+			cmd.add("-jar");
+			cmd.add(src.getAbsolutePath());
+		} else {
+			cmd.add("-cp");
+			cmd.add(ManagementFactory.getRuntimeMXBean().getClassPath());
+			cmd.add(SynthPi.class.getName());
+		}
+		Collections.addAll(cmd, MAIN_ARGS);
+		if (!cmd.contains("-disablebrowserstart")) {
+			cmd.add("-disablebrowserstart");
+		}
+		return cmd;
+	}
+
 	private static void parseCommandLine(String[] args) {
 
 		// create the command line parser
