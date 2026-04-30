@@ -15,7 +15,7 @@ public final class Freeverb implements IProcessor {
 	
 //    private static final float muted = 0;
     private static final float fixedgain = 0.015f * 2;
-    private static final float scalewet = 3;
+    private static final float scalewet = 1f; // reduced to match scaledry 2→1 + FINAL_GAIN ×2 compensation
     private static final float scaledry = 1;
     private static final float scaledamp = 0.4f;
     private static final float scaleroom = 0.28f;
@@ -158,9 +158,12 @@ public final class Freeverb implements IProcessor {
     public void updateOneKnobSetting() {
     	final float val = P.VAL[P.REVERB_ONE_KNOB];
     	final float wet  = (float)(val == 0 ? 0 : Math.pow(val, 0.35));
-    	final float room = 0.15f + val * 0.85f;
+    	final float room = 0.15f + val * 0.9f; // reaches 1.05 → roomsize≈0.994 (vs 0.98), ~2× longer tail
     	final float damp = 1f - val * 0.9f;
-    	final float dry  = val < 0.5f ? 1.0f : 1.0f - (val - 0.5f);
+    	// dry tracks inversely with wet across the full range so reverb adds
+    	// character rather than loudness — avoids energy accumulation when wet
+    	// was rising on top of a flat 1.0 dry through the bottom half of travel.
+    	final float dry  = 1.0f - wet * 0.5f;
     	setDry(dry);
     	setWet(wet);
     	setRoomSize(room);

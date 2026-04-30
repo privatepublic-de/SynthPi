@@ -1,6 +1,7 @@
 package de.privatepublic.pi.synth.modules.fx;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.modules.mod.LFO;
 
 /**
  * Clean stereo digital delay with independent left/right tap times.
@@ -38,8 +39,11 @@ public class DigitalDelay extends DelayBase {
 	@Override
 	public void process(final int bufferLen, final float[][] buffers) {
 		final float feedback = P.VAL[P.DELAY_FEEDBACK];
-		final float rateL = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
-		final float rateR = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE_RIGHT]);
+		final float lfoAdd = LFO.lfoAmountAdd(0, P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
+		final float baseL  = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
+		final float baseR  = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE_RIGHT]);
+		final float rateL  = Math.max(1f, Math.min(delayLineSizeUnder, baseL + baseL*0.5f*lfoAdd));
+		final float rateR  = Math.max(1f, Math.min(delayLineSizeUnder, baseR + baseR*0.5f*lfoAdd));
 		final float deltaL = (rateL - lastrateL) / bufferLen;
 		final float deltaR = (rateR - lastrateR) / bufferLen;
 		final float wet = P.VAL[P.DELAY_WET];

@@ -99,10 +99,10 @@ public class MultiModeFilter {
 	public float processSample(final float sampleValue, final int i) {
 		filterEnv.nextValue();
 		// apply drive
-		drive = sampleValue*(1f + 10f*P.VALX[p_overload]);
+		drive = sampleValue*(1f + 4f*P.VALX[p_overload]);
 		dsquare = drive*drive;
 		drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
-		inValue = sampleValue*P.VALMIXHIGH[p_overload] + drive*P.VALMIXLOW[p_overload]*.334f;
+		inValue = sampleValue*P.VALMIXHIGH[p_overload] + drive*P.VALMIXLOW[p_overload];
 		
 //		frq = FastCalc.ensureRange(
 //				(

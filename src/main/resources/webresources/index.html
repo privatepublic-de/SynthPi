@@ -182,31 +182,25 @@
             </div>
           </div>
         </div>
-        <div class="osc-engine-panel" data-engine="wt">
-          <!-- Each bank picker is a labeled horizontal pill row. Per-OSC
-               context is explicit in the prefix instead of inferred from
-               column position; total panel height drops from ~95px (vertical
-               5-stack) to ~50px (two horizontal rows). The OSC1↔OSC2 column
-               border in the OSC row above doesn't extend through this layout
-               (no vertical column boundary inside a horizontal row), but the
-               labels remove any ambiguity about which picker is which. -->
-          <div class="row bank-row">
-            <span class="bank-label">OSC 1 Bank</span>
-            <div
-              class="select"
-              data-osc="/osc/1/waveset"
-              data-list="Analog,Overtones,Strings,Keys,Voices"
-              data-step-floor
-            ></div>
+        <!-- Waveform / spectrum scope strip — shown in WT and Add modes -->
+        <div class="osc-scope-strip">
+          <div class="scope-screen">
+            <canvas id="scope-canvas-1" width="200" height="48"></canvas>
+            <span class="scope-label">OSC 1</span>
           </div>
-          <div class="row bank-row">
-            <span class="bank-label">OSC 2 Bank</span>
-            <div
-              class="select"
-              data-osc="/osc/2/waveset"
-              data-list="Analog,Overtones,Strings,Keys,Voices"
-              data-step-floor
-            ></div>
+          <div class="scope-screen">
+            <canvas id="scope-canvas-2" width="200" height="48"></canvas>
+            <span class="scope-label">OSC 2</span>
+          </div>
+        </div>
+        <div class="osc-engine-panel" data-engine="wt">
+          <div class="bank-dual">
+            <div class="bank-col">
+              <div class="select grid-3" data-osc="/osc/1/waveset" data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
+            </div>
+            <div class="bank-col">
+              <div class="select grid-3" data-osc="/osc/2/waveset" data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
+            </div>
           </div>
         </div>
       </div>

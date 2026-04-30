@@ -435,20 +435,25 @@ body.learnmode [data-osc]:hover {
    switches between modes — only the rendering and pointer events go away.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]
    when the engine reports those modes via /osc/mode and /fx/delay/type. */
-/* Engine-specific subpanels in the OSC section: hidden by default and
-   shown only when body[data-osc-mode] matches the panel's data-engine.
-   Uses display:none (not visibility:hidden) so the surrounding rows close
-   the gap when nothing matches — Add/Exc modes have no panel at all. */
+/* Engine-specific subpanels in the OSC section. Collapsed by default via
+   max-height:0; the matching mode expands them with a smooth slide. Using
+   max-height transition instead of display:none/block so the panel slides
+   in rather than snapping — reduces perceived layout jump on mode switch. */
 .osc-engine-panel {
-  display: none;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  border-top: 0px solid var(--color-dark);
+  transition: max-height 0.18s ease, opacity 0.15s ease,
+              padding-top 0.18s ease, border-top-width 0.18s ease;
+}
+body[data-osc-mode="blep"] .osc-engine-panel[data-engine="va"],
+body[data-osc-mode="wt"]   .osc-engine-panel[data-engine="wt"] {
+  max-height: 160px;
+  opacity: 1;
   padding-top: 10px;
-  border-top: 1px solid var(--color-dark);
-}
-body[data-osc-mode="blep"] .osc-engine-panel[data-engine="va"] {
-  display: block;
-}
-body[data-osc-mode="wt"] .osc-engine-panel[data-engine="wt"] {
-  display: block;
+  border-top-width: 1px;
 }
 
 /* OSC1 / OSC2 wave: a continuous rotary in WT/Add/Exc, a 4-option Select
@@ -482,19 +487,96 @@ body[data-osc-mode="blep"] .va-only-inline {
   display: block;
 }
 
-/* WT bank picker rows: horizontal labeled pill row per OSC. The label
-   acts as a per-OSC eyebrow so users don't have to infer context from
-   column position. min-width on the label keeps both pickers' option
-   pills left-aligned regardless of label length. */
-.bank-row {
-  gap: 12px;
-  align-items: center;
-  padding: 4px 0;
+/* WT bank picker: two columns side by side, each with a mini label and a
+   3-column option grid (3+2 layout for 5 banks). Compact enough to sit
+   close in height to the VA engine panel so mode switches feel stable. */
+.bank-dual {
+  display: flex;
+  gap: 16px;
 }
-.bank-label {
-  color: var(--color-darkened);
-  min-width: 80px;
-  font-size: 12px;
+.bank-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 3-column option grid used by the WT bank pickers. Row-major flow:
+   items 1–3 in the first row, 4–5 in the second. */
+.select.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.select.grid-3 .option {
+  margin: 0;
+  text-align: left;
+  font-size: 11px;
+  padding: 2px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.select.grid-3 .option.selected {
+  background-color: #39FF14;
+  color: #000;
+}
+
+/* Waveform / spectrum scope strip below the OSC controls.
+   Visible only in WT (waveform) and Add (spectrum) modes. */
+.osc-scope-strip {
+  display: none;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-dark);
+}
+body[data-osc-mode="wt"] .osc-scope-strip,
+body[data-osc-mode="add"] .osc-scope-strip {
+  display: flex;
+}
+.scope-screen {
+  flex: 1;
+  position: relative;
+  height: 48px;
+  background: #070d09;
+  border-radius: 3px;
+  border: 1px solid #1b2c1f;
+  overflow: hidden;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 0 1px #2a4a30;
+}
+/* CRT horizontal scanlines */
+.scope-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.13) 2px,
+    rgba(0, 0, 0, 0.13) 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+.scope-screen canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: ns-resize;
+}
+.scope-label {
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  font-size: 9px;
+  font-family: monospace;
+  color: rgba(57, 255, 20, 0.4);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 2;
 }
 
 body .delay-digital-only {

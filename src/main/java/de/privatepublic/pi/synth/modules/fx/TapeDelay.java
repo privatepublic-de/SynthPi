@@ -1,6 +1,7 @@
 package de.privatepublic.pi.synth.modules.fx;
 
 import de.privatepublic.pi.synth.P;
+import de.privatepublic.pi.synth.modules.mod.LFO;
 
 /**
  * Tape-style delay: master's original {@link Delay} algorithm with
@@ -39,7 +40,9 @@ public class TapeDelay extends DelayBase {
 	@Override
 	public void process(final int bufferLen, final float[][] buffers) {
 		final float feedback = P.VAL[P.DELAY_FEEDBACK];
-		final float targetRate = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
+		final float baseRate = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
+		final float targetRate = Math.max(1f, Math.min(delayLineSizeUnder,
+				baseRate + baseRate*0.5f*LFO.lfoAmountAdd(0, P.VALXC[P.MOD_DELAY_TIME_AMOUNT])));
 		final float wet = P.VAL[P.DELAY_WET];
 		final float wetInv = 1-wet;
 		final float[] bufL = buffers[0];
