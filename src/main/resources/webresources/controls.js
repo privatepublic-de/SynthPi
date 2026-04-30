@@ -161,9 +161,9 @@ export class Rotary {
 			const v = U.capInRange(this.value + Math.sign(e.deltaY) / 150, 0, 1);
 			this._userSetValue(v);
 		});
-		// Double-click resets to 0 (matches old jQuery UI behaviour).
+		// Double-click resets to default: center (0.5) for bipolar, start (0) for unipolar.
 		element.addEventListener("dblclick", () => {
-			this._userSetValue(0);
+			this._userSetValue(this.isBipolar ? 0.5 : 0);
 		});
 
 		if (this.path) {

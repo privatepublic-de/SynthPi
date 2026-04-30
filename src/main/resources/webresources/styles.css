@@ -9,6 +9,7 @@
   --tint-3-d: #846f3c;
   --tint-4: #2a9d8f;
   --tint-4-d: #154e47;
+  --tint-violet: #9175cc;
   --color-darkened: #808088;
   --color-dark: #404048;
   --color-dim: #323239;
@@ -281,7 +282,11 @@ body.learnmode [data-osc]:hover {
 /* Modulation matrix grid. Row labels left-aligned; column headers
    rotated -90° so the long target names ("Pitch 2", "OSC2 Vol",
    "Delay Time") fit in narrow columns without wrapping. */
-#modmatrix { padding: 8px 12px; }
+#modmatrix {
+  padding: 8px 12px;
+  --color: var(--tint-violet);
+  background-color: #1c1928;
+}
 .modmatrix-table {
   border-collapse: collapse;
   margin: 6px 0;
@@ -294,7 +299,7 @@ body.learnmode [data-osc]:hover {
 .modmatrix-table thead th {
   font-size: 11px;
   font-weight: normal;
-  color: var(--color-darkened);
+  color: #7060a8;
   height: 70px;
   vertical-align: bottom;
   padding: 4px 2px;
@@ -306,7 +311,7 @@ body.learnmode [data-osc]:hover {
   text-align: right;
   padding: 0 8px !important;
   font-size: 12px;
-  color: var(--color);
+  color: var(--tint-violet);
   white-space: nowrap;
 }
 .modmatrix-table tbody td {
@@ -314,7 +319,7 @@ body.learnmode [data-osc]:hover {
   height: 42px;
   text-align: center;
   vertical-align: middle;
-  background-color: var(--color-body);
+  background-color: #1c1928;
 }
 .modmatrix-table tbody td:empty { background-color: transparent; }
 .modmatrix-table tbody td .rotary { margin: 0 auto; }

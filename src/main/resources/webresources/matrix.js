@@ -72,6 +72,7 @@ export function initMatrix() {
 
 	// Body rows — one per source.
 	const tbody = document.createElement("tbody");
+	const pendingKnobs = [];
 	for (let r = 0; r < SOURCES.length; r++) {
 		const tr = document.createElement("tr");
 		const rowLabel = document.createElement("th");
@@ -89,14 +90,17 @@ export function initMatrix() {
 				knob.dataset.size = "tiny";
 				knob.title = `${SOURCES[r]} → ${TARGETS[c]}`;
 				td.appendChild(knob);
-				// Instantiate directly so the Rotary is bound regardless of
-				// when the global querySelectorAll loop runs in app.js.
-				new Rotary(knob);
+				pendingKnobs.push(knob);
 			}
 			tr.appendChild(td);
 		}
 		tbody.appendChild(tr);
 	}
 	table.appendChild(tbody);
+	// Append to live DOM before instantiating Rotary so getComputedStyle
+	// can resolve inherited CSS variables (--color, --color-dark).
 	container.appendChild(table);
+	for (const knob of pendingKnobs) {
+		new Rotary(knob);
+	}
 }
