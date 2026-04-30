@@ -74,4 +74,13 @@ function wireConditionalSubpanels() {
 	socket.onParam("/fx/delay/type", (v) => {
 		document.body.dataset.delayType = v > 0 ? "digital" : "tape";
 	});
+
+	// Limiter GR meter. Server sends values ≥1: 1.0 = idle, >1.0 = reducing.
+	// The server pre-scales: sent = (envelope-1)*0.2+1, so (sent-1)*5 → 0..1.
+	const limiterMeter = document.getElementById("limiter-meter");
+	const limiterFill  = limiterMeter.querySelector(".lm-fill");
+	socket.onCommand("/label/limiter/reduction", (_path, value) => {
+		const gr = Math.min(1, (parseFloat(value) - 1) * 5);
+		limiterFill.style.width = (gr * 100) + "%";
+	});
 }

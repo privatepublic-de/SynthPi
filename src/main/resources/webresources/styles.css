@@ -36,6 +36,31 @@ body {
 #status .status-spacer {
   flex: 1;
 }
+#limiter-meter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lm-label {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: var(--color-darkened);
+}
+.lm-track {
+  width: 48px;
+  height: 5px;
+  background: var(--color-dark);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.lm-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, var(--tint-3), var(--tint-1));
+  border-radius: 2px;
+  transition: width 0.08s ease-out;
+  box-shadow: 0 0 4px var(--tint-1);
+}
 #patch-name {
   font-weight: bold;
   color: #ddd;
