@@ -218,6 +218,25 @@ body.connecting .row { opacity: 0.3; pointer-events: none; }
 }
 .settings-form .settings-save:hover { background: var(--tint-3); }
 
+.settings-section-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-darkened);
+  margin-top: 4px;
+}
+.midi-port-list { display: flex; flex-direction: column; gap: 6px; }
+.midi-port-list-empty { font-size: 12px; color: var(--color-darkened); }
+.midi-port-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.midi-port-row label.settings-checkbox { flex: 1; min-width: 0; }
+.midi-port-row.port-unavailable { opacity: 0.55; }
+.midi-port-row select { flex-shrink: 0; }
+
 /* MIDI learn — body class flips while learn mode is active. */
 body.learnmode {
   cursor: crosshair;

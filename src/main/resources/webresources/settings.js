@@ -1,12 +1,11 @@
-// Settings modal: MIDI channel, polyphony, pitch bend range + fix, audio
-// buffer size, output limiter. Triggered by the gear button in the status
-// bar; uses /command/settings/load + /settings response, and saves via
+// Settings modal: MIDI port selection, polyphony, pitch bend range + fix, audio
+// buffer size, output limiter. Triggered by the gear button in the status bar;
+// uses /command/settings/load + /settings response, saves via
 // /command/settings/save with the full JSON object.
 //
-// The "transfer performance data" field still lives on the server but no
-// longer has UI per the rewrite scope decision. We preserve its current
-// value on save (object spread of _lastSettings) so it doesn't get
-// silently flipped off.
+// The "transfer performance data" field still lives on the server but no longer
+// has UI. We preserve its current value on save (object spread of _lastSettings)
+// so it doesn't get silently flipped off.
 
 import { socket } from "./socket.js";
 import * as modal from "./modal.js";
@@ -32,10 +31,31 @@ class Settings {
 
 	_render(s) {
 		this._lastSettings = s;
-		const channelOptions = [
-			`<option value="0" ${s.midichannel === 0 ? "selected" : ""}>All channels</option>`,
-			...range(1, 17).map((n) => `<option value="${n}" ${s.midichannel === n ? "selected" : ""}>${n}</option>`),
-		].join("");
+
+		const portsHtml = (s.midiports || []).map((p) => {
+			const unavailable = !p.available ? " port-unavailable" : "";
+			const channelOptions = [
+				`<option value="0" ${p.channel === 0 ? "selected" : ""}>All channels</option>`,
+				...range(1, 17).map((n) =>
+					`<option value="${n}" ${p.channel === n ? "selected" : ""}>${n}</option>`),
+			].join("");
+			return `
+				<div class="midi-port-row${unavailable}">
+					<label class="settings-checkbox">
+						<input type="checkbox" name="midiport" data-key="${escHtml(p.key)}" ${p.enabled ? "checked" : ""}>
+						${escHtml(p.name)}${p.vendor ? ` <small>(${escHtml(p.vendor)})</small>` : ""}
+						${unavailable ? ` <small class="port-unavail-note">(not connected)</small>` : ""}
+					</label>
+					<select name="midichan" data-key="${escHtml(p.key)}">${channelOptions}</select>
+				</div>`;
+		}).join("");
+
+		const portsSection = s.midiports && s.midiports.length > 0
+			? `<div class="settings-section-label">MIDI ports</div>
+			   <div class="midi-port-list">${portsHtml}</div>`
+			: `<div class="settings-section-label">MIDI ports</div>
+			   <div class="midi-port-list-empty">No MIDI input devices detected.</div>`;
+
 		const polyOptions = range(2, 9).map((n) =>
 			`<option value="${n}" ${s.polyphonyvoices === n ? "selected" : ""}>${n} voices</option>`).join("");
 		const bendOptions = range(1, 13).map((n) =>
@@ -46,7 +66,8 @@ class Settings {
 		const content = this.modalEl.querySelector(".settings-content");
 		content.innerHTML = `
 			<div class="settings-form">
-				<label>MIDI channel <select name="midichannel">${channelOptions}</select></label>
+				${portsSection}
+				<div class="settings-section-label">Synth</div>
 				<label>Polyphony <select name="polyphonyvoices">${polyOptions}</select></label>
 				<label>Pitch bend range <select name="pitchbendrange">${bendOptions}</select></label>
 				<label class="settings-checkbox"><input type="checkbox" name="pitchbendfix" ${s.pitchbendfix ? "checked" : ""}> Fix strange pitch-bend behaviour (macOS)</label>
@@ -63,11 +84,19 @@ class Settings {
 	_save() {
 		const form = this.modalEl.querySelector(".settings-form");
 		const get = (name) => form.querySelector(`[name="${name}"]`);
-		// Preserve any fields the form doesn't touch (e.g. transferperformancedata)
-		// so saving the modal doesn't silently change unseen settings.
+
+		const midiports = Array.from(form.querySelectorAll('[name="midiport"]')).map((cb) => {
+			const chanEl = form.querySelector(`[name="midichan"][data-key="${CSS.escape(cb.dataset.key)}"]`);
+			return {
+				key: cb.dataset.key,
+				enabled: cb.checked,
+				channel: chanEl ? parseInt(chanEl.value) : 0,
+			};
+		});
+
 		const data = {
 			...this._lastSettings,
-			midichannel: parseInt(get("midichannel").value),
+			midiports,
 			polyphonyvoices: parseInt(get("polyphonyvoices").value),
 			pitchbendrange: parseInt(get("pitchbendrange").value),
 			pitchbendfix: get("pitchbendfix").checked,
@@ -83,6 +112,14 @@ function range(start, endExclusive) {
 	const out = [];
 	for (let i = start; i < endExclusive; i++) out.push(i);
 	return out;
+}
+
+function escHtml(str) {
+	return String(str)
+		.replace(/&/g, "&amp;")
+		.replace(/"/g, "&quot;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;");
 }
 
 export function initSettings() {

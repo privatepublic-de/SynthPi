@@ -402,13 +402,24 @@ public class PresetHandler {
 	
 	private static JSONObject settingsJSONObject() {
 		JSONObject settings = new JSONObject();
-		settings.put(K.PREF_MIDI_CHANNEL.key(), P.MIDI_CHANNEL+1);
 		settings.put(K.PREF_PITCH_BEND_RANGE.key(), (int)(P.BEND_RANGE_CENTS/100));
 		settings.put(K.PREF_PITCH_BEND_FIX.key(), !P.FIX_STRANGE_MIDI_PITCH_BEND);
 		settings.put(K.PREF_POLYPHONY_VOICES.key(), P.POLYPHONY);
 		settings.put(K.PREF_AUDIO_BUFFER_SIZE.key(), P.SAMPLE_BUFFER_SIZE);
 		settings.put(K.PREF_TRANSFER_PERFORMANCE_DATA.key(), P.HTTP_SEND_PERFORMACE_DATA);
 		settings.put(K.PREF_LIMITER_ENABLED.key(), P.LIMITER_ENABLED);
+		JSONArray ports = new JSONArray();
+		for (MidiHandler.PortConfig cfg : MidiHandler.INSTANCE.getPortInfos()) {
+			JSONObject p = new JSONObject();
+			p.put("key", cfg.key);
+			p.put("name", cfg.name);
+			p.put("vendor", cfg.vendor);
+			p.put("enabled", cfg.enabled);
+			p.put("channel", cfg.channel);
+			p.put("available", cfg.available);
+			ports.put(p);
+		}
+		settings.put(K.PREF_MIDI_PORT_CONFIGS.key(), ports);
 		return settings;
 	}
 	
@@ -442,7 +453,33 @@ public class PresetHandler {
 		log.debug("Updating settings");
 		JSONObject settings = new JSONObject(jsonString);
 		if (settings.has(K.PREF_MIDI_CHANNEL.key())) {
+			// Kept for backwards compatibility with old settings files; no longer written.
 			P.MIDI_CHANNEL = settings.getInt(K.PREF_MIDI_CHANNEL.key())-1;
+		}
+		if (settings.has(K.PREF_MIDI_PORT_CONFIGS.key())) {
+			try {
+				JSONArray ports = settings.getJSONArray(K.PREF_MIDI_PORT_CONFIGS.key());
+				List<MidiHandler.PortConfig> configs = new ArrayList<>();
+				for (int i = 0; i < ports.length(); i++) {
+					JSONObject p = ports.getJSONObject(i);
+					if (p.has("key") && p.has("enabled") && p.has("channel")) {
+						configs.add(new MidiHandler.PortConfig(
+							p.getString("key"),
+							p.optString("name", ""),
+							p.optString("vendor", ""),
+							p.getBoolean("enabled"),
+							p.getInt("channel")
+						));
+					}
+				}
+				if (MidiHandler.INSTANCE != null) {
+					MidiHandler.INSTANCE.applyPortConfig(configs);
+				} else {
+					MidiHandler.SAVED_PORT_CONFIGS = configs;
+				}
+			} catch (JSONException e) {
+				log.warn("Error reading midi port configs", e);
+			}
 		}
 		if (settings.has(K.PREF_PITCH_BEND_RANGE.key())) {
 			P.BEND_RANGE_CENTS = settings.getInt(K.PREF_PITCH_BEND_RANGE.key())*100f;
@@ -552,6 +589,7 @@ public class PresetHandler {
 		PREF_LIMITER_ENABLED("limiterenabled"),
 		PREF_MIDI_CC_SELECT("midi_cc_select"),
 		PREF_MIDI_CC_VALUE("midi_cc_value"),
+		PREF_MIDI_PORT_CONFIGS("midiports"),
 		
 		UI_EXISTINGPATCHES("existingPatches"), 
 		UI_CATEGORIES("categories"), 
