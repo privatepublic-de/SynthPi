@@ -307,11 +307,71 @@ public class WaveTables {
 			ft[i] = stretchTable(folderName+filenames[i]);
 		}
 		log.debug("Loading wave tables {}", folderName);
-		// assign tables to all octaves
-		for (int oc=0;oc<OCTAVE_COUNT;oc++) {
-			for (int i=0;i<NUMBER_WAVES;i++) {
-				WAVES[position][i][oc] = ft[i];
-			}			
+		final float nyquistfreq = P.SAMPLE_RATE_HZ / 2.0f;
+		for (int oc=0; oc<OCTAVE_COUNT; oc++) {
+			final float maxfreq = (float)(FIRST_OCTAVE_MAX_FREQ * Math.pow(2, oc));
+			final int maxHarmonic = (int)(nyquistfreq / maxfreq);
+			for (int i=0; i<NUMBER_WAVES; i++) {
+				WAVES[position][i][oc] = bandLimit(ft[i], maxHarmonic);
+			}
+		}
+	}
+
+	private static float[] bandLimit(float[] table, int maxHarmonic) {
+		final int N = TABLE_LENGTH;
+		double[] re = new double[N];
+		double[] im = new double[N];
+		for (int i = 0; i < N; i++) re[i] = table[i];
+		fft(re, im, false);
+		if (maxHarmonic < N / 2) {
+			for (int k = maxHarmonic + 1; k < N - maxHarmonic; k++) {
+				re[k] = 0;
+				im[k] = 0;
+			}
+		}
+		fft(re, im, true);
+		float[] result = new float[N + 1];
+		float maxAbs = 0;
+		for (int i = 0; i < N; i++) {
+			result[i] = (float)(re[i] / N);
+			final float abs = Math.abs(result[i]);
+			if (abs > maxAbs) maxAbs = abs;
+		}
+		result[N] = result[0];
+		if (maxAbs > 1e-9f) {
+			final float inv = 1.0f / maxAbs;
+			for (int i = 0; i <= N; i++) result[i] *= inv;
+		}
+		return result;
+	}
+
+	private static void fft(double[] re, double[] im, boolean inverse) {
+		final int N = re.length;
+		for (int i = 1, j = 0; i < N; i++) {
+			int bit = N >> 1;
+			for (; (j & bit) != 0; bit >>= 1) j ^= bit;
+			j ^= bit;
+			if (i < j) {
+				double t = re[i]; re[i] = re[j]; re[j] = t;
+				t = im[i]; im[i] = im[j]; im[j] = t;
+			}
+		}
+		for (int len = 2; len <= N; len <<= 1) {
+			final double ang = 2 * Math.PI / len * (inverse ? 1 : -1);
+			final double wRe = Math.cos(ang), wIm = Math.sin(ang);
+			for (int i = 0; i < N; i += len) {
+				double curRe = 1, curIm = 0;
+				for (int j = 0; j < len / 2; j++) {
+					final double uRe = re[i+j], uIm = im[i+j];
+					final double vRe = re[i+j+len/2]*curRe - im[i+j+len/2]*curIm;
+					final double vIm = re[i+j+len/2]*curIm + im[i+j+len/2]*curRe;
+					re[i+j]       = uRe + vRe; im[i+j]       = uIm + vIm;
+					re[i+j+len/2] = uRe - vRe; im[i+j+len/2] = uIm - vIm;
+					final double nextRe = curRe*wRe - curIm*wIm;
+					curIm = curRe*wIm + curIm*wRe;
+					curRe = nextRe;
+				}
+			}
 		}
 	}
 	

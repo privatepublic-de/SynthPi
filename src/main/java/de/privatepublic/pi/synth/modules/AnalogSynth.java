@@ -2,7 +2,6 @@ package de.privatepublic.pi.synth.modules;
 
 import java.nio.FloatBuffer;
 import java.util.List;
-import java.util.Vector;
 
 import javax.sound.midi.ShortMessage;
 
@@ -198,67 +197,72 @@ public class AnalogSynth implements ISynth, IMidiNoteReceiver {
 
 
 	private static class Key {
-		
-		private Key(int midiNoteNumber, AnalogSynthVoice voice) {
-			this.midiNoteNumber = midiNoteNumber;
-			this.voice = voice;
-			frequency = P.MIDI_NOTE_FREQUENCY_HZ[midiNoteNumber];
-		}
-		
-		
+
 		public int midiNoteNumber;
 		public float frequency;
 		public AnalogSynthVoice voice;
-		
-		
-		public static Key pressKey(int midiNo, AnalogSynthVoice voice) {
-			Key newKey = new Key(midiNo, voice);
-			PRESSED_KEYS.add(newKey);
-			return newKey;
+
+		private static final int MAX_KEYS = P.POLYPHONY_MAX + 4;
+		private static final Key[] KEY_POOL = new Key[MAX_KEYS];
+		private static int keyCount = 0;
+
+		static {
+			for (int i = 0; i < MAX_KEYS; i++) {
+				KEY_POOL[i] = new Key();
+			}
 		}
-		
+
+		public static Key pressKey(int midiNo, AnalogSynthVoice voice) {
+			final int slot = keyCount < MAX_KEYS ? keyCount++ : MAX_KEYS - 1;
+			final Key k = KEY_POOL[slot];
+			k.midiNoteNumber = midiNo;
+			k.voice = voice;
+			k.frequency = P.MIDI_NOTE_FREQUENCY_HZ[midiNo];
+			return k;
+		}
+
 		public static Key releaseKey(int midiNo) {
 			Key removek = null;
-			
-			for (Key k:PRESSED_KEYS) {
-				if (k.midiNoteNumber==midiNo && k.voice.lastMidiNote==midiNo) {
+			int removeIdx = -1;
+			for (int i = 0; i < keyCount; i++) {
+				final Key k = KEY_POOL[i];
+				if (k.midiNoteNumber == midiNo && k.voice.lastMidiNote == midiNo) {
 					removek = k;
+					removeIdx = i;
 				}
 			}
-			if (removek!=null) {
-				PRESSED_KEYS.remove(removek);
+			if (removeIdx >= 0) {
+				final Key freed = KEY_POOL[removeIdx];
+				System.arraycopy(KEY_POOL, removeIdx + 1, KEY_POOL, removeIdx, keyCount - 1 - removeIdx);
+				keyCount--;
+				KEY_POOL[keyCount] = freed;
 			}
-			for (Key k:PRESSED_KEYS) {
-				if (k.midiNoteNumber==midiNo) {
-					PRESSED_KEYS.remove(k);
+			for (int i = 0; i < keyCount; i++) {
+				if (KEY_POOL[i].midiNoteNumber == midiNo) {
+					final Key freed = KEY_POOL[i];
+					System.arraycopy(KEY_POOL, i + 1, KEY_POOL, i, keyCount - 1 - i);
+					keyCount--;
+					KEY_POOL[keyCount] = freed;
 					break;
 				}
 			}
 			return removek;
 		}
-		
+
 		public static int pressedKeyCount() {
-			return PRESSED_KEYS.size();
+			return keyCount;
 		}
-		
+
 		public static boolean keyIsPressed(AnalogSynthVoice voice) {
-			for (Key k:PRESSED_KEYS) {
-				if (k.voice==voice) {
-					return true;
-				}
+			for (int i = 0; i < keyCount; i++) {
+				if (KEY_POOL[i].voice == voice) return true;
 			}
 			return false;
 		}
-		
+
 		public static Key lastKey() {
-			if (PRESSED_KEYS.size()>0) {
-				return PRESSED_KEYS.get(PRESSED_KEYS.size()-1);
-			}
-			return null;
+			return keyCount > 0 ? KEY_POOL[keyCount - 1] : null;
 		}
-		
-		private static Vector<Key> PRESSED_KEYS = new Vector<Key>();
-		
 	}
 	
 

@@ -91,6 +91,30 @@ public class AnalogSynthVoice {
 	
 	public long lastTriggered = 0;
 	public int lastMidiNote = 0;
+
+	private float pendingFreq;
+	private float pendingVelocity;
+	private final Runnable pendingTrigger = new Runnable() {
+		@Override
+		public void run() {
+			final IOscillator osc1;
+			final IOscillator osc2;
+			switch (P.VAL_OSCILLATOR_MODE) {
+			case ADDITIVE: osc1=osc1_add; osc2=osc2_add; break;
+			case EXITER:   osc1=osc1_pluck; osc2=osc2_pluck; break;
+			case BLEP:     osc1=osc1_blep; osc2=osc2_blep; break;
+			case WAVETABLE: default: osc1=osc1_va; osc2=osc2_va; break;
+			}
+			osc1.trigger(pendingFreq, pendingVelocity);
+			osc2.trigger(pendingFreq, pendingVelocity);
+			filter1.trigger(pendingFreq, pendingVelocity);
+			filter2.trigger(pendingFreq, pendingVelocity);
+			envelope.noteOn(pendingVelocity);
+			modEnvelope.noteOn(1);
+			env2.noteOn(1);
+			AnalogSynth.lastTriggeredFrequency = pendingFreq;
+		}
+	};
 	
 	private RouteFilters filtersAllOff = new RouteFilters(filter1, filter2) {
 		@Override
@@ -386,40 +410,9 @@ public class AnalogSynthVoice {
 			AnalogSynth.lastTriggeredFrequency = frequency;
 		}
 		else {
-			envelope.queueNoteOn(velocity, new Runnable() {
-				@Override
-				public void run() {
-					final IOscillator osc1;
-					final IOscillator osc2;
-					switch (P.VAL_OSCILLATOR_MODE) {
-					case ADDITIVE:
-						osc1=osc1_add;
-						osc2=osc2_add;
-						break;
-					case EXITER:
-						osc1=osc1_pluck;
-						osc2=osc2_pluck;
-						break;
-					case BLEP:
-						osc1=osc1_blep;
-						osc2=osc2_blep;
-						break;
-					case WAVETABLE:
-					default:
-						osc1=osc1_va;
-						osc2=osc2_va;
-						break;
-					}
-					osc1.trigger(frequency, velocity);
-					osc2.trigger(frequency, velocity);
-					filter1.trigger(frequency, velocity);
-					filter2.trigger(frequency, velocity);
-					envelope.noteOn(velocity);
-					modEnvelope.noteOn(1);
-					env2.noteOn(1);
-					AnalogSynth.lastTriggeredFrequency = frequency;
-				}
-			});
+			pendingFreq = frequency;
+			pendingVelocity = velocity;
+			envelope.queueNoteOn(velocity, pendingTrigger);
 		}
 	}
 
@@ -464,6 +457,9 @@ public class AnalogSynthVoice {
 	private float noiseModAmount = 0;
 	
 	public void process(final float[][] outbuffers, final int startPos, final int nframes) {
+		if (envelope.state == State.REST) {
+			return;
+		}
 		final boolean filter1on = P.IS[P.FILTER1_ON];
 		final boolean filter2on = P.IS[P.FILTER2_ON];
 		final IOscillator osc1;
