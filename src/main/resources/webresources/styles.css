@@ -445,11 +445,14 @@ body.learnmode [data-osc]:hover {
   opacity: 0;
   padding-top: 0;
   border-top: 0px solid var(--color-dark);
-  transition: max-height 0.18s ease, opacity 0.15s ease,
-              padding-top 0.18s ease, border-top-width 0.18s ease;
+  transition:
+    max-height 0.18s ease,
+    opacity 0.15s ease,
+    padding-top 0.18s ease,
+    border-top-width 0.18s ease;
 }
 body[data-osc-mode="blep"] .osc-engine-panel[data-engine="va"],
-body[data-osc-mode="wt"]   .osc-engine-panel[data-engine="wt"] {
+body[data-osc-mode="wt"] .osc-engine-panel[data-engine="wt"] {
   max-height: 160px;
   opacity: 1;
   padding-top: 10px;
@@ -519,7 +522,7 @@ body[data-osc-mode="blep"] .va-only-inline {
   text-overflow: ellipsis;
 }
 .select.grid-3 .option.selected {
-  background-color: #39FF14;
+  background-color: #39ff14;
   color: #000;
 }
 
@@ -543,7 +546,9 @@ body[data-osc-mode="add"] .osc-scope-strip {
   border-radius: 3px;
   border: 1px solid #1b2c1f;
   overflow: hidden;
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.8), 0 0 1px #2a4a30;
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.8),
+    0 0 1px #2a4a30;
 }
 /* CRT horizontal scanlines */
 .scope-screen::after {
@@ -748,6 +753,12 @@ body[data-delay-type="digital"] .delay-digital-only {
   }
 }
 
+.select.vertical.osc-wave-select {
+  .option {
+    margin: 1px 0;
+  }
+}
+
 /* 2-column grid variant — used by the LFO type picker so the section
    doesn't have to be ~340px wide just to fit the title row. Column-major
    flow: items 1..3 fill the left column top-to-bottom, items 4..6 the
@@ -777,7 +788,6 @@ body[data-delay-type="digital"] .delay-digital-only {
   background-color: var(--color);
   color: #000;
   border-color: var(--color);
-  font-weight: bold;
 }
 
 #keyboard {
