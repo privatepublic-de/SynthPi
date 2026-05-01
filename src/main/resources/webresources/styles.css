@@ -435,26 +435,22 @@ body.learnmode [data-osc]:hover {
    switches between modes — only the rendering and pointer events go away.
    App.js sets body[data-osc-mode="blep"] and body[data-delay-type="digital"]
    when the engine reports those modes via /osc/mode and /fx/delay/type. */
-/* Engine-specific subpanels in the OSC section. Collapsed by default via
-   max-height:0; the matching mode expands them with a smooth slide. Using
-   max-height transition instead of display:none/block so the panel slides
-   in rather than snapping — reduces perceived layout jump on mode switch. */
+/* Engine-specific subpanels in the OSC section. Height/padding snap
+   instantly on mode switch; only opacity cross-fades so nothing slides. */
 .osc-engine-panel {
   overflow: hidden;
   max-height: 0;
   opacity: 0;
+  pointer-events: none;
   padding-top: 0;
   border-top: 0px solid var(--color-dark);
-  transition:
-    max-height 0.18s ease,
-    opacity 0.15s ease,
-    padding-top 0.18s ease,
-    border-top-width 0.18s ease;
+  transition: opacity 0.2s ease;
 }
 body[data-osc-mode="blep"] .osc-engine-panel[data-engine="va"],
 body[data-osc-mode="wt"] .osc-engine-panel[data-engine="wt"] {
   max-height: 160px;
   opacity: 1;
+  pointer-events: auto;
   padding-top: 10px;
   border-top-width: 1px;
 }
