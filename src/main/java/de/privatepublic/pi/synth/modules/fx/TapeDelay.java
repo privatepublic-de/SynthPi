@@ -15,8 +15,8 @@ public class TapeDelay extends DelayBase {
 
 	private final int delayLineSize = (int)(P.SAMPLE_RATE_HZ*2);
 	private final int delayLineSizeUnder = delayLineSize-1;
-	private final float[] delayLineL = new float[delayLineSize+1];
-	private final float[] delayLineR = new float[delayLineSize+1];
+	private final float[] delayLineL = new float[delayLineSize];
+	private final float[] delayLineR = new float[delayLineSize];
 	private int writeIndex = 0;
 
 	// Per-sample one-pole coefficient on the rate. Half-time is
@@ -29,7 +29,7 @@ public class TapeDelay extends DelayBase {
 
 	@Override
 	public void initPatch() {
-		for (int i=0; i<delayLineL.length; i++) {
+		for (int i=0; i<delayLineSize; i++) {
 			delayLineL[i] = 0;
 			delayLineR[i] = 0;
 		}
@@ -52,19 +52,16 @@ public class TapeDelay extends DelayBase {
 		for (int i=0;i<bufferLen;i++) {
 			in1 = bufL[i];
 			in2 = bufR[i];
-			if (++writeIndex==delayLineSize) {
-				writeIndex=0;
-				delayLineL[delayLineSize] = delayLineL[0];
-				delayLineR[delayLineSize] = delayLineR[0];
-			}
+			if (++writeIndex==delayLineSize) writeIndex=0;
 			readindex = (writeIndex - lastrate);
-			if (readindex<0) {	readindex += delayLineSize; }
+			if (readindex<0) readindex += delayLineSize;
 			indexBase = (int)readindex;
 			indexFract = readindex-indexBase;
+			final int indexBase1 = indexBase+1 < delayLineSize ? indexBase+1 : 0;
 			valL0 = delayLineL[indexBase];
-			valL1 = delayLineL[indexBase+1];
+			valL1 = delayLineL[indexBase1];
 			valR0 = delayLineR[indexBase];
-			valR1 = delayLineR[indexBase+1];
+			valR1 = delayLineR[indexBase1];
 			feedbackL = valR0*feedback;
 			feedbackL += (valR1*feedback-feedbackL)*indexFract;
 			feedbackR = valL0*feedback;

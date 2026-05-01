@@ -18,8 +18,8 @@ public class DigitalDelay extends DelayBase {
 
 	private final int delayLineSize = (int)(P.SAMPLE_RATE_HZ*2);
 	private final int delayLineSizeUnder = delayLineSize-1;
-	private final float[] delayLineL = new float[delayLineSize+1];
-	private final float[] delayLineR = new float[delayLineSize+1];
+	private final float[] delayLineL = new float[delayLineSize];
+	private final float[] delayLineR = new float[delayLineSize];
 	private int writeIndex = 0;
 
 	private float lastrateL = 0;
@@ -27,7 +27,7 @@ public class DigitalDelay extends DelayBase {
 
 	@Override
 	public void initPatch() {
-		for (int i=0; i<delayLineL.length; i++) {
+		for (int i=0; i<delayLineSize; i++) {
 			delayLineL[i] = 0;
 			delayLineR[i] = 0;
 		}
@@ -56,23 +56,21 @@ public class DigitalDelay extends DelayBase {
 		for (int i=0;i<bufferLen;i++) {
 			in1 = bufL[i];
 			in2 = bufR[i];
-			if (++writeIndex==delayLineSize) {
-				writeIndex=0;
-				delayLineL[delayLineSize] = delayLineL[0];
-				delayLineR[delayLineSize] = delayLineR[0];
-			}
+			if (++writeIndex==delayLineSize) writeIndex=0;
 			readindexL = (writeIndex - lastrateL);
-			if (readindexL<0) { readindexL += delayLineSize; }
+			if (readindexL<0) readindexL += delayLineSize;
 			readindexR = (writeIndex - lastrateR);
-			if (readindexR<0) { readindexR += delayLineSize; }
+			if (readindexR<0) readindexR += delayLineSize;
 			indexBaseL = (int)readindexL;
 			indexFractL = readindexL - indexBaseL;
 			indexBaseR = (int)readindexR;
 			indexFractR = readindexR - indexBaseR;
+			final int indexBase1L = indexBaseL+1 < delayLineSize ? indexBaseL+1 : 0;
+			final int indexBase1R = indexBaseR+1 < delayLineSize ? indexBaseR+1 : 0;
 			valL0 = delayLineL[indexBaseL];
-			valL1 = delayLineL[indexBaseL+1];
+			valL1 = delayLineL[indexBase1L];
 			valR0 = delayLineR[indexBaseR];
-			valR1 = delayLineR[indexBaseR+1];
+			valR1 = delayLineR[indexBase1R];
 			final float tappedL = valL0 + (valL1-valL0)*indexFractL;
 			final float tappedR = valR0 + (valR1-valR0)*indexFractR;
 			// self-feedback (per-channel), input mixed in mono-sum to feed both lines
