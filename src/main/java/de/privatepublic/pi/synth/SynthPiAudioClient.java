@@ -138,6 +138,21 @@ public class SynthPiAudioClient implements AudioClient {
 		else {
 			MidiPlayback.INSTANCE.stopMIDI();
 		}
+		// JIT warmup: drive the entire audio path through silent buffers so hot
+		// methods reach C1/C2 before the real-time deadline starts.
+		log.info("JIT warmup...");
+		FloatBuffer wL = FloatBuffer.allocate(P.SAMPLE_BUFFER_SIZE);
+		FloatBuffer wR = FloatBuffer.allocate(P.SAMPLE_BUFFER_SIZE);
+		List<FloatBuffer> warmupBuffers = new ArrayList<>(2);
+		warmupBuffers.add(wL);
+		warmupBuffers.add(wR);
+		for (int i = 0; i < 500; i++) {
+			wL.rewind();
+			wR.rewind();
+			P.interpolate();
+			synthengine.process(warmupBuffers, P.SAMPLE_BUFFER_SIZE);
+		}
+		log.info("JIT warmup complete.");
 		SynthPi.uiMessage("Audio system: "+P.AUDIO_SYSTEM_NAME);
 		SynthPi.uiMessage("Audio buffer size: "+P.SAMPLE_BUFFER_SIZE);
 		SynthPi.uiMessage("Sample rate: "+(int)P.SAMPLE_RATE_HZ+" Hz");
