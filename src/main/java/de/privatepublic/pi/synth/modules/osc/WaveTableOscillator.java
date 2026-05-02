@@ -199,9 +199,6 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 					else if (effFreq > targetFreq) effFreq -= glide;
 					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 				}
-				if (osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
-					idx = 0;
-				}
 			}
 			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
 			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth;
@@ -226,11 +223,24 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 				val2 += ((wave2[indexBase+1] - val2) * indexFrac);
 				val = val*(1-waveformFract) + val2*waveformFract;
 			}
+			// Sync: val is the "before" value. Compute afterVal at index 0, set up
+			// correction so output is continuous, then reset the phase.
+			if (!ampmodLocal && osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
+				float afterVal = wave1[0];
+				if (waveformBase < waveIndexMax) {
+					afterVal = afterVal*(1-waveformFract) + wavesetTable[waveformBase+1][octindex][0]*waveformFract;
+				}
+				syncCorrection += val - afterVal;
+				syncFadeRemaining = SYNC_FADE_SAMPLES;
+				syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+				idx = 0;
+				val = afterVal;
+			}
 			idx += tableInc * freq;
 			if (idx >= tableLen) {
 				idx -= tableLen;
 			}
-			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*vol : val*vol;
+			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*vol : (val + applySyncCorrection())*vol;
 		}
 
 		effectiveFrequency = effFreq;
@@ -262,14 +272,11 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 					effectiveFrequency = targetFrequency;
 				}
 			}
-			if (P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
-				tableIndex = 0;
-			}
 		}
-		final float freq = 
+		final float freq =
 				effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
 				* LFO.lfoAmountAsymm(sampleNo, P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
-		
+
 		final float waveform = P.VAL[P.OSC2_WAVE] + LFO.lfoAmountAdd(sampleNo, P.VALXC[P.MOD_WAVE2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_WAVE_AMOUNT]);
 		final float waveformpos;
 		if (waveform>1) {
@@ -296,12 +303,22 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 			val2 += ((wave2[indexBase+1]-val2)*indexFrac);
 			val = (val*(1-waveformFract) + val2*waveformFract);
 		}
-		
+		if (!ampmod && P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
+			float afterVal = wave1[0];
+			if (waveformBase < WaveTables.WAVE_INDEX_MAX) {
+				afterVal = afterVal*(1-waveformFract) + WaveTables.WAVES[wavesetindex][waveformBase+1][octindex][0]*waveformFract;
+			}
+			syncCorrection += val - afterVal;
+			syncFadeRemaining = SYNC_FADE_SAMPLES;
+			syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+			tableIndex = 0;
+			val = afterVal;
+		}
 		tableIndex += WaveTables.TABLE_INCREMENT*freq;
 		if (tableIndex >= WaveTables.TABLE_LENGTH) {
 			tableIndex -= WaveTables.TABLE_LENGTH;
 		}
-		return ampmod ? am_buffer[sampleNo]*val*vol : val*vol;
+		return ampmod ? am_buffer[sampleNo]*val*vol : (val + applySyncCorrection())*vol;
 	}
 	
 	// sadly the above copy & paste coding approach is much more performant!

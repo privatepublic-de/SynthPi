@@ -126,27 +126,34 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 					effectiveFrequency = targetFrequency;
 				}
 			}
-			if (P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
-				index = 0;
-			}
 		}
 		final float freq = effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
 				* LFO.lfoAmountAsymm(sampleNo, P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
 		final int playBufferLen = Math.min((int)(P.SAMPLE_RATE_HZ / Math.max(freq,1)), bufferLen);
 		if (playBufferLen>1) {
-//			final int prefIndex = (index-1+playBufferLen)%playBufferLen;
+			if (!ampmod && P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
+				int prefBefore = index - 1;
+				if (prefBefore < 0) prefBefore = playBufferLen - 1;
+				final float wv = P.VAL[P.OSC2_WAVE];
+				final float beforeVal = delayBuffer[index]*(1-wv) + delayBuffer[prefBefore]*wv;
+				final float afterVal  = delayBuffer[0]*(1-wv)     + delayBuffer[playBufferLen-1]*wv;
+				syncCorrection += beforeVal - afterVal;
+				syncFadeRemaining = SYNC_FADE_SAMPLES;
+				syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+				index = 0;
+			}
 			int prefIndex = index-1;
 			if (index-1<0) {
 				prefIndex = playBufferLen-1;
 			}
 			final float val = (delayBuffer[index]*(1-P.VAL[P.OSC2_WAVE])+delayBuffer[prefIndex]*P.VAL[P.OSC2_WAVE]);
 			delayBuffer[index] = val;
-			index = ++index<playBufferLen?index:0; // (++index)%playBufferLen;
+			index = ++index<playBufferLen?index:0;
 			if (ampmod) {
 				return (am_buffer[sampleNo]*val*volume);
 			}
 			else {
-				return val*volume;
+				return (val + applySyncCorrection())*volume;
 			}
 		}
 		else {
@@ -242,9 +249,6 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 					else if (effFreq > targetFreq) effFreq -= glide;
 					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 				}
-				if (osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
-					idx = 0;
-				}
 			}
 			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
@@ -253,12 +257,22 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 			final float freq = effFreq * pitchLfo * pitchBend * pitchAsymm;
 			final int playBufferLen = Math.min((int)(sampleRate / Math.max(freq, 1)), blen);
 			if (playBufferLen > 1) {
+				if (!ampmodLocal && osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
+					int prefBefore = idx - 1;
+					if (prefBefore < 0) prefBefore = playBufferLen - 1;
+					final float beforeVal = dly[idx]*(1-osc2WaveVal) + dly[prefBefore]*osc2WaveVal;
+					final float afterVal  = dly[0]*(1-osc2WaveVal)   + dly[playBufferLen-1]*osc2WaveVal;
+					syncCorrection += beforeVal - afterVal;
+					syncFadeRemaining = SYNC_FADE_SAMPLES;
+					syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+					idx = 0;
+				}
 				int prefIndex = idx - 1;
 				if (prefIndex < 0) prefIndex = playBufferLen - 1;
 				final float val = dly[idx]*(1-osc2WaveVal) + dly[prefIndex]*osc2WaveVal;
 				dly[idx] = val;
 				idx = ++idx < playBufferLen ? idx : 0;
-				outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*volume : val*volume;
+				outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*volume : (val + applySyncCorrection())*volume;
 			}
 			else {
 				outBuf[sampleNo] = 0;

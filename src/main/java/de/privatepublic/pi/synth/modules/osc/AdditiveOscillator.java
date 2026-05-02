@@ -107,7 +107,8 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 	
 	private float frequencyStepSize = 0;
 	private float outValue;
-	private boolean ampmod, sync; 
+	private float prevSample2 = 0;
+	private boolean ampmod, sync;
 	private float ampModAmount, ampamount, modwave1amount, modwave2amount, modenv1waveamount;
 	
 	@Override
@@ -166,18 +167,25 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 		frequencyStepSize = 
 				effectiveFrequency*LFO.lfoAmount(sampleNo, P.VALXC[P.MOD_PITCH_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH_AMOUNT])*P.PITCH_BEND_FACTOR
 				* LFO.lfoAmountAsymm(sampleNo, P.VALXC[P.MOD_PITCH2_AMOUNT], modEnvelope, P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT]);
-		outValue = 0;
 		sync = P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo];
+		if (sync && !ampmod) {
+			// afterVal = 0 (polySin(0) = 0 for all harmonics); correction bridges from prev output
+			syncCorrection += prevSample2;
+			syncFadeRemaining = SYNC_FADE_SAMPLES;
+			syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+		}
+		outValue = 0;
 		modwave2amount = P.VALXC[P.MOD_WAVE2_AMOUNT];
 		modenv1waveamount = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
 		for (int i=0;i<HARMONICS_COUNT_EFFECTIVE;i++) {
 			outValue += sines[i].value(P.OSC2_WAVE, LFO.lfoAmountAdd(sampleNo, modwave2amount, modEnvelope, modenv1waveamount), sync);
 		}
+		prevSample2 = outValue;
 		if (ampmod) {
 			return (am_buffer[sampleNo]*outValue*volume);
 		}
 		else {
-			return outValue*volume;
+			return (outValue + applySyncCorrection())*volume;
 		}
 	}
 
@@ -280,6 +288,12 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1 + modEnvVal*pitch2ModEnvDepth;
 			frequencyStepSize = effFreq * pitchLfo * pitchBend * pitchAsymm;
 			final boolean sync = osc2SyncIs && syncOnFrameBuffer[sampleNo];
+			if (sync && !ampmodLocal) {
+				// afterVal = 0 (polySin(0) = 0 for all harmonics); outValue = prev sample's sum
+				syncCorrection += outValue;
+				syncFadeRemaining = SYNC_FADE_SAMPLES;
+				syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+			}
 			final float waveformMod = lfoVal*modAmount*wfDepth + modEnvVal*wfModEnvDepth;
 			// Hoist VOLUME_MAP index/fract once per sample — same for all 15 harmonics.
 			final float vIndex = FastCalc.ensureRange(wfBase + waveformMod, 0f, 1f) * VOLUMES_COUNT;
@@ -290,7 +304,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 				acc += s[i].valueOfPrecomputed(volBase, volFract, sync);
 			}
 			outValue = acc;
-			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*acc*volume : acc*volume;
+			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*acc*volume : (acc + applySyncCorrection())*volume;
 		}
 
 		effectiveFrequency = effFreq;

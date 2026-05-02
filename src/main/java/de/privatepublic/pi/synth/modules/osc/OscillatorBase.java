@@ -12,7 +12,27 @@ public abstract class OscillatorBase implements IOscillator {
 	protected float effectiveFrequency = 440;
 	protected float targetFrequency = 440;
 	protected float glideStepSize = 0;
-	
+
+	// Sync anti-click: at the reset sample, accumulate (before - after) here and
+	// decay linearly to zero so the output is continuous across the hard reset.
+	protected static final int SYNC_FADE_SAMPLES = 8;
+	protected float syncCorrection = 0;
+	protected float syncCorrectionStep = 0;
+	protected int syncFadeRemaining = 0;
+
+	protected final float applySyncCorrection() {
+		if (syncFadeRemaining > 0) {
+			final float c = syncCorrection;
+			syncCorrection -= syncCorrectionStep;
+			if (--syncFadeRemaining == 0) {
+				syncCorrection = 0;
+				syncCorrectionStep = 0;
+			}
+			return c;
+		}
+		return 0;
+	}
+
 	protected final boolean isBase;
 	protected final boolean isSecond;
 	

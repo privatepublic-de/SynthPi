@@ -253,9 +253,6 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 					effectiveFrequency = targetFrequency;
 				}
 			}
-			if (P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
-				phase = 0f;
-			}
 		}
 		final float lfoVal = lfo.bufferedValueAt(sampleNo);
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
@@ -274,10 +271,20 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 				+ env2.outValue * P.VALC[paramModEnv2PW];
 		final float pw = FastCalc.ensureRange(pwBase + pwMod, 0.05f, 0.95f);
 		final float waveSel = P.VAL[paramOscWave];
-		final float val = generateSample(waveSel, phase, dt, pw);
+		final float savedAccum = triangleAccum;
+		float val = generateSample(waveSel, phase, dt, pw);
+		if (!ampmod && P.IS[P.OSC2_SYNC] && syncOnFrameBuffer[sampleNo]) {
+			triangleAccum = savedAccum;
+			final float afterVal = generateSample(waveSel, 0f, dt, pw);
+			syncCorrection += val - afterVal;
+			syncFadeRemaining = SYNC_FADE_SAMPLES;
+			syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+			phase = 0f;
+			val = afterVal;
+		}
 		phase += dt;
 		if (phase >= 1f) phase -= 1f;
-		return ampmod ? am_buffer[sampleNo]*val*volume : val*volume;
+		return ampmod ? am_buffer[sampleNo]*val*volume : (val + applySyncCorrection())*volume;
 	}
 
 	// --- IOscillator: buffer-rate variants (used by USE_BUFFER_PATH=true, the default) ---
@@ -396,9 +403,6 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 					else effFreq -= glide;
 					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 				}
-				if (osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
-					p = 0f;
-				}
 			}
 			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float pitchModLfo = 1 - lfoVal*modAmount*pitchDepth;
@@ -410,8 +414,18 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 			final float dt = freq * invSampleRate;
 			final float pwMod = lfoVal*modAmount*pwLfoDepth + modEnvVal*pwModEnv1Depth + env2Val*pwModEnv2Depth;
 			final float pw = FastCalc.ensureRange(pwBase + pwMod, 0.05f, 0.95f);
-			final float val = generateSample(waveSel, p, dt, pw);
-			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*vol : val*vol;
+			final float savedAccum = triangleAccum;
+			float val = generateSample(waveSel, p, dt, pw);
+			if (!ampmodLocal && osc2SyncIs && syncOnFrameBuffer[sampleNo]) {
+				triangleAccum = savedAccum;
+				final float afterVal = generateSample(waveSel, 0f, dt, pw);
+				syncCorrection += val - afterVal;
+				syncFadeRemaining = SYNC_FADE_SAMPLES;
+				syncCorrectionStep = syncCorrection / SYNC_FADE_SAMPLES;
+				p = 0f;
+				val = afterVal;
+			}
+			outBuf[sampleNo] = ampmodLocal ? am_buffer[sampleNo]*val*vol : (val + applySyncCorrection())*vol;
 			p += dt;
 			if (p >= 1f) p -= 1f;
 		}
