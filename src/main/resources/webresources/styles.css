@@ -569,11 +569,15 @@ body[data-osc-mode="add"] .osc-scope-strip {
 }
 .scope-label {
   position: absolute;
-  top: 3px;
+  top: 4px;
   left: 5px;
   font-size: 9px;
   font-family: monospace;
-  color: rgba(57, 255, 20, 0.4);
+  color: rgba(57, 255, 20, 0.95);
+  background: rgba(7, 13, 9, 0.75);
+  border: 1px solid rgba(57, 255, 20, 0.25);
+  border-radius: 2px;
+  padding: 0 3px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   pointer-events: none;
