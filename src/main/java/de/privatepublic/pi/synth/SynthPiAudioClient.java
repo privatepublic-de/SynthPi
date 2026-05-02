@@ -161,7 +161,7 @@ public class SynthPiAudioClient implements AudioClient {
 		log.info("Synth is up and running!");
 	}
 
-	public static float LOAD = 0;
+	public static volatile float LOAD = 0;
 	private static long bufferTimeNS = 0;
 	
 	@Override
