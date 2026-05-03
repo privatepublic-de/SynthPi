@@ -13,7 +13,7 @@ import de.privatepublic.pi.synth.util.FastCalc;
 public class MultiModeFilter {
 
 	public static final float MIN_STABLE_FREQUENCY = 40f;
-	public static final float MAX_STABLE_FREQUENCY = 12000f - MIN_STABLE_FREQUENCY;
+	public static final float MAX_STABLE_FREQUENCY = 12000f;
 	private static final float DOUBLE_SAMPLE_RATE = P.SAMPLE_RATE_HZ*2;
 	
 	private int p_track_keyboard = P.FILTER1_TRACK_KEYBOARD;
@@ -43,12 +43,9 @@ public class MultiModeFilter {
 	public void trigger(final float freq, final float velocity) {
 		filterEnv.noteOn(velocity);
 //		freq_keyboard_offset = freq*AU.FILTER_KEYBOARD_TRACKING;
-		if (P.VAL[p_track_keyboard]>0) {
-			frqOffset = freq*P.VAL[p_track_keyboard]*2f;//freq_keyboard_offset;
-		}
-		else {
-			frqOffset = 0;
-		}
+		// Multiplicative key tracking: one octave pitch change = one octave cutoff change at 100%.
+		// A4 (440 Hz) is the center — multiplier is 1.0 there, so the knob sets the exact cutoff.
+		frqKeyTrackMult = (float) Math.pow(freq / 440.0, P.VAL[p_track_keyboard]);
 	}
 	
 	public void noteOff() {
@@ -56,7 +53,7 @@ public class MultiModeFilter {
 	}
 
 	private float frq, Q, G, Gm1, G4, moogK;
-	private float frqOffset, state0, state1, state2, state3;
+	private float frqKeyTrackMult = 1f, state0, state1, state2, state3;
 	private float f1, damp;
 //	private float y_l0, y_l1, y_b0, y_b1, y_h1; 
 //	private float f1 = 0;
@@ -71,12 +68,11 @@ public class MultiModeFilter {
 		type = P.VAL_FILTER_TYPE_FOR[p_type];
 		frq = FastCalc.ensureRange(
 				(
-					MIN_STABLE_FREQUENCY
-					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
+					MAX_STABLE_FREQUENCY*P.VALX[p_freq]
 					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
 					+ (p_type == 0 ? MAX_STABLE_FREQUENCY * P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_FILTER_AMOUNT] : 0)
-					+ frqOffset
 				)
+				* frqKeyTrackMult
 				* LFO.lfoAmount(0, P.VALXC[p_mod_amount]),
 				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
@@ -86,12 +82,12 @@ public class MultiModeFilter {
 			G = g / (1f + g);
 			Gm1 = 1f - G;
 			G4 = G * G * G * G;
-			moogK = P.VAL[p_resonance] * 3.99f;
+			moogK = P.VAL[p_resonance] * 4.0f;
 		}
 		else {
 			Q = P.VAL[p_resonance];
 			f1 = (float) (2.0*Math.sin(Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
-			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
+			damp = (float) Math.min(2.0*(1.0 - Math.pow(Q, 0.25)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
 			}
 	}
 	
