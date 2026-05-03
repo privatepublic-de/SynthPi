@@ -18,7 +18,7 @@ public class LFO {
 	public final static String[] WAVE_NAMES = new String[] {"SIN","TRG","RUP","RDN", "SQR", "SH"};
 	public static int WAVE_LENGHT = (int)P.SAMPLE_RATE_HZ;
 	public final static float LOW_FREQ = 0.03f;
-	public final static float HI_FREQ = 30;
+	public final static float HI_FREQ = 500;
 	public final static float FREQ_RANGE = HI_FREQ-LOW_FREQ;
 	private final static float[][] TABLES = new float[WAVE_COUNT][];
 	
@@ -113,9 +113,7 @@ public class LFO {
 		final float inc = tableIndexIncrement;
 		final int waveLen = WAVE_LENGHT;
 		for (int i=0; i<nframes; i++) {
-			int idx = (int)(baseOffset + inc*i);
-			if (idx >= waveLen) idx -= waveLen;
-			buf[i] = wave[idx];
+			buf[i] = wave[(int)(baseOffset + inc*i) % waveLen];
 		}
 	}
 
@@ -173,7 +171,7 @@ public class LFO {
 	
 	public void nextBufferSlice(final int nframes) {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
-		tableIndexIncrement = (LOW_FREQ+(P.VALX[paraIndexLfoRate]*FREQ_RANGE));
+		tableIndexIncrement = LOW_FREQ * (float) Math.pow(HI_FREQ / LOW_FREQ, P.VAL[paraIndexLfoRate]);
 		if (paraIndexLfoRate == P.MOD_RATE) {
 			tableIndexIncrement = FastCalc.ensureRange(
 				tableIndexIncrement + P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_LFO_AMOUNT] * FREQ_RANGE,
@@ -182,20 +180,13 @@ public class LFO {
 		if (currentWave==TABLES[5]) {
 			tableIndexIncrement /= P.SAMPLE_RATE_HZ;
 		}
-		indexOffset = indexOffset+nframes*tableIndexIncrement;
-		if (indexOffset>WAVE_LENGHT) {
-			indexOffset -= WAVE_LENGHT;
-		}
+		indexOffset = (indexOffset + nframes*tableIndexIncrement) % WAVE_LENGHT;
 	}
 	
 //	private float idx;
 	
 	public float valueAt(final int index) {
-		int idx = (int)(indexOffset + tableIndexIncrement*index);
-		if (idx>=WAVE_LENGHT) {
-			idx -= WAVE_LENGHT;
-		}
-		return currentWave[idx];
+		return currentWave[(int)(indexOffset + tableIndexIncrement*index) % WAVE_LENGHT];
 	}
 	
 	
