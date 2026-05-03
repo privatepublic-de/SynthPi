@@ -84,5 +84,5 @@ public class StateVariableFilter {
 	}
 	
 	@SuppressWarnings("unused")
-	private static final Logger log = LoggerFactory.getLogger(MultiModeFilter.class);
+	private static final Logger log = LoggerFactory.getLogger(StateVariableFilter.class);
 }

@@ -103,20 +103,8 @@ public class MultiModeFilter {
 		dsquare = drive*drive;
 		drive = drive * ( 27 + dsquare ) / ( 27 + 9 * dsquare );
 		inValue = sampleValue*P.VALMIXHIGH[p_overload] + drive*P.VALMIXLOW[p_overload];
-		
-//		frq = FastCalc.ensureRange(
-//				(
-//					MIN_STABLE_FREQUENCY
-//					+ MAX_STABLE_FREQUENCY*P.VALX[p_freq]
-//					+ (MAX_STABLE_FREQUENCY * (filterEnv.nextValue() * P.VALXC[p_env_depth]))
-//					+ frqOffset
-//				) 
-//				* LFO.lfoAmount(i, P.VALXC[p_mod_amount]),
-//				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
 		if (type==FilterType.LOWPASS24) {
-			// ZDF: solve feedback loop algebraically to avoid one-sample delay instability at high fc
-			// y3 = G^4*u + (1-G)*(G^3*s0 + G^2*s1 + G*s2 + s3), substitute into u = input - k*y3
 			float G2 = G * G;
 			float S = G2*G*state0 + G2*state1 + G*state2 + state3;
 			float u = (inValue - moogK * Gm1 * S) / (1f + moogK * G4);
@@ -129,10 +117,6 @@ public class MultiModeFilter {
 			return y3;
 		}
 		else {
-//			Q = P.VAL[p_resonance];
-//			f1 = (float) (2.0*Math.sin(Math.PI*(frq/DOUBLE_SAMPLE_RATE)));  // the fs*2 is because it's float sampled
-//			damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
-			
 			notch = inValue - damp*band;
 			low   = low + f1*band;
 			high  = notch - low;
