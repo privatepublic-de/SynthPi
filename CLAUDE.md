@@ -11,9 +11,18 @@ SynthPi is a polyphonic software synthesizer written in Java. It runs as a stand
 This is a Maven project targeting Java 21.
 
 ```sh
-mvn package          # produces target/SynthPi-1.0.0-SNAPSHOT-boxed.jar (fat jar via boxed-assembly.xml)
+# Fat jar (all platforms)
+mvn package
 java -jar target/SynthPi-1.0.0-SNAPSHOT-boxed.jar [options]
+
+# macOS DMG — Apple Silicon → dist/arm64/SynthPi.dmg
+mvn verify -P macos-arm64
+
+# macOS DMG — Intel Mac → dist/x64/SynthPi.dmg
+mvn verify -P macos-x64
 ```
+
+The `-P macos-*` profiles (defined in `pom.xml`) download the matching Temurin 21 JDK into `target/` on first run, then call `jpackage` to produce a self-contained `.app` bundle wrapped in a DMG. The JDK tarballs are cached so subsequent runs are fast.
 
 There are **no tests** — `mvn test` is a no-op.
 
@@ -81,6 +90,30 @@ All three converge on `P.set()` (or the voice-level note callbacks). Parameter c
 Served from `src/main/resources/webresources/` via [JettyWebServerInterface](src/main/java/de/privatepublic/pi/synth/comm/web/JettyWebServerInterface.java). Resources are eagerly cached at startup into a `Hashtable` (see `CachedResource.CACHE_FILENAMES` — **add new static assets to that list or they won't be served**, except in `-disablewebcache` mode). The live UI is `index.html` + `synthcontrol.js` (jQuery + jquery.knob).
 
 A second UI mockup lives under `webresources/controls/` (referenced in the latest commit "mockup new interface") — it's a work-in-progress redesign and is not currently wired into the cache list or routing.
+
+### macOS app bundle / icon
+
+The app icon lives in `src/main/resources/`:
+- `SynthPi.svg` — master vector source (1024×1024 viewBox, editable)
+- `SynthPi.icns` — compiled macOS icon set (all 10 required sizes, generated from the SVG)
+
+To use with `jpackage`: `--icon src/main/resources/SynthPi.icns`
+
+To regenerate the ICNS after editing the SVG:
+```sh
+qlmanage -t -s 1024 -o /tmp/ src/main/resources/SynthPi.svg 2>/dev/null
+mkdir -p /tmp/SynthPi.iconset
+for SIZE in 16 32 64 128 256 512 1024; do
+  sips -z $SIZE $SIZE /tmp/SynthPi.svg.png --out /tmp/SynthPi.iconset/icon_${SIZE}x${SIZE}.png > /dev/null
+done
+cp /tmp/SynthPi.iconset/icon_32x32.png   /tmp/SynthPi.iconset/icon_16x16@2x.png
+cp /tmp/SynthPi.iconset/icon_64x64.png   /tmp/SynthPi.iconset/icon_32x32@2x.png
+cp /tmp/SynthPi.iconset/icon_256x256.png /tmp/SynthPi.iconset/icon_128x128@2x.png
+cp /tmp/SynthPi.iconset/icon_512x512.png /tmp/SynthPi.iconset/icon_256x256@2x.png
+cp /tmp/SynthPi.iconset/icon_1024x1024.png /tmp/SynthPi.iconset/icon_512x512@2x.png
+rm /tmp/SynthPi.iconset/icon_64x64.png /tmp/SynthPi.iconset/icon_1024x1024.png
+iconutil -c icns /tmp/SynthPi.iconset -o src/main/resources/SynthPi.icns
+```
 
 ### Persistence
 

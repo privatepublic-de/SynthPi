@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Dark background with macOS squircle rounded corners -->
+  <rect width="1024" height="1024" rx="230" fill="#0D0D0D"/>
+
+  <!-- Orange circle -->
+  <circle cx="512" cy="512" r="398" fill="#F07800"/>
+
+  <!-- White horizontal bar (drawn first, N path sits on top) -->
+  <rect x="114" y="489" width="796" height="54" rx="27" fill="white"/>
+
+  <!-- White N-waveform: left vertical → diagonal → right vertical, stroked -->
+  <path d="M 287,676 L 287,366 L 737,676 L 737,366"
+        fill="none"
+        stroke="white"
+        stroke-width="68"
+        stroke-linecap="round"
+        stroke-linejoin="miter"/>
+</svg>

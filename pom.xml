@@ -189,6 +189,7 @@ echo "[jpackage] building SynthPi.dmg (arm64)..."
   --runtime-image "$JDK_DIR/Contents/Home" \
   --dest "$DEST" \
   --app-version "$APP_VERSION" \
+  --icon "${project.basedir}/src/main/resources/SynthPi.icns" \
   --java-options "-Xmx512m"
 echo "[jpackage] done: dist/arm64/SynthPi.dmg"
 										]]></argument>
@@ -254,6 +255,7 @@ arch -x86_64 "$JDK_DIR/Contents/Home/bin/jpackage" \
   --runtime-image "$JDK_DIR/Contents/Home" \
   --dest "$DEST" \
   --app-version "$APP_VERSION" \
+  --icon "${project.basedir}/src/main/resources/SynthPi.icns" \
   --java-options "-Xmx512m"
 echo "[jpackage] done: dist/x64/SynthPi.dmg"
 										]]></argument>
