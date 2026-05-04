@@ -91,6 +91,9 @@ public class AnalogSynthVoice {
 	
 	public long lastTriggered = 0;
 	public int lastMidiNote = 0;
+	// Per-note modulation sources, valid regardless of oscillator mode.
+	private float keyNorm = 0f;
+	private float noteVelocity = 0f;
 
 	private float pendingFreq;
 	private float pendingVelocity;
@@ -105,13 +108,16 @@ public class AnalogSynthVoice {
 			case BLEP:     osc1=osc1_blep; osc2=osc2_blep; break;
 			case WAVETABLE: default: osc1=osc1_va; osc2=osc2_va; break;
 			}
+			noteVelocity = pendingVelocity;
+			final float octs = (float)(Math.log(pendingFreq / 440.0) / Math.log(2.0)) / 4f;
+			keyNorm = octs < -1f ? -1f : (octs > 1f ? 1f : octs);
 			osc1.trigger(pendingFreq, pendingVelocity);
 			osc2.trigger(pendingFreq, pendingVelocity);
 			filter1.trigger(pendingFreq, pendingVelocity);
 			filter2.trigger(pendingFreq, pendingVelocity);
 			envelope.noteOn(pendingVelocity);
-			modEnvelope.noteOn(1);
-			env2.noteOn(1);
+			modEnvelope.noteOn(P.IS[P.MOD_ENV1_VEL_SENS] ? pendingVelocity : 1);
+			env2.noteOn(P.IS[P.MOD_ENV2_VEL_SENS] ? pendingVelocity : 1);
 			AnalogSynth.lastTriggeredFrequency = pendingFreq;
 		}
 	};
@@ -378,6 +384,9 @@ public class AnalogSynthVoice {
 	public void trigger(final int midiNote, final float frequency, final float velocity, final long timestamp) {
 		lastMidiNote = midiNote;
 		lastTriggered = timestamp;
+		noteVelocity = velocity;
+		final float octaves = (float)(Math.log(frequency / 440.0) / Math.log(2.0)) / 4f;
+		keyNorm = octaves < -1f ? -1f : (octaves > 1f ? 1f : octaves);
 		if (envelope.state==State.REST) {
 			final IOscillator osc1;
 			final IOscillator osc2;
@@ -405,8 +414,8 @@ public class AnalogSynthVoice {
 			filter1.trigger(frequency, velocity);
 			filter2.trigger(frequency, velocity);
 			envelope.noteOn(velocity);
-			modEnvelope.noteOn(1);
-			env2.noteOn(1);
+			modEnvelope.noteOn(P.IS[P.MOD_ENV1_VEL_SENS] ? velocity : 1);
+			env2.noteOn(P.IS[P.MOD_ENV2_VEL_SENS] ? velocity : 1);
 			AnalogSynth.lastTriggeredFrequency = frequency;
 		}
 		else {
@@ -484,9 +493,29 @@ public class AnalogSynthVoice {
 			break;
 		}
 		final float osc1Vol = P.VALMIXHIGH[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
-		final float osc2Vol = P.VALMIXLOW[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
+		// OSC2 volume with modulation from all sources hoisted at control rate
+		final float env2OutForMix = env2.outValue;
+		final float osc2VolBase = P.VALMIXLOW[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
+		final float osc2VolMod = 1f
+				+ LFO.GLOBAL.bufferedValueAt(0) * P.MOD_AMOUNT_COMBINED * P.VALXC[P.MOD_LFO_OSC2VOL_AMOUNT]
+				+ modEnvelope.outValue * P.VALXC[P.MOD_ENV1_OSC2VOL_AMOUNT]
+				+ env2OutForMix * P.VALXC[P.MOD_ENV2_OSC2_VOL_AMOUNT]
+				+ P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_OSC2VOL_AMOUNT]
+				+ keyNorm * P.VALXC[P.MOD_KEY_OSC2VOL_AMOUNT]
+				+ noteVelocity * P.VALXC[P.MOD_VEL_OSC2VOL_AMOUNT]
+				+ P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_OSC2VOL_AMOUNT];
+		final float osc2Vol = osc2VolBase * Math.max(0f, osc2VolMod);
 		noiseLevel = P.VALX[P.OSC_NOISE_LEVEL];
 		noiseModAmount = P.VALXC[P.MOD_ENV1_NOISE_AMOUNT];
+		// Hoist extra noise sources (control-rate; LFO is sampled per-sample in the loop)
+		final float lfoNoiseAmt = P.VALXC[P.MOD_LFO_NOISE_AMOUNT];
+		final float env2NoiseAmt = P.VALXC[P.MOD_ENV2_NOISE_AMOUNT];
+		final float pressNoiseAmt = P.VALXC[P.MOD_PRESS_NOISE_AMOUNT];
+		final float keyNoiseBase = keyNorm * P.VALXC[P.MOD_KEY_NOISE_AMOUNT];
+		final float velNoiseBase = noteVelocity * P.VALXC[P.MOD_VEL_NOISE_AMOUNT];
+		final float wheelNoiseBase = P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_NOISE_AMOUNT];
+		final float pressNoiseBase = P.CHANNEL_PRESSURE * pressNoiseAmt;
+		final float modAmount = P.MOD_AMOUNT_COMBINED;
 		RouteFilters filterRoute = filtersAllOff;
 		if (filter1on || filter2on) {
 			switch(P.VAL_FILTER_ROUTING) {
@@ -538,50 +567,62 @@ public class AnalogSynthVoice {
 		final float[] outR = outbuffers[1];
 		final float width = 1-P.VAL[P.SPREAD];
 		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
-		filter1.updateFreqResponse();
-		filter2.updateFreqResponse();
-		// Per-voice LFO render for this chunk. Existing oscillators read from
-		// LFO.GLOBAL; only BlepOscillator (Phase 5) reads this per-voice LFO.
-		// Until then, the calls are state-evolving but functionally invisible.
+		final float modEnv1Out = modEnvelope.outValue;
+		filter1.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);
+		filter2.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);
+		// Per-voice LFO render for this chunk.
 		lfo.renderBuffer(nframes);
 
 		if (USE_BUFFER_PATH) {
-			// Pre-render mod envelope so both oscillators see identical trajectory.
-			// env2 advances in lockstep but its outValue is unused until Phase 5
-			// wires it into BlepOscillator's modulation matrix.
+			// Pre-render mod envelope and advance env2; snapshot env2 for oscillator use.
 			for (int i=0; i<nframes; i++) {
 				modEnvBuf[i] = modEnvelope.nextValue();
 				env2.nextValue();
 			}
-			// Mode-specific dispatch: one buffer call per oscillator, statically typed.
+			final float env2Snap = env2.outValue;
+			// Push per-note state into the active oscillator pair so their inner loops
+			// can read env2Val, keyNorm, noteVelocity without changing call signatures.
 			switch (P.VAL_OSCILLATOR_MODE) {
 			case ADDITIVE:
+				osc1_add.env2Val = env2Snap; osc2_add.env2Val = env2Snap;
 				osc1_add.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
 				osc2_add.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
 				break;
 			case EXITER:
+				osc1_pluck.env2Val = env2Snap; osc2_pluck.env2Val = env2Snap;
 				osc1_pluck.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
 				osc2_pluck.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
 				break;
 			case BLEP:
+				// BlepOscillator reads env2 directly via its injected reference; env2Val unused.
 				osc1_blep.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
 				osc2_blep.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
 				break;
 			case WAVETABLE:
 			default:
+				osc1_va.env2Val = env2Snap; osc2_va.env2Val = env2Snap;
 				osc1_va.processBuffer1st(nframes, osc1Vol, syncBuffer, am_buffer, modEnvBuf, osc1OutBuf);
 				osc2_va.processBuffer2nd(nframes, osc2Vol, syncBuffer, am_buffer, modEnvBuf, osc2OutBuf);
 				break;
 			}
-			// Pre-mix noise into oscillator buffers and pre-render envelope*LFO into envBuf,
-			// so the filter route runs as a single buffer-rate dispatch instead of per sample.
+			// Pre-mix noise (all sources) and envelope*LFO into working buffers.
+			final float env2NoiseTerm = env2Snap * env2NoiseAmt;
 			for (int i=0; i<nframes; i++) {
 				noiseX2 += noiseX1;
 				noiseX1 ^= noiseX2;
-				noise_val = (noiseLevel + modEnvBuf[i]*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
+				final float lfoNoiseTerm = LFO.GLOBAL.bufferedValueAt(i) * modAmount * lfoNoiseAmt;
+				noise_val = Math.max(0f, noiseLevel
+						+ modEnvBuf[i]*noiseModAmount
+						+ env2NoiseTerm
+						+ lfoNoiseTerm
+						+ pressNoiseBase
+						+ keyNoiseBase
+						+ velNoiseBase
+						+ wheelNoiseBase) * (noiseX2 * NOISE_SCALE) * .5f;
 				osc1MixBuf[i] = osc1OutBuf[i] + noise_val;
 				osc2MixBuf[i] = osc2OutBuf[i] + noise_val;
-				envBuf[i] = envelope.nextValue() * (1 + LFO.lfoAmountAdd(i, modVol));
+				envBuf[i] = envelope.nextValue() * (1 + LFO.lfoAmountAdd(i, modVol)
+						+ P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_VOL_AMOUNT]);
 			}
 			filterRoute.processBuffer(nframes, osc1MixBuf, osc2MixBuf, envBuf, width, startPos, outL, outR);
 			// am_buffer is fully overwritten by OSC1 each buffer, no per-sample reset needed.
@@ -592,10 +633,19 @@ public class AnalogSynthVoice {
 				env2.nextValue();
 				noiseX2 += noiseX1;
 				noiseX1 ^= noiseX2;
-				noise_val = (noiseLevel + modEnvelope.outValue*noiseModAmount) * (noiseX2 * NOISE_SCALE) * .5f;
+				final float lfoNoiseTerm = LFO.GLOBAL.bufferedValueAt(i) * modAmount * lfoNoiseAmt;
+				noise_val = Math.max(0f, noiseLevel
+						+ modEnvelope.outValue*noiseModAmount
+						+ env2.outValue*env2NoiseAmt
+						+ lfoNoiseTerm
+						+ pressNoiseBase
+						+ keyNoiseBase
+						+ velNoiseBase
+						+ wheelNoiseBase) * (noiseX2 * NOISE_SCALE) * .5f;
 				osc1_val = osc1.processSample1st(i, osc1Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
 				osc2_val = osc2.processSample2nd(i, osc2Vol, syncBuffer, am_buffer, modEnvelope) + noise_val;
-				filterRoute.process(osc1_val, osc2_val, envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol)), width, i, startPos, outL, outR);
+				filterRoute.process(osc1_val, osc2_val, envelope.nextValue()*(1+LFO.lfoAmountAdd(i, modVol)
+						+ P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_VOL_AMOUNT]), width, i, startPos, outL, outR);
 				am_buffer[i] = 0;
 			}
 		}

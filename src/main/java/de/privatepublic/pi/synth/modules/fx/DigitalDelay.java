@@ -40,10 +40,12 @@ public class DigitalDelay extends DelayBase {
 	public void process(final int bufferLen, final float[][] buffers) {
 		final float feedback = P.VAL[P.DELAY_FEEDBACK];
 		final float lfoAdd = LFO.lfoAmountAdd(0, P.VALXC[P.MOD_DELAY_TIME_AMOUNT]);
+		final float pressAdd = P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_DELAY_AMOUNT];
+		final float wheelAdd = P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_DELAY_AMOUNT];
 		final float baseL  = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
 		final float baseR  = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE_RIGHT]);
-		final float rateL  = Math.max(1f, Math.min(delayLineSizeUnder, baseL + baseL*0.5f*lfoAdd));
-		final float rateR  = Math.max(1f, Math.min(delayLineSizeUnder, baseR + baseR*0.5f*lfoAdd));
+		final float rateL  = Math.max(1f, Math.min(delayLineSizeUnder, baseL + baseL*0.5f*(lfoAdd + pressAdd + wheelAdd)));
+		final float rateR  = Math.max(1f, Math.min(delayLineSizeUnder, baseR + baseR*0.5f*(lfoAdd + pressAdd + wheelAdd)));
 		final float deltaL = (rateL - lastrateL) / bufferLen;
 		final float deltaR = (rateR - lastrateR) / bufferLen;
 		final float wet = P.VAL[P.DELAY_WET];

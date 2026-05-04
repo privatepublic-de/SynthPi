@@ -9,7 +9,7 @@
   --tint-3-d: #846f3c;
   --tint-4: #2a9d8f;
   --tint-4-d: #154e47;
-  --tint-violet: #9175cc;
+  --tint-violet: #b491ff;
   --color-darkened: #808088;
   --color-dark: #404048;
   --color-dim: #323239;
@@ -404,15 +404,24 @@ body.learnmode [data-osc]:hover {
   padding: 0;
 }
 .modmatrix-table thead th {
+  height: 70px;
+  padding: 0;
+}
+.modmatrix-col-label {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  /* justify-content:flex-start = physical top = visual bottom after 180° rotation */
+  justify-content: flex-start;
+  /* align-items:center = cross axis (horizontal) centering */
+  align-items: center;
+  white-space: nowrap;
   font-size: 11px;
   font-weight: normal;
   color: #7060a8;
-  height: 70px;
-  vertical-align: bottom;
-  padding: 4px 2px;
-  writing-mode: vertical-rl;
-  transform: rotate(180deg); /* read top-to-bottom */
-  white-space: nowrap;
+  padding: 4px 0;
 }
 .modmatrix-row-label {
   text-align: right;
@@ -507,8 +516,12 @@ body[data-osc-mode="blep"] .va-only-inline {
   opacity: 0.55;
 }
 
-.osc1-col .osc-col-label::before { content: "OSC 1"; }
-.osc2-col .osc-col-label::before { content: "OSC 2"; }
+.osc1-col .osc-col-label::before {
+  content: "OSC 1";
+}
+.osc2-col .osc-col-label::before {
+  content: "OSC 2";
+}
 
 /* In Exciter mode: "Shared" labels the left column (Excitation only).
    The osc2-col top label is removed so no label sits above Damping.

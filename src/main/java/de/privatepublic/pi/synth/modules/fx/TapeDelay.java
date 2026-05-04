@@ -42,7 +42,9 @@ public class TapeDelay extends DelayBase {
 		final float feedback = P.VAL[P.DELAY_FEEDBACK];
 		final float baseRate = delayLineSizeUnder*(.001f+.999f*P.VALX[P.DELAY_RATE]);
 		final float targetRate = Math.max(1f, Math.min(delayLineSizeUnder,
-				baseRate + baseRate*0.5f*LFO.lfoAmountAdd(0, P.VALXC[P.MOD_DELAY_TIME_AMOUNT])));
+				baseRate + baseRate*0.5f*LFO.lfoAmountAdd(0, P.VALXC[P.MOD_DELAY_TIME_AMOUNT])
+				+ baseRate*0.5f*P.CHANNEL_PRESSURE*P.VALXC[P.MOD_PRESS_DELAY_AMOUNT]
+				+ baseRate*0.5f*P.VAL[P.MOD_WHEEL]*P.VALXC[P.MOD_WHEEL_DELAY_AMOUNT]));
 		final float wet = P.VAL[P.DELAY_WET];
 		final float wetInv = 1-wet;
 		final float[] bufL = buffers[0];

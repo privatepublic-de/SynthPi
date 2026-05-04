@@ -173,8 +173,12 @@ public class LFO {
 		currentWave = TABLES[(int)(P.VAL[paraIndexLfoType]*WAVE_COUNT_CALC)];
 		tableIndexIncrement = LOW_FREQ * (float) Math.pow(HI_FREQ / LOW_FREQ, P.VAL[paraIndexLfoRate]);
 		if (paraIndexLfoRate == P.MOD_RATE) {
+			final float selfMod = bufferValues.length > 0 ? bufferValues[0] : 0f;
 			tableIndexIncrement = FastCalc.ensureRange(
-				tableIndexIncrement + P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_LFO_AMOUNT] * FREQ_RANGE,
+				tableIndexIncrement
+					+ P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_LFO_AMOUNT] * FREQ_RANGE
+					+ selfMod * P.MOD_AMOUNT_COMBINED * P.VALXC[P.MOD_LFO_LFORATE_AMOUNT] * FREQ_RANGE
+					+ P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_LFORATE_AMOUNT] * FREQ_RANGE,
 				LOW_FREQ, LOW_FREQ + FREQ_RANGE);
 		}
 		if (currentWave==TABLES[5]) {

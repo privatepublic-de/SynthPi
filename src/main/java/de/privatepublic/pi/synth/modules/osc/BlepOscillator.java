@@ -298,14 +298,23 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 		final float pitchModEnv1Depth = P.VALXC[paramModEnv1Pitch];
 		final float pitchModEnv2Depth = P.VALXC[paramModEnv2Pitch];
 		final float pitchModPressDepth = P.VALXC[paramModPressPitch];
+		final float pitchModKeyDepth = P.VALXC[isBase ? P.MOD_KEY_PITCH1_AMOUNT : P.MOD_KEY_PITCH2_AMOUNT];
 		final float channelPressure = P.CHANNEL_PRESSURE;
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
 		final float pwBase = P.VAL[paramOscPW];
 		final float pwLfoDepth = P.VALXC[paramModPW];
 		final float pwModEnv1Depth = P.VALC[paramModEnv1PW];
 		final float pwModEnv2Depth = P.VALC[paramModEnv2PW];
+		final float pwModPressDepth = P.VALXC[isBase ? P.MOD_PRESS_PW1_AMOUNT : P.MOD_PRESS_PW2_AMOUNT];
+		final float pwModKeyDepth   = P.VALXC[isBase ? P.MOD_KEY_PW1_AMOUNT   : P.MOD_KEY_PW2_AMOUNT];
+		final float pwModVelDepth   = P.VALXC[isBase ? P.MOD_VEL_PW1_AMOUNT   : P.MOD_VEL_PW2_AMOUNT];
+		final float pwModWheelDepth = P.VALXC[isBase ? P.MOD_WHEEL_PW1_AMOUNT  : P.MOD_WHEEL_PW2_AMOUNT];
+		final float pitchWheelDepth = P.VALXC[isBase ? P.MOD_WHEEL_PITCH1_AMOUNT : P.MOD_WHEEL_PITCH2_AMOUNT];
 		final float waveSel = P.VAL[paramOscWave];
 		final float env2Val = env2.outValue;
+		final float kn = keyNorm;
+		final float nv = noteVelocity;
+		final float wh = P.VAL[P.MOD_WHEEL];
 		final boolean subOn = isBase && P.IS[P.OSC_SUB_VOLUME];
 		final float subVol = subOn ? P.VAL[P.OSC_SUB_VOLUME] : 0f;
 		final float subFactor = P.IS[P.OSC_SUB_LOW] ? 0.25f : 0.5f;
@@ -330,10 +339,11 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 			final float modEnvVal = modEnvBuf[sampleNo];
 			final float pitchModLfo = 1 - lfoVal*modAmount*pitchDepth;
 			final float pitchModEnv = modEnvVal*pitchModEnv1Depth + env2Val*pitchModEnv2Depth
-					+ channelPressure*pitchModPressDepth;
+					+ channelPressure*pitchModPressDepth + kn*pitchModKeyDepth + wh*pitchWheelDepth;
 			final float freq = effFreq * (pitchModLfo + pitchModEnv) * pitchBend;
 			final float dt = freq * invSampleRate * driftRatio;
-			final float pwMod = lfoVal*modAmount*pwLfoDepth + modEnvVal*pwModEnv1Depth + env2Val*pwModEnv2Depth;
+			final float pwMod = lfoVal*modAmount*pwLfoDepth + modEnvVal*pwModEnv1Depth + env2Val*pwModEnv2Depth
+					+ channelPressure*pwModPressDepth + kn*pwModKeyDepth + nv*pwModVelDepth + wh*pwModWheelDepth;
 			final float pw = FastCalc.ensureRange(pwBase + pwMod, 0.05f, 0.95f);
 			final float val = generateSample(waveSel, p, dt, pw);
 			float out = val;
@@ -368,9 +378,19 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 		final float pitch2ModEnv1Depth = P.VALXC[paramModEnv1Pitch];
 		final float pitch2ModEnv2Depth = P.VALXC[paramModEnv2Pitch];
 		final float pitch2ModPressDepth = P.VALXC[paramModPressPitch];
+		final float pitch2ModKeyDepth = P.VALXC[P.MOD_KEY_PITCH2_AMOUNT];
+		final float pitch2WheelDepth  = P.VALXC[P.MOD_WHEEL_PITCH2_AMOUNT];
 		final float channelPressure = P.CHANNEL_PRESSURE;
+		final float wh = P.VAL[P.MOD_WHEEL];
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
 		final float ampModAmount = P.VALC[P.MOD_ENV1_AM_AMOUNT];
+		final float lfoRingAmt = P.VALXC[P.MOD_LFO_RING_AMOUNT];
+		final float env2RingAmt = P.VALXC[P.MOD_ENV2_RING_AMOUNT];
+		final float pressRingAmt = P.VALXC[P.MOD_PRESS_RING_AMOUNT];
+		final float keyRingAmt = P.VALXC[P.MOD_KEY_RING_AMOUNT];
+		final float velRingAmt = P.VALXC[P.MOD_VEL_RING_AMOUNT];
+		final float wheelRingAmt = P.VALXC[P.MOD_WHEEL_RING_AMOUNT];
+		final float pwModWheelDepth = P.VALXC[P.MOD_WHEEL_PW2_AMOUNT];
 		final float osc2AmBase = P.VAL[P.OSC2_AM];
 		final boolean osc2AmIs = P.IS[P.OSC2_AM];
 		final boolean osc2SyncIs = P.IS[P.OSC2_SYNC];
@@ -378,8 +398,13 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 		final float pwLfoDepth = P.VALXC[paramModPW];
 		final float pwModEnv1Depth = P.VALC[paramModEnv1PW];
 		final float pwModEnv2Depth = P.VALC[paramModEnv2PW];
+		final float pwModPressDepth = P.VALXC[P.MOD_PRESS_PW2_AMOUNT];
+		final float pwModKeyDepth   = P.VALXC[P.MOD_KEY_PW2_AMOUNT];
+		final float pwModVelDepth   = P.VALXC[P.MOD_VEL_PW2_AMOUNT];
 		final float waveSel = P.VAL[paramOscWave];
 		final float env2Val = env2.outValue;
+		final float kn = keyNorm;
+		final float nv = noteVelocity;
 
 		float effFreq = effectiveFrequency;
 		float p = phase;
@@ -393,8 +418,18 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 				effFreq = targetFreq;
 			}
 			final float modEnvVal = modEnvBuf[sampleNo];
-			final float ampamount = FastCalc.ensureRange(osc2AmBase + modEnvVal*ampModAmount, 0, 1);
-			ampmodLocal = ampamount > 0 || ampModAmount != 0;
+			final float lfoVal = lfo.bufferedValueAt(sampleNo);
+			final float ampamount = FastCalc.ensureRange(osc2AmBase
+					+ lfoVal*modAmount*lfoRingAmt
+					+ modEnvVal*ampModAmount
+					+ env2Val*env2RingAmt
+					+ channelPressure*pressRingAmt
+					+ kn*keyRingAmt
+					+ nv*velRingAmt
+					+ wh*wheelRingAmt, 0, 1);
+			ampmodLocal = ampamount > 0 || ampModAmount != 0 || lfoRingAmt != 0
+					|| env2RingAmt != 0 || pressRingAmt != 0 || keyRingAmt != 0
+					|| velRingAmt != 0 || wheelRingAmt != 0;
 			if (ampmodLocal) {
 				effFreq = targetFreq * (ampamount * 4);
 			} else {
@@ -404,15 +439,15 @@ public class BlepOscillator extends OscillatorBase implements IPitchBendReceiver
 					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 				}
 			}
-			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float pitchModLfo = 1 - lfoVal*modAmount*pitchDepth;
 			final float pitchModEnv = modEnvVal*pitchModEnv1Depth;
 			final float pitch2Lfo = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1;
 			final float pitch2Env = modEnvVal*pitch2ModEnv1Depth + env2Val*pitch2ModEnv2Depth
-					+ channelPressure*pitch2ModPressDepth;
+					+ channelPressure*pitch2ModPressDepth + kn*pitch2ModKeyDepth + wh*pitch2WheelDepth;
 			final float freq = effFreq * (pitchModLfo + pitchModEnv) * pitchBend * (pitch2Lfo + pitch2Env);
 			final float dt = freq * invSampleRate;
-			final float pwMod = lfoVal*modAmount*pwLfoDepth + modEnvVal*pwModEnv1Depth + env2Val*pwModEnv2Depth;
+			final float pwMod = lfoVal*modAmount*pwLfoDepth + modEnvVal*pwModEnv1Depth + env2Val*pwModEnv2Depth
+					+ channelPressure*pwModPressDepth + kn*pwModKeyDepth + nv*pwModVelDepth + wh*pwModWheelDepth;
 			final float pw = FastCalc.ensureRange(pwBase + pwMod, 0.05f, 0.95f);
 			final float savedAccum = triangleAccum;
 			float val = generateSample(waveSel, p, dt, pw);

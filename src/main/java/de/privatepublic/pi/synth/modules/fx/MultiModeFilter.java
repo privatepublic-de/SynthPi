@@ -23,6 +23,13 @@ public class MultiModeFilter {
 	private int p_env_depth = P.FILTER1_ENV_DEPTH;
 	private int p_type = 0;
 	private int p_overload = 0;
+	// Extended mod matrix sources (env1, env2, pressure, key, velocity, wheel)
+	private final int p_mod_env1;
+	private final int p_mod_env2;
+	private final int p_mod_press;
+	private final int p_mod_key;
+	private final int p_mod_vel;
+	private final int p_mod_wheel;
 	
 	
 	private final EnvADSR filterEnv; // new EnvADSR(new short[] {P.FILTER1_ENV_A, P.FILTER1_ENV_D, P.FILTER1_ENV_S, P.FILTER1_ENV_R}, P.FILTER1_ENV_VELOCITY_SENS);
@@ -37,6 +44,21 @@ public class MultiModeFilter {
 		p_track_keyboard = trkkbd;
 		p_overload = overload;
 		filterEnv = new EnvADSR(envelopeConfig);
+		if (type == 0) {
+			p_mod_env1  = P.MOD_ENV1_FILTER1_AMOUNT;
+			p_mod_env2  = P.MOD_ENV2_FILTER_AMOUNT;
+			p_mod_press = P.MOD_PRESS_FILTER_AMOUNT;
+			p_mod_key   = P.MOD_KEY_FILTER1_AMOUNT;
+			p_mod_vel   = P.MOD_VEL_FILTER1_AMOUNT;
+			p_mod_wheel = P.MOD_WHEEL_FILTER1_AMOUNT;
+		} else {
+			p_mod_env1  = P.MOD_ENV1_FILTER2_AMOUNT;
+			p_mod_env2  = P.MOD_ENV2_FILTER2_AMOUNT;
+			p_mod_press = P.MOD_PRESS_FILTER2_AMOUNT;
+			p_mod_key   = P.MOD_KEY_FILTER2_AMOUNT;
+			p_mod_vel   = P.MOD_VEL_FILTER2_AMOUNT;
+			p_mod_wheel = P.MOD_WHEEL_FILTER2_AMOUNT;
+		}
 	}
 	
 	
@@ -64,13 +86,18 @@ public class MultiModeFilter {
 	float drive, dsquare, inValue;
 	FilterType type;
 	
-	public void updateFreqResponse() {
+	public void updateFreqResponse(float modEnv1Val, float env2Val, float keyNorm, float velocity) {
 		type = P.VAL_FILTER_TYPE_FOR[p_type];
 		frq = FastCalc.ensureRange(
 				(
 					MAX_STABLE_FREQUENCY*P.VALX[p_freq]
-					+ (MAX_STABLE_FREQUENCY * (filterEnv.outValue * P.VALXC[p_env_depth]))
-					+ (p_type == 0 ? MAX_STABLE_FREQUENCY * P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_FILTER_AMOUNT] : 0)
+					+ MAX_STABLE_FREQUENCY * filterEnv.outValue * P.VALXC[p_env_depth]
+					+ MAX_STABLE_FREQUENCY * modEnv1Val * P.VALXC[p_mod_env1]
+					+ MAX_STABLE_FREQUENCY * env2Val    * P.VALXC[p_mod_env2]
+					+ MAX_STABLE_FREQUENCY * P.CHANNEL_PRESSURE * P.VALXC[p_mod_press]
+					+ MAX_STABLE_FREQUENCY * keyNorm   * P.VALXC[p_mod_key]
+					+ MAX_STABLE_FREQUENCY * velocity  * P.VALXC[p_mod_vel]
+					+ MAX_STABLE_FREQUENCY * P.VAL[P.MOD_WHEEL] * P.VALXC[p_mod_wheel]
 				)
 				* frqKeyTrackMult
 				* LFO.lfoAmount(0, P.VALXC[p_mod_amount]),

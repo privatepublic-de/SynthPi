@@ -90,10 +90,24 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 		final float pitchBend = P.PITCH_BEND_FACTOR;
 		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
 		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float pitchModEnv2Depth = P.VALXC[P.MOD_ENV2_PITCH_AMOUNT];
+		final float pitchModPressDepth = P.VALXC[P.MOD_PRESS_PITCH_AMOUNT];
+		final float pitchModKeyDepth = P.VALXC[P.MOD_KEY_PITCH1_AMOUNT];
 		final float wfBase = P.VAL[P.OSC1_WAVE];
 		final float wfDepth = P.VALXC[P.MOD_WAVE1_AMOUNT];
 		final float wfModEnvDepth = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
+		final float wfEnv2Depth = P.VALXC[P.MOD_ENV2_WAVE1_AMOUNT];
+		final float wfPressDepth = P.VALXC[P.MOD_PRESS_WAVE1_AMOUNT];
+		final float wfKeyDepth = P.VALXC[P.MOD_KEY_WAVE1_AMOUNT];
+		final float wfVelDepth = P.VALXC[P.MOD_VEL_WAVE1_AMOUNT];
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float env2v = env2Val;
+		final float pressure = P.CHANNEL_PRESSURE;
+		final float kn = keyNorm;
+		final float nv = noteVelocity;
+		final float wh = P.VAL[P.MOD_WHEEL];
+		final float wfWheelDepth = P.VALXC[P.MOD_WHEEL_WAVE1_AMOUNT];
+		final float pitchWheelDepth = P.VALXC[P.MOD_WHEEL_PITCH1_AMOUNT];
 		final int wavesetindex = (int)(P.VAL[wavesetparamindex]*WaveTables.WAVE_SET_COUNT);
 		final float[][][] wavesetTable = WaveTables.WAVES[wavesetindex];
 		final int waveIndexMax = WaveTables.WAVE_INDEX_MAX;
@@ -115,8 +129,11 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 			}
 			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
-			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth) * pitchBend;
-			final float waveform = wfBase + (lfoVal*modAmount*wfDepth) + modEnvVal*wfModEnvDepth;
+			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth)
+					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
+					+ pressure*pitchModPressDepth + kn*pitchModKeyDepth + wh*pitchWheelDepth) * pitchBend;
+			final float waveform = wfBase + (lfoVal*modAmount*wfDepth) + modEnvVal*wfModEnvDepth
+					+ env2v*wfEnv2Depth + pressure*wfPressDepth + kn*wfKeyDepth + nv*wfVelDepth + wh*wfWheelDepth;
 			final float waveformpos;
 			if (waveform > 1)      waveformpos = waveIndexMax;
 			else if (waveform < 0) waveformpos = 0;
@@ -160,13 +177,37 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 		final float pitchBend = P.PITCH_BEND_FACTOR;
 		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
 		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float pitchModEnv2Depth = P.VALXC[P.MOD_ENV2_PITCH_AMOUNT];
+		final float pitchModPressDepth = P.VALXC[P.MOD_PRESS_PITCH_AMOUNT];
+		final float pitchModKeyDepth = P.VALXC[P.MOD_KEY_PITCH1_AMOUNT];
 		final float pitch2Depth = P.VALXC[P.MOD_PITCH2_AMOUNT];
 		final float pitch2ModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT];
+		final float pitch2ModEnv2Depth = P.VALXC[P.MOD_ENV2_PITCH2_AMOUNT];
+		final float pitch2ModPressDepth = P.VALXC[P.MOD_PRESS_PITCH2_AMOUNT];
+		final float pitch2ModKeyDepth = P.VALXC[P.MOD_KEY_PITCH2_AMOUNT];
 		final float wfBase = P.VAL[P.OSC2_WAVE];
 		final float wfDepth = P.VALXC[P.MOD_WAVE2_AMOUNT];
-		final float wfModEnvDepth = P.VALXC[P.MOD_ENV1_WAVE_AMOUNT];
+		final float wfModEnvDepth = P.VALXC[P.MOD_ENV1_WAVE2_AMOUNT];
+		final float wfEnv2Depth = P.VALXC[P.MOD_ENV2_WAVE2_AMOUNT];
+		final float wfPressDepth = P.VALXC[P.MOD_PRESS_WAVE2_AMOUNT];
+		final float wfKeyDepth = P.VALXC[P.MOD_KEY_WAVE2_AMOUNT];
+		final float wfVelDepth = P.VALXC[P.MOD_VEL_WAVE2_AMOUNT];
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
 		final float ampModAmount = P.VALC[P.MOD_ENV1_AM_AMOUNT];
+		final float lfoRingAmt = P.VALXC[P.MOD_LFO_RING_AMOUNT];
+		final float env2RingAmt = P.VALXC[P.MOD_ENV2_RING_AMOUNT];
+		final float pressRingAmt = P.VALXC[P.MOD_PRESS_RING_AMOUNT];
+		final float keyRingAmt = P.VALXC[P.MOD_KEY_RING_AMOUNT];
+		final float velRingAmt = P.VALXC[P.MOD_VEL_RING_AMOUNT];
+		final float wheelRingAmt = P.VALXC[P.MOD_WHEEL_RING_AMOUNT];
+		final float env2v = env2Val;
+		final float pressure = P.CHANNEL_PRESSURE;
+		final float kn = keyNorm;
+		final float nv = noteVelocity;
+		final float wh = P.VAL[P.MOD_WHEEL];
+		final float pitchWheelDepth  = P.VALXC[P.MOD_WHEEL_PITCH1_AMOUNT];
+		final float pitch2WheelDepth = P.VALXC[P.MOD_WHEEL_PITCH2_AMOUNT];
+		final float wfWheelDepth     = P.VALXC[P.MOD_WHEEL_WAVE2_AMOUNT];
 		final float osc2AmBase = P.VAL[P.OSC2_AM];
 		final boolean osc2AmIs = P.IS[P.OSC2_AM];
 		final boolean osc2SyncIs = P.IS[P.OSC2_SYNC];
@@ -188,8 +229,18 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 				effFreq = targetFreq;
 			}
 			final float modEnvVal = modEnvBuf[sampleNo];
-			final float ampamount = FastCalc.ensureRange(osc2AmBase + modEnvVal*ampModAmount, 0, 1);
-			ampmodLocal = ampamount > 0 || ampModAmount != 0;
+			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float ampamount = FastCalc.ensureRange(osc2AmBase
+					+ lfoVal*modAmount*lfoRingAmt
+					+ modEnvVal*ampModAmount
+					+ env2v*env2RingAmt
+					+ pressure*pressRingAmt
+					+ kn*keyRingAmt
+					+ nv*velRingAmt
+					+ wh*wheelRingAmt, 0, 1);
+			ampmodLocal = ampamount > 0 || ampModAmount != 0 || lfoRingAmt != 0
+					|| env2RingAmt != 0 || pressRingAmt != 0 || keyRingAmt != 0
+					|| velRingAmt != 0 || wheelRingAmt != 0;
 			if (ampmodLocal) {
 				effFreq = targetFreq * (ampamount * 4);
 			}
@@ -200,11 +251,15 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 				}
 			}
-			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
-			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth;
-			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1 + modEnvVal*pitch2ModEnvDepth;
+			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth)
+					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
+					+ pressure*pitchModPressDepth + kn*pitchModKeyDepth + wh*pitchWheelDepth;
+			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1
+					+ modEnvVal*pitch2ModEnvDepth + env2v*pitch2ModEnv2Depth
+					+ pressure*pitch2ModPressDepth + kn*pitch2ModKeyDepth + wh*pitch2WheelDepth;
 			final float freq = effFreq * pitchLfo * pitchBend * pitchAsymm;
-			final float waveform = wfBase + (lfoVal*modAmount*wfDepth) + modEnvVal*wfModEnvDepth;
+			final float waveform = wfBase + (lfoVal*modAmount*wfDepth) + modEnvVal*wfModEnvDepth
+					+ env2v*wfEnv2Depth + pressure*wfPressDepth + kn*wfKeyDepth + nv*wfVelDepth + wh*wfWheelDepth;
 			final float waveformpos;
 			if (waveform > 1)      waveformpos = waveIndexMax;
 			else if (waveform < 0) waveformpos = 0;

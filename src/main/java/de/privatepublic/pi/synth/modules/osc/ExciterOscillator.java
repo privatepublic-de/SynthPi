@@ -168,7 +168,15 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 		final float pitchBend = P.PITCH_BEND_FACTOR;
 		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
 		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float pitchModEnv2Depth = P.VALXC[P.MOD_ENV2_PITCH_AMOUNT];
+		final float pitchModPressDepth = P.VALXC[P.MOD_PRESS_PITCH_AMOUNT];
+		final float pitchModKeyDepth = P.VALXC[P.MOD_KEY_PITCH1_AMOUNT];
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float env2v = env2Val;
+		final float pressure = P.CHANNEL_PRESSURE;
+		final float kn = keyNorm;
+		final float wh = P.VAL[P.MOD_WHEEL];
+		final float pitchWheelDepth = P.VALXC[P.MOD_WHEEL_PITCH1_AMOUNT];
 		final float osc2WaveVal = P.VAL[P.OSC2_WAVE];
 		final int blen = bufferLen;
 		final float sampleRate = P.SAMPLE_RATE_HZ;
@@ -188,7 +196,9 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 			}
 			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
-			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth) * pitchBend;
+			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth)
+					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
+					+ pressure*pitchModPressDepth + kn*pitchModKeyDepth + wh*pitchWheelDepth) * pitchBend;
 			final int playBufferLen = Math.min((int)(sampleRate / Math.max(freq, 1)), blen);
 			if (playBufferLen > 1) {
 				int prefIndex = idx - 1;
@@ -218,9 +228,21 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 		final float pitchBend = P.PITCH_BEND_FACTOR;
 		final float pitchDepth = P.VALXC[P.MOD_PITCH_AMOUNT];
 		final float pitchModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH_AMOUNT];
+		final float pitchModEnv2Depth = P.VALXC[P.MOD_ENV2_PITCH_AMOUNT];
+		final float pitchModPressDepth = P.VALXC[P.MOD_PRESS_PITCH_AMOUNT];
+		final float pitchModKeyDepth = P.VALXC[P.MOD_KEY_PITCH1_AMOUNT];
 		final float pitch2Depth = P.VALXC[P.MOD_PITCH2_AMOUNT];
 		final float pitch2ModEnvDepth = P.VALXC[P.MOD_ENV1_PITCH2_AMOUNT];
+		final float pitch2ModEnv2Depth = P.VALXC[P.MOD_ENV2_PITCH2_AMOUNT];
+		final float pitch2ModPressDepth = P.VALXC[P.MOD_PRESS_PITCH2_AMOUNT];
+		final float pitch2ModKeyDepth = P.VALXC[P.MOD_KEY_PITCH2_AMOUNT];
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
+		final float env2v = env2Val;
+		final float pressure = P.CHANNEL_PRESSURE;
+		final float kn = keyNorm;
+		final float wh = P.VAL[P.MOD_WHEEL];
+		final float pitchWheelDepth  = P.VALXC[P.MOD_WHEEL_PITCH1_AMOUNT];
+		final float pitch2WheelDepth = P.VALXC[P.MOD_WHEEL_PITCH2_AMOUNT];
 		final float osc2WaveVal = P.VAL[P.OSC2_WAVE];
 		final boolean osc2AmIs = P.IS[P.OSC2_AM];
 		final boolean osc2SyncIs = P.IS[P.OSC2_SYNC];
@@ -252,8 +274,12 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 			}
 			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
-			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth) + modEnvVal*pitchModEnvDepth;
-			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1 + modEnvVal*pitch2ModEnvDepth;
+			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth)
+					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
+					+ pressure*pitchModPressDepth + kn*pitchModKeyDepth + wh*pitchWheelDepth;
+			final float pitchAsymm = ((lfoVal+1)*modAmount*0.5f*pitch2Depth) + 1
+					+ modEnvVal*pitch2ModEnvDepth + env2v*pitch2ModEnv2Depth
+					+ pressure*pitch2ModPressDepth + kn*pitch2ModKeyDepth + wh*pitch2WheelDepth;
 			final float freq = effFreq * pitchLfo * pitchBend * pitchAsymm;
 			final int playBufferLen = Math.min((int)(sampleRate / Math.max(freq, 1)), blen);
 			if (playBufferLen > 1) {

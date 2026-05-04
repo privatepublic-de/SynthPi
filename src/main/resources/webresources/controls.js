@@ -171,14 +171,15 @@ export class Rotary {
 				if (this._userActive) return;
 				this._setValue(v);
 			});
-			// Subscribe unconditionally — when the server has a label for this
-			// param (e.g. "440 Hz", "−3.4 dB"), it'll arrive and we'll switch
-			// the display over. Params without a label never push and the raw
-			// 0..127 keeps showing.
-			socket.onCommand(`/label${this.path}`, (path, value) => {
-				this._serverLabelReceived = true;
-				this.valueElement.textContent = value;
-			});
+			// Bipolar params always display in the -100/0/+100% format computed
+			// client-side; server labels would override that with a locale-formatted
+			// raw value which is meaningless for depth knobs.
+			if (!this.isBipolar) {
+				socket.onCommand(`/label${this.path}`, (path, value) => {
+					this._serverLabelReceived = true;
+					this.valueElement.textContent = value;
+				});
+			}
 		}
 	}
 
@@ -201,7 +202,7 @@ export class Rotary {
 			const intPercent = Math.round(100 * percent);
 			displayValue = (100 - intPercent) + " : " + intPercent;
 		} else if (this.isBipolar) {
-			displayValue = Math.round(127 * percent) - 64;
+			displayValue = Math.round((percent - 0.5) * 200) + "%";
 		} else {
 			displayValue = Math.round(127 * percent);
 		}
