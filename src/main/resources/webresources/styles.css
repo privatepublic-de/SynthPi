@@ -510,10 +510,11 @@ body[data-osc-mode="blep"] .va-only-inline {
 .osc1-col .osc-col-label::before { content: "OSC 1"; }
 .osc2-col .osc-col-label::before { content: "OSC 2"; }
 
-/* In Exciter mode Excitation and Damping are shared synthesis params that
-   affect both oscillators — signal this by relabelling the left column. */
-body[data-osc-mode="exc"] .osc1-col .osc-col-label::before {
-  content: "Shared";
+/* In Exciter mode Excitation and Damping are both shared params — drop the
+   column labels so only the tuning-wrap's "OSC 2" marker remains. */
+body[data-osc-mode="exc"] .osc1-col .osc-col-label::before,
+body[data-osc-mode="exc"] .osc2-col > .osc-col-label::before {
+  content: "";
 }
 
 .osc2-col {
@@ -525,6 +526,39 @@ body[data-osc-mode="exc"] .osc1-col .osc-col-label::before {
    and va-only toggle align cleanly regardless of engine mode height. */
 .osc2-col > .row {
   align-items: center;
+}
+
+/* Tuning-knob wrapper: transparent to layout in normal modes so the rotaries
+   flow as direct siblings of the wave slot. In Exciter mode it becomes a
+   labelled column, shifting the border one knob to the right so Excitation
+   and Damping read as shared params while only tuning is branded OSC 2. */
+.osc2-tuning-wrap {
+  display: contents;
+}
+.osc2-tuning-label {
+  display: none;
+}
+body[data-osc-mode="exc"] .osc2-col {
+  border-left: none;
+  padding-left: 0;
+}
+body[data-osc-mode="exc"] .osc2-tuning-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 10px;
+  border-left: 1px solid var(--color-dark);
+}
+body[data-osc-mode="exc"] .osc2-tuning-label {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color);
+  opacity: 0.55;
+}
+body[data-osc-mode="exc"] .osc2-tuning-label::before {
+  content: "OSC 2";
 }
 
 /* WT bank picker: two columns side by side, each with a mini label and a

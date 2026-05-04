@@ -118,25 +118,33 @@
                   data-step-floor
                 ></div>
               </div>
-              <div
-                class="rotary"
-                data-osc="/osc/2/tuning"
-                data-label="Semitones"
-                data-bipolar
-              ></div>
-              <div
-                class="rotary"
-                data-osc="/osc/2/tuning/fine"
-                data-label="Fine Tune"
-                data-bipolar
-              ></div>
-              <!-- OSC2 keytracking is VA-only (only BlepOscillator reads it). -->
-              <div
-                class="toggle va-only-inline"
-                data-osc="/osc/2/keytrack"
-                data-label="OSC2 Keytrack"
-              >
-                OSC2 Track
+              <!-- In Exciter mode this wrapper carries the border + label so
+                   Excitation and Damping read as shared params left of the
+                   divider, with only the tuning knobs branded OSC 2. -->
+              <div class="osc2-tuning-wrap">
+                <div class="osc2-tuning-label"></div>
+                <div class="row">
+                  <div
+                    class="rotary"
+                    data-osc="/osc/2/tuning"
+                    data-label="Semitones"
+                    data-bipolar
+                  ></div>
+                  <div
+                    class="rotary"
+                    data-osc="/osc/2/tuning/fine"
+                    data-label="Fine Tune"
+                    data-bipolar
+                  ></div>
+                  <!-- OSC2 keytracking is VA-only (only BlepOscillator reads it). -->
+                  <div
+                    class="toggle va-only-inline"
+                    data-osc="/osc/2/keytrack"
+                    data-label="OSC2 Keytrack"
+                  >
+                    OSC2 Track
+                  </div>
+                </div>
               </div>
             </div>
           </div>
