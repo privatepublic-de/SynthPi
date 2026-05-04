@@ -510,18 +510,12 @@ body[data-osc-mode="blep"] .va-only-inline {
 .osc1-col .osc-col-label::before { content: "OSC 1"; }
 .osc2-col .osc-col-label::before { content: "OSC 2"; }
 
-/* In Exciter mode restore the "Shared" label so Excitation and Damping
-   are vertically offset by the same label height as the tuning-wrap's
-   "OSC 2" marker. The osc2-col top label becomes an invisible spacer of
-   equal height so Damping aligns with Excitation. */
+/* In Exciter mode shift the OSC1 column label to "Shared". OSC2's own
+   "OSC 2" label stays visible as normal — it now heads the whole right
+   section (Damping + tuning). The border moves inside to the tuning-wrap,
+   sub-separating the shared Damping knob from the OSC2-only tuning. */
 body[data-osc-mode="exc"] .osc1-col .osc-col-label::before {
   content: "Shared";
-}
-body[data-osc-mode="exc"] .osc2-col > .osc-col-label {
-  visibility: hidden;
-}
-body[data-osc-mode="exc"] .osc2-col > .osc-col-label::before {
-  content: "OSC 2"; /* same text as real labels → identical line-height */
 }
 body[data-osc-mode="exc"] .osc2-col > .row {
   align-items: flex-start;
@@ -555,20 +549,8 @@ body[data-osc-mode="exc"] .osc2-col {
 body[data-osc-mode="exc"] .osc2-tuning-wrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
   padding-left: 10px;
   border-left: 1px solid var(--color-dark);
-}
-body[data-osc-mode="exc"] .osc2-tuning-label {
-  display: block;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color);
-  opacity: 0.55;
-}
-body[data-osc-mode="exc"] .osc2-tuning-label::before {
-  content: "OSC 2";
 }
 
 /* WT bank picker: two columns side by side, each with a mini label and a
