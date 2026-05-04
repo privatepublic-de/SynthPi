@@ -151,6 +151,12 @@ public class P {
 	public static float CHANNEL_PRESSURE = 0;
 	/** Raw target for channel pressure; smoothed into {@link #CHANNEL_PRESSURE} by {@link #interpolate()}. */
 	public static float CHANNEL_PRESSURE_TARGET = 0;
+	/** Last-active-voice snapshot of mod envelope 1 output, for global LFO rate modulation. */
+	public static float MOD_ENV1_GLOBAL = 0f;
+	/** Last-active-voice snapshot of mod envelope 2 output, for global LFO rate modulation. */
+	public static float MOD_ENV2_GLOBAL = 0f;
+	/** Last-active-voice keyboard position (keyNorm), for global LFO rate modulation. */
+	public static float KEY_NORM_GLOBAL = 0f;
 	
 	public static final String[] OSC_PATH = new String[PARAM_STORE_SIZE];
 	

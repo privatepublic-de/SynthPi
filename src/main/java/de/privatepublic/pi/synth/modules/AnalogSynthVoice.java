@@ -649,6 +649,9 @@ public class AnalogSynthVoice {
 				am_buffer[i] = 0;
 			}
 		}
+		P.MOD_ENV1_GLOBAL = modEnvelope.outValue;
+		P.MOD_ENV2_GLOBAL = env2.outValue;
+		P.KEY_NORM_GLOBAL = keyNorm;
 		lfo.nextBufferSlice(nframes);
 	}
 	
