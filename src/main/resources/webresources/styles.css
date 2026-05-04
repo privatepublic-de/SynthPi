@@ -32,6 +32,8 @@ body {
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-wrap: wrap;
+  row-gap: 4px;
 }
 #status .status-spacer {
   flex: 1;
@@ -388,6 +390,9 @@ body.learnmode [data-osc]:hover {
   padding: 8px 12px;
   --color: var(--tint-violet);
   background-color: #1c1928;
+  overflow-x: auto;
+  flex-shrink: 1;
+  min-width: 0;
 }
 .modmatrix-table {
   border-collapse: collapse;
@@ -595,6 +600,7 @@ body[data-delay-type="digital"] .delay-digital-only {
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .col {
@@ -619,6 +625,7 @@ body[data-delay-type="digital"] .delay-digital-only {
   border-radius: var(--border-radius);
   background-color: #181818;
   box-shadow: 0 0 4px #000;
+  flex-shrink: 0;
 }
 
 .area .row {
@@ -800,6 +807,11 @@ body[data-delay-type="digital"] .delay-digital-only {
   background-color: #000;
   box-shadow: 0 -8px 10px var(--color-body);
   align-items: flex-end;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-dark) transparent;
 }
 
 .keys {
