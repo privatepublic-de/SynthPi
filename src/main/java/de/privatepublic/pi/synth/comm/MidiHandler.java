@@ -195,14 +195,17 @@ public class MidiHandler {
 	 * Called by PresetHandler.settingsJSONObject() to populate the UI.
 	 */
 	public List<PortConfig> getPortInfos() {
-		// Build live device key set first (outside the lock; MidiSystem call can be slow).
+		// Build live device key set + info map (outside the lock; MidiSystem call can be slow).
 		Set<String> liveKeys = new HashSet<>();
+		Map<String, MidiDevice.Info> liveInfoByKey = new LinkedHashMap<>();
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 		for (MidiDevice.Info info : infos) {
 			try {
 				MidiDevice device = MidiSystem.getMidiDevice(info);
 				if (device.getMaxTransmitters() != 0) {
-					liveKeys.add(PortConfig.makeKey(info));
+					String key = PortConfig.makeKey(info);
+					liveKeys.add(key);
+					liveInfoByKey.put(key, info);
 				}
 			} catch (MidiUnavailableException e) { /* skip */ }
 		}
@@ -211,7 +214,21 @@ public class MidiHandler {
 		Set<String> savedKeys = new HashSet<>();
 		synchronized (this) {
 			for (PortConfig cfg : portConfigs.values()) {
-				PortConfig copy = new PortConfig(cfg.key, cfg.name, cfg.vendor, cfg.enabled, cfg.channel);
+				String name = cfg.name;
+				String vendor = cfg.vendor;
+				// Names are not round-tripped through the UI save, so a saved config may
+				// have an empty name. Fill it from the live device when available; fall
+				// back to the key (which encodes name+vendor) for disconnected ports.
+				if (name == null || name.isEmpty()) {
+					MidiDevice.Info liveInfo = liveInfoByKey.get(cfg.key);
+					if (liveInfo != null) {
+						name = liveInfo.getName();
+						vendor = liveInfo.getVendor() != null ? liveInfo.getVendor().trim() : "";
+					} else {
+						name = cfg.key;
+					}
+				}
+				PortConfig copy = new PortConfig(cfg.key, name, vendor, cfg.enabled, cfg.channel);
 				copy.available = liveKeys.contains(cfg.key);
 				result.add(copy);
 				savedKeys.add(cfg.key);
