@@ -515,6 +515,17 @@ public class AnalogSynthVoice {
 		final float velNoiseBase = noteVelocity * P.VALXC[P.MOD_VEL_NOISE_AMOUNT];
 		final float wheelNoiseBase = P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_NOISE_AMOUNT];
 		final float pressNoiseBase = P.CHANNEL_PRESSURE * pressNoiseAmt;
+		// Per-voice effective LFO amount: base knob + additive modulations, clamped to [0, 1].
+		// Written to P.MOD_AMOUNT_COMBINED so all oscillator inner loops (which hoist modAmount
+		// at the start of processBuffer) pick up the correct per-voice value.
+		P.MOD_AMOUNT_COMBINED = Math.max(0f, Math.min(1f,
+				P.VAL[P.MOD_AMOUNT_BASE]
+				+ modEnvelope.outValue * P.VALXC[P.MOD_ENV1_LFOAMT_AMOUNT]
+				+ env2OutForMix       * P.VALXC[P.MOD_ENV2_LFOAMT_AMOUNT]
+				+ P.CHANNEL_PRESSURE  * P.VALXC[P.MOD_PRESS_LFOAMT_AMOUNT]
+				+ P.VAL[P.MOD_WHEEL]  * P.VALXC[P.MOD_WHEEL_LFOAMT_AMOUNT]
+				+ keyNorm             * P.VALXC[P.MOD_KEY_LFOAMT_AMOUNT]
+				+ noteVelocity        * P.VALXC[P.MOD_VEL_LFOAMT_AMOUNT]));
 		final float modAmount = P.MOD_AMOUNT_COMBINED;
 		RouteFilters filterRoute = filtersAllOff;
 		if (filter1on || filter2on) {
@@ -566,7 +577,7 @@ public class AnalogSynthVoice {
 		final float[] outL = outbuffers[0];
 		final float[] outR = outbuffers[1];
 		final float width = 1-P.VAL[P.SPREAD];
-		final float modVol = P.VAL[P.MOD_VOL_AMOUNT];
+		final float modVol = P.VALXC[P.MOD_VOL_AMOUNT];
 		final float modEnv1Out = modEnvelope.outValue;
 		filter1.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);
 		filter2.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);

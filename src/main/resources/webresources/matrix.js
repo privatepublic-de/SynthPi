@@ -20,7 +20,7 @@ const SOURCES = ["LFO", "Mod Env 1", "Mod Env 2", "Pressure", "Keyboard", "Veloc
 const TARGETS = [
 	"Pitch 1", "Pitch 2", "PW 1", "PW 2", "Wave 1", "Wave 2",
 	"Filter 1", "Filter 2", "Vol", "OSC2 Vol", "Ring", "Noise",
-	"LFO Rate", "Delay Time",
+	"LFO Rate", "Delay Time", "LFO Amt",
 ];
 
 // 6×14 path table; null = source has no routing to that target.
@@ -30,49 +30,49 @@ const PATHS = [
 		"/mod/1/depth/pitch", "/mod/1/depth/pitch/2", "/mod/1/depth/pw/1", "/mod/1/depth/pw/2",
 		"/mod/1/depth/wave/1", "/mod/1/depth/wave/2", "/mod/1/depth/filter/1", "/mod/1/depth/filter/2",
 		"/mod/1/depth/vol", "/mod/1/depth/osc2vol", "/mod/1/depth/ring", "/mod/1/depth/noise",
-		"/mod/1/depth/lforate", "/mod/1/depth/delaytime",
+		"/mod/1/depth/lforate", "/mod/1/depth/delaytime", null,
 	],
 	// Mod Env 1
 	[
 		"/mod/env/depth/pitch", "/mod/env/depth/pitch/2", "/mod/env/depth/pw/1", "/mod/env/depth/pw/2",
 		"/mod/env/depth/wave", "/mod/env/depth/wave/2", "/mod/env/depth/filter/1", "/mod/env/depth/filter/2",
 		null, "/mod/env/depth/osc2vol", "/mod/env/depth/am", "/mod/env/depth/noise",
-		"/mod/env/depth/lforate", null,
+		"/mod/env/depth/lforate", null, "/mod/env/depth/lfoamt",
 	],
 	// Mod Env 2
 	[
 		"/mod/env/2/depth/pitch", "/mod/env/2/depth/pitch/2", "/mod/env/2/depth/pw/1", "/mod/env/2/depth/pw/2",
 		"/mod/env/2/depth/wave/1", "/mod/env/2/depth/wave/2", "/mod/env/2/depth/filter", "/mod/env/2/depth/filter/2",
 		null, "/mod/env/2/depth/osc2vol", "/mod/env/2/depth/ring", "/mod/env/2/depth/noise",
-		"/mod/env/2/depth/lforate", null,
+		"/mod/env/2/depth/lforate", null, "/mod/env/2/depth/lfoamt",
 	],
 	// Channel pressure
 	[
 		"/mod/press/depth/pitch", "/mod/press/depth/pitch/2", "/mod/press/depth/pw/1", "/mod/press/depth/pw/2",
 		"/mod/press/depth/wave/1", "/mod/press/depth/wave/2", "/mod/press/depth/filter", "/mod/press/depth/filter/2",
 		null, "/mod/press/depth/osc2vol", "/mod/press/depth/ring", "/mod/press/depth/noise",
-		"/mod/press/depth/lfo", "/mod/press/depth/delaytime",
+		"/mod/press/depth/lfo", "/mod/press/depth/delaytime", "/mod/press/depth/lfoamt",
 	],
 	// Keyboard (keyNorm: 0 at A4, ±1 over ±4 octaves)
 	[
 		"/mod/key/depth/pitch", "/mod/key/depth/pitch/2", "/mod/key/depth/pw/1", "/mod/key/depth/pw/2",
 		"/mod/key/depth/wave/1", "/mod/key/depth/wave/2", "/mod/key/depth/filter/1", "/mod/key/depth/filter/2",
 		null, "/mod/key/depth/osc2vol", "/mod/key/depth/ring", "/mod/key/depth/noise",
-		"/mod/key/depth/lforate", null,
+		"/mod/key/depth/lforate", null, "/mod/key/depth/lfoamt",
 	],
 	// Velocity (0..1, bipolar depth = inverted velocity possible)
 	[
 		null, null, "/mod/vel/depth/pw/1", "/mod/vel/depth/pw/2",
 		"/mod/vel/depth/wave/1", "/mod/vel/depth/wave/2", "/mod/vel/depth/filter/1", "/mod/vel/depth/filter/2",
 		null, "/mod/vel/depth/osc2vol", "/mod/vel/depth/ring", "/mod/vel/depth/noise",
-		null, null,
+		null, null, "/mod/vel/depth/lfoamt",
 	],
 	// Mod Wheel (0..1, independent of global LFO amount)
 	[
 		"/mod/wheel/depth/pitch", "/mod/wheel/depth/pitch/2", "/mod/wheel/depth/pw/1", "/mod/wheel/depth/pw/2",
 		"/mod/wheel/depth/wave/1", "/mod/wheel/depth/wave/2", "/mod/wheel/depth/filter/1", "/mod/wheel/depth/filter/2",
 		"/mod/wheel/depth/vol", "/mod/wheel/depth/osc2vol", "/mod/wheel/depth/ring", "/mod/wheel/depth/noise",
-		"/mod/wheel/depth/lforate", "/mod/wheel/depth/delaytime",
+		"/mod/wheel/depth/lforate", "/mod/wheel/depth/delaytime", "/mod/wheel/depth/lfoamt",
 	],
 ];
 

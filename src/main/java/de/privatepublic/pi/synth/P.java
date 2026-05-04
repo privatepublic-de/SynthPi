@@ -100,7 +100,7 @@ public class P {
 	public static PatchCategory LAST_LOADED_PATCH_CATEGORY = PatchCategory.WHATEVER;
 	
 	/** Number of available parameters */
-	public static final int PARAM_STORE_SIZE = 174;
+	public static final int PARAM_STORE_SIZE = 180;
 	
 	/** float value of parameter (0 - 1) */
 	public static final float[] VAL = new float[PARAM_STORE_SIZE];
@@ -145,8 +145,9 @@ public class P {
 	public static boolean PEDAL = false;
 	/** Pitch bend frequency factor. No pitch bend=1. This factor can be applied directly to a frequency. */
 	public static float PITCH_BEND_FACTOR = 1;
-	/** Combined lfo modulation amount: max(MOD_WHEEL, MOD_AMOUNT_BASE) */
-	public static float MOD_AMOUNT_COMBINED = 0;
+	/** LFO output scale applied to all depth formulas. Fixed at 1.0 — the mod matrix
+	 *  depth knobs are the sole control of per-target amount. */
+	public static float MOD_AMOUNT_COMBINED = 1.0f;
 	/** MIDI channel pressure (aftertouch) value, smoothed. */
 	public static float CHANNEL_PRESSURE = 0;
 	/** Raw target for channel pressure; smoothed into {@link #CHANNEL_PRESSURE} by {@link #interpolate()}. */
@@ -501,6 +502,15 @@ public class P {
 
 	// index 159 reserved
 
+	// LFO output amount as a mod target (indices 174-179).
+	// All sources modulate MOD_AMOUNT_COMBINED additively on top of MOD_AMOUNT_BASE.
+	public static final int MOD_ENV1_LFOAMT_AMOUNT  = 174;
+	public static final int MOD_ENV2_LFOAMT_AMOUNT  = 175;
+	public static final int MOD_PRESS_LFOAMT_AMOUNT = 176;
+	public static final int MOD_WHEEL_LFOAMT_AMOUNT = 177;
+	public static final int MOD_KEY_LFOAMT_AMOUNT   = 178;
+	public static final int MOD_VEL_LFOAMT_AMOUNT   = 179;
+
 	// Mod wheel as independent matrix source (indices 160-173).
 	// Wheel signal = VAL[MOD_WHEEL] (0..1). Depth knobs are bipolar (0.5 = no mod).
 	// MOD_AMOUNT_COMBINED is now driven by MOD_AMOUNT_BASE only; the wheel no longer
@@ -754,6 +764,13 @@ public class P {
 		OSC_PATH[MOD_VEL_RING_AMOUNT] = "/mod/vel/depth/ring";
 		OSC_PATH[MOD_VEL_NOISE_AMOUNT] = "/mod/vel/depth/noise";
 
+		OSC_PATH[MOD_ENV1_LFOAMT_AMOUNT]  = "/mod/env/depth/lfoamt";
+		OSC_PATH[MOD_ENV2_LFOAMT_AMOUNT]  = "/mod/env/2/depth/lfoamt";
+		OSC_PATH[MOD_PRESS_LFOAMT_AMOUNT] = "/mod/press/depth/lfoamt";
+		OSC_PATH[MOD_WHEEL_LFOAMT_AMOUNT] = "/mod/wheel/depth/lfoamt";
+		OSC_PATH[MOD_KEY_LFOAMT_AMOUNT]   = "/mod/key/depth/lfoamt";
+		OSC_PATH[MOD_VEL_LFOAMT_AMOUNT]   = "/mod/vel/depth/lfoamt";
+
 		OSC_PATH[MOD_WHEEL_PITCH1_AMOUNT]  = "/mod/wheel/depth/pitch";
 		OSC_PATH[MOD_WHEEL_PITCH2_AMOUNT]  = "/mod/wheel/depth/pitch/2";
 		OSC_PATH[MOD_WHEEL_PW1_AMOUNT]     = "/mod/wheel/depth/pw/1";
@@ -917,6 +934,14 @@ public class P {
 		setDirectly(MOD_VEL_RING_AMOUNT, .5f);
 		setDirectly(MOD_VEL_NOISE_AMOUNT, .5f);
 
+		setDirectly(MOD_AMOUNT_BASE, 1.0f);   // full LFO amount by default
+		setDirectly(MOD_ENV1_LFOAMT_AMOUNT, .5f);
+		setDirectly(MOD_ENV2_LFOAMT_AMOUNT, .5f);
+		setDirectly(MOD_PRESS_LFOAMT_AMOUNT, .5f);
+		setDirectly(MOD_WHEEL_LFOAMT_AMOUNT, .5f);
+		setDirectly(MOD_KEY_LFOAMT_AMOUNT, .5f);
+		setDirectly(MOD_VEL_LFOAMT_AMOUNT, .5f);
+
 		setDirectly(MOD_WHEEL_PITCH1_AMOUNT, .5f);
 		setDirectly(MOD_WHEEL_PITCH2_AMOUNT, .5f);
 		setDirectly(MOD_WHEEL_PW1_AMOUNT, .5f);
@@ -1025,7 +1050,7 @@ public class P {
 			}
 			break;
 		case MOD_AMOUNT_BASE:
-			MOD_AMOUNT_COMBINED = VAL[MOD_AMOUNT_BASE];
+			MOD_AMOUNT_COMBINED = VAL[MOD_AMOUNT_BASE]; // per-voice mods are added on top in AnalogSynthVoice
 		}
 	}
 	
