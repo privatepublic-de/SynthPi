@@ -894,7 +894,7 @@ body[data-delay-type="digital"] .delay-digital-only {
   box-shadow: 0 -8px 10px var(--color-body);
   align-items: flex-end;
   flex-wrap: nowrap;
-  justify-content: flex-start;
+  justify-content: safe center;
   overflow-x: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--color-dark) transparent;
