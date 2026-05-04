@@ -491,9 +491,53 @@ body[data-osc-mode="blep"] .va-only-inline {
   display: block;
 }
 
+/* OSC 1 / OSC 2 labelled column grouping within the oscillator panel.
+   Each column wraps its wave slot (and, for OSC2, the tuning knobs).
+   The visual separator lives on osc2-col so both wave slots and all
+   OSC2 tuning controls read as a single owned group. */
+.osc-col {
+  gap: 4px;
+}
+
+.osc-col-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color);
+  opacity: 0.55;
+}
+
+.osc1-col .osc-col-label::before { content: "OSC 1"; }
+.osc2-col .osc-col-label::before { content: "OSC 2"; }
+
+/* In Exciter mode Excitation and Damping are shared synthesis params that
+   affect both oscillators — signal this by relabelling the left column. */
+body[data-osc-mode="exc"] .osc1-col .osc-col-label::before {
+  content: "Shared";
+}
+
+.osc2-col {
+  padding-left: 10px;
+  border-left: 1px solid var(--color-dark);
+}
+
+/* Vertically centre items in the OSC2 inner row so the wave slot, rotaries,
+   and va-only toggle align cleanly regardless of engine mode height. */
+.osc2-col > .row {
+  align-items: center;
+}
+
 /* WT bank picker: two columns side by side, each with a mini label and a
    3-column option grid (3+2 layout for 5 banks). Compact enough to sit
    close in height to the VA engine panel so mode switches feel stable. */
+.bank-col-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color);
+  opacity: 0.55;
+}
+
 .bank-dual {
   display: flex;
   gap: 16px;

@@ -68,74 +68,77 @@
             data-label="Gain"
           ></div>
         </div>
-        <!-- Stable shape across all engines: OSC1 + OSC2 wave knobs, then
-             OSC2 tuning + ringmod. Mode-specific extras (PW/Sub for VA, Bank
-             pickers for Wavetable) live in the engine panels below; nothing
-             here jumps when the user switches engines. The wave-knob labels
-             swap per engine via app.js (data-label-*). -->
+        <!-- OSC 1 and OSC 2 labelled column groups. The separator lives at the
+             column boundary so both wave slots and all OSC2 tuning controls
+             are clearly owned. Labels change per engine via CSS ::before
+             content — Exciter shifts the OSC1 label to "Shared" because
+             Excitation and Damping both affect all oscillators. -->
         <div class="row">
-          <!-- VA's BLEP engine actually buckets OSC*_WAVE into four discrete
-               regions (sine / triangle / saw / pulse — see BlepOscillator's
-               generateSample). Showing it as a continuous knob in VA mode
-               misrepresents the engine; CSS swaps to the 4-option Select
-               below in VA mode while keeping the rotary for WT/Add/Exc. Both
-               widgets share the same /osc/N/wave path; socket.send fans out
-               locally so the inactive widget's state stays in sync. -->
-          <div class="osc-wave-slot">
-            <div
-              class="rotary"
-              data-osc="/osc/1/wave"
-              data-label="OSC1 Wave"
-              data-label-blep="OSC1 Wave"
-              data-label-wt="OSC1 Wave"
-              data-label-add="OSC1 Timbre"
-              data-label-exc="Excitation"
-            ></div>
-            <div
-              class="select vertical osc-wave-select"
-              data-osc="/osc/1/wave"
-              data-list="Sine,Triangle,Saw,Pulse"
-              data-step-floor
-            ></div>
+          <div class="col osc-col osc1-col">
+            <div class="osc-col-label"></div>
+            <!-- VA's BLEP engine buckets OSC*_WAVE into four discrete regions
+                 (Sine/Triangle/Saw/Pulse). CSS swaps from the continuous rotary
+                 to the 4-option Select in VA mode; both share the same OSC path
+                 so the inactive widget stays in sync. -->
+            <div class="osc-wave-slot">
+              <div
+                class="rotary"
+                data-osc="/osc/1/wave"
+                data-label="OSC1 Wave"
+                data-label-blep="OSC1 Wave"
+                data-label-wt="OSC1 Wave"
+                data-label-add="OSC1 Timbre"
+                data-label-exc="Excitation"
+              ></div>
+              <div
+                class="select vertical osc-wave-select"
+                data-osc="/osc/1/wave"
+                data-list="Sine,Triangle,Saw,Pulse"
+                data-step-floor
+              ></div>
+            </div>
           </div>
-          <div class="osc-wave-slot group-left">
-            <div
-              class="rotary"
-              data-osc="/osc/2/wave"
-              data-label="OSC2 Wave"
-              data-label-blep="OSC2 Wave"
-              data-label-wt="OSC2 Wave"
-              data-label-add="OSC2 Timbre"
-              data-label-exc="Damping"
-            ></div>
-            <div
-              class="select vertical osc-wave-select"
-              data-osc="/osc/2/wave"
-              data-list="Sine,Triangle,Saw,Pulse"
-              data-step-floor
-            ></div>
-          </div>
-          <div
-            class="rotary"
-            data-osc="/osc/2/tuning"
-            data-label="Semitones"
-            data-bipolar
-          ></div>
-          <div
-            class="rotary"
-            data-osc="/osc/2/tuning/fine"
-            data-label="Fine Tune"
-            data-bipolar
-          ></div>
-          <!-- OSC2 keytracking is VA-only (only BlepOscillator reads it).
-               It sits in the OSC row in VA mode rather than the engine panel
-               so the OSC2 group reads as a single visual unit. -->
-          <div
-            class="toggle va-only-inline"
-            data-osc="/osc/2/keytrack"
-            data-label="OSC2 Keytrack"
-          >
-            OSC2 Track
+          <div class="col osc-col osc2-col">
+            <div class="osc-col-label"></div>
+            <div class="row">
+              <div class="osc-wave-slot">
+                <div
+                  class="rotary"
+                  data-osc="/osc/2/wave"
+                  data-label="OSC2 Wave"
+                  data-label-blep="OSC2 Wave"
+                  data-label-wt="OSC2 Wave"
+                  data-label-add="OSC2 Timbre"
+                  data-label-exc="Damping"
+                ></div>
+                <div
+                  class="select vertical osc-wave-select"
+                  data-osc="/osc/2/wave"
+                  data-list="Sine,Triangle,Saw,Pulse"
+                  data-step-floor
+                ></div>
+              </div>
+              <div
+                class="rotary"
+                data-osc="/osc/2/tuning"
+                data-label="Semitones"
+                data-bipolar
+              ></div>
+              <div
+                class="rotary"
+                data-osc="/osc/2/tuning/fine"
+                data-label="Fine Tune"
+                data-bipolar
+              ></div>
+              <!-- OSC2 keytracking is VA-only (only BlepOscillator reads it). -->
+              <div
+                class="toggle va-only-inline"
+                data-osc="/osc/2/keytrack"
+                data-label="OSC2 Keytrack"
+              >
+                OSC2 Track
+              </div>
+            </div>
           </div>
         </div>
         <!-- Engine-specific config (display:none when engine doesn't match —
@@ -196,9 +199,11 @@
         <div class="osc-engine-panel" data-engine="wt">
           <div class="bank-dual">
             <div class="bank-col">
+              <div class="bank-col-label">OSC 1</div>
               <div class="select grid-3" data-osc="/osc/1/waveset" data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
             </div>
             <div class="bank-col">
+              <div class="bank-col-label">OSC 2</div>
               <div class="select grid-3" data-osc="/osc/2/waveset" data-list="Analog,Overtones,Strings,Keys,Voices" data-step-floor></div>
             </div>
           </div>
