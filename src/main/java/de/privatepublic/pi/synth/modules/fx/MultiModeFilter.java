@@ -82,7 +82,7 @@ public class MultiModeFilter {
 //	private float gain = 0;
 //	private float damp, drive=0, notch, low, high, band, out, in;
 	private float notch, low, high, band, out;
-//	private float dnormoffset =  1.0E-25;
+	private static final float DC_OFFSET = 1.0E-25f;
 	float drive, dsquare, inValue;
 	FilterType type;
 	
@@ -133,17 +133,17 @@ public class MultiModeFilter {
 			float u = (inValue - moogK * Gm1 * S) / (1f + moogK * G4);
 			float sq = u * u;
 			u = u * (27f + sq) / (27f + 9f * sq);  // tanh approximation
-			float y0 = G * (u  - state0) + state0;  state0 = 2f*y0 - state0;
-			float y1 = G * (y0 - state1) + state1;  state1 = 2f*y1 - state1;
-			float y2 = G * (y1 - state2) + state2;  state2 = 2f*y2 - state2;
-			float y3 = G * (y2 - state3) + state3;  state3 = 2f*y3 - state3;
+			float y0 = G * (u  - state0) + state0;  state0 = 2f*y0 - state0 + DC_OFFSET;
+			float y1 = G * (y0 - state1) + state1;  state1 = 2f*y1 - state1 + DC_OFFSET;
+			float y2 = G * (y1 - state2) + state2;  state2 = 2f*y2 - state2 + DC_OFFSET;
+			float y3 = G * (y2 - state3) + state3;  state3 = 2f*y3 - state3 + DC_OFFSET;
 			return y3;
 		}
 		else {
 			notch = inValue - damp*band;
-			low   = low + f1*band;
+			low   = low + f1*band + DC_OFFSET;
 			high  = notch - low;
-			band  = f1*high + band;// - drive*band*band*band;
+			band  = f1*high + band + DC_OFFSET;
 			switch (type) {
 			case LOWPASS:
 				out = low;
@@ -162,9 +162,9 @@ public class MultiModeFilter {
 				out = low+band+high;
 			}
 			notch = inValue - damp*band;
-			low   = low + f1*band;
+			low   = low + f1*band + DC_OFFSET;
 			high  = notch - low;
-			band  = f1*high + band;// - drive*band*band*band;
+			band  = f1*high + band + DC_OFFSET;
 			switch (type) {
 			case LOWPASS:
 				return out + low;

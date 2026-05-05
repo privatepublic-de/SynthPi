@@ -69,13 +69,18 @@ public class SynthPi {
 			if (window!=null) {
 			Timer timer = new Timer("LoadWatch", true);
 			timer.schedule(new TimerTask() {
-				// private float averaged;
 				private float[] recent = new float[5];
 				private int pos = 0;
+				private int lastMissed = 0;
+				private int missDecayTicks = 0;
 				@Override
 				public void run() {
 					recent[pos] = SynthPiAudioClient.LOAD;
 					window.setLoad(0.2f*(recent[0]+recent[1]+recent[2]+recent[3]+recent[4]));
+					int missed = SynthPiAudioClient.MISSED_DEADLINES;
+					if (missed != lastMissed) { missDecayTicks = 10; lastMissed = missed; }
+					if (missDecayTicks > 0) missDecayTicks--;
+					window.setJitter(missDecayTicks > 0);
 					pos = ++pos%5;
 				}}, 1000, 50);
 			}

@@ -1,5 +1,6 @@
 package de.privatepublic.pi.synth;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Image;
@@ -32,6 +33,7 @@ public class AppWindow {
 	private JFrame frame;
 	private JTextArea textArea;
 	private JProgressBar progressBarLoad;
+	private JLabel lblDspLoad;
 
 	/**
 	 * Create the application.
@@ -79,7 +81,7 @@ public class AppWindow {
 		
 		progressBarLoad = new JProgressBar();
 		
-		JLabel lblDspLoad = new JLabel("DSP load:");
+		lblDspLoad = new JLabel("DSP load:");
 		lblDspLoad.setLabelFor(progressBarLoad);
 		lblDspLoad.setFont(new Font("Dialog", Font.PLAIN, 12));
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
@@ -151,6 +153,10 @@ public class AppWindow {
 	
 	public void setLoad(float load) {
 		progressBarLoad.setValue((int)(100*load));
+	}
+
+	public void setJitter(boolean active) {
+		progressBarLoad.setForeground(active ? Color.ORANGE : null);
 	}
 	
 	public static void openWebBrowser() {

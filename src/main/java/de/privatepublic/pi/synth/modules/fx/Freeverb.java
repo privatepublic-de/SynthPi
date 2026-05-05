@@ -36,6 +36,9 @@ public final class Freeverb implements IProcessor {
     private float width;
 //    private float mode;
     private boolean dirty;
+    // Tiny DC offset injected into comb/allpass feedback to prevent values from
+    // decaying into IEEE 754 subnormal range (which causes 50-100× slowdown on x86).
+    private static final float DC_OFFSET = 1.0E-25f;
     // Comb filters
     private int numcombs;
     private Comb[] combL;
@@ -361,32 +364,7 @@ public final class Freeverb implements IProcessor {
         public void processMix(float inputs[], float outputs[], int buffersize) {
             for (int i = 0; i < buffersize; i++) {
                 float output = buffer[bufidx];
-
-                //undenormalise(output);
-//                if (output > 0.0) {
-//                    if (output < 1.0E-10) {
-//                        output = 0;
-//                    }
-//                }
-//                if (output < 0.0) {
-//                    if (output > -1.0E-10) {
-//                        output = 0;
-//                    }
-//                }
-
-                filterstore = (output * damp2) + (filterstore * damp1);
-                //undenormalise(filterstore);
-//                if (filterstore > 0.0) {
-//                    if (filterstore < 1.0E-10) {
-//                        filterstore = 0;
-//                    }
-//                }
-//                if (filterstore < 0.0) {
-//                    if (filterstore > -1.0E-10) {
-//                        filterstore = 0;
-//                    }
-//                }
-
+                filterstore = (output * damp2) + (filterstore * damp1) + DC_OFFSET;
                 buffer[bufidx] = inputs[i] + (filterstore * feedback);
 
                 if (++bufidx >= bufsize) {
@@ -500,26 +478,11 @@ public final class Freeverb implements IProcessor {
 //        }
 
         public void processReplace(float inputs[], float outputs[], int buffersize) {
-
             for (int i = 0; i < buffersize; i++) {
-
                 float bufout = buffer[bufidx];
-
-                //undenormalise 
-//                if (bufout > 0.0) {
-//                    if (bufout < 1.0E-10) {
-//                        bufout = 0;
-//                    }
-//                }
-//                if (bufout < 0.0) {
-//                    if (bufout > -1.0E-10) {
-//                        bufout = 0;
-//                    }
-//                }
-
                 float input = inputs[i];
                 outputs[i] = -input + bufout;
-                buffer[bufidx] = input + bufout * feedback;
+                buffer[bufidx] = input + (bufout * feedback) + DC_OFFSET;
                 if (++bufidx >= bufsize) {
                     bufidx = 0;
                 }

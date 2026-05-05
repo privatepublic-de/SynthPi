@@ -26,6 +26,7 @@ public class Limiter implements IProcessor {
 	            envelope = attack * ( envelope - val ) + val;
 	        else
 	            envelope = release * ( envelope - val ) + val;
+			if (envelope < 1e-18f) envelope = 0f;
 			if( envelope>1 ) {
 				outL[i] /= envelope;
 				outR[i] /= envelope;

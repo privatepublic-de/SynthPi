@@ -16,6 +16,7 @@ import de.privatepublic.pi.synth.modules.mod.LFO;
  */
 public class DigitalDelay extends DelayBase {
 
+	private static final float DC_OFFSET = 1.0E-25f;
 	private final int delayLineSize = (int)(P.SAMPLE_RATE_HZ*2);
 	private final int delayLineSizeUnder = delayLineSize-1;
 	private final float[] delayLineL = new float[delayLineSize];
@@ -77,8 +78,8 @@ public class DigitalDelay extends DelayBase {
 			final float tappedR = valR0 + (valR1-valR0)*indexFractR;
 			// self-feedback (per-channel), input mixed in mono-sum to feed both lines
 			final float inSum = in1 + in2;
-			delayLineL[writeIndex] = inSum + tappedL*feedback;
-			delayLineR[writeIndex] = inSum + tappedR*feedback;
+			delayLineL[writeIndex] = inSum + tappedL*feedback + DC_OFFSET;
+			delayLineR[writeIndex] = inSum + tappedR*feedback + DC_OFFSET;
 			outL = tappedL*wet;
 			outR = tappedR*wet;
 			bufL[i] = in1*wetInv+outL;

@@ -38,16 +38,17 @@ public class StateVariableFilter {
 		damp = (float) Math.min(2.0*(1.0 - FastCalc.pow(Q, 0.25f)), Math.min(2.0f, 2.0f/f1 - f1*0.5f));
 	}
 
+	private static final float DC_OFFSET = 1.0E-25f;
 	private float frq, Q;
 	private float f1, damp;
 	private float notch, low, high, band, out;
-	
+
 	@SuppressWarnings("incomplete-switch")
 	public float processSample(final float sampleValue) {
 		notch = sampleValue - damp*band;
-		low   = low + f1*band;
+		low   = low + f1*band + DC_OFFSET;
 		high  = notch - low;
-		band  = f1*high + band;// - drive*band*band*band;
+		band  = f1*high + band + DC_OFFSET;
 		switch (type) {
 		case LOWPASS:
 			out = low;
@@ -66,9 +67,9 @@ public class StateVariableFilter {
 			out = low+band+high;
 		}
 		notch = sampleValue - damp*band;
-		low   = low + f1*band;
+		low   = low + f1*band + DC_OFFSET;
 		high  = notch - low;
-		band  = f1*high + band;// - drive*band*band*band;
+		band  = f1*high + band + DC_OFFSET;
 		switch (type) {
 		case LOWPASS:
 			return out + low;

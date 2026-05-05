@@ -2,6 +2,7 @@ package de.privatepublic.pi.synth.modules.fx;
 
 public class HalfBandFilter {
 
+    private static final float DC_OFFSET = 1.0E-25f;
     private final float b0s1, b1s1, b2s1, a1s1, a2s1;
     private final float b0s2, b1s2, b2s2, a1s2, a2s2;
     private float w1s1, w2s1, w1s2, w2s2;
@@ -35,10 +36,10 @@ public class HalfBandFilter {
         // Two cascaded biquads, Direct Form II Transposed
         float y1 = b0s1 * x + w1s1;
         w1s1 = b1s1 * x - a1s1 * y1 + w2s1;
-        w2s1 = b2s1 * x - a2s1 * y1;
+        w2s1 = b2s1 * x - a2s1 * y1 + DC_OFFSET;
         float y2 = b0s2 * y1 + w1s2;
         w1s2 = b1s2 * y1 - a1s2 * y2 + w2s2;
-        w2s2 = b2s2 * y1 - a2s2 * y2;
+        w2s2 = b2s2 * y1 - a2s2 * y2 + DC_OFFSET;
         return y2;
     }
 

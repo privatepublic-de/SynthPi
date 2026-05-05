@@ -162,10 +162,17 @@ public class SynthPiAudioClient implements AudioClient {
 	}
 
 	public static volatile float LOAD = 0;
+	public static volatile int MISSED_DEADLINES = 0;
 	private static long bufferTimeNS = 0;
+	private long lastCallbackNanos = 0;
 	
 	@Override
 	public boolean process(long time, List<FloatBuffer> inputs, List<FloatBuffer> outputs, int nframes) {
+		final long nowNanos = System.nanoTime();
+		if (lastCallbackNanos > 0 && (nowNanos - lastCallbackNanos) > bufferTimeNS * 3 / 2) {
+			MISSED_DEADLINES++;
+		}
+		lastCallbackNanos = nowNanos;
 		if (synthengine!=null) {
 			try {
 				long startnanos = System.nanoTime();

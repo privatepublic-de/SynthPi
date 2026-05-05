@@ -581,8 +581,10 @@ public class AnalogSynthVoice {
 		final float modEnv1Out = modEnvelope.outValue;
 		filter1.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);
 		filter2.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);
-		// Per-voice LFO render for this chunk.
-		lfo.renderBuffer(nframes);
+		// Per-voice LFO render for this chunk — only BLEP mode reads it.
+		if (P.VAL_OSCILLATOR_MODE == P.OscillatorMode.BLEP) {
+			lfo.renderBuffer(nframes);
+		}
 
 		if (USE_BUFFER_PATH) {
 			// Pre-render mod envelope and advance env2; snapshot env2 for oscillator use.
@@ -663,7 +665,9 @@ public class AnalogSynthVoice {
 		P.MOD_ENV1_GLOBAL = modEnvelope.outValue;
 		P.MOD_ENV2_GLOBAL = env2.outValue;
 		P.KEY_NORM_GLOBAL = keyNorm;
-		lfo.nextBufferSlice(nframes);
+		if (P.VAL_OSCILLATOR_MODE == P.OscillatorMode.BLEP) {
+			lfo.nextBufferSlice(nframes);
+		}
 	}
 	
 	

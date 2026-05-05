@@ -13,6 +13,7 @@ import de.privatepublic.pi.synth.modules.mod.LFO;
  */
 public class TapeDelay extends DelayBase {
 
+	private static final float DC_OFFSET = 1.0E-25f;
 	private final int delayLineSize = (int)(P.SAMPLE_RATE_HZ*2);
 	private final int delayLineSizeUnder = delayLineSize-1;
 	private final float[] delayLineL = new float[delayLineSize];
@@ -68,8 +69,8 @@ public class TapeDelay extends DelayBase {
 			feedbackL += (valR1*feedback-feedbackL)*indexFract;
 			feedbackR = valL0*feedback;
 			feedbackR += (valL1*feedback-feedbackR)*indexFract;
-			delayLineL[writeIndex] = feedbackL+in1+in2;
-			delayLineR[writeIndex] = feedbackR;
+			delayLineL[writeIndex] = feedbackL+in1+in2+DC_OFFSET;
+			delayLineR[writeIndex] = feedbackR+DC_OFFSET;
 			out1 = valL0*wet;
 			out1 += (valL1*wet-out1)*indexFract;
 			out2 = valR0*wet;
