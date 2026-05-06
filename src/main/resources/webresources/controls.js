@@ -93,6 +93,9 @@ export class Rotary {
 		this.path = element.dataset.osc || null;
 		this.isBipolar = element.dataset.bipolar !== undefined;
 		this.isMix = element.dataset.mix !== undefined;
+		// Bipolar knobs with meaningful server-provided units (e.g. "st", "¢")
+		// can opt in to server labels via data-server-label.
+		this.useServerLabel = element.dataset.serverLabel !== undefined;
 		// Echo guard: while the user is actively dragging, ignore inbound
 		// /path=value pushes from the server so the knob doesn't fight back.
 		// (The server already suppresses value-echo to the originating session,
@@ -173,8 +176,10 @@ export class Rotary {
 			});
 			// Bipolar params always display in the -100/0/+100% format computed
 			// client-side; server labels would override that with a locale-formatted
-			// raw value which is meaningless for depth knobs.
-			if (!this.isBipolar) {
+			// raw value which is meaningless for depth knobs. Knobs with
+			// data-server-label opt in to server labels regardless (e.g. tuning
+			// knobs that display "st" / "¢" rather than %).
+			if (!this.isBipolar || this.useServerLabel) {
 				socket.onCommand(`/label${this.path}`, (path, value) => {
 					this._serverLabelReceived = true;
 					this.valueElement.textContent = value;
