@@ -934,7 +934,7 @@ public class P {
 		setDirectly(MOD_VEL_RING_AMOUNT, .5f);
 		setDirectly(MOD_VEL_NOISE_AMOUNT, .5f);
 
-		setDirectly(MOD_AMOUNT_BASE, 1.0f);   // full LFO amount by default
+		setDirectly(MOD_AMOUNT_BASE, 0.0f);
 		setDirectly(MOD_ENV1_LFOAMT_AMOUNT, .5f);
 		setDirectly(MOD_ENV2_LFOAMT_AMOUNT, .5f);
 		setDirectly(MOD_PRESS_LFOAMT_AMOUNT, .5f);
