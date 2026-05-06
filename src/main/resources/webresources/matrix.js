@@ -3,7 +3,7 @@
 // Rows = sources (LFO, Mod Env 1, Mod Env 2, Mod Wheel, Pressure, Velocity, Keyboard).
 // Cols = targets (Pitch All, Pitch 2, PW 1, PW 2, Wave 1, Wave 2,
 //                Filter 1, Filter 2, Noise, Ring, Delay Time,
-//                LFO Amt, LFO Rate, OSC2 Vol, Vol).
+//                LFO Amt, LFO Rate, OSC Mix, Vol).
 // Each valid cell is a small bipolar rotary bound to the source's
 // MOD_<TARGET>_AMOUNT path. Empty cells render as blank space.
 //
@@ -19,12 +19,12 @@ const SOURCES = ["LFO", "Mod Env 1", "Mod Env 2", "Mod Wheel", "Pressure", "Velo
 const TARGETS = [
 	"Pitch All", "Pitch 2", "PW 1", "PW 2", "Wave 1", "Wave 2",
 	"Filter 1", "Filter 2", "Noise", "Ring", "Delay Time",
-	"LFO Amt", "LFO Rate", "OSC2 Vol", "Vol",
+	"LFO Amt", "LFO Rate", "OSC Mix", "Vol",
 ];
 
 // 7×15 path table; null = source has no routing to that target.
 // Columns 0-7: Pitch All, Pitch 2, PW 1, PW 2, Wave 1, Wave 2, Filter 1, Filter 2
-// Columns 8-14: Noise, Ring, Delay Time, LFO Amt, LFO Rate, OSC2 Vol, Vol
+// Columns 8-14: Noise, Ring, Delay Time, LFO Amt, LFO Rate, OSC Mix, Vol
 const PATHS = [
 	// LFO
 	[

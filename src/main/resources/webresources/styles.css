@@ -384,7 +384,7 @@ body.learnmode [data-osc]:hover {
 }
 
 /* Modulation matrix grid. Row labels left-aligned; column headers
-   rotated -90° so the long target names ("Pitch 2", "OSC2 Vol",
+   rotated -90° so the long target names ("Pitch 2", "OSC Mix",
    "Delay Time") fit in narrow columns without wrapping. */
 #modmatrix {
   padding: 8px 12px;
