@@ -64,7 +64,7 @@ class Settings {
 		const polyOptions = range(2, 9).map((n) =>
 			`<option value="${n}" ${s.polyphonyvoices === n ? "selected" : ""}>${n} voices</option>`).join("");
 		const bendOptions = range(1, 13).map((n) =>
-			`<option value="${n * 100}" ${s.pitchbendrange === n * 100 ? "selected" : ""}>${n} semitone${n > 1 ? "s" : ""}</option>`).join("");
+			`<option value="${n}" ${s.pitchbendrange === n ? "selected" : ""}>${n} semitone${n > 1 ? "s" : ""}</option>`).join("");
 		const bufferOptions = [32, 64, 96, 128, 256, 512].map((n) =>
 			`<option value="${n}" ${s.audiobuffersize === n ? "selected" : ""}>${n} samples</option>`).join("");
 
@@ -82,7 +82,7 @@ class Settings {
 				<div class="settings-section-label">Synth</div>
 				<label>Polyphony <select name="polyphonyvoices">${polyOptions}</select></label>
 				<label>Pitch bend range <select name="pitchbendrange">${bendOptions}</select></label>
-				<label class="settings-checkbox"><input type="checkbox" name="pitchbendfix" ${s.pitchbendfix ? "checked" : ""}> Fix strange pitch-bend behaviour (macOS)</label>
+				<label class="settings-checkbox"><input type="checkbox" name="pitchbendfix" ${s.pitchbendfix ? "checked" : ""}> Pitch bend center = 0 (two's-complement, macOS default)</label>
 				<label>Audio buffer size <select name="audiobuffersize">${bufferOptions}</select> <small>(needs restart)</small></label>
 				<label>Audio output device <select name="audiodevicename">${deviceOptions}</select> <small>(needs restart)</small></label>
 				<label class="settings-checkbox"><input type="checkbox" name="limiterenabled" ${s.limiterenabled ? "checked" : ""}> Output limiter active</label>

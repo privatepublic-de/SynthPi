@@ -489,7 +489,10 @@ public class PresetHandler {
 			}
 		}
 		if (settings.has(K.PREF_PITCH_BEND_RANGE.key())) {
-			P.BEND_RANGE_CENTS = settings.getInt(K.PREF_PITCH_BEND_RANGE.key())*100f;
+			int pbr = settings.getInt(K.PREF_PITCH_BEND_RANGE.key());
+			// Values 1–12 are semitones (normal format). Values ≥100 are cents
+			// written by a buggy UI that sent option values 100–1200 raw.
+			P.BEND_RANGE_CENTS = pbr <= 12 ? pbr * 100f : Math.min(pbr, 1200f);
 		}
 		if (settings.has(K.PREF_PITCH_BEND_FIX.key())) {
 			P.FIX_STRANGE_MIDI_PITCH_BEND = !settings.getBoolean(K.PREF_PITCH_BEND_FIX.key());
