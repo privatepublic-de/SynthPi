@@ -492,19 +492,24 @@ public class AnalogSynthVoice {
 			osc2=osc2_va;
 			break;
 		}
-		final float osc1Vol = P.VALMIXHIGH[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
-		// OSC2 volume with modulation from all sources hoisted at control rate
 		final float env2OutForMix = env2.outValue;
-		final float osc2VolBase = P.VALMIXLOW[P.OSC_1_2_MIX]*P.VALX[P.OSC_GAIN]*.75f;
-		final float osc2VolMod = 1f
-				+ LFO.GLOBAL.bufferedValueAt(0) * P.MOD_AMOUNT_COMBINED * P.VALXC[P.MOD_LFO_OSC2VOL_AMOUNT]
+		// Modulate the OSC 1/2 mix position so both oscillators move complementarily.
+		// All MOD_*_OSC2VOL depth params shift the mix knob rather than scaling OSC2 alone.
+		final float mixMod = LFO.GLOBAL.bufferedValueAt(0) * P.MOD_AMOUNT_COMBINED * P.VALXC[P.MOD_LFO_OSC2VOL_AMOUNT]
 				+ modEnvelope.outValue * P.VALXC[P.MOD_ENV1_OSC2VOL_AMOUNT]
 				+ env2OutForMix * P.VALXC[P.MOD_ENV2_OSC2_VOL_AMOUNT]
 				+ P.CHANNEL_PRESSURE * P.VALXC[P.MOD_PRESS_OSC2VOL_AMOUNT]
 				+ keyNorm * P.VALXC[P.MOD_KEY_OSC2VOL_AMOUNT]
 				+ noteVelocity * P.VALXC[P.MOD_VEL_OSC2VOL_AMOUNT]
 				+ P.VAL[P.MOD_WHEEL] * P.VALXC[P.MOD_WHEEL_OSC2VOL_AMOUNT];
-		final float osc2Vol = osc2VolBase * Math.max(0f, osc2VolMod);
+		final float mixPos = Math.max(0f, Math.min(1f, P.VAL[P.OSC_1_2_MIX] + mixMod));
+		// Equal-power crossfade — same formula as P.setDirectly VALMIXLOW/VALMIXHIGH
+		final float mixC = (mixPos - 0.5f) * 2f;
+		final float mixX2 = Math.abs(mixC) - 1f;
+		final float mixCv = Math.signum(mixC) * (1f - mixX2 * mixX2 * mixX2 * mixX2);
+		final float gain = P.VALX[P.OSC_GAIN] * .75f;
+		final float osc2Vol = (float) Math.sqrt(0.5 * (1.0 + mixCv)) * gain;
+		final float osc1Vol = (float) Math.sqrt(0.5 * (1.0 - mixCv)) * gain;
 		noiseLevel = P.VALX[P.OSC_NOISE_LEVEL];
 		noiseModAmount = P.VALXC[P.MOD_ENV1_NOISE_AMOUNT];
 		// Hoist extra noise sources (control-rate; LFO is sampled per-sample in the loop)

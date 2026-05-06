@@ -362,7 +362,7 @@ public class P {
 	public static final int MOD_ENV2_FILTER_AMOUNT = 96;
 	/** Mod envelope 2 LFO rate modulation depth (use centered) */
 	public static final int MOD_ENV2_LFORATE_AMOUNT = 97;
-	/** Mod envelope 2 osc2 volume modulation depth (use centered) */
+	/** Mod envelope 2 OSC 1/2 mix modulation depth (use centered) */
 	public static final int MOD_ENV2_OSC2_VOL_AMOUNT = 98;
 	/** Mod envelope 2 noise level modulation depth (use centered) */
 	public static final int MOD_ENV2_NOISE_AMOUNT = 99;
@@ -408,7 +408,7 @@ public class P {
 	/** Mod envelope 2 velocity sensitivity: >0 = scale by note velocity */
 	public static final int MOD_ENV2_VEL_SENS = 115;
 
-	/** LFO → OSC2 volume modulation depth (use centered) */
+	/** LFO → OSC 1/2 mix modulation depth (use centered) */
 	public static final int MOD_LFO_OSC2VOL_AMOUNT = 116;
 	/** LFO → ring mod depth modulation amount (use centered) */
 	public static final int MOD_LFO_RING_AMOUNT = 117;
@@ -423,7 +423,7 @@ public class P {
 	public static final int MOD_ENV1_FILTER1_AMOUNT = 121;
 	/** Mod envelope 1 → filter 2 cutoff modulation depth (use centered) */
 	public static final int MOD_ENV1_FILTER2_AMOUNT = 122;
-	/** Mod envelope 1 → OSC2 volume modulation depth (use centered) */
+	/** Mod envelope 1 → OSC 1/2 mix modulation depth (use centered) */
 	public static final int MOD_ENV1_OSC2VOL_AMOUNT = 123;
 	/** Mod envelope 1 → LFO rate modulation depth (use centered) */
 	public static final int MOD_ENV1_LFORATE_AMOUNT = 124;
@@ -447,7 +447,7 @@ public class P {
 	public static final int MOD_PRESS_WAVE2_AMOUNT = 132;
 	/** Channel pressure → filter 2 cutoff modulation depth (use centered) */
 	public static final int MOD_PRESS_FILTER2_AMOUNT = 133;
-	/** Channel pressure → OSC2 volume modulation depth (use centered) */
+	/** Channel pressure → OSC 1/2 mix modulation depth (use centered) */
 	public static final int MOD_PRESS_OSC2VOL_AMOUNT = 134;
 	/** Channel pressure → ring mod depth modulation amount (use centered) */
 	public static final int MOD_PRESS_RING_AMOUNT = 135;
@@ -472,7 +472,7 @@ public class P {
 	public static final int MOD_KEY_FILTER1_AMOUNT = 144;
 	/** Keyboard tracking → filter 2 cutoff modulation depth (use centered) */
 	public static final int MOD_KEY_FILTER2_AMOUNT = 145;
-	/** Keyboard tracking → OSC2 volume modulation depth (use centered) */
+	/** Keyboard tracking → OSC 1/2 mix modulation depth (use centered) */
 	public static final int MOD_KEY_OSC2VOL_AMOUNT = 146;
 	/** Keyboard tracking → ring mod depth modulation amount (use centered) */
 	public static final int MOD_KEY_RING_AMOUNT = 147;
@@ -493,7 +493,7 @@ public class P {
 	public static final int MOD_VEL_FILTER1_AMOUNT = 154;
 	/** Velocity → filter 2 cutoff modulation depth (use centered) */
 	public static final int MOD_VEL_FILTER2_AMOUNT = 155;
-	/** Velocity → OSC2 volume modulation depth (use centered) */
+	/** Velocity → OSC 1/2 mix modulation depth (use centered) */
 	public static final int MOD_VEL_OSC2VOL_AMOUNT = 156;
 	/** Velocity → ring mod depth modulation amount (use centered) */
 	public static final int MOD_VEL_RING_AMOUNT = 157;
