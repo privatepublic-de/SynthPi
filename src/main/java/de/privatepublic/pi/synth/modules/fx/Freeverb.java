@@ -160,7 +160,7 @@ public final class Freeverb implements IProcessor {
     
     public void updateOneKnobSetting() {
     	final float val = P.VAL[P.REVERB_ONE_KNOB];
-    	final float wet  = (float)(val == 0 ? 0 : Math.pow(val, 0.35));
+    	final float wet  = (float)(val == 0 ? 0 : Math.pow(val, 0.7));
     	final float room = 0.15f + val * 0.9f; // reaches 1.05 → roomsize≈0.994 (vs 0.98), ~2× longer tail
     	final float damp = 1f - val * 0.9f;
     	// dry tracks inversely with wet across the full range so reverb adds
