@@ -79,8 +79,12 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 		// square
 		new float[] { 0, 0, 0, 0, 0,  1, 0, 1f/3, 0, 1f/5, 0, 1f/7, 0, 1f/9, 0, 1f/11, 0, 1f/13, 0, 1f/15, 0, 1f/17 },
 		new float[] { 1, 0, 0, 0, 0,  1, 0, 1f/3, 0, 1f/5, 0, 1f/7, 0, 1f/9, 0, 1f/11, 0, 1f/13, 0, 1f/15, 0, 1f/17 },
+		// bright saw: 1/sqrt(n) rolloff — much less high-harmonic attenuation than 1/n
+		new float[] { 0, 0, 0, 0, 0,  1, 0.707f, 0.577f, 0.500f, 0.447f, 0.408f, 0.378f, 0.354f, 0.333f, 0.316f, 0, 0, 0, 0, 0, 0, 0 },
+		// buzz cluster: only high harmonics (8th–10th at peak, fundamental nearly absent)
+		new float[] { 0, 0, 0, 0, 0,  0.0f, 0.0f, 0.1f, 0.2f, 0.4f, 0.7f, 0.9f, 1.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0 },
 		// last is doubled for array access
-		new float[] { 1, 0, 0, 0, 0,  1, 0, 1f/3, 0, 1f/5, 0, 1f/7, 0, 1f/9, 0, 1f/11, 0, 1f/13, 0, 1f/15, 0, 1f/17 }
+		new float[] { 0, 0, 0, 0, 0,  0.0f, 0.0f, 0.1f, 0.2f, 0.4f, 0.7f, 0.9f, 1.0f, 1.0f, 1.0f, 0, 0, 0, 0, 0, 0, 0 }
 	};
 	private static final int HARMONICS_COUNT = HARMONIC_FACTORS_SEMIS.length;
 	private static final int HARMONICS_COUNT_EFFECTIVE = P.LOW_BUDGET_ADDITIVE?HARMONIC_FACTORS_SEMIS.length/2:HARMONIC_FACTORS_SEMIS.length;
