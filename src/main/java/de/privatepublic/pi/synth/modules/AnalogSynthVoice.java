@@ -587,8 +587,9 @@ public class AnalogSynthVoice {
 		final float width = 1-P.VAL[P.SPREAD];
 		final float modVol = P.VALXC[P.MOD_VOL_AMOUNT];
 		final float modEnv1Out = modEnvelope.outValue;
-		filter1.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);
-		filter2.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity);
+		final float lfoVal0 = lfo.bufferedValueAt(0);
+		filter1.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity, lfoVal0);
+		filter2.updateFreqResponse(modEnv1Out, env2OutForMix, keyNorm, noteVelocity, lfoVal0);
 
 		if (USE_BUFFER_PATH) {
 			// Pre-render mod envelope and advance env2; snapshot env2 for oscillator use.

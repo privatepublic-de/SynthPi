@@ -7,7 +7,6 @@ import de.privatepublic.pi.synth.P;
 import de.privatepublic.pi.synth.P.FilterType;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR;
 import de.privatepublic.pi.synth.modules.mod.EnvADSR.EnvelopeParamConfig;
-import de.privatepublic.pi.synth.modules.mod.LFO;
 import de.privatepublic.pi.synth.util.FastCalc;
 
 public class MultiModeFilter {
@@ -86,7 +85,7 @@ public class MultiModeFilter {
 	float drive, dsquare, inValue;
 	FilterType type;
 	
-	public void updateFreqResponse(float modEnv1Val, float env2Val, float keyNorm, float velocity) {
+	public void updateFreqResponse(float modEnv1Val, float env2Val, float keyNorm, float velocity, float lfoVal) {
 		type = P.VAL_FILTER_TYPE_FOR[p_type];
 		frq = FastCalc.ensureRange(
 				(
@@ -100,7 +99,7 @@ public class MultiModeFilter {
 					+ MAX_STABLE_FREQUENCY * P.VAL[P.MOD_WHEEL] * P.VALXC[p_mod_wheel]
 				)
 				* frqKeyTrackMult
-				* LFO.lfoAmount(0, P.VALXC[p_mod_amount]),
+				* (1 - lfoVal * P.MOD_AMOUNT_COMBINED * P.VALXC[p_mod_amount]),
 				MIN_STABLE_FREQUENCY, MAX_STABLE_FREQUENCY);
 
 		if (type==FilterType.LOWPASS24) {
