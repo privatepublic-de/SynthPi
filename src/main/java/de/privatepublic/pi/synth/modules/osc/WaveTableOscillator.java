@@ -14,10 +14,12 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 
 	private float tableIndex = 0;
 	private final int wavesetparamindex;
+	private final LFO lfo;
 //	private static float[] ignoreBuffer = new float[P.SAMPLE_BUFFER_SIZE];
-	
-	public WaveTableOscillator(boolean primaryOrSecondary) {
+
+	public WaveTableOscillator(boolean primaryOrSecondary, LFO lfo) {
 		super(primaryOrSecondary);
+		this.lfo = lfo;
 		wavesetparamindex = primaryOrSecondary?P.OSC1_WAVE_SET:P.OSC2_WAVE_SET;
 		MidiHandler.registerReceiver(this);
 	}
@@ -127,7 +129,7 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 				else if (effFreq > targetFreq) effFreq -= glide;
 				if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 			}
-			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
 			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth)
 					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
@@ -229,7 +231,7 @@ public class WaveTableOscillator extends OscillatorBase implements IPitchBendRec
 				effFreq = targetFreq;
 			}
 			final float modEnvVal = modEnvBuf[sampleNo];
-			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float ampamount = FastCalc.ensureRange(osc2AmBase
 					+ lfoVal*modAmount*lfoRingAmt
 					+ modEnvVal*ampModAmount

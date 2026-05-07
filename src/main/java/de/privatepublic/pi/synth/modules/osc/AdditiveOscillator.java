@@ -87,9 +87,11 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 	private static final int VOLUMES_COUNT = VOLUME_MAP.length-2;
 	
 	private Sine[] sines = new Sine[HARMONICS_COUNT];
-	
-	public AdditiveOscillator(boolean primaryOrSecondary) {
+	private final LFO lfo;
+
+	public AdditiveOscillator(boolean primaryOrSecondary, LFO lfo) {
 		super(primaryOrSecondary);
+		this.lfo = lfo;
 		MidiHandler.registerReceiver(this);
 		for (int i=0;i<HARMONICS_COUNT;i++) {
 			int semis = HARMONIC_FACTORS_SEMIS[i];
@@ -101,16 +103,15 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 				factor = i-4;
 			}
 			sines[i] = new Sine(i, factor);
-//			log.debug("{} -> {}", i, factor);
 		}
 	}
-	
+
 	private float frequencyStepSize = 0;
 	private float outValue;
 	private float prevSample2 = 0;
 	private boolean ampmod, sync;
 	private float ampModAmount, ampamount, modwave1amount, modwave2amount, modenv1waveamount;
-	
+
 	@Override
 	public float processSample1st(int sampleNo, float volume, boolean[] syncOnFrameBuffer, float[] am_buffer, EnvADSR modEnvelope) {
 		if (effectiveFrequency!=targetFrequency) {
@@ -228,7 +229,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 				else if (effFreq > targetFreq) effFreq -= glide;
 				if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 			}
-			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
 			frequencyStepSize = effFreq * ((1 - lfoVal*modAmount*pitchDepth)
 					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
@@ -312,7 +313,7 @@ public class AdditiveOscillator extends OscillatorBase implements IPitchBendRece
 				effFreq = targetFreq;
 			}
 			final float modEnvVal = modEnvBuf[sampleNo];
-			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float ampamt = FastCalc.ensureRange(osc2AmBase
 					+ lfoVal*modAmount*lfoRingAmt
 					+ modEnvVal*ampModAmt

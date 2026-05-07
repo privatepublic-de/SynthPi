@@ -18,9 +18,11 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 	private int index = 0;
 	private int currentSampleNo = 0;
 	private Random random = new Random();
-	
-	public ExciterOscillator(boolean primaryOrSecondary) {
+	private final LFO lfo;
+
+	public ExciterOscillator(boolean primaryOrSecondary, LFO lfo) {
 		super(primaryOrSecondary);
+		this.lfo = lfo;
 		MidiHandler.registerReceiver(this);
 	}
 	
@@ -194,7 +196,7 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 				else if (effFreq > targetFreq) effFreq -= glide;
 				if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 			}
-			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
 			final float freq = effFreq * ((1 - lfoVal*modAmount*pitchDepth)
 					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
@@ -272,7 +274,7 @@ public class ExciterOscillator extends OscillatorBase implements IPitchBendRecei
 					if (Math.abs(effFreq - targetFreq) < glide) effFreq = targetFreq;
 				}
 			}
-			final float lfoVal = LFO.GLOBAL.bufferedValueAt(sampleNo);
+			final float lfoVal = lfo.bufferedValueAt(sampleNo);
 			final float modEnvVal = modEnvBuf[sampleNo];
 			final float pitchLfo = (1 - lfoVal*modAmount*pitchDepth)
 					+ modEnvVal*pitchModEnvDepth + env2v*pitchModEnv2Depth
