@@ -124,12 +124,12 @@ public class FancyParam {
 			result = Math.round(P.VALC[P.OSC2_TUNING]*24)+" st";
 			break;
 		case P.MOD_RATE:
-			calculatedVal = LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE));
-			if (calculatedVal<10) {
-				result = FORMAT_FLOAT2.format(LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE)))+" Hz";
+			calculatedVal = LFO.LOW_FREQ * (float)Math.pow(LFO.HI_FREQ / LFO.LOW_FREQ, P.VAL[P.MOD_RATE]);
+			if (calculatedVal < 10) {
+				result = FORMAT_FLOAT2.format(calculatedVal) + " Hz";
 			}
 			else {
-				result = FORMAT_FLOAT.format(LFO.LOW_FREQ+(P.VALX[P.MOD_RATE]*(LFO.FREQ_RANGE)))+" Hz";
+				result = FORMAT_FLOAT.format(calculatedVal) + " Hz";
 			}
 			break;
 		case P.MOD_LFO_TYPE:
